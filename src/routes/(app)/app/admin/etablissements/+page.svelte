@@ -1,12 +1,15 @@
 <script lang="ts">
-	import type { PageData } from './$types';
+	import type { PageData, ActionData } from './$types';
 	import { fade, scale } from 'svelte/transition';
+	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 
-	let { data }: { data: PageData } = $props();
+	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	// State
 	let etablissements = $derived(data.etablissements);
 	let loading = $state(false);
+	let deleteLoading = $state(false);
 
 	// Pagination & Search
 	let query = $state('');
@@ -26,6 +29,13 @@
 		toast = { message, type };
 		setTimeout(() => (toast = null), 3000);
 	}
+
+	// Réagir aux changements du form (résultats des actions)
+	$effect(() => {
+		if (form?.message) {
+			showToast(form.message, form.success ? 'success' : 'error');
+		}
+	});
 
 	// Derived
 	const filteredEtabs = $derived(
@@ -52,12 +62,7 @@
 	function closeDeleteModal() {
 		isDeleteModalOpen = false;
 		selectedEtab = null;
-	}
-
-	async function confirmDelete() {
-		// TODO: Implémenter la suppression API
-		showToast('Établissement supprimé avec succès');
-		closeDeleteModal();
+		deleteLoading = false;
 	}
 
 	// CSV Export
@@ -307,16 +312,47 @@
 							type="button"
 							class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
 							onclick={closeDeleteModal}
+							disabled={deleteLoading}
 						>
 							Annuler
 						</button>
-						<button
-							type="button"
-							class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700"
-							onclick={confirmDelete}
+						<form
+							method="POST"
+							action="?/delete"
+							use:enhance={() => {
+								deleteLoading = true;
+								return async ({ result, update }) => {
+									if (result.type === 'success') {
+										closeDeleteModal();
+										showToast('Établissement supprimé avec succès', 'success');
+									} else if (result.type === 'failure') {
+										const errorMessage = (result.data as { message?: string })?.message || 'Erreur lors de la suppression';
+										showToast(errorMessage, 'error');
+										deleteLoading = false;
+									}
+									await update();
+								};
+							}}
 						>
-							Supprimer définitivement
-						</button>
+							<input type="hidden" name="id" value={selectedEtab.id} />
+							<button
+								type="submit"
+								class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700 disabled:opacity-50"
+								disabled={deleteLoading}
+							>
+								{#if deleteLoading}
+									<span class="flex items-center gap-2">
+										<svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24">
+											<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+											<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+										</svg>
+										Suppression...
+									</span>
+								{:else}
+									Supprimer définitivement
+								{/if}
+							</button>
+						</form>
 					</div>
 				</div>
 			</div>

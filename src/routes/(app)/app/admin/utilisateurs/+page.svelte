@@ -980,6 +980,14 @@
 										usersWithSociete = [...usersWithSociete, { id: selectedUser!.id, societeId: societeIdValue }];
 									}
 									usersWithSociete = usersWithSociete;
+									
+									// Mettre à jour aussi le tableau users pour refléter le changement immédiatement
+									users = users.map(u => 
+										u.id === selectedUser?.id 
+											? { ...u, societeId: societeIdValue } 
+											: u
+									);
+									
 									closeSocieteModal();
 									showToast('Société mise à jour avec succès');
 								} else {
