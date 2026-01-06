@@ -99,12 +99,13 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="raisonSocial" class="text-sm font-medium text-gray-700">Raison Sociale</label>
+					<label for="raisonSocial" class="text-sm font-medium text-gray-700">Raison Sociale *</label>
 					<input
 						type="text"
 						id="raisonSocial"
 						name="raisonSocial"
 						value={data_form.raisonSocial}
+						required
 						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
 					/>
 				</div>
@@ -123,24 +124,26 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="email" class="text-sm font-medium text-gray-700">Email</label>
+					<label for="email" class="text-sm font-medium text-gray-700">Email *</label>
 					<input
 						type="email"
 						id="email"
 						name="email"
 						value={data_form.email}
+						required
 						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
 						placeholder="contact@etab.com"
 					/>
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="tel" class="text-sm font-medium text-gray-700">Téléphone</label>
+					<label for="tel" class="text-sm font-medium text-gray-700">Téléphone *</label>
 					<input
 						type="tel"
 						id="tel"
 						name="tel"
 						value={data_form.tel}
+						required
 						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
 					/>
 				</div>
@@ -158,34 +161,37 @@
 
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<div class="space-y-1.5 md:col-span-2">
-					<label for="rue" class="text-sm font-medium text-gray-700">Adresse</label>
+					<label for="rue" class="text-sm font-medium text-gray-700">Adresse *</label>
 					<input
 						type="text"
 						id="rue"
 						name="rue"
 						value={data_form.rue}
+						required
 						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
 						placeholder="123 rue de la Paix"
 					/>
 				</div>
 				<div class="space-y-1.5">
-					<label for="cp" class="text-sm font-medium text-gray-700">Code Postal</label>
+					<label for="cp" class="text-sm font-medium text-gray-700">Code Postal *</label>
 					<input
 						type="text"
 						id="cp"
 						name="cp"
 						value={data_form.cp}
+						required
 						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
 						placeholder="75000"
 					/>
 				</div>
 				<div class="space-y-1.5">
-					<label for="ville" class="text-sm font-medium text-gray-700">Ville</label>
+					<label for="ville" class="text-sm font-medium text-gray-700">Ville *</label>
 					<input
 						type="text"
 						id="ville"
 						name="ville"
 						value={data_form.ville}
+						required
 						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
 						placeholder="Paris"
 					/>

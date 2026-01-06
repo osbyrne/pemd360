@@ -20,7 +20,10 @@ export const user = sqliteTable("user", {
   banned: integer("banned", { mode: "boolean" }).default(false),
   banReason: text("ban_reason"),
   banExpires: integer("ban_expires", { mode: "timestamp_ms" }),
-});
+  societeId: integer("societe_id").references(() => societe.id),
+}, (table) => ({
+  societeIdIdx: index("user_societe_id_idx").on(table.societeId),
+}));
 
 export const session = sqliteTable(
   "session",
@@ -92,9 +95,13 @@ export const verification = sqliteTable(
   (table) => [index("verification_identifier_idx").on(table.identifier)],
 );
 
-export const userRelations = relations(user, ({ many }) => ({
+export const userRelations = relations(user, ({ one, many }) => ({
   sessions: many(session),
   accounts: many(account),
+  societe: one(societe, {
+    fields: [user.societeId],
+    references: [societe.id],
+  }),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -202,6 +209,7 @@ export const societe = sqliteTable('societe', {
 
 export const societeRelations = relations(societe, ({ many }) => ({
   etablissements: many(etablissement),
+  users: many(user),
 }));
 
 export const etablissement = sqliteTable('etablissement', {

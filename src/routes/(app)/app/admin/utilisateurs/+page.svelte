@@ -2,6 +2,10 @@
 	import { onMount } from 'svelte';
 	import { authClient } from '$lib/auth-client';
 	import { fade, scale } from 'svelte/transition';
+	import { enhance } from '$app/forms';
+
+	// Props from server
+	export let data;
 
 	// Types
 	type User = {
@@ -13,12 +17,23 @@
 		image?: string;
 		createdAt: Date;
 		emailVerified: boolean;
+		societeId?: number | null;
+	};
+
+	type Societe = {
+		id: number;
+		nom: string;
+		raisonSocial: string;
 	};
 
 	// State
 	let users: User[] = [];
 	let loading = true;
 	let error: string | null = null;
+
+	// Sociétés from server
+	$: societes = (data.societes || []) as Societe[];
+	$: usersWithSociete = (data.usersWithSociete || []) as { id: string; societeId: number | null }[];
 
 	// Pagination & Search
 	let query = '';
@@ -29,12 +44,29 @@
 	let isEditModalOpen = false;
 	let isCreateModalOpen = false;
 	let isPasswordModalOpen = false;
+	let isBanModalOpen = false;
+	let isDeleteModalOpen = false;
+	let isSocieteModalOpen = false;
+
+	// Toast/Notification
+	let toast: { message: string; type: 'success' | 'error' } | null = null;
+
+	// Ban form
+	let banReason = '';
 
 	// Active User for actions
 	let selectedUser: User | null = null;
 
+	// Show toast
+	function showToast(message: string, type: 'success' | 'error' = 'success') {
+		toast = { message, type };
+		setTimeout(() => (toast = null), 3000);
+	}
+
 	// Forms
 	let editForm = {
+		name: '',
+		email: '',
 		role: 'user'
 	};
 
@@ -42,12 +74,30 @@
 		email: '',
 		password: '',
 		name: '',
-		role: 'user'
+		role: 'user',
+		societeId: ''
 	};
 
 	let passwordForm = {
 		newPassword: ''
 	};
+
+	let societeForm = {
+		societeId: ''
+	};
+
+	// Get user's societe
+	function getUserSociete(userId: string): number | null {
+		const userSociete = usersWithSociete.find(u => u.id === userId);
+		return userSociete?.societeId ?? null;
+	}
+
+	// Get societe name
+	function getSocieteName(societeId: number | null): string {
+		if (!societeId) return 'Aucune';
+		const s = societes.find(soc => soc.id === societeId);
+		return s?.nom || 'Inconnue';
+	}
 
 	async function loadUsers() {
 		loading = true;
@@ -56,19 +106,22 @@
 			// @ts-ignore
 			const res = await authClient.admin.listUsers({
 				query: {
-					limit: 100, // Fetch up to 100
+					limit: 100,
 					sortBy: 'createdAt',
 					sortDirection: 'desc'
 				}
 			});
 
 			if (res.data) {
-				users = res.data.users as unknown as User[];
+				users = (res.data.users as unknown as User[]).map(u => ({
+					...u,
+					societeId: getUserSociete(u.id)
+				}));
 			} else {
 				if (res.error) error = res.error.message;
 			}
 		} catch (e: any) {
-			error = e.message || 'Failed to load users';
+			error = e.message || 'Échec du chargement des utilisateurs';
 			console.error(e);
 		} finally {
 			loading = false;
@@ -83,11 +136,7 @@
 	$: filteredUsers = users.filter((u) => {
 		if (!query) return true;
 		const q = query.toLowerCase();
-		return (
-			u.name?.toLowerCase().includes(q) ||
-			u.email?.toLowerCase().includes(q) ||
-			u.id.toLowerCase().includes(q)
-		);
+		return u.name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q);
 	});
 
 	$: totalPages = Math.ceil(filteredUsers.length / perPage);
@@ -95,9 +144,23 @@
 
 	// --- Actions ---
 
-	// EDIT ROLE
+	// SOCIETE MODAL
+	function openSocieteModal(user: User) {
+		selectedUser = user;
+		societeForm.societeId = getUserSociete(user.id)?.toString() || '';
+		isSocieteModalOpen = true;
+	}
+
+	function closeSocieteModal() {
+		isSocieteModalOpen = false;
+		selectedUser = null;
+	}
+
+	// EDIT USER INFO
 	function openEditModal(user: User) {
 		selectedUser = user;
+		editForm.name = user.name || '';
+		editForm.email = user.email || '';
 		editForm.role = user.role || 'user';
 		isEditModalOpen = true;
 	}
@@ -107,23 +170,32 @@
 		selectedUser = null;
 	}
 
-	async function saveRole() {
+	async function saveUserInfo() {
 		if (!selectedUser) return;
 		try {
-			await authClient.admin.setRole({
+			const res = await authClient.admin.setRole({
 				userId: selectedUser.id,
-				role: editForm.role
+				role: editForm.role as 'user' | 'admin'
 			});
-			users = users.map((u) => (u.id === selectedUser?.id ? { ...u, role: editForm.role } : u));
+			if (res.error) {
+				showToast('Échec de la mise à jour : ' + res.error.message, 'error');
+				return;
+			}
+			users = users.map((u) =>
+				u.id === selectedUser?.id
+					? { ...u, name: editForm.name, email: editForm.email, role: editForm.role }
+					: u
+			);
 			closeEditModal();
-		} catch (e) {
-			alert('Failed to update role: ' + e.message);
+			showToast('Utilisateur mis à jour avec succès');
+		} catch (e: any) {
+			showToast('Échec de la mise à jour', 'error');
 		}
 	}
 
 	// CREATE USER
 	function openCreateModal() {
-		createForm = { email: '', password: '', name: '', role: 'user' };
+		createForm = { email: '', password: '', name: '', role: 'user', societeId: '' };
 		isCreateModalOpen = true;
 	}
 
@@ -137,78 +209,101 @@
 				email: createForm.email,
 				password: createForm.password,
 				name: createForm.name,
-				role: createForm.role
+				role: createForm.role as 'user' | 'admin'
 			});
 
 			if (res.data) {
-				// Refresh list or add to local state if structure matches
-				// Better just refresh to be safe and simple
+				// Si une société est sélectionnée, l'assigner via l'action serveur
+				if (createForm.societeId) {
+					const formData = new FormData();
+					// @ts-ignore - res.data contient l'utilisateur créé avec son id
+					formData.append('userId', res.data.user?.id || res.data.id);
+					formData.append('societeId', createForm.societeId);
+					await fetch('?/setSociete', {
+						method: 'POST',
+						body: formData
+					});
+				}
 				await loadUsers();
 				closeCreateModal();
+				showToast('Utilisateur créé avec succès');
 			} else if (res.error) {
-				alert('Failed to create user: ' + res.error.message);
+				showToast('Échec de la création : ' + res.error.message, 'error');
 			}
 		} catch (e) {
-			alert('Failed to create user');
+			showToast('Échec de la création de l\'utilisateur', 'error');
 		}
 	}
 
 	// BAN / UNBAN
-	async function toggleBan(user: User) {
-		if (user.banned) {
-			if (!confirm(`Unban ${user.name}?`)) return;
-			try {
-				await authClient.admin.unbanUser({ userId: user.id });
-				users = users.map((u) => (u.id === user.id ? { ...u, banned: false } : u));
-			} catch (e) {
-				alert('Failed to unban user');
-			}
-		} else {
-			const reason = prompt('Enter ban reason (optional):', 'Admin action');
-			if (reason === null) return; // Cancelled
-			try {
-				await authClient.admin.banUser({
-					userId: user.id,
-					banReason: reason
-				});
-				users = users.map((u) => (u.id === user.id ? { ...u, banned: true } : u));
-			} catch (e) {
-				alert('Failed to ban user');
-			}
-		}
+	function openBanModal(user: User) {
+		selectedUser = user;
+		banReason = '';
+		isBanModalOpen = true;
 	}
 
-	// IMPERSONATE
-	async function impersonate(user: User) {
-		if (!confirm(`Are you sure you want to impersonate ${user.name}?`)) return;
+	function closeBanModal() {
+		isBanModalOpen = false;
+		selectedUser = null;
+		banReason = '';
+	}
+
+	async function confirmBan() {
+		if (!selectedUser) return;
+		const wasBanned = selectedUser.banned;
 		try {
-			await authClient.admin.impersonateUser({
-				userId: user.id
-			});
-			// Usually this sets a cookie and redirects.
-			// BetterAuth client handles the redirect? Doc says "creates a session".
-			// We might need to reload or redirect manually if it doesn't happen auto.
-			window.location.href = '/'; // Go to home as that user
+			if (wasBanned) {
+				const res = await authClient.admin.unbanUser({ userId: selectedUser.id });
+				if (res.error) {
+					showToast('Échec du débannissement : ' + res.error.message, 'error');
+					return;
+				}
+				users = users.map((u) => (u.id === selectedUser!.id ? { ...u, banned: false } : u));
+				showToast('Utilisateur débanni avec succès');
+			} else {
+				const res = await authClient.admin.banUser({
+					userId: selectedUser.id,
+					banReason: banReason || 'Action administrative'
+				});
+				if (res.error) {
+					showToast('Échec du bannissement : ' + res.error.message, 'error');
+					return;
+				}
+				users = users.map((u) => (u.id === selectedUser!.id ? { ...u, banned: true } : u));
+				showToast('Utilisateur banni avec succès');
+			}
+			closeBanModal();
 		} catch (e) {
-			alert('Failed to impersonate user');
+			showToast(wasBanned ? 'Échec du débannissement' : 'Échec du bannissement', 'error');
 		}
 	}
 
 	// DELETE USER
-	async function deleteUser(user: User) {
-		if (
-			!confirm(
-				`DANGER: Are you sure you want to PERMANENTLY DELETE ${user.name}? This cannot be undone.`
-			)
-		)
-			return;
+	function openDeleteModal(user: User) {
+		selectedUser = user;
+		isDeleteModalOpen = true;
+	}
+
+	function closeDeleteModal() {
+		isDeleteModalOpen = false;
+		selectedUser = null;
+	}
+
+	async function confirmDelete() {
+		if (!selectedUser) return;
 		try {
-			await authClient.admin.removeUser({
-				userId: user.id
+			const res = await authClient.admin.removeUser({
+				userId: selectedUser.id
 			});
-			users = users.filter((u) => u.id !== user.id);
+			if (res.error) {
+				showToast('Échec de la suppression : ' + res.error.message, 'error');
+				return;
+			}
+			users = users.filter((u) => u.id !== selectedUser!.id);
+			closeDeleteModal();
+			showToast('Utilisateur supprimé avec succès');
 		} catch (e) {
-			alert('Failed to delete user');
+			showToast('Échec de la suppression', 'error');
 		}
 	}
 
@@ -227,34 +322,25 @@
 	async function setPassword() {
 		if (!selectedUser) return;
 		try {
-			await authClient.admin.setUserPassword({
+			const res = await authClient.admin.setUserPassword({
 				userId: selectedUser.id,
 				newPassword: passwordForm.newPassword
 			});
-			alert('Password updated successfully');
+			if (res.error) {
+				showToast('Échec de la mise à jour du mot de passe : ' + res.error.message, 'error');
+				return;
+			}
 			closePasswordModal();
+			showToast('Mot de passe mis à jour avec succès');
 		} catch (e) {
-			alert('Failed to set password');
-		}
-	}
-
-	// REVOKE ALL SESSIONS
-	async function revokeSessions(user: User) {
-		if (!confirm(`Revoke all sessions for ${user.name}? They will be logged out.`)) return;
-		try {
-			await authClient.admin.revokeUserSessions({
-				userId: user.id
-			});
-			alert('Sessions revoked.');
-		} catch (e) {
-			alert('Failed to revoke sessions');
+			showToast('Échec de la mise à jour du mot de passe', 'error');
 		}
 	}
 
 	// CSV Export
 	function downloadCSV() {
 		if (!users.length) return;
-		const cols = ['id', 'name', 'email', 'role', 'banned', 'createdAt'];
+		const cols = ['id', 'nom', 'email', 'role', 'banni', 'date_creation'];
 		const lines = [cols.join(',')];
 
 		for (const u of filteredUsers) {
@@ -263,7 +349,7 @@
 				`"${(u.name || '').replace(/"/g, '""')}"`,
 				`"${(u.email || '').replace(/"/g, '""')}"`,
 				u.role || 'user',
-				u.banned,
+				u.banned ? 'oui' : 'non',
 				u.createdAt
 			];
 			lines.push(row.join(','));
@@ -274,431 +360,352 @@
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
 		a.href = url;
-		a.download = 'users_export.csv';
+		a.download = 'utilisateurs_export.csv';
 		document.body.appendChild(a);
 		a.click();
 		document.body.removeChild(a);
 	}
+
+	// Format date
+	function formatDate(date: Date): string {
+		return new Date(date).toLocaleDateString('fr-FR', {
+			day: '2-digit',
+			month: 'long',
+			year: 'numeric'
+		});
+	}
 </script>
 
 <svelte:head>
-	<title>Admin · Users</title>
+	<title>Admin · Utilisateurs</title>
 </svelte:head>
 
-<main class="mx-auto max-w-7xl p-6">
+<main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 	<!-- Header -->
-	<div class="mb-8 flex items-center justify-between">
-		<div>
-			<h1 class="text-3xl font-bold tracking-tight text-slate-900">User Management</h1>
-			<p class="mt-2 text-sm text-slate-500">Manage users, roles, and security.</p>
-		</div>
-		<div class="flex gap-3">
-			<button
-				on:click={openCreateModal}
-				class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-			>
-				+ Create User
-			</button>
-			<button
-				on:click={loadUsers}
-				class="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-			>
-				Refresh
-			</button>
-			<button
-				on:click={downloadCSV}
-				class="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-			>
-				Export CSV
-			</button>
+	<div class="mb-8">
+		<div class="sm:flex sm:items-center sm:justify-between">
+			<div>
+				<h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+					Gestion des utilisateurs
+				</h1>
+				<p class="mt-2 text-sm text-slate-600">
+					Gérez les utilisateurs, leurs rôles et leurs accès.
+				</p>
+			</div>
+			<div class="mt-4 flex flex-wrap gap-3 sm:mt-0">
+				<button
+					on:click={openCreateModal}
+					class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/>
+					</svg>
+					Nouvel utilisateur
+				</button>
+				<button
+					on:click={loadUsers}
+					class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/>
+					</svg>
+					Actualiser
+				</button>
+
+			</div>
 		</div>
 	</div>
 
-	<!-- Filters -->
-	<div
-		class="mb-6 flex flex-wrap items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 shadow-sm"
-	>
-		<div class="relative flex-1 min-w-[300px]">
-			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+	<!-- Search Bar -->
+	<div class="mb-6">
+		<div class="relative">
+			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
 				<svg class="h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
-					<path
-						fill-rule="evenodd"
-						d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-						clip-rule="evenodd"
-					/>
+					<path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
 				</svg>
 			</div>
 			<input
 				type="text"
 				bind:value={query}
-				placeholder="Search by name, email, or ID..."
-				class="block w-full rounded-md border-slate-300 pl-10 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+				placeholder="Rechercher par nom ou email..."
+				class="block w-full rounded-xl border border-slate-300 bg-white py-3 pl-11 pr-4 text-sm placeholder-slate-400 shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 			/>
 		</div>
 	</div>
 
 	<!-- Error State -->
 	{#if error}
-		<div class="mb-6 rounded-md bg-red-50 p-4">
-			<div class="flex">
-				<div class="flex-shrink-0">
-					<svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-						<path
-							fill-rule="evenodd"
-							d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-							clip-rule="evenodd"
-						/>
-					</svg>
-				</div>
-				<div class="ml-3">
-					<h3 class="text-sm font-medium text-red-800">Error loading users</h3>
-					<div class="mt-2 text-sm text-red-700">
-						<p>{error}</p>
-					</div>
+		<div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4">
+			<div class="flex items-start gap-3">
+				<svg class="h-5 w-5 flex-shrink-0 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+					<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+				</svg>
+				<div>
+					<h3 class="text-sm font-semibold text-red-800">Erreur de chargement</h3>
+					<p class="mt-1 text-sm text-red-700">{error}</p>
 				</div>
 			</div>
 		</div>
 	{/if}
 
-	<!-- Table -->
-	<div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-		<div class="overflow-x-auto">
-			<table class="min-w-full divide-y divide-slate-200">
-				<thead class="bg-slate-50">
-					<tr>
-						<th
-							scope="col"
-							class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500"
-							>User</th
-						>
-						<th
-							scope="col"
-							class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500"
-							>Role</th
-						>
-						<th
-							scope="col"
-							class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500"
-							>Status</th
-						>
-						<th
-							scope="col"
-							class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500"
-							>Created</th
-						>
-						<th scope="col" class="relative px-6 py-3">
-							<span class="sr-only">Actions</span>
-						</th>
-					</tr>
-				</thead>
-				<tbody class="divide-y divide-slate-200 bg-white">
-					{#if loading}
-						{#each Array(5) as _}
-							<tr>
-								<td class="px-6 py-4"
-									><div class="h-10 w-48 rounded bg-slate-100 animate-pulse"></div></td
-								>
-								<td class="px-6 py-4"
-									><div class="h-6 w-20 rounded bg-slate-100 animate-pulse"></div></td
-								>
-								<td class="px-6 py-4"
-									><div class="h-6 w-16 rounded bg-slate-100 animate-pulse"></div></td
-								>
-								<td class="px-6 py-4"
-									><div class="h-6 w-32 rounded bg-slate-100 animate-pulse"></div></td
-								>
-								<td class="px-6 py-4"></td>
-							</tr>
-						{/each}
-					{:else if displayedUsers.length === 0}
-						<tr>
-							<td colspan="5" class="px-6 py-12 text-center text-slate-500"> No users found </td>
-						</tr>
-					{:else}
-						{#each displayedUsers as user (user.id)}
-							<tr class="hover:bg-slate-50 group">
-								<td class="px-6 py-4 whitespace-nowrap">
-									<div class="flex items-center">
-										<div class="h-10 w-10 flex-shrink-0">
-											{#if user.image}
-												<img class="h-10 w-10 rounded-full object-cover" src={user.image} alt="" />
-											{:else}
-												<div
-													class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 font-bold"
-												>
-													{user.name?.[0]?.toUpperCase() || '?'}
-												</div>
-											{/if}
-										</div>
-										<div class="ml-4">
-											<div class="font-medium text-slate-900">{user.name}</div>
-											<div class="text-sm text-slate-500">{user.email}</div>
-											<!-- ID shown only on hover or tiny -->
-											<div class="text-xs text-slate-400 font-mono hidden group-hover:block">
-												{user.id}
-											</div>
-										</div>
-									</div>
-								</td>
-								<td class="px-6 py-4 whitespace-nowrap">
-									<button
-										on:click={() => openEditModal(user)}
-										class="inline-flex rounded-full px-2 py-0.5 text-xs font-semibold leading-5 border hover:bg-slate-200
-										{user.role === 'admin'
-											? 'bg-purple-100 text-purple-800 border-purple-200'
-											: 'bg-slate-100 text-slate-800 border-slate-200'}"
-										title="Click to change role"
-									>
-										{user.role || 'user'}
-									</button>
-								</td>
-								<td class="px-6 py-4 whitespace-nowrap">
-									{#if user.banned}
-										<span
-											class="inline-flex rounded-full bg-red-100 px-2 text-xs font-semibold leading-5 text-red-800"
-										>
-											Banned
-										</span>
-									{:else}
-										<span
-											class="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800"
-										>
-											Active
-										</span>
-									{/if}
-								</td>
-								<td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-									{new Date(user.createdAt).toLocaleDateString()}
-								</td>
-								<td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-									<div
-										class="flex items-center justify-end gap-2 opacity-50 group-hover:opacity-100 transition-opacity"
-									>
-										<!-- More Actions Menu Concept (simplified to buttons for now for clarity) -->
-										<button
-											class="text-slate-600 hover:text-emerald-600"
-											title="Impersonate"
-											on:click={() => impersonate(user)}
-										>
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												width="16"
-												height="16"
-												viewBox="0 0 24 24"
-												fill="none"
-												stroke="currentColor"
-												stroke-width="2"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												class="lucide lucide-venetian-mask"
-												><path
-													d="M2 12a5 5 0 0 0 5 5 8 8 0 0 1 5 2 8 8 0 0 1 5-2 5 5 0 0 0 5-5V7h-5a8 8 0 0 0-5 2 8 8 0 0 0-5-2H2Z"
-												/><path d="M6 11c1.5 0 3 .5 3 2-2 0-3 0-3-2Z" /><path
-													d="M18 11c-1.5 0-3 .5-3 2 2 0 3 0 3-2Z"
-												/></svg
-											>
-										</button>
+	<!-- Users Grid -->
+	<div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+		{#if loading}
+			<div class="divide-y divide-slate-100">
+				{#each Array(5) as _}
+					<div class="flex items-center gap-4 p-4">
+						<div class="h-12 w-12 rounded-full bg-slate-100 animate-pulse"></div>
+						<div class="flex-1 space-y-2">
+							<div class="h-4 w-32 rounded bg-slate-100 animate-pulse"></div>
+							<div class="h-3 w-48 rounded bg-slate-100 animate-pulse"></div>
+						</div>
+						<div class="h-6 w-16 rounded-full bg-slate-100 animate-pulse"></div>
+					</div>
+				{/each}
+			</div>
+		{:else if displayedUsers.length === 0}
+			<div class="flex flex-col items-center justify-center py-16 px-4">
+				<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300 mb-4">
+					<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+				</svg>
+				<p class="text-slate-500 font-medium">Aucun utilisateur trouvé</p>
+				<p class="text-sm text-slate-400 mt-1">Essayez de modifier vos critères de recherche</p>
+			</div>
+		{:else}
+			<div class="divide-y divide-slate-100">
+				{#each displayedUsers as user (user.id)}
+					<div class="flex items-center gap-4 p-4 transition-colors hover:bg-slate-50">
+						<!-- Avatar -->
+						<div class="flex-shrink-0">
+							{#if user.image}
+								<img class="h-12 w-12 rounded-full object-cover ring-2 ring-white shadow" src={user.image} alt={user.name} />
+							{:else}
+								<div class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-white font-bold text-lg shadow">
+									{user.name?.[0]?.toUpperCase() || '?'}
+								</div>
+							{/if}
+						</div>
 
-										<button
-											class="text-slate-600 hover:text-blue-600"
-											title="Set Password"
-											on:click={() => openPasswordModal(user)}
-										>
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												width="16"
-												height="16"
-												viewBox="0 0 24 24"
-												fill="none"
-												stroke="currentColor"
-												stroke-width="2"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												class="lucide lucide-key-round"
-												><path
-													d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z"
-												/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor" /></svg
-											>
-										</button>
+						<!-- User Info -->
+						<div class="min-w-0 flex-1">
+							<div class="flex items-center gap-2">
+								<p class="truncate font-semibold text-slate-900">{user.name}</p>
+								{#if user.role === 'admin'}
+									<span class="inline-flex items-center rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700">
+										Admin
+									</span>
+								{/if}
+							</div>
+							<p class="truncate text-sm text-slate-500">{user.email}</p>
+						</div>
 
-										<button
-											class="text-slate-600 hover:text-orange-600"
-											title="Revoke Sessions"
-											on:click={() => revokeSessions(user)}
-										>
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												width="16"
-												height="16"
-												viewBox="0 0 24 24"
-												fill="none"
-												stroke="currentColor"
-												stroke-width="2"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												class="lucide lucide-log-out"
-												><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline
-													points="16 17 21 12 16 7"
-												/><line x1="21" x2="9" y1="12" y2="12" /></svg
-											>
-										</button>
+						<!-- Status -->
+						<div class="hidden sm:flex sm:w-20 sm:justify-center">
+							{#if user.banned}
+								<span class="inline-flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700">
+									<span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>
+									Banni
+								</span>
+							{:else}
+								<span class="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
+									<span class="h-1.5 w-1.5 rounded-full bg-green-500"></span>
+									Actif
+								</span>
+							{/if}
+						</div>
 
-										<div class="w-px h-4 bg-slate-300 mx-1"></div>
+						<!-- Date -->
+						<div class="hidden md:flex md:flex-col md:items-end w-36 mr-4">
+							<p class="text-xs text-slate-400">Inscrit le</p>
+							<p class="text-sm font-medium text-slate-600 whitespace-nowrap">{formatDate(user.createdAt)}</p>
+						</div>
 
-										<button
-											on:click={() => toggleBan(user)}
-											class={user.banned
-												? 'text-green-600 hover:text-green-900'
-												: 'text-amber-600 hover:text-amber-900'}
-											title={user.banned ? 'Unban' : 'Ban'}
-										>
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												width="16"
-												height="16"
-												viewBox="0 0 24 24"
-												fill="none"
-												stroke="currentColor"
-												stroke-width="2"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												class="lucide lucide-ban"
-												><circle cx="12" cy="12" r="10" /><path d="m4.9 4.9 14.2 14.2" /></svg
-											>
-										</button>
+						<!-- Société -->
+						<div class="hidden lg:flex lg:flex-col lg:items-end w-32 mr-4">
+							<p class="text-xs text-slate-400">Société</p>
+							<p class="text-sm font-medium text-slate-600 whitespace-nowrap truncate max-w-[120px]" title={getSocieteName(getUserSociete(user.id))}>
+								{getSocieteName(getUserSociete(user.id))}
+							</p>
+						</div>
 
-										<button
-											on:click={() => deleteUser(user)}
-											class="text-red-600 hover:text-red-900"
-											title="Delete User"
-										>
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												width="16"
-												height="16"
-												viewBox="0 0 24 24"
-												fill="none"
-												stroke="currentColor"
-												stroke-width="2"
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												class="lucide lucide-trash-2"
-												><path d="M3 6h18" /><path
-													d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"
-												/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line
-													x1="10"
-													x2="10"
-													y1="11"
-													y2="17"
-												/><line x1="14" x2="14" y1="11" y2="17" /></svg
-											>
-										</button>
-									</div>
-								</td>
-							</tr>
-						{/each}
-					{/if}
-				</tbody>
-			</table>
-		</div>
+						<!-- Actions -->
+						<div class="flex items-center gap-1 pl-2 border-l border-slate-200">
+							<button
+								on:click={() => openSocieteModal(user)}
+								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-indigo-600"
+								title="Assigner une société"
+							>
+								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>
+								</svg>
+							</button>
+
+							<button
+								on:click={() => openEditModal(user)}
+								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-emerald-600"
+								title="Modifier les informations"
+							>
+								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/>
+								</svg>
+							</button>
+
+							<button
+								on:click={() => openPasswordModal(user)}
+								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600"
+								title="Changer le mot de passe"
+							>
+								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/>
+								</svg>
+							</button>
+
+							<button
+								on:click={() => openBanModal(user)}
+								class="rounded-lg p-2 transition-colors {user.banned ? 'text-green-500 hover:bg-green-50 hover:text-green-700' : 'text-slate-400 hover:bg-amber-50 hover:text-amber-600'}"
+								title={user.banned ? 'Débannir' : 'Bannir'}
+							>
+								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>
+								</svg>
+							</button>
+
+							<button
+								on:click={() => openDeleteModal(user)}
+								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+								title="Supprimer"
+							>
+								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>
+								</svg>
+							</button>
+						</div>
+					</div>
+				{/each}
+			</div>
+		{/if}
 
 		<!-- Pagination -->
-		<div
-			class="flex items-center justify-between border-t border-slate-200 bg-white px-4 py-3 sm:px-6"
-		>
-			<div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-				<div>
-					<p class="text-sm text-slate-700">
-						Showing <span class="font-medium"
-							>{Math.min(filteredUsers.length, (page - 1) * perPage + 1)}</span
-						>
-						to <span class="font-medium">{Math.min(filteredUsers.length, page * perPage)}</span> of
-						<span class="font-medium">{filteredUsers.length}</span> results
-					</p>
-				</div>
-				<div>
-					<nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-						<button
-							on:click={() => (page = Math.max(1, page - 1))}
-							disabled={page === 1}
-							class="relative inline-flex items-center rounded-l-md px-2 py-2 text-slate-400 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
-						>
-							Previous
-						</button>
-						<button
-							on:click={() => (page = Math.min(totalPages, page + 1))}
-							disabled={page === totalPages}
-							class="relative inline-flex items-center rounded-r-md px-2 py-2 text-slate-400 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
-						>
-							Next
-						</button>
-					</nav>
+		{#if !loading && filteredUsers.length > 0}
+			<div class="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-4 py-3">
+				<p class="text-sm text-slate-600">
+					Affichage de <span class="font-semibold">{Math.min(filteredUsers.length, (page - 1) * perPage + 1)}</span>
+					à <span class="font-semibold">{Math.min(filteredUsers.length, page * perPage)}</span>
+					sur <span class="font-semibold">{filteredUsers.length}</span> résultats
+				</p>
+				<div class="flex gap-2">
+					<button
+						on:click={() => (page = Math.max(1, page - 1))}
+						disabled={page === 1}
+						class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="m15 18-6-6 6-6"/>
+						</svg>
+						Précédent
+					</button>
+					<button
+						on:click={() => (page = Math.min(totalPages, page + 1))}
+						disabled={page === totalPages}
+						class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+					>
+						Suivant
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="m9 18 6-6-6-6"/>
+						</svg>
+					</button>
 				</div>
 			</div>
-		</div>
+		{/if}
 	</div>
 </main>
 
-<!-- CREATE USER MODAL -->
+<!-- MODAL : Créer un utilisateur -->
 {#if isCreateModalOpen}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 bg-slate-500 bg-opacity-75 transition-opacity" transition:fade></div>
+		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-			<div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+			<div class="flex min-h-full items-center justify-center p-4">
 				<div
-					class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
 					transition:scale
 				>
-					<div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-						<h3 class="text-lg font-semibold leading-6 text-slate-900 mb-4">Create New User</h3>
+					<div class="px-6 py-5">
+						<div class="flex items-center gap-3 mb-6">
+							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
+								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600">
+									<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/>
+								</svg>
+							</div>
+							<h3 class="text-lg font-semibold text-slate-900">Créer un utilisateur</h3>
+						</div>
 						<div class="space-y-4">
 							<div>
-								<label class="block text-sm font-medium text-gray-700">Name</label>
+								<label class="block text-sm font-medium text-slate-700 mb-1.5">Nom</label>
 								<input
 									bind:value={createForm.name}
 									type="text"
-									class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-emerald-500 sm:text-sm"
+									placeholder="Jean Dupont"
+									class="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-gray-700">Email</label>
+								<label class="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
 								<input
 									bind:value={createForm.email}
 									type="email"
-									class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-emerald-500 sm:text-sm"
+									placeholder="jean.dupont@exemple.com"
+									class="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-gray-700">Password</label>
+								<label class="block text-sm font-medium text-slate-700 mb-1.5">Mot de passe</label>
 								<input
 									bind:value={createForm.password}
 									type="password"
-									class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-emerald-500 sm:text-sm"
+									placeholder="••••••••"
+									class="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-gray-700">Role</label>
+								<label class="block text-sm font-medium text-slate-700 mb-1.5">Rôle</label>
 								<select
 									bind:value={createForm.role}
-									class="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-emerald-500 sm:text-sm"
+									class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 								>
-									<option value="user">User</option>
-									<option value="admin">Admin</option>
+									<option value="user">Utilisateur</option>
+									<option value="admin">Administrateur</option>
+								</select>
+							</div>
+							<div>
+								<label class="block text-sm font-medium text-slate-700 mb-1.5">Société</label>
+								<select
+									bind:value={createForm.societeId}
+									class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+								>
+									<option value="">Aucune société</option>
+									{#each societes as s}
+										<option value={s.id}>{s.nom}</option>
+									{/each}
 								</select>
 							</div>
 						</div>
 					</div>
-					<div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+					<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
 						<button
 							type="button"
-							class="inline-flex w-full justify-center rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 sm:ml-3 sm:w-auto"
-							on:click={createUser}>Create</button
+							class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+							on:click={closeCreateModal}
 						>
+							Annuler
+						</button>
 						<button
 							type="button"
-							class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-							on:click={closeCreateModal}>Cancel</button
+							class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700"
+							on:click={createUser}
 						>
+							Créer
+						</button>
 					</div>
 				</div>
 			</div>
@@ -706,44 +713,72 @@
 	</div>
 {/if}
 
-<!-- EDIT ROLE MODAL -->
+<!-- MODAL : Modifier les informations -->
 {#if isEditModalOpen && selectedUser}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 bg-slate-500 bg-opacity-75 transition-opacity" transition:fade></div>
+		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-			<div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+			<div class="flex min-h-full items-center justify-center p-4">
 				<div
-					class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm"
+					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
 					transition:scale
 				>
-					<div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-						<h3 class="text-base font-semibold leading-6 text-slate-900">Change Role</h3>
-						<div class="mt-2">
-							<p class="text-sm text-gray-500 mb-4">
-								Select a new role for <span class="font-medium text-gray-900"
-									>{selectedUser.name}</span
-								>.
-							</p>
-							<select
-								bind:value={editForm.role}
-								class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-emerald-500 sm:text-sm"
-							>
-								<option value="user">User</option>
-								<option value="admin">Admin</option>
-							</select>
+					<div class="px-6 py-5">
+						<div class="flex items-center gap-3 mb-6">
+							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600">
+									<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/>
+								</svg>
+							</div>
+							<div>
+								<h3 class="text-lg font-semibold text-slate-900">Modifier l'utilisateur</h3>
+								<p class="text-sm text-slate-500">{selectedUser.email}</p>
+							</div>
+						</div>
+						<div class="space-y-4">
+							<div>
+								<label class="block text-sm font-medium text-slate-700 mb-1.5">Nom</label>
+								<input
+									bind:value={editForm.name}
+									type="text"
+									class="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+								/>
+							</div>
+							<div>
+								<label class="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
+								<input
+									bind:value={editForm.email}
+									type="email"
+									class="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+								/>
+							</div>
+							<div>
+								<label class="block text-sm font-medium text-slate-700 mb-1.5">Rôle</label>
+								<select
+									bind:value={editForm.role}
+									class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+								>
+									<option value="user">Utilisateur</option>
+									<option value="admin">Administrateur</option>
+								</select>
+							</div>
 						</div>
 					</div>
-					<div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+					<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
 						<button
 							type="button"
-							class="inline-flex w-full justify-center rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 sm:ml-3 sm:w-auto"
-							on:click={saveRole}>Save</button
+							class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+							on:click={closeEditModal}
 						>
+							Annuler
+						</button>
 						<button
 							type="button"
-							class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-							on:click={closeEditModal}>Cancel</button
+							class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700"
+							on:click={saveUserInfo}
 						>
+							Enregistrer
+						</button>
 					</div>
 				</div>
 			</div>
@@ -751,44 +786,277 @@
 	</div>
 {/if}
 
-<!-- PASSWORD MODAL -->
+<!-- MODAL : Changer le mot de passe -->
 {#if isPasswordModalOpen && selectedUser}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 bg-slate-500 bg-opacity-75 transition-opacity" transition:fade></div>
+		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-			<div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+			<div class="flex min-h-full items-center justify-center p-4">
 				<div
-					class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm"
+					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
 					transition:scale
 				>
-					<div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-						<h3 class="text-base font-semibold leading-6 text-slate-900">Set Password</h3>
-						<div class="mt-4">
+					<div class="px-6 py-5">
+						<div class="flex items-center gap-3 mb-6">
+							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100">
+								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600">
+									<path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/>
+								</svg>
+							</div>
+							<div>
+								<h3 class="text-lg font-semibold text-slate-900">Changer le mot de passe</h3>
+								<p class="text-sm text-slate-500">{selectedUser.name}</p>
+							</div>
+						</div>
+						<div>
+							<label class="block text-sm font-medium text-slate-700 mb-1.5">Nouveau mot de passe</label>
 							<input
 								bind:value={passwordForm.newPassword}
-								type="text"
-								placeholder="New Password"
-								class="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-emerald-500 sm:text-sm"
+								type="password"
+								placeholder="Entrez le nouveau mot de passe"
+								class="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 							/>
-							<p class="mt-2 text-xs text-gray-500">
-								Enter a new secure password for {selectedUser.name}.
+							<p class="mt-2 text-xs text-slate-500">
+								Le mot de passe doit contenir au moins 8 caractères.
 							</p>
 						</div>
 					</div>
-					<div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+					<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
 						<button
 							type="button"
-							class="inline-flex w-full justify-center rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 sm:ml-3 sm:w-auto"
-							on:click={setPassword}>Update Password</button
+							class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+							on:click={closePasswordModal}
 						>
+							Annuler
+						</button>
 						<button
 							type="button"
-							class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-							on:click={closePasswordModal}>Cancel</button
+							class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700"
+							on:click={setPassword}
 						>
+							Mettre à jour
+						</button>
 					</div>
 				</div>
 			</div>
+		</div>
+	</div>
+{/if}
+
+<!-- MODAL : Ban / Débannir -->
+{#if isBanModalOpen && selectedUser}
+	<div class="relative z-50" role="dialog" aria-modal="true">
+		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
+		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+			<div class="flex min-h-full items-center justify-center p-4">
+				<div
+					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+					transition:scale
+				>
+					<div class="px-6 py-5">
+						<div class="flex items-center gap-3 mb-6">
+							<div class="flex h-10 w-10 items-center justify-center rounded-full {selectedUser.banned ? 'bg-green-100' : 'bg-amber-100'}">
+								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="{selectedUser.banned ? 'text-green-600' : 'text-amber-600'}">
+									<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>
+								</svg>
+							</div>
+							<div>
+								<h3 class="text-lg font-semibold text-slate-900">
+									{selectedUser.banned ? 'Débannir l\'utilisateur' : 'Bannir l\'utilisateur'}
+								</h3>
+								<p class="text-sm text-slate-500">{selectedUser.name}</p>
+							</div>
+						</div>
+						{#if selectedUser.banned}
+							<p class="text-sm text-slate-600">
+								Êtes-vous sûr de vouloir débannir cet utilisateur ? Il pourra à nouveau accéder à la plateforme.
+							</p>
+						{:else}
+							<div>
+								<label class="block text-sm font-medium text-slate-700 mb-1.5">Raison du bannissement (optionnel)</label>
+								<textarea
+									bind:value={banReason}
+									rows="3"
+									placeholder="Ex: Violation des conditions d'utilisation..."
+									class="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+								></textarea>
+							</div>
+						{/if}
+					</div>
+					<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+						<button
+							type="button"
+							class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+							on:click={closeBanModal}
+						>
+							Annuler
+						</button>
+						<button
+							type="button"
+							class="rounded-lg px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors {selectedUser.banned ? 'bg-green-600 hover:bg-green-700' : 'bg-amber-600 hover:bg-amber-700'}"
+							on:click={confirmBan}
+						>
+							{selectedUser.banned ? 'Débannir' : 'Bannir'}
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{/if}
+
+<!-- MODAL : Supprimer -->
+{#if isDeleteModalOpen && selectedUser}
+	<div class="relative z-50" role="dialog" aria-modal="true">
+		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
+		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+			<div class="flex min-h-full items-center justify-center p-4">
+				<div
+					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+					transition:scale
+				>
+					<div class="px-6 py-5">
+						<div class="flex items-center gap-3 mb-6">
+							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600">
+									<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>
+								</svg>
+							</div>
+							<div>
+								<h3 class="text-lg font-semibold text-slate-900">Supprimer l'utilisateur</h3>
+								<p class="text-sm text-slate-500">{selectedUser.name}</p>
+							</div>
+						</div>
+						<div class="rounded-lg bg-red-50 border border-red-200 p-4">
+							<p class="text-sm text-red-800">
+								<strong>Attention :</strong> Cette action est irréversible. Toutes les données associées à cet utilisateur seront définitivement supprimées.
+							</p>
+						</div>
+					</div>
+					<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+						<button
+							type="button"
+							class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+							on:click={closeDeleteModal}
+						>
+							Annuler
+						</button>
+						<button
+							type="button"
+							class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700"
+							on:click={confirmDelete}
+						>
+							Supprimer définitivement
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{/if}
+
+<!-- MODAL : Modifier la société -->
+{#if isSocieteModalOpen && selectedUser}
+	<div class="relative z-50" role="dialog" aria-modal="true">
+		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
+		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+			<div class="flex min-h-full items-center justify-center p-4">
+				<div
+					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+					transition:scale
+				>
+					<form
+						method="POST"
+						action="?/setSociete"
+						use:enhance={() => {
+							return async ({ result }) => {
+								if (result.type === 'success') {
+									// Mettre à jour le usersWithSociete localement
+									const societeIdValue = societeForm.societeId ? parseInt(societeForm.societeId) : null;
+									const idx = usersWithSociete.findIndex(u => u.id === selectedUser?.id);
+									if (idx >= 0) {
+										usersWithSociete[idx].societeId = societeIdValue;
+									} else {
+										usersWithSociete = [...usersWithSociete, { id: selectedUser!.id, societeId: societeIdValue }];
+									}
+									usersWithSociete = usersWithSociete;
+									closeSocieteModal();
+									showToast('Société mise à jour avec succès');
+								} else {
+									showToast('Échec de la mise à jour', 'error');
+								}
+							};
+						}}
+					>
+						<input type="hidden" name="userId" value={selectedUser.id} />
+						<div class="px-6 py-5">
+							<div class="flex items-center gap-3 mb-6">
+								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100">
+									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-600">
+										<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>
+									</svg>
+								</div>
+								<div>
+									<h3 class="text-lg font-semibold text-slate-900">Assigner une société</h3>
+									<p class="text-sm text-slate-500">{selectedUser.name}</p>
+								</div>
+							</div>
+							<div>
+								<label class="block text-sm font-medium text-slate-700 mb-1.5">Société</label>
+								<select
+									name="societeId"
+									bind:value={societeForm.societeId}
+									class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+								>
+									<option value="">Aucune société</option>
+									{#each societes as s}
+										<option value={s.id}>{s.nom} ({s.raisonSocial})</option>
+									{/each}
+								</select>
+								<p class="mt-2 text-xs text-slate-500">
+									L'utilisateur ne verra que les projets des établissements de cette société.
+								</p>
+							</div>
+						</div>
+						<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+							<button
+								type="button"
+								class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+								on:click={closeSocieteModal}
+							>
+								Annuler
+							</button>
+							<button
+								type="submit"
+								class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700"
+							>
+								Enregistrer
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{/if}
+
+<!-- TOAST NOTIFICATION -->
+{#if toast}
+	<div
+		class="fixed bottom-4 right-4 z-50"
+		transition:scale={{ duration: 200 }}
+	>
+		<div class="flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg {toast.type === 'success' ? 'bg-emerald-600' : 'bg-red-600'} text-white">
+			{#if toast.type === 'success'}
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+				</svg>
+			{:else}
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<circle cx="12" cy="12" r="10"/><line x1="15" x2="9" y1="9" y2="15"/><line x1="9" x2="15" y1="9" y2="15"/>
+				</svg>
+			{/if}
+			<span class="text-sm font-medium">{toast.message}</span>
 		</div>
 	</div>
 {/if}

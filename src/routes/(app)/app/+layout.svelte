@@ -78,6 +78,12 @@
 					adminOnly: true
 				},
 				{
+					href: '/app/admin/projets',
+					label: 'Projets',
+					icon: null,
+					adminOnly: true
+				},
+				{
 					href: '/app/admin/nature',
 					label: 'Nature',
 					icon: null,
@@ -277,8 +283,12 @@
 				</div>
 			{/if}
 
-			<button onclick={handleLogout} class="btn btn-error btn-ghost w-full justify-start gap-3">
-				<LogOut class="h-5 w-5" />Déconnexion
+			<button 
+				onclick={handleLogout} 
+				class="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-red-600 transition-colors hover:bg-red-50"
+			>
+				<LogOut class="h-5 w-5 flex-shrink-0" />
+				<span class="font-medium">Déconnexion</span>
 			</button>
 		</div>
 	</aside>

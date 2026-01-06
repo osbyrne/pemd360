@@ -1,226 +1,771 @@
 <script lang="ts">
-	import { Plus, Eye, Building, Search, Filter, Download, MoreVertical, Phone, MapPin, X } from 'lucide-svelte';
+	import type { PageData } from './$types';
+	import { fade, scale } from 'svelte/transition';
+	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 
-	// Mock data as requested
-	const companies = [
-		{
-			id: 1,
-			nom: 'Dépollution Conseil',
-			raisonSociale: 'Dépollution Conseil',
-			rue: '7 rue Montespan',
-			cp: '91000',
-			ville: 'Evry-Courcouronnes',
-			tel: '06 31 32 67 15',
-            status: 'Actif'
-		},
-        {
-			id: 2,
-			nom: 'Bati Renov',
-			raisonSociale: 'Bati Rénovation SARL',
-			rue: '12 avenue de la République',
-			cp: '75011',
-			ville: 'Paris',
-			tel: '01 42 55 88 99',
-            status: 'En attente'
+	let { data }: { data: PageData } = $props();
+
+	// State
+	let societes = $derived(data.societes);
+	let loading = $state(false);
+
+	// Pagination & Search
+	let query = $state('');
+	let perPage = 25;
+	let page = $state(1);
+
+	// Modals State
+	let isCreateModalOpen = $state(false);
+	let isEditModalOpen = $state(false);
+	let isDeleteModalOpen = $state(false);
+
+	// Toast
+	let toast: { message: string; type: 'success' | 'error' } | null = $state(null);
+
+	// Active item
+	let selectedCompany: (typeof societes)[0] | null = $state(null);
+
+	// Forms
+	let createForm = $state({
+		nom: '',
+		raisonSocial: '',
+		rue: '',
+		cp: '',
+		ville: '',
+		tel: '',
+		fax: '',
+		email: '',
+		siren: '',
+		type: 0
+	});
+
+	let editForm = $state({
+		nom: '',
+		raisonSocial: '',
+		rue: '',
+		cp: '',
+		ville: '',
+		tel: '',
+		fax: '',
+		email: '',
+		siren: '',
+		type: 0
+	});
+
+	function showToast(message: string, type: 'success' | 'error' = 'success') {
+		toast = { message, type };
+		setTimeout(() => (toast = null), 3000);
+	}
+
+	// Derived
+	const filteredCompanies = $derived(
+		societes.filter((c) => {
+			if (!query) return true;
+			const q = query.toLowerCase();
+			return (
+				c.nom?.toLowerCase().includes(q) ||
+				c.ville?.toLowerCase().includes(q) ||
+				c.raisonSocial?.toLowerCase().includes(q) ||
+				c.email?.toLowerCase().includes(q)
+			);
+		})
+	);
+
+	const totalPages = $derived(Math.ceil(filteredCompanies.length / perPage));
+	const displayedCompanies = $derived(filteredCompanies.slice((page - 1) * perPage, page * perPage));
+
+	// Actions
+	function openCreateModal() {
+		createForm = { nom: '', raisonSocial: '', rue: '', cp: '', ville: '', tel: '', fax: '', email: '', siren: '', type: 0 };
+		isCreateModalOpen = true;
+	}
+
+	function closeCreateModal() {
+		isCreateModalOpen = false;
+	}
+
+	function openEditModal(company: (typeof societes)[0]) {
+		selectedCompany = company;
+		editForm = {
+			nom: company.nom || '',
+			raisonSocial: company.raisonSocial || '',
+			rue: company.rue || '',
+			cp: company.cp || '',
+			ville: company.ville || '',
+			tel: company.tel || '',
+			fax: company.fax || '',
+			email: company.email || '',
+			siren: company.siren || '',
+			type: company.type || 0
+		};
+		isEditModalOpen = true;
+	}
+
+	function closeEditModal() {
+		isEditModalOpen = false;
+		selectedCompany = null;
+	}
+
+	function openDeleteModal(company: (typeof societes)[0]) {
+		selectedCompany = company;
+		isDeleteModalOpen = true;
+	}
+
+	function closeDeleteModal() {
+		isDeleteModalOpen = false;
+		selectedCompany = null;
+	}
+
+	// CSV Export
+	function downloadCSV() {
+		if (!societes.length) return;
+		const cols = ['id', 'nom', 'raisonSocial', 'rue', 'cp', 'ville', 'tel', 'email', 'siren'];
+		const lines = [cols.join(',')];
+
+		for (const c of filteredCompanies) {
+			const row = [
+				c.id,
+				`"${(c.nom || '').replace(/"/g, '""')}"`,
+				`"${(c.raisonSocial || '').replace(/"/g, '""')}"`,
+				`"${(c.rue || '').replace(/"/g, '""')}"`,
+				c.cp || '',
+				`"${(c.ville || '').replace(/"/g, '""')}"`,
+				`"${(c.tel || '').replace(/"/g, '""')}"`,
+				`"${(c.email || '').replace(/"/g, '""')}"`,
+				`"${(c.siren || '').replace(/"/g, '""')}"`
+			];
+			lines.push(row.join(','));
 		}
-	];
 
-    let searchTerm = $state('');
-    let isModalOpen = $state(false);
+		const csv = lines.join('\n');
+		const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'societes_export.csv';
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+	}
 </script>
 
-<div class="font-[Poppins]">
-	<!-- En-tête -->
-	<div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-		<div>
-			<h1 class="text-3xl font-bold text-gray-900">Sociétés</h1>
-			<p class="mt-1 text-sm text-gray-500">Gérez la liste des sociétés et leurs établissements rattachés.</p>
+<svelte:head>
+	<title>Admin · Sociétés</title>
+</svelte:head>
+
+<main class="mx-auto max-w-7xl">
+	<!-- Header -->
+	<div class="mb-8">
+		<div class="sm:flex sm:items-center sm:justify-between">
+			<div>
+				<h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+					Gestion des sociétés
+				</h1>
+				<p class="mt-2 text-sm text-slate-600">
+					Gérez la liste des sociétés et leurs établissements rattachés.
+				</p>
+			</div>
+			<div class="mt-4 flex flex-wrap gap-3 sm:mt-0">
+				<button
+					onclick={openCreateModal}
+					class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M5 12h14" /><path d="M12 5v14" />
+					</svg>
+					Nouvelle société
+				</button>
+				<button
+					onclick={downloadCSV}
+					class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" />
+					</svg>
+					Exporter CSV
+				</button>
+			</div>
 		</div>
-		<button onclick={() => isModalOpen = true} class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-colors">
-			<Plus class="mr-2 h-4 w-4" />
-			Nouvelle société
-		</button>
 	</div>
 
-	<!-- Toolbar -->
-	<div class="mb-6 flex flex-col sm:flex-row gap-4 justify-between items-center bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-		<div class="relative w-full sm:w-96">
-			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-				<Search class="h-4 w-4 text-gray-400" />
+	<!-- Search Bar -->
+	<div class="mb-6">
+		<div class="relative">
+			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+				<svg class="h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
+					<path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+				</svg>
 			</div>
 			<input
 				type="text"
-				class="block w-full rounded-md border-gray-300 pl-10 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm py-2"
-				placeholder="Rechercher une société..."
-				bind:value={searchTerm}
+				bind:value={query}
+				placeholder="Rechercher par nom, ville ou raison sociale..."
+				class="block w-full rounded-xl border border-slate-300 bg-white py-3 pl-11 pr-4 text-sm placeholder-slate-400 shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 			/>
-		</div>
-		<div class="flex gap-2 w-full sm:w-auto">
-			<button class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
-				<Filter class="mr-2 h-4 w-4 text-gray-500" />
-				Filtres
-			</button>
-			<button class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">
-				<Download class="mr-2 h-4 w-4 text-gray-500" />
-				Exporter
-			</button>
 		</div>
 	</div>
 
-	<!-- Tableau responsive -->
-	<div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-		<div class="overflow-x-auto">
-			<table class="w-full min-w-max border-collapse text-left text-sm text-gray-500">
-				<thead class="bg-gray-50">
-					<tr>
-						<th scope="col" class="px-6 py-4 font-semibold text-gray-900">Société</th>
-						<th scope="col" class="px-6 py-4 font-semibold text-gray-900">Localisation</th>
-						<th scope="col" class="px-6 py-4 font-semibold text-gray-900">Contact</th>
-						<th scope="col" class="px-6 py-4 font-semibold text-gray-900">Statut</th>
-						<th scope="col" class="px-6 py-4 font-semibold text-gray-900 text-right">Actions</th>
-					</tr>
-				</thead>
-				<tbody class="divide-y divide-gray-200 border-t border-gray-200">
-					{#each companies as company}
-						<tr class="hover:bg-gray-50 transition-colors">
-							<td class="px-6 py-4">
-								<div class="flex items-center gap-3">
-									<div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 font-bold">
-										{company.nom.charAt(0)}
-									</div>
-									<div>
-										<div class="font-medium text-gray-900">{company.nom}</div>
-										<div class="text-xs text-gray-500">ID: #{company.id}</div>
-									</div>
-								</div>
-							</td>
-							<td class="px-6 py-4">
-								<div class="flex flex-col">
-									<span class="text-gray-900">{company.ville}</span>
-									<span class="text-xs text-gray-500">{company.rue}, {company.cp}</span>
-								</div>
-							</td>
-							<td class="px-6 py-4">
-								<div class="flex items-center gap-2">
-									<Phone class="h-3.5 w-3.5 text-gray-400" />
-									<span class="font-mono text-xs">{company.tel}</span>
-								</div>
-							</td>
-							<td class="px-6 py-4">
-								<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
-									{company.status === 'Actif' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
-									{company.status}
-								</span>
-							</td>
-							<td class="px-6 py-4 text-right">
-								<div class="flex justify-end gap-2">
-									<button class="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500" title="Voir détails">
-										<Eye class="h-5 w-5" />
-									</button>
-									<button class="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500" title="Gérer établissements">
-										<Building class="h-5 w-5" />
-									</button>
-								</div>
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
-		
+	<!-- List -->
+	<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+		{#if loading}
+			<div class="divide-y divide-slate-100">
+				{#each Array(5) as _}
+					<div class="flex items-center gap-4 p-4">
+						<div class="h-12 w-12 animate-pulse rounded-full bg-slate-100"></div>
+						<div class="flex-1 space-y-2">
+							<div class="h-4 w-32 animate-pulse rounded bg-slate-100"></div>
+							<div class="h-3 w-48 animate-pulse rounded bg-slate-100"></div>
+						</div>
+						<div class="h-6 w-16 animate-pulse rounded-full bg-slate-100"></div>
+					</div>
+				{/each}
+			</div>
+		{:else if displayedCompanies.length === 0}
+			<div class="flex flex-col items-center justify-center px-4 py-16">
+				<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-4 text-slate-300">
+					<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" /><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" /><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2" /><path d="M10 6h4" /><path d="M10 10h4" /><path d="M10 14h4" /><path d="M10 18h4" />
+				</svg>
+				<p class="font-medium text-slate-500">Aucune société trouvée</p>
+				<p class="mt-1 text-sm text-slate-400">Essayez de modifier vos critères de recherche</p>
+			</div>
+		{:else}
+			<div class="divide-y divide-slate-100">
+				{#each displayedCompanies as company (company.id)}
+					<div class="flex items-center gap-4 p-4 transition-colors hover:bg-slate-50">
+						<!-- Avatar -->
+						<div class="flex-shrink-0">
+							<div class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-lg font-bold text-white shadow">
+								{company.nom?.[0]?.toUpperCase() || '?'}
+							</div>
+						</div>
+
+						<!-- Info -->
+						<div class="min-w-0 flex-1">
+							<p class="font-semibold text-slate-900">{company.nom}</p>
+							<p class="text-sm text-slate-500">{company.raisonSocial || '-'}</p>
+						</div>
+
+						<!-- Location -->
+						<div class="hidden flex-shrink-0 sm:flex sm:flex-col sm:items-start">
+							<p class="text-sm font-medium text-slate-900">{company.ville || '-'}</p>
+							<p class="text-xs text-slate-500">{company.cp || '-'}</p>
+						</div>
+
+						<!-- Email / Tel -->
+						<div class="mr-4 hidden flex-shrink-0 md:flex md:flex-col md:items-end">
+							<p class="text-sm text-slate-900">{company.email || '-'}</p>
+							<p class="text-xs text-slate-500">{company.tel || '-'}</p>
+						</div>
+
+						<!-- Actions -->
+						<div class="flex flex-shrink-0 items-center gap-1 border-l border-slate-200 pl-2">
+							<button
+								onclick={() => openEditModal(company)}
+								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600"
+								title="Modifier"
+							>
+								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" />
+								</svg>
+							</button>
+
+							<button
+								onclick={() => openDeleteModal(company)}
+								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+								title="Supprimer"
+							>
+								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M3 6h18" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" />
+								</svg>
+							</button>
+						</div>
+					</div>
+				{/each}
+			</div>
+		{/if}
+
 		<!-- Pagination -->
-		<div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
-			<div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-				<div>
-					<p class="text-sm text-gray-700">
-						Affichage de <span class="font-medium">1</span> à <span class="font-medium">{companies.length}</span> sur <span class="font-medium">{companies.length}</span> résultats
-					</p>
+		{#if !loading && filteredCompanies.length > 0}
+			<div class="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-4 py-3">
+				<p class="text-sm text-slate-600">
+					Affichage de <span class="font-semibold">{Math.min(filteredCompanies.length, (page - 1) * perPage + 1)}</span>
+					à <span class="font-semibold">{Math.min(filteredCompanies.length, page * perPage)}</span>
+					sur <span class="font-semibold">{filteredCompanies.length}</span> résultats
+				</p>
+				<div class="flex gap-2">
+					<button
+						onclick={() => (page = Math.max(1, page - 1))}
+						disabled={page === 1}
+						class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="m15 18-6-6 6-6" />
+						</svg>
+						Précédent
+					</button>
+					<button
+						onclick={() => (page = Math.min(totalPages, page + 1))}
+						disabled={page === totalPages}
+						class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+					>
+						Suivant
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="m9 18 6-6-6-6" />
+						</svg>
+					</button>
 				</div>
-				<div>
-					<nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-						<button class="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20">
-							<span class="sr-only">Précédent</span>
-							<!-- Heroicon name: mini/chevron-left -->
-							<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-								<path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
-							</svg>
-						</button>
-						<button aria-current="page" class="relative z-10 inline-flex items-center border border-emerald-500 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-600 focus:z-20">1</button>
-						<button class="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20">2</button>
-						<button class="relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20">3</button>
-						<button class="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20">
-							<span class="sr-only">Suivant</span>
-							<!-- Heroicon name: mini/chevron-right -->
-							<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-								<path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-							</svg>
-						</button>
-					</nav>
+			</div>
+		{/if}
+	</div>
+</main>
+
+<!-- MODAL : Créer -->
+{#if isCreateModalOpen}
+	<div class="relative z-50" role="dialog" aria-modal="true">
+		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
+		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+			<div class="flex min-h-full items-center justify-center p-4">
+				<div
+					class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+					transition:scale
+				>
+					<form 
+						method="POST" 
+						action="?/create"
+						use:enhance={() => {
+							loading = true;
+							return async ({ result }) => {
+								loading = false;
+								if (result.type === 'success') {
+									showToast('Société créée avec succès');
+									closeCreateModal();
+									await invalidateAll();
+								} else {
+									showToast('Erreur lors de la création', 'error');
+								}
+							};
+						}}
+					>
+						<div class="px-6 py-5">
+							<div class="mb-6 flex items-center gap-3">
+								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
+									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600">
+										<path d="M5 12h14" /><path d="M12 5v14" />
+									</svg>
+								</div>
+								<div>
+									<h3 class="text-lg font-semibold text-slate-900">Nouvelle société</h3>
+									<p class="text-sm text-slate-500">Remplissez les informations ci-dessous</p>
+								</div>
+							</div>
+							<div class="space-y-4">
+								<div class="grid grid-cols-2 gap-4">
+									<div class="space-y-1.5">
+										<label for="create-nom" class="text-sm font-medium text-slate-700">Nom</label>
+										<input
+											type="text"
+											id="create-nom"
+											name="nom"
+											bind:value={createForm.nom}
+											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+											placeholder="Ex: Dépollution Conseil"
+											required
+										/>
+									</div>
+									<div class="space-y-1.5">
+										<label for="create-tel" class="text-sm font-medium text-slate-700">Téléphone</label>
+										<input
+											type="tel"
+											id="create-tel"
+											name="tel"
+											bind:value={createForm.tel}
+											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										/>
+									</div>
+								</div>
+
+								<div class="space-y-1.5">
+									<label for="create-raison" class="text-sm font-medium text-slate-700">Raison sociale</label>
+									<input
+										type="text"
+										id="create-raison"
+										name="raisonSocial"
+										bind:value={createForm.raisonSocial}
+										class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+									/>
+								</div>
+
+								<div class="space-y-1.5">
+									<label for="create-rue" class="text-sm font-medium text-slate-700">Adresse</label>
+									<input
+										type="text"
+										id="create-rue"
+										name="rue"
+										bind:value={createForm.rue}
+										class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										placeholder="Numéro et rue"
+									/>
+								</div>
+
+								<div class="grid grid-cols-2 gap-4">
+									<div class="space-y-1.5">
+										<label for="create-cp" class="text-sm font-medium text-slate-700">Code postal</label>
+										<input
+											type="text"
+											id="create-cp"
+											name="cp"
+											bind:value={createForm.cp}
+											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										/>
+									</div>
+									<div class="space-y-1.5">
+										<label for="create-ville" class="text-sm font-medium text-slate-700">Ville</label>
+										<input
+											type="text"
+											id="create-ville"
+											name="ville"
+											bind:value={createForm.ville}
+											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										/>
+									</div>
+								</div>
+
+								<div class="grid grid-cols-2 gap-4">
+									<div class="space-y-1.5">
+										<label for="create-email" class="text-sm font-medium text-slate-700">Email</label>
+										<input
+											type="email"
+											id="create-email"
+											name="email"
+											bind:value={createForm.email}
+											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										/>
+									</div>
+									<div class="space-y-1.5">
+										<label for="create-fax" class="text-sm font-medium text-slate-700">Fax</label>
+										<input
+											type="tel"
+											id="create-fax"
+											name="fax"
+											bind:value={createForm.fax}
+											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										/>
+									</div>
+								</div>
+
+								<div class="grid grid-cols-2 gap-4">
+									<div class="space-y-1.5">
+										<label for="create-siren" class="text-sm font-medium text-slate-700">SIREN</label>
+										<input
+											type="text"
+											id="create-siren"
+											name="siren"
+											bind:value={createForm.siren}
+											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										/>
+									</div>
+									<div class="space-y-1.5">
+										<label for="create-type" class="text-sm font-medium text-slate-700">Type</label>
+										<input
+											type="number"
+											id="create-type"
+											name="type"
+											bind:value={createForm.type}
+											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										/>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+							<button
+								type="button"
+								class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+								onclick={closeCreateModal}
+							>
+								Annuler
+							</button>
+							<button
+								type="submit"
+								disabled={loading}
+								class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 disabled:opacity-50"
+							>
+								{loading ? 'Création...' : 'Créer la société'}
+							</button>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
+{/if}
 
-<!-- Modal -->
-{#if isModalOpen}
-<!-- Modal Content -->
-<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-    <div class="w-full max-w-lg rounded-xl bg-white shadow-2xl ring-1 ring-gray-200">
-        <div class="flex items-center justify-between border-b border-gray-100 p-6">
-            <h2 class="text-lg font-semibold text-gray-900">Nouvelle société</h2>
-            <button onclick={() => isModalOpen = false} class="rounded-lg p-2 text-gray-400 hover:bg-gray-50 hover:text-gray-500">
-                <X class="h-5 w-5" />
-            </button>
-        </div>
-        <form class="p-6 space-y-5">
-            <div class="grid grid-cols-2 gap-5">
-                <div class="space-y-1.5">
-                    <label for="nom" class="text-sm font-medium text-gray-700">Nom</label>
-                    <input type="text" id="nom" class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm" placeholder="Ex: Dépollution Conseil" />
-                </div>
-                <div class="space-y-1.5">
-                    <label for="siret" class="text-sm font-medium text-gray-700">SIRET</label>
-                    <input type="text" id="siret" class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm" placeholder="14 chiffres" />
-                </div>
-            </div>
-            
-            <div class="space-y-1.5">
-                <label for="raisonSociale" class="text-sm font-medium text-gray-700">Raison Sociale</label>
-                <input type="text" id="raisonSociale" class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm" />
-            </div>
+<!-- MODAL : Éditer -->
+{#if isEditModalOpen && selectedCompany}
+	<div class="relative z-50" role="dialog" aria-modal="true">
+		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
+		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+			<div class="flex min-h-full items-center justify-center p-4">
+				<div
+					class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+					transition:scale
+				>
+					<form 
+						method="POST" 
+						action="?/update"
+						use:enhance={() => {
+							loading = true;
+							return async ({ result }) => {
+								loading = false;
+								if (result.type === 'success') {
+									showToast('Société mise à jour avec succès');
+									closeEditModal();
+									await invalidateAll();
+								} else {
+									showToast('Erreur lors de la mise à jour', 'error');
+								}
+							};
+						}}
+					>
+						<input type="hidden" name="id" value={selectedCompany.id} />
+						<div class="px-6 py-5">
+							<div class="mb-6 flex items-center gap-3">
+								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600">
+										<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" />
+									</svg>
+								</div>
+								<div>
+									<h3 class="text-lg font-semibold text-slate-900">Modifier la société</h3>
+									<p class="text-sm text-slate-500">{selectedCompany.nom}</p>
+								</div>
+							</div>
+							<div class="space-y-4">
+								<div class="grid grid-cols-2 gap-4">
+									<div class="space-y-1.5">
+										<label for="edit-nom" class="text-sm font-medium text-slate-700">Nom</label>
+										<input
+											type="text"
+											id="edit-nom"
+											name="nom"
+											bind:value={editForm.nom}
+											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+											required
+										/>
+									</div>
+									<div class="space-y-1.5">
+										<label for="edit-tel" class="text-sm font-medium text-slate-700">Téléphone</label>
+										<input
+											type="tel"
+											id="edit-tel"
+											name="tel"
+											bind:value={editForm.tel}
+											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										/>
+									</div>
+								</div>
 
-            <div class="space-y-1.5">
-                <label for="adresse" class="text-sm font-medium text-gray-700">Adresse</label>
-                <input type="text" id="adresse" class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm" placeholder="Numéro et rue" />
-            </div>
+								<div class="space-y-1.5">
+									<label for="edit-raison" class="text-sm font-medium text-slate-700">Raison sociale</label>
+									<input
+										type="text"
+										id="edit-raison"
+										name="raisonSocial"
+										bind:value={editForm.raisonSocial}
+										class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+									/>
+								</div>
 
-            <div class="grid grid-cols-2 gap-5">
-                <div class="space-y-1.5">
-                    <label for="cp" class="text-sm font-medium text-gray-700">Code Postal</label>
-                    <input type="text" id="cp" class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm" />
-                </div>
-                <div class="space-y-1.5">
-                    <label for="ville" class="text-sm font-medium text-gray-700">Ville</label>
-                    <input type="text" id="ville" class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm" />
-                </div>
-            </div>
+								<div class="space-y-1.5">
+									<label for="edit-rue" class="text-sm font-medium text-slate-700">Adresse</label>
+									<input
+										type="text"
+										id="edit-rue"
+										name="rue"
+										bind:value={editForm.rue}
+										class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+									/>
+								</div>
 
-            <div class="space-y-1.5">
-                <label for="tel" class="text-sm font-medium text-gray-700">Téléphone</label>
-                <input type="tel" id="tel" class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm" />
-            </div>
+								<div class="grid grid-cols-2 gap-4">
+									<div class="space-y-1.5">
+										<label for="edit-cp" class="text-sm font-medium text-slate-700">Code postal</label>
+										<input
+											type="text"
+											id="edit-cp"
+											name="cp"
+											bind:value={editForm.cp}
+											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										/>
+									</div>
+									<div class="space-y-1.5">
+										<label for="edit-ville" class="text-sm font-medium text-slate-700">Ville</label>
+										<input
+											type="text"
+											id="edit-ville"
+											name="ville"
+											bind:value={editForm.ville}
+											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										/>
+									</div>
+								</div>
 
-            <div class="mt-6 flex justify-end gap-3 pt-4 border-t border-gray-100">
-                <button type="button" onclick={() => isModalOpen = false} class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
-                    Annuler
-                </button>
-                <button type="submit" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700">
-                    Créer la société
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+								<div class="grid grid-cols-2 gap-4">
+									<div class="space-y-1.5">
+										<label for="edit-email" class="text-sm font-medium text-slate-700">Email</label>
+										<input
+											type="email"
+											id="edit-email"
+											name="email"
+											bind:value={editForm.email}
+											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										/>
+									</div>
+									<div class="space-y-1.5">
+										<label for="edit-fax" class="text-sm font-medium text-slate-700">Fax</label>
+										<input
+											type="tel"
+											id="edit-fax"
+											name="fax"
+											bind:value={editForm.fax}
+											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										/>
+									</div>
+								</div>
+
+								<div class="grid grid-cols-2 gap-4">
+									<div class="space-y-1.5">
+										<label for="edit-siren" class="text-sm font-medium text-slate-700">SIREN</label>
+										<input
+											type="text"
+											id="edit-siren"
+											name="siren"
+											bind:value={editForm.siren}
+											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										/>
+									</div>
+									<div class="space-y-1.5">
+										<label for="edit-type" class="text-sm font-medium text-slate-700">Type</label>
+										<input
+											type="number"
+											id="edit-type"
+											name="type"
+											bind:value={editForm.type}
+											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										/>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+							<button
+								type="button"
+								class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+								onclick={closeEditModal}
+							>
+								Annuler
+							</button>
+							<button
+								type="submit"
+								disabled={loading}
+								class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 disabled:opacity-50"
+							>
+								{loading ? 'Enregistrement...' : 'Enregistrer'}
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{/if}
+
+<!-- MODAL : Supprimer -->
+{#if isDeleteModalOpen && selectedCompany}
+	<div class="relative z-50" role="dialog" aria-modal="true">
+		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
+		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+			<div class="flex min-h-full items-center justify-center p-4">
+				<div
+					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+					transition:scale
+				>
+					<form 
+						method="POST" 
+						action="?/delete"
+						use:enhance={() => {
+							loading = true;
+							return async ({ result }) => {
+								loading = false;
+								if (result.type === 'success') {
+									showToast('Société supprimée avec succès');
+									closeDeleteModal();
+									await invalidateAll();
+								} else {
+									showToast('Erreur lors de la suppression', 'error');
+								}
+							};
+						}}
+					>
+						<input type="hidden" name="id" value={selectedCompany.id} />
+						<div class="px-6 py-5">
+							<div class="mb-6 flex items-center gap-3">
+								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600">
+										<path d="M3 6h18" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" />
+									</svg>
+								</div>
+								<div>
+									<h3 class="text-lg font-semibold text-slate-900">Supprimer la société</h3>
+									<p class="text-sm text-slate-500">{selectedCompany.nom}</p>
+								</div>
+							</div>
+							<div class="rounded-lg border border-red-200 bg-red-50 p-4">
+								<p class="text-sm text-red-800">
+									<strong>Attention :</strong> Cette action est irréversible. Toutes les données associées
+									à cette société seront définitivement supprimées.
+								</p>
+							</div>
+						</div>
+						<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+							<button
+								type="button"
+								class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
+								onclick={closeDeleteModal}
+							>
+								Annuler
+							</button>
+							<button
+								type="submit"
+								disabled={loading}
+								class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700 disabled:opacity-50"
+							>
+								{loading ? 'Suppression...' : 'Supprimer définitivement'}
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{/if}
+
+<!-- TOAST NOTIFICATION -->
+{#if toast}
+	<div class="fixed bottom-4 right-4 z-50" transition:scale={{ duration: 200 }}>
+		<div class="flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg {toast.type === 'success' ? 'bg-emerald-600' : 'bg-red-600'} text-white">
+			{#if toast.type === 'success'}
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
+				</svg>
+			{:else}
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<circle cx="12" cy="12" r="10" /><line x1="15" x2="9" y1="9" y2="15" /><line x1="9" x2="15" y1="9" y2="15" />
+				</svg>
+			{/if}
+			<span class="text-sm font-medium">{toast.message}</span>
+		</div>
+	</div>
 {/if}
 

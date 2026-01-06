@@ -29,6 +29,20 @@
       "when": 1766343782817,
       "tag": "0003_chief_nebula",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1767733755272,
+      "tag": "0004_nappy_wendell_rand",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1767734015130,
+      "tag": "0005_wide_blonde_phantom",
+      "breakpoints": true
     }
   ]
 }
