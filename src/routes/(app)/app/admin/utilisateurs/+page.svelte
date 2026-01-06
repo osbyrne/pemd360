@@ -3,6 +3,7 @@
 	import { authClient } from '$lib/auth-client';
 	import { fade, scale } from 'svelte/transition';
 	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
 
 	// Props from server
 	export let data;
@@ -217,13 +218,23 @@
 				if (createForm.societeId) {
 					const formData = new FormData();
 					// @ts-ignore - res.data contient l'utilisateur créé avec son id
-					formData.append('userId', res.data.user?.id || res.data.id);
+					const userId = res.data.user?.id || res.data.id;
+					formData.append('userId', userId);
 					formData.append('societeId', createForm.societeId);
-					await fetch('?/setSociete', {
+					
+					const response = await fetch('?/setSociete', {
 						method: 'POST',
 						body: formData
 					});
+					
+					if (!response.ok) {
+						showToast('Société assignée, mais erreur lors de la mise à jour', 'error');
+					}
 				}
+				
+				// Recharger les données du serveur pour obtenir les associations mises à jour
+				await invalidateAll();
+				// Recharger les utilisateurs pour afficher le nouvel utilisateur
 				await loadUsers();
 				closeCreateModal();
 				showToast('Utilisateur créé avec succès');
@@ -380,7 +391,7 @@
 	<title>Admin · Utilisateurs</title>
 </svelte:head>
 
-<main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+<main class="mx-auto max-w-7xl">
 	<!-- Header -->
 	<div class="mb-8">
 		<div class="sm:flex sm:items-center sm:justify-between">
@@ -641,8 +652,9 @@
 						</div>
 						<div class="space-y-4">
 							<div>
-								<label class="block text-sm font-medium text-slate-700 mb-1.5">Nom</label>
+								<label for="create-name" class="block text-sm font-medium text-slate-700 mb-1.5">Nom</label>
 								<input
+									id="create-name"
 									bind:value={createForm.name}
 									type="text"
 									placeholder="Jean Dupont"
@@ -650,8 +662,9 @@
 								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
+								<label for="create-email" class="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
 								<input
+									id="create-email"
 									bind:value={createForm.email}
 									type="email"
 									placeholder="jean.dupont@exemple.com"
@@ -659,8 +672,9 @@
 								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-slate-700 mb-1.5">Mot de passe</label>
+								<label for="create-password" class="block text-sm font-medium text-slate-700 mb-1.5">Mot de passe</label>
 								<input
+									id="create-password"
 									bind:value={createForm.password}
 									type="password"
 									placeholder="••••••••"
@@ -668,8 +682,9 @@
 								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-slate-700 mb-1.5">Rôle</label>
+								<label for="create-role" class="block text-sm font-medium text-slate-700 mb-1.5">Rôle</label>
 								<select
+									id="create-role"
 									bind:value={createForm.role}
 									class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 								>
@@ -678,8 +693,9 @@
 								</select>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-slate-700 mb-1.5">Société</label>
+								<label for="create-societe" class="block text-sm font-medium text-slate-700 mb-1.5">Société</label>
 								<select
+									id="create-societe"
 									bind:value={createForm.societeId}
 									class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 								>
@@ -737,24 +753,27 @@
 						</div>
 						<div class="space-y-4">
 							<div>
-								<label class="block text-sm font-medium text-slate-700 mb-1.5">Nom</label>
+								<label for="edit-name" class="block text-sm font-medium text-slate-700 mb-1.5">Nom</label>
 								<input
+									id="edit-name"
 									bind:value={editForm.name}
 									type="text"
 									class="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
+								<label for="edit-email" class="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
 								<input
+									id="edit-email"
 									bind:value={editForm.email}
 									type="email"
 									class="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-slate-700 mb-1.5">Rôle</label>
+								<label for="edit-role" class="block text-sm font-medium text-slate-700 mb-1.5">Rôle</label>
 								<select
+									id="edit-role"
 									bind:value={editForm.role}
 									class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 								>
@@ -809,8 +828,9 @@
 							</div>
 						</div>
 						<div>
-							<label class="block text-sm font-medium text-slate-700 mb-1.5">Nouveau mot de passe</label>
+							<label for="new-password" class="block text-sm font-medium text-slate-700 mb-1.5">Nouveau mot de passe</label>
 							<input
+								id="new-password"
 								bind:value={passwordForm.newPassword}
 								type="password"
 								placeholder="Entrez le nouveau mot de passe"
@@ -873,8 +893,9 @@
 							</p>
 						{:else}
 							<div>
-								<label class="block text-sm font-medium text-slate-700 mb-1.5">Raison du bannissement (optionnel)</label>
+								<label for="ban-reason" class="block text-sm font-medium text-slate-700 mb-1.5">Raison du bannissement (optionnel)</label>
 								<textarea
+									id="ban-reason"
 									bind:value={banReason}
 									rows="3"
 									placeholder="Ex: Violation des conditions d'utilisation..."
@@ -971,7 +992,10 @@
 						use:enhance={() => {
 							return async ({ result }) => {
 								if (result.type === 'success') {
-									// Mettre à jour le usersWithSociete localement
+									// Invalider les données du serveur pour les recharger
+									await invalidateAll();
+									
+									// Mettre à jour le usersWithSociete localement pour une mise à jour immédiate
 									const societeIdValue = societeForm.societeId ? parseInt(societeForm.societeId) : null;
 									const idx = usersWithSociete.findIndex(u => u.id === selectedUser?.id);
 									if (idx >= 0) {
@@ -1010,8 +1034,9 @@
 								</div>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-slate-700 mb-1.5">Société</label>
+								<label for="assign-societe" class="block text-sm font-medium text-slate-700 mb-1.5">Société</label>
 								<select
+									id="assign-societe"
 									name="societeId"
 									bind:value={societeForm.societeId}
 									class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"

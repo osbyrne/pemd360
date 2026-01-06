@@ -75,7 +75,7 @@
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30">
 	{#if mounted}
 		<!-- Header Section -->
-		<div class="relative overflow-hidden bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500">
+		<div class="relative overflow-hidden bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 -mx-4 lg:-mx-6 -mt-4 lg:-mt-6">
 			<div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" in:fade={{ duration: 300 }}>
 				<div in:fly={{ y: 20, duration: 400, delay: 100 }}>
 					<h1 class="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-2">

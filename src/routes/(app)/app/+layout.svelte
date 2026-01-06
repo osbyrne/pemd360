@@ -137,10 +137,40 @@
 		}
 	];
 
+	// Fonction pour vérifier si un lien est actif
+	function isActive(href: string): boolean {
+		return $page.url.pathname === href || $page.url.pathname.startsWith(href + '/');
+	}
+
+	// Fonction pour vérifier si un menu contient la page active
+	function hasActiveSubItem(link: NavLink): boolean {
+		if (!link.subItems) return false;
+		return link.subItems.some(sub => isActive(sub.href));
+	}
+
+	// Initialiser les menus étendus en fonction de la page active
+	function initExpandedMenus() {
+		const expanded: Record<string, boolean> = {};
+		for (const link of allNavLinks) {
+			if (link.subItems) {
+				expanded[link.label] = hasActiveSubItem(link);
+			}
+		}
+		return expanded;
+	}
+
 	// State for expanded submenus
-	let expandedMenus = $state<Record<string, boolean>>({
-		'Administration': true,
-		'Inventaires': true
+	let expandedMenus = $state<Record<string, boolean>>(initExpandedMenus());
+
+	// Mettre à jour les menus quand la route change
+	$effect(() => {
+		const currentPath = $page.url.pathname;
+		// Recalculer quels menus doivent être ouverts
+		for (const link of allNavLinks) {
+			if (link.subItems) {
+				expandedMenus[link.label] = hasActiveSubItem(link);
+			}
+		}
 	});
 
 	function toggleMenu(label: string) {
@@ -157,11 +187,6 @@
 		}
 		return true;
 	}));
-
-	// Fonction pour vérifier si un lien est actif
-	function isActive(href: string): boolean {
-		return $page.url.pathname === href || $page.url.pathname.startsWith(href + '/');
-	}
 
 	async function handleLogout() {
 		await authClient.signOut();
@@ -264,22 +289,22 @@
 
 		<!-- User Profile Section - Fixed at bottom -->
 		<div class="shrink-0 border-t border-gray-200 p-4">
-			{#if $session.data?.user}
+			{#if data.user}
 				<div class="mb-4 rounded-lg bg-gray-50 p-3">
 					<div class="mb-2 flex items-center gap-3">
 						<div
 							class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white font-semibold"
 						>
-							{$session.data.user.name?.charAt(0).toUpperCase() || 'U'}
+							{data.user.name?.charAt(0).toUpperCase() || 'U'}
 						</div>
 						<div class="flex-1 overflow-hidden">
-							<p class="truncate font-semibold text-gray-900">{$session.data.user.name}</p>
+							<p class="truncate font-semibold text-gray-900">{data.user.name}</p>
 							<p class="truncate text-xs text-gray-500">
-								{$session.data.user.role || 'Utilisateur'}
+								{data.user.role || 'Utilisateur'}
 							</p>
 						</div>
 					</div>
-					<p class="truncate text-xs text-gray-600">{$session.data.user.email}</p>
+					<p class="truncate text-xs text-gray-600">{data.user.email}</p>
 				</div>
 			{/if}
 
