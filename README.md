@@ -1,5 +1,8 @@
 # Setup
 
+- Have Node.js installed
+- Move the [the database](https://drive.google.com/file/d/1vFjrOPKTi7bPwsZap2S3PJ-q-leApWXD/view?usp=drive_link) to project root
+
 ```bash
 npm install
 ```
