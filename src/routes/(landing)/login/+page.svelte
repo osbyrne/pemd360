@@ -29,7 +29,7 @@
 				error = response.error.message || 'Email ou mot de passe incorrect';
 			} else {
 				// Connexion réussie, rediriger vers le tableau de bord
-				goto('/app/dashboard');
+				goto('/app/projets');
 			}
 		} catch (e) {
 			error = 'Une erreur est survenue. Veuillez réessayer.';

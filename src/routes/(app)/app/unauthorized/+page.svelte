@@ -3,7 +3,7 @@
 	import { ShieldAlert } from 'lucide-svelte';
 
 	function goBack() {
-		goto('/app/dashboard');
+		goto('/app/projets');
 	}
 </script>
 

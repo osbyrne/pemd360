@@ -33,7 +33,7 @@
 				>
 				{#if user}
 					<a
-						href="/app/dashboard"
+						href="/app/projets"
 						class="rounded-md border-2 border-emerald-600 bg-emerald-600 px-4 py-2 font-medium text-white transition-colors hover:bg-emerald-700"
 					>
 						Tableau de bord
@@ -95,7 +95,7 @@
 					>
 					{#if user}
 						<a
-							href="/app/dashboard"
+							href="/app/projets"
 							class="w-fit rounded-md border-2 border-emerald-600 bg-emerald-600 px-4 py-2 font-medium text-white transition-colors hover:bg-emerald-700"
 							onclick={() => (mobileMenuOpen = false)}
 						>
