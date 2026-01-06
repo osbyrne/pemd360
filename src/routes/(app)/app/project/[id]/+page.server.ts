@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/db/client';
-import { projet, etablissement, user } from '$lib/server/db/schema';
+import { projet, etablissement, user, societe } from '$lib/server/db/schema';
 import { eq, and, inArray } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
@@ -12,7 +12,29 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         throw error(401, 'Non autorisé');
     }
 
-    const result = await db.select().from(projet).where(eq(projet.id, id));
+    const result = await db.select({
+        id: projet.id,
+        libelle: projet.libelle,
+        reference: projet.reference,
+        ville: projet.ville,
+        cp: projet.cp,
+        rue: projet.rue,
+        dateDemarrage: projet.dateDemarrage,
+        dateDeFin: projet.dateDeFin,
+        codeInsee: projet.codeInsee,
+        section: projet.section,
+        parcelle: projet.parcelle,
+        typeOperation: projet.typeOperation,
+        maitreDOuvrage: projet.maitreDOuvrage,
+        idEtabId: projet.idEtabId,
+        etablissementNom: etablissement.nom,
+        societeNom: societe.nom,
+    })
+    .from(projet)
+    .leftJoin(etablissement, eq(projet.idEtabId, etablissement.id))
+    .leftJoin(societe, eq(etablissement.idSocieteId, societe.id))
+    .where(eq(projet.id, id));
+    
     const project = result[0];
 
     if (!project) {
