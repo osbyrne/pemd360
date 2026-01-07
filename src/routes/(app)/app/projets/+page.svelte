@@ -9,7 +9,7 @@
 	
 	let mounted = $state(false);
 	let searchQuery = $state('');
-	let viewMode = $state<'grid' | 'list'>('grid');
+	let viewMode = $state<'grid' | 'list'>('list');
 	let sortBy = $state<'date' | 'name' | 'ville'>('date');
 	let sortOrder = $state<'asc' | 'desc'>('desc');
 
