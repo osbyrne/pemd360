@@ -24,6 +24,7 @@ vite.config.ts.timestamp-*
 
 # Working with a local database
 /betterauth_pemd.sqlite
+/pemd360database.db
 
 # lockfiles
 bun.lock
