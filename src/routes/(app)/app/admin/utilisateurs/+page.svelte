@@ -716,6 +716,7 @@
 									id="create-password"
 									bind:value={createForm.password}
 									type="password"
+									autocomplete="new-password"
 									placeholder="••••••••"
 									class="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 								/>
@@ -905,6 +906,7 @@
 								id="new-password"
 								bind:value={passwordForm.newPassword}
 								type="password"
+								autocomplete="new-password"
 								placeholder="Entrez le nouveau mot de passe"
 								class="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 							/>

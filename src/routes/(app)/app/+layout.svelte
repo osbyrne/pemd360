@@ -226,7 +226,9 @@
 	>
 		<!-- Logo -->
 		<div class="flex h-20 shrink-0 items-center justify-center border-b border-gray-200 px-4">
-			<img src={logoPEMD} alt="PEMD 360" class="h-16 w-auto object-contain" />
+			<a href="/app/" onclick={() => { if (window.innerWidth < 1024) sidebarOpen = false; }}>
+				<img src={logoPEMD} alt="PEMD 360" class="h-16 w-auto object-contain" />
+			</a>
 		</div>
 
 		<!-- Navigation - scrollable -->
