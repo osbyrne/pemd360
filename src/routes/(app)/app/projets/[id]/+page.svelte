@@ -52,6 +52,46 @@
 					}
 				}
 			}
+
+			// Add amiante tags from database
+			if (data.amianteTags && data.amianteTags.length > 0) {
+				console.log(`Adding ${data.amianteTags.length} amiante tags to the model`);
+				
+				for (const tag of data.amianteTags) {
+					try {
+						// Parse position data from JSON strings
+						const anchorPosition = JSON.parse(tag.anchorPosition);
+						const stemVector = JSON.parse(tag.stemVector);
+
+						// Determine label based on presence of amiante
+						const amianteStatus = tag.presenceAmiante ? 'Présence' : 'Absence';
+						const label = `Amiante - ${amianteStatus}`;
+
+						// Create tag descriptor
+						const tagDescriptor = {
+							label: label,
+							description: `${tag.description}\nType: ${tag.type}\nÉtage: ${tag.etage}`,
+							anchorPosition: {
+								x: anchorPosition.x,
+								y: anchorPosition.y,
+								z: anchorPosition.z
+							},
+							stemVector: {
+								x: stemVector.x,
+								y: stemVector.y,
+								z: stemVector.z
+							},
+							color: tag.presenceAmiante ? { r: 1, g: 0, b: 0 } : { r: 0, g: 1, b: 0 }
+						};
+
+						// Add tag to model
+						const [sid] = await mpSdk.Mattertag.add(tagDescriptor);
+						console.log(`Added amiante tag ${tag.id} with sid ${sid}`);
+					} catch (tagError) {
+						console.error(`Failed to add amiante tag ${tag.id}:`, tagError);
+					}
+				}
+			}
 		} catch (e) {
 			console.error('Matterport SDK connection failed:', e);
 		}
@@ -66,6 +106,10 @@
 	<div class="mb-6 flex items-center gap-4">
 		<span class="text-sm text-gray-600">
 			{data.tags?.length || 0} tag{data.tags?.length === 1 ? '' : 's'} mail
+		</span>
+		<span class="text-sm text-gray-600">•</span>
+		<span class="text-sm text-gray-600">
+			{data.amianteTags?.length || 0} tag{data.amianteTags?.length === 1 ? '' : 's'} amiante
 		</span>
 	</div>
 
