@@ -80,7 +80,7 @@
 				</div>
 
 				<div class="space-y-1.5 md:col-span-2">
-					<label for="idSocieteId" class="text-sm font-medium text-gray-700">Société parente</label>
+					<label for="idSocieteId" class="text-sm font-medium text-gray-700">Société</label>
 					<select
 						id="idSocieteId"
 						name="idSocieteId"

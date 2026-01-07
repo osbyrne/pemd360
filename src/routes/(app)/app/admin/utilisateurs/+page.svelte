@@ -87,6 +87,10 @@
 		projetIds: [] as string[]
 	};
 
+	// Search filters for project selection
+	let createProjectSearch = '';
+	let modalProjectSearch = '';
+
 	// Get user's projets
 	function getUserProjets(userId: string): string[] {
 		return usersWithProjets
@@ -104,6 +108,19 @@
 		if (names.length <= 2) return names.join(', ');
 		return `${names.slice(0, 2).join(', ')} +${names.length - 2}`;
 	}
+
+	// Filter projects based on search
+	$: filteredCreateProjets = projets.filter(p => {
+		if (!createProjectSearch) return true;
+		const search = createProjectSearch.toLowerCase();
+		return p.libelle.toLowerCase().includes(search) || p.reference.toLowerCase().includes(search);
+	});
+
+	$: filteredModalProjets = projets.filter(p => {
+		if (!modalProjectSearch) return true;
+		const search = modalProjectSearch.toLowerCase();
+		return p.libelle.toLowerCase().includes(search) || p.reference.toLowerCase().includes(search);
+	});
 
 	// Get projets count
 	function getProjetsCount(userId: string): number {
@@ -129,7 +146,7 @@
 					projetIds: getUserProjets(u.id)
 				}));
 			} else {
-				if (res.error) error = res.error.message;
+				if (res.error) error = res.error.message || 'Une erreur est survenue';
 			}
 		} catch (e: any) {
 			error = e.message || 'Échec du chargement des utilisateurs';
@@ -139,8 +156,22 @@
 		}
 	}
 
+	// Close modals on Escape
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === 'Escape') {
+			if (isProjetsModalOpen) closeProjetsModal();
+			else if (isCreateModalOpen) closeCreateModal();
+			else if (isEditModalOpen) closeEditModal();
+			else if (isPasswordModalOpen) closePasswordModal();
+			else if (isBanModalOpen) closeBanModal();
+			else if (isDeleteModalOpen) closeDeleteModal();
+		}
+	}
+
 	onMount(() => {
 		loadUsers();
+		window.addEventListener('keydown', handleKeydown);
+		return () => window.removeEventListener('keydown', handleKeydown);
 	});
 
 	// Derived
@@ -159,6 +190,7 @@
 	function openProjetsModal(user: User) {
 		selectedUser = user;
 		projetsForm.projetIds = getUserProjets(user.id);
+		modalProjectSearch = '';
 		isProjetsModalOpen = true;
 	}
 
@@ -207,6 +239,7 @@
 	// CREATE USER
 	function openCreateModal() {
 		createForm = { email: '', password: '', name: '', role: 'user', projetIds: [] };
+		createProjectSearch = '';
 		isCreateModalOpen = true;
 	}
 
@@ -454,7 +487,7 @@
 	{#if error}
 		<div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4">
 			<div class="flex items-start gap-3">
-				<svg class="h-5 w-5 flex-shrink-0 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+				<svg class="h-5 w-5 shrink-0 text-red-500" viewBox="0 0 20 20" fill="currentColor">
 					<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
 				</svg>
 				<div>
@@ -493,11 +526,11 @@
 				{#each displayedUsers as user (user.id)}
 					<div class="flex items-center gap-4 p-4 transition-colors hover:bg-slate-50">
 						<!-- Avatar -->
-						<div class="flex-shrink-0">
+						<div class="shrink-0">
 							{#if user.image}
 								<img class="h-12 w-12 rounded-full object-cover ring-2 ring-white shadow" src={user.image} alt={user.name} />
 							{:else}
-								<div class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-white font-bold text-lg shadow">
+								<div class="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-emerald-400 to-emerald-600 text-white font-bold text-lg shadow">
 									{user.name?.[0]?.toUpperCase() || '?'}
 								</div>
 							{/if}
@@ -640,7 +673,7 @@
 <!-- MODAL : Créer un utilisateur -->
 {#if isCreateModalOpen}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
+		<button type="button" aria-label="Fermer la modale" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade on:click={closeCreateModal}></button>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
@@ -700,11 +733,27 @@
 							</div>
 							<div>
 								<label for="create-projets" class="block text-sm font-medium text-slate-700 mb-1.5">Projets</label>
+								<!-- Search bar for projects -->
+								<div class="relative mb-2">
+									<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+										<svg class="h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
+											<path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+										</svg>
+									</div>
+									<input
+										type="text"
+										bind:value={createProjectSearch}
+										placeholder="Rechercher un projet..."
+										class="block w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 text-sm placeholder-slate-400 shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+									/>
+								</div>
 								<div class="max-h-40 overflow-y-auto rounded-lg border border-slate-300 bg-white p-2">
 									{#if projets.length === 0}
 										<p class="text-sm text-slate-500 py-2 px-2">Aucun projet disponible</p>
+									{:else if filteredCreateProjets.length === 0}
+										<p class="text-sm text-slate-500 py-2 px-2">Aucun projet trouvé</p>
 									{:else}
-										{#each projets as p}
+										{#each filteredCreateProjets as p}
 											<label class="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-slate-50 cursor-pointer">
 												<input
 													type="checkbox"
@@ -755,14 +804,14 @@
 <!-- MODAL : Modifier les informations -->
 {#if isEditModalOpen && selectedUser}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
+		<button type="button" aria-label="Fermer la modale" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade on:click={closeEditModal}></button>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
 					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
 					transition:scale
 				>
-					<div class="px-6 py-5">
+						<div class="px-6 py-5">
 						<div class="flex items-center gap-3 mb-6">
 							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
 								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600">
@@ -831,14 +880,14 @@
 <!-- MODAL : Changer le mot de passe -->
 {#if isPasswordModalOpen && selectedUser}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
+		<button type="button" aria-label="Fermer la modale" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade on:click={closePasswordModal}></button>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
 					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
 					transition:scale
 				>
-					<div class="px-6 py-5">
+						<div class="px-6 py-5">
 						<div class="flex items-center gap-3 mb-6">
 							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100">
 								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-amber-600">
@@ -889,14 +938,14 @@
 <!-- MODAL : Ban / Débannir -->
 {#if isBanModalOpen && selectedUser}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
+		<button type="button" aria-label="Fermer la modale" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade on:click={closeBanModal}></button>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
 					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
 					transition:scale
 				>
-					<div class="px-6 py-5">
+						<div class="px-6 py-5">
 						<div class="flex items-center gap-3 mb-6">
 							<div class="flex h-10 w-10 items-center justify-center rounded-full {selectedUser.banned ? 'bg-green-100' : 'bg-amber-100'}">
 								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="{selectedUser.banned ? 'text-green-600' : 'text-amber-600'}">
@@ -952,14 +1001,14 @@
 <!-- MODAL : Supprimer -->
 {#if isDeleteModalOpen && selectedUser}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
+		<button type="button" aria-label="Fermer la modale" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade on:click={closeDeleteModal}></button>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
 					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
 					transition:scale
 				>
-					<div class="px-6 py-5">
+						<div class="px-6 py-5">
 						<div class="flex items-center gap-3 mb-6">
 							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
 								<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600">
@@ -1002,7 +1051,7 @@
 <!-- MODAL : Gérer les projets -->
 {#if isProjetsModalOpen && selectedUser}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
+		<button type="button" aria-label="Fermer la modale" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade on:click={closeProjetsModal}></button>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
@@ -1057,12 +1106,28 @@
 								</div>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-slate-700 mb-1.5">Projets assignés</label>
+								<div class="block text-sm font-medium text-slate-700 mb-1.5">Projets assignés</div>
+								<!-- Search bar for projects -->
+								<div class="relative mb-2">
+									<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+										<svg class="h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
+											<path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+										</svg>
+									</div>
+									<input
+										type="text"
+										bind:value={modalProjectSearch}
+										placeholder="Rechercher un projet..."
+										class="block w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 text-sm placeholder-slate-400 shadow-sm transition-colors focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+									/>
+								</div>
 								<div class="max-h-64 overflow-y-auto border border-slate-200 rounded-lg divide-y divide-slate-100">
 									{#if projets.length === 0}
 										<p class="p-4 text-sm text-slate-500 text-center">Aucun projet disponible</p>
+									{:else if filteredModalProjets.length === 0}
+										<p class="p-4 text-sm text-slate-500 text-center">Aucun projet trouvé</p>
 									{:else}
-										{#each projets as p}
+										{#each filteredModalProjets as p}
 											<label class="flex items-center gap-3 p-3 hover:bg-slate-50 cursor-pointer">
 												<input 
 													type="checkbox" 
