@@ -20,6 +20,26 @@
 	let showTermite = $state(false);
 	let showStructure = $state(false);
 
+	// modal states and selected presence filters (defaults: both checked)
+	let showAmianteModal = $state(false);
+	let showPlombModal = $state(false);
+	let showTermiteModal = $state(false);
+
+	let amiantePresenceSelected: number[] = [0, 1, 2];
+	let plombPresenceSelected: number[] = [0, 1, 2];
+	let termitePresenceSelected: number[] = [0, 1, 2];
+
+	// helper booleans for modal checkboxes
+	let amiantePresent = true;
+	let amianteAbsent = true;
+	let amianteEnCours = true;
+	let plombPresent = true;
+	let plombAbsent = true;
+	let plombEnCours = true;
+	let termitePresent = true;
+	let termiteAbsent = true;
+	let termiteEnCours = true;
+
 	let mailSids: string[] = [];
 	let amianteSids: string[] = [];
 	let plombSids: string[] = [];
@@ -61,8 +81,9 @@
 		if (!mpSdk) return;
 		if (showAmiante) {
 			if (data.amianteTags && data.amianteTags.length > 0) {
-				console.log(`Adding ${data.amianteTags.length} amiante tags`);
-				for (const tag of data.amianteTags) {
+				const filtered = data.amianteTags.filter((t: any) => amiantePresenceSelected.includes(Number(t.presenceAmiante)));
+				console.log(`Adding ${filtered.length} amiante tags`);
+				for (const tag of filtered) {
 					try {
 						const anchorPosition = JSON.parse(tag.anchorPosition);
 						const stemVector = JSON.parse(tag.stemVector);
@@ -93,8 +114,9 @@
 		if (!mpSdk) return;
 		if (showPlomb) {
 			if (data.plombTags && data.plombTags.length > 0) {
-				console.log(`Adding ${data.plombTags.length} plomb tags`);
-				for (const tag of data.plombTags) {
+				const filtered = data.plombTags.filter((t: any) => plombPresenceSelected.includes(Number(t.presencePlomb)));
+				console.log(`Adding ${filtered.length} plomb tags`);
+				for (const tag of filtered) {
 					try {
 						const anchorPosition = JSON.parse(tag.anchorPosition);
 						const stemVector = JSON.parse(tag.stemVector);
@@ -130,8 +152,9 @@
 		if (!mpSdk) return;
 		if (showTermite) {
 			if (data.termiteTags && data.termiteTags.length > 0) {
-				console.log(`Adding ${data.termiteTags.length} termite tags`);
-				for (const tag of data.termiteTags) {
+				const filtered = data.termiteTags.filter((t: any) => termitePresenceSelected.includes(Number(t.presenceTermite)));
+				console.log(`Adding ${filtered.length} termite tags`);
+				for (const tag of filtered) {
 					try {
 						const anchorPosition = JSON.parse(tag.anchorPosition);
 						const stemVector = JSON.parse(tag.stemVector);
@@ -205,50 +228,165 @@
 	});
 </script>
 
-<div class="h-full w-full p-6 font-[Poppins]">
+<div class="h-screen w-full p-6 font-[Poppins] flex flex-col">
 	<div class="mb-6 flex items-center gap-4">
 		<h1 class="text-2xl font-bold text-gray-900">{data.projet.libelle}</h1>
 	</div>
 
-	<div class="mb-6 flex flex-wrap items-center gap-6">
+	<!-- Modals -->
+	{#if showAmianteModal}
+		<div class="fixed inset-0 z-50 flex items-center justify-center">
+			<div class="absolute inset-0 bg-black/40" on:click={() => { showAmianteModal = false; }}></div>
+			<div class="relative z-10 w-80 rounded-lg bg-white p-4 shadow-lg">
+				<h3 class="mb-3 text-lg font-semibold">Filtrer Amiante</h3>
+				<div class="mb-3 flex flex-col gap-2">
+					<label class="flex items-center gap-2">
+						<input type="checkbox" bind:checked={amiantePresent} />
+						<span>Présence</span>
+					</label>
+					<label class="flex items-center gap-2">
+						<input type="checkbox" bind:checked={amianteAbsent} />
+						<span>Absence</span>
+					</label>
+					<label class="flex items-center gap-2">
+						<input type="checkbox" bind:checked={amianteEnCours} />
+						<span>En cours</span>
+					</label>
+				</div>
+				<div class="flex justify-end gap-2">
+					<button class="rounded px-3 py-1 text-sm" on:click={() => { showAmianteModal = false; }}>Annuler</button>
+					<button class="rounded bg-blue-600 px-3 py-1 text-sm text-white" on:click={() => {
+						amiantePresenceSelected = [];
+						if (amiantePresent) amiantePresenceSelected.push(1);
+						if (amianteAbsent) amiantePresenceSelected.push(0);
+						if (amianteEnCours) amiantePresenceSelected.push(2);
+						showAmianteModal = false;
+						showAmiante = true;
+						toggleAmiante();
+					}}>Appliquer</button>
+				</div>
+			</div>
+		</div>
+	{/if}
+
+	{#if showPlombModal}
+		<div class="fixed inset-0 z-50 flex items-center justify-center">
+			<div class="absolute inset-0 bg-black/40" on:click={() => { showPlombModal = false; }}></div>
+			<div class="relative z-10 w-80 rounded-lg bg-white p-4 shadow-lg">
+				<h3 class="mb-3 text-lg font-semibold">Filtrer Plomb</h3>
+				<div class="mb-3 flex flex-col gap-2">
+					<label class="flex items-center gap-2">
+						<input type="checkbox" bind:checked={plombPresent} />
+						<span>Présence</span>
+					</label>
+					<label class="flex items-center gap-2">
+						<input type="checkbox" bind:checked={plombAbsent} />
+						<span>Absence</span>
+					</label>
+					<label class="flex items-center gap-2">
+						<input type="checkbox" bind:checked={plombEnCours} />
+						<span>En cours</span>
+					</label>
+				</div>
+				<div class="flex justify-end gap-2">
+					<button class="rounded px-3 py-1 text-sm" on:click={() => { showPlombModal = false; }}>Annuler</button>
+					<button class="rounded bg-blue-600 px-3 py-1 text-sm text-white" on:click={() => {
+						plombPresenceSelected = [];
+						if (plombPresent) plombPresenceSelected.push(1);
+						if (plombAbsent) plombPresenceSelected.push(0);
+						if (plombEnCours) plombPresenceSelected.push(2);
+						showPlombModal = false;
+						showPlomb = true;
+						togglePlomb();
+					}}>Appliquer</button>
+				</div>
+			</div>
+		</div>
+	{/if}
+
+	{#if showTermiteModal}
+		<div class="fixed inset-0 z-50 flex items-center justify-center">
+			<div class="absolute inset-0 bg-black/40" on:click={() => { showTermiteModal = false; }}></div>
+			<div class="relative z-10 w-80 rounded-lg bg-white p-4 shadow-lg">
+				<h3 class="mb-3 text-lg font-semibold">Filtrer Termite</h3>
+				<div class="mb-3 flex flex-col gap-2">
+					<label class="flex items-center gap-2">
+						<input type="checkbox" bind:checked={termitePresent} />
+						<span>Présence</span>
+					</label>
+					<label class="flex items-center gap-2">
+						<input type="checkbox" bind:checked={termiteAbsent} />
+						<span>Absence</span>
+					</label>
+					<label class="flex items-center gap-2">
+						<input type="checkbox" bind:checked={termiteEnCours} />
+						<span>En cours</span>
+					</label>
+				</div>
+				<div class="flex justify-end gap-2">
+					<button class="rounded px-3 py-1 text-sm" on:click={() => { showTermiteModal = false; }}>Annuler</button>
+					<button class="rounded bg-blue-600 px-3 py-1 text-sm text-white" on:click={() => {
+						termitePresenceSelected = [];
+						if (termitePresent) termitePresenceSelected.push(1);
+						if (termiteAbsent) termitePresenceSelected.push(0);
+						if (termiteEnCours) termitePresenceSelected.push(2);
+						showTermiteModal = false;
+						showTermite = true;
+						toggleTermite();
+					}}>Appliquer</button>
+				</div>
+			</div>
+		</div>
+	{/if}
+
+	<div class="mb-6 grid grid-cols-5 gap-4 w-full">
 		<button
 			type="button"
 			title="Afficher les mail tags"
 			aria-pressed={showMail}
 			on:click={() => { showMail = !showMail; toggleMail(); }}
-			class={`w-16 h-16 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showMail ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
+			class={`w-full h-20 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showMail ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
 		>
-			<Mail size={28} class={`transition-transform ${showMail ? 'scale-110 text-blue-700' : 'text-gray-700'}`} />
+			<Mail size={32} class={`transition-transform ${showMail ? 'scale-110 text-blue-700' : 'text-gray-700'}`} />
 		</button>
 
 		<button
 			type="button"
 			title="Afficher les tags amiante"
 			aria-pressed={showAmiante}
-			on:click={() => { showAmiante = !showAmiante; toggleAmiante(); }}
-			class={`w-16 h-16 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showAmiante ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
+			on:click={() => {
+				if (showAmiante) { showAmiante = false; toggleAmiante(); }
+				else { showAmianteModal = true; }
+			}}
+			class={`w-full h-20 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showAmiante ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
 		>
-			<img src={tagAmianteImg} alt="amiante" class={`h-8 w-8 transition-transform ${showAmiante ? 'scale-110' : ''}`} />
+			<img src={tagAmianteImg} alt="amiante" class={`h-10 w-10 transition-transform ${showAmiante ? 'scale-110' : ''}`} />
 		</button>
 
 		<button
 			type="button"
 			title="Afficher les tags plomb"
 			aria-pressed={showPlomb}
-			on:click={() => { showPlomb = !showPlomb; togglePlomb(); }}
-			class={`w-16 h-16 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showPlomb ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
+			on:click={() => {
+				if (showPlomb) { showPlomb = false; togglePlomb(); }
+				else { showPlombModal = true; }
+			}}
+			class={`w-full h-20 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showPlomb ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
 		>
-			<img src={tagPlombImg} alt="plomb" class={`h-8 w-8 transition-transform ${showPlomb ? 'scale-110' : ''}`} />
+			<img src={tagPlombImg} alt="plomb" class={`h-10 w-10 transition-transform ${showPlomb ? 'scale-110' : ''}`} />
 		</button>
 
 		<button
 			type="button"
 			title="Afficher les tags termite"
 			aria-pressed={showTermite}
-			on:click={() => { showTermite = !showTermite; toggleTermite(); }}
-			class={`w-16 h-16 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showTermite ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
+			on:click={() => {
+				if (showTermite) { showTermite = false; toggleTermite(); }
+				else { showTermiteModal = true; }
+			}}
+			class={`w-full h-20 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showTermite ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
 		>
-			<img src={tagTermiteImg} alt="termite" class={`h-8 w-8 transition-transform ${showTermite ? 'scale-110' : ''}`} />
+			<img src={tagTermiteImg} alt="termite" class={`h-10 w-10 transition-transform ${showTermite ? 'scale-110' : ''}`} />
 		</button>
 
 		<button
@@ -256,13 +394,13 @@
 			title="Afficher les tags structure"
 			aria-pressed={showStructure}
 			on:click={() => { showStructure = !showStructure; toggleStructure(); }}
-			class={`w-16 h-16 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showStructure ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
+			class={`w-full h-20 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showStructure ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
 		>
-			<img src={tagStructureImg} alt="structure" class={`h-8 w-8 transition-transform ${showStructure ? 'scale-110' : ''}`} />
+			<img src={tagStructureImg} alt="structure" class={`h-10 w-10 transition-transform ${showStructure ? 'scale-110' : ''}`} />
 		</button>
 	</div>
 
-	<div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm h-[80vh]">
+	<div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm flex-1">
 		<iframe
 			bind:this={iframe}
 			title="Matterport Showcase"
