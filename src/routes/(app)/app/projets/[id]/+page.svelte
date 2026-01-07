@@ -92,6 +92,53 @@
 					}
 				}
 			}
+
+			// Add plomb tags from database
+			if (data.plombTags && data.plombTags.length > 0) {
+				console.log(`Adding ${data.plombTags.length} plomb tags to the model`);
+				
+				for (const tag of data.plombTags) {
+					try {
+						// Parse position data from JSON strings
+						const anchorPosition = JSON.parse(tag.anchorPosition);
+						const stemVector = JSON.parse(tag.stemVector);
+
+						// Determine label based on presence of plomb
+						const plombStatus = tag.presencePlomb ? 'Présence' : 'Absence';
+						const label = `Plomb - ${plombStatus}`;
+
+						// Build description with concentration if available
+						let description = tag.description;
+						if (tag.presencePlomb && tag.concentration) {
+							description += `\nConcentration: ${tag.concentration}`;
+						}
+						description += `\nÉtage: ${tag.etage}`;
+
+						// Create tag descriptor
+						const tagDescriptor = {
+							label: label,
+							description: description,
+							anchorPosition: {
+								x: anchorPosition.x,
+								y: anchorPosition.y,
+								z: anchorPosition.z
+							},
+							stemVector: {
+								x: stemVector.x,
+								y: stemVector.y,
+								z: stemVector.z
+							},
+							color: tag.presencePlomb ? { r: 1, g: 0.5, b: 0 } : { r: 0, g: 0.7, b: 1 }
+						};
+
+						// Add tag to model
+						const [sid] = await mpSdk.Mattertag.add(tagDescriptor);
+						console.log(`Added plomb tag ${tag.id} with sid ${sid}`);
+					} catch (tagError) {
+						console.error(`Failed to add plomb tag ${tag.id}:`, tagError);
+					}
+				}
+			}
 		} catch (e) {
 			console.error('Matterport SDK connection failed:', e);
 		}
@@ -110,6 +157,10 @@
 		<span class="text-sm text-gray-600">•</span>
 		<span class="text-sm text-gray-600">
 			{data.amianteTags?.length || 0} tag{data.amianteTags?.length === 1 ? '' : 's'} amiante
+		</span>
+		<span class="text-sm text-gray-600">•</span>
+		<span class="text-sm text-gray-600">
+			{data.plombTags?.length || 0} tag{data.plombTags?.length === 1 ? '' : 's'} plomb
 		</span>
 	</div>
 
