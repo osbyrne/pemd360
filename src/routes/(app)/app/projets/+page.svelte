@@ -220,7 +220,7 @@
 							<!-- Card Footer -->
 							<div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-2">
 								<a
-									href="/app/project/{projet.id}"
+									href="/app/details/{projet.id}"
 									class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-100 transition-colors"
 								>
 									<Info class="h-4 w-4" />
@@ -279,7 +279,7 @@
 								<!-- Actions -->
 								<div class="flex items-center gap-2">
 									<a
-										href="/app/project/{projet.id}"
+										href="/app/details/{projet.id}"
 										class="p-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors"
 										title="Voir les détails"
 									>
