@@ -78,7 +78,7 @@
 		
 
 		<!-- Search & Filters Bar -->
-		<div class="max-w-7xl mx-auto px-4 mt-6 sm:px-6 lg:px-8 -mt-6 relative z-10" in:fly={{ y: 30, duration: 400, delay: 250 }}>
+		<div class="max-w-7xl mx-auto px-4 mt-6 sm:px-6 lg:px-8 -mt-6 relative z-10">
 			<div class="bg-white rounded-2xl border border-slate-200 p-4">
 				<div class="flex flex-col sm:flex-row gap-4">
 					<!-- Search -->

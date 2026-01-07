@@ -52,7 +52,7 @@
 	// Toast/Notification
 	let toast: { message: string; type: 'success' | 'error' } | null = null;
 
-	// Ban form
+	// Clôture de compte (formulaire)
 	let banReason = '';
 
 	// Active User for actions
@@ -285,7 +285,7 @@
 		}
 	}
 
-	// BAN / UNBAN
+	// CLÔTURE / RÉACTIVATION DE COMPTE
 	function openBanModal(user: User) {
 		selectedUser = user;
 		banReason = '';
@@ -305,26 +305,26 @@
 			if (wasBanned) {
 				const res = await authClient.admin.unbanUser({ userId: selectedUser.id });
 				if (res.error) {
-					showToast('Échec du débannissement : ' + res.error.message, 'error');
+					showToast('Échec de la réactivation : ' + res.error.message, 'error');
 					return;
 				}
 				users = users.map((u) => (u.id === selectedUser!.id ? { ...u, banned: false } : u));
-				showToast('Utilisateur débanni avec succès');
+				showToast('Compte réactivé avec succès');
 			} else {
 				const res = await authClient.admin.banUser({
 					userId: selectedUser.id,
 					banReason: banReason || 'Action administrative'
 				});
 				if (res.error) {
-					showToast('Échec du bannissement : ' + res.error.message, 'error');
+					showToast('Échec de la clôture : ' + res.error.message, 'error');
 					return;
 				}
 				users = users.map((u) => (u.id === selectedUser!.id ? { ...u, banned: true } : u));
-				showToast('Utilisateur banni avec succès');
+				showToast('Compte clôturé avec succès');
 			}
 			closeBanModal();
 		} catch (e) {
-			showToast(wasBanned ? 'Échec du débannissement' : 'Échec du bannissement', 'error');
+			showToast(wasBanned ? 'Échec de la réactivation du compte' : 'Échec de la clôture du compte', 'error');
 		}
 	}
 
@@ -390,7 +390,7 @@
 	// CSV Export
 	function downloadCSV() {
 		if (!users.length) return;
-		const cols = ['id', 'nom', 'email', 'role', 'banni', 'date_creation'];
+		const cols = ['id', 'nom', 'email', 'role', 'cloture', 'date_creation'];
 		const lines = [cols.join(',')];
 
 		for (const u of filteredUsers) {
@@ -554,7 +554,7 @@
 							{#if user.banned}
 								<span class="inline-flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700">
 									<span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>
-									Banni
+									Clôturé
 								</span>
 							{:else}
 								<span class="inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
@@ -613,7 +613,7 @@
 							<button
 								on:click={() => openBanModal(user)}
 								class="rounded-lg p-2 transition-colors {user.banned ? 'text-green-500 hover:bg-green-50 hover:text-green-700' : 'text-slate-400 hover:bg-amber-50 hover:text-amber-600'}"
-								title={user.banned ? 'Débannir' : 'Bannir'}
+								title={user.banned ? 'Réactiver le compte' : 'Clôturer le compte'}
 							>
 								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 									<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>
@@ -937,7 +937,7 @@
 	</div>
 {/if}
 
-<!-- MODAL : Ban / Débannir -->
+<!-- MODAL : Clôture / Réactivation de compte -->
 {#if isBanModalOpen && selectedUser}
 	<div class="relative z-50" role="dialog" aria-modal="true">
 		<button type="button" aria-label="Fermer la modale" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade on:click={closeBanModal}></button>
@@ -956,18 +956,18 @@
 							</div>
 							<div>
 								<h3 class="text-lg font-semibold text-slate-900">
-									{selectedUser.banned ? 'Débannir l\'utilisateur' : 'Bannir l\'utilisateur'}
+									{selectedUser.banned ? 'Réactiver le compte' : 'Clôturer le compte'}
 								</h3>
 								<p class="text-sm text-slate-500">{selectedUser.name}</p>
 							</div>
 						</div>
 						{#if selectedUser.banned}
 							<p class="text-sm text-slate-600">
-								Êtes-vous sûr de vouloir débannir cet utilisateur ? Il pourra à nouveau accéder à la plateforme.
+								Êtes-vous sûr de vouloir réactiver ce compte ? Il pourra à nouveau accéder à la plateforme.
 							</p>
 						{:else}
 							<div>
-								<label for="ban-reason" class="block text-sm font-medium text-slate-700 mb-1.5">Raison du bannissement (optionnel)</label>
+								<label for="ban-reason" class="block text-sm font-medium text-slate-700 mb-1.5">Raison de la clôture (optionnel)</label>
 								<textarea
 									id="ban-reason"
 									bind:value={banReason}
@@ -991,7 +991,7 @@
 							class="rounded-lg px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors {selectedUser.banned ? 'bg-green-600 hover:bg-green-700' : 'bg-amber-600 hover:bg-amber-700'}"
 							on:click={confirmBan}
 						>
-							{selectedUser.banned ? 'Débannir' : 'Bannir'}
+							{selectedUser.banned ? 'Réactiver' : 'Clôturer'}
 						</button>
 					</div>
 				</div>
