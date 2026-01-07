@@ -24,6 +24,17 @@
 	// Active item
 	let selectedProjet: (typeof projets)[0] | null = $state(null);
 
+	// Dropdown menu state
+	let openDropdownId: string | null = $state(null);
+
+	function toggleDropdown(projetId: string) {
+		openDropdownId = openDropdownId === projetId ? null : projetId;
+	}
+
+	function closeDropdown() {
+		openDropdownId = null;
+	}
+
 	function showToast(message: string, type: 'success' | 'error' = 'success') {
 		toast = { message, type };
 		setTimeout(() => (toast = null), 3000);
@@ -203,34 +214,56 @@
 									<span class="text-sm text-slate-600">{formatDate(proj.dateDemarrage)}</span>
 								</td>
 								<td class="px-6 py-4">
-									<div class="flex items-center justify-end gap-2">
-										<a
-											href="/app/admin/projets/{proj.id}"
-											class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600"
-											title="Voir"
-										>
-											<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-												<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
-											</svg>
-										</a>
-										<a
-											href="/app/admin/projets/{proj.id}/modifier"
-											class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-emerald-600"
-											title="Modifier"
-										>
-											<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-												<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/>
-											</svg>
-										</a>
-										<button
-											onclick={() => openDeleteModal(proj)}
-											class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
-											title="Supprimer"
-										>
-											<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-												<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>
-											</svg>
-										</button>
+									<div class="flex items-center justify-end">
+										<div class="relative">
+											<button
+												onclick={() => toggleDropdown(proj.id)}
+												class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+												title="Actions"
+											>
+												<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+													<circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/>
+												</svg>
+											</button>
+											{#if openDropdownId === proj.id}
+												<div 
+													class="absolute right-0 mt-2 w-48 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-10"
+													transition:scale={{ duration: 100 }}
+												>
+													<div class="py-1">
+														<a
+															href="/app/admin/projets/{proj.id}"
+															class="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+															onclick={closeDropdown}
+														>
+															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+																<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+															</svg>
+															Voir
+														</a>
+														<a
+															href="/app/admin/projets/{proj.id}/modifier"
+															class="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+															onclick={closeDropdown}
+														>
+															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+																<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/>
+															</svg>
+															Modifier
+														</a>
+														<button
+															onclick={() => { openDeleteModal(proj); closeDropdown(); }}
+															class="flex w-full items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+														>
+															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+																<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>
+															</svg>
+															Supprimer
+														</button>
+													</div>
+												</div>
+											{/if}
+										</div>
 									</div>
 								</td>
 							</tr>
