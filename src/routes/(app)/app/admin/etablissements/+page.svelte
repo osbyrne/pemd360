@@ -180,8 +180,8 @@
 				{#each displayedEtabs as etab (etab.id)}
 					<div class="flex items-center gap-4 p-4 transition-colors hover:bg-slate-50">
 						<!-- Avatar -->
-						<div class="flex-shrink-0">
-							<div class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-lg font-bold text-white shadow">
+						<div class="shrink-0">
+							<div class="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-emerald-400 to-emerald-600 text-lg font-bold text-white shadow">
 								{etab.nom?.[0]?.toUpperCase() || '?'}
 							</div>
 						</div>

@@ -72,10 +72,10 @@
 	<title>Mes Projets</title>
 </svelte:head>
 
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50/30">
+<div class="min-h-screen">
 	{#if mounted}
 		<!-- Header Section -->
-		<div class="relative overflow-hidden bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 -mx-4 lg:-mx-6 -mt-4 lg:-mt-6">
+		<div class="relative overflow-hidden bg-linear-to-r from-emerald-600 via-emerald-500 to-teal-500 -mx-4 lg:-mx-6 -mt-4 lg:-mt-6">
 			<div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12" in:fade={{ duration: 300 }}>
 				<div in:fly={{ y: 20, duration: 400, delay: 100 }}>
 					<h1 class="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-2">
@@ -187,9 +187,6 @@
 							<!-- Card Header -->
 							<div class="p-6 pb-4">
 								<div class="flex items-start gap-4">
-									<div class="p-3 rounded-xl bg-emerald-600 text-white">
-										<Building2 class="h-6 w-6" />
-									</div>
 									<div class="flex-1 min-w-0">
 										<h3 class="font-semibold text-slate-900 text-lg truncate">
 											{projet.libelle}

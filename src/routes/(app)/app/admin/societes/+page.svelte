@@ -234,8 +234,8 @@
 				{#each displayedCompanies as company (company.id)}
 					<div class="flex items-center gap-4 p-4 transition-colors hover:bg-slate-50">
 						<!-- Avatar -->
-						<div class="flex-shrink-0">
-							<div class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-lg font-bold text-white shadow">
+						<div class="shrink-0">
+							<div class="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-emerald-400 to-emerald-600 text-lg font-bold text-white shadow">
 								{company.nom?.[0]?.toUpperCase() || '?'}
 							</div>
 						</div>
@@ -247,19 +247,19 @@
 						</div>
 
 						<!-- Location -->
-						<div class="hidden flex-shrink-0 sm:flex sm:flex-col sm:items-start">
+						<div class="hidden shrink-0 sm:flex sm:flex-col sm:items-start">
 							<p class="text-sm font-medium text-slate-900">{company.ville || '-'}</p>
 							<p class="text-xs text-slate-500">{company.cp || '-'}</p>
 						</div>
 
 						<!-- Email / Tel -->
-						<div class="mr-4 hidden flex-shrink-0 md:flex md:flex-col md:items-end">
+						<div class="mr-4 hidden shrink-0 md:flex md:flex-col md:items-end">
 							<p class="text-sm text-slate-900">{company.email || '-'}</p>
 							<p class="text-xs text-slate-500">{company.tel || '-'}</p>
 						</div>
 
 						<!-- Actions -->
-						<div class="flex flex-shrink-0 items-center gap-1 border-l border-slate-200 pl-2">
+						<div class="flex shrink-0 items-center gap-1 border-l border-slate-200 pl-2">
 							<button
 								onclick={() => openEditModal(company)}
 								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600"
