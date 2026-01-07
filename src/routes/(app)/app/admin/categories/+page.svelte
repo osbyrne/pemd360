@@ -11,6 +11,26 @@
 	
 	let currentCategory = $state<any>(null);
 
+	// Pagination & Search
+    let query = $state('');
+    let perPage = 25;
+    let page = $state(1);
+
+    // Derived
+    const filteredList = $derived(
+        (data.categories || []).filter((item: any) => {
+            if (!query) return true;
+            const q = query.toLowerCase();
+            return (
+                item.categorie?.toLowerCase().includes(q) ||
+                item.groupeName?.toLowerCase().includes(q)
+            );
+        })
+    );
+
+    const totalPages = $derived(Math.ceil(filteredList.length / perPage));
+    const displayedList = $derived(filteredList.slice((page - 1) * perPage, page * perPage));
+
 	// Form defaults
 	let initialForm = {
 		id: '',
@@ -77,6 +97,23 @@
 		</button>
 	</div>
 
+	<!-- Search Bar -->
+    <div class="mb-6">
+        <div class="relative">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <input
+                type="text"
+                bind:value={query}
+                placeholder="Rechercher par catégorie ou groupe..."
+                class="block w-full rounded-xl border border-gray-300 bg-white py-3 pl-11 pr-4 text-sm placeholder-gray-400 shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+            />
+        </div>
+    </div>
+
 	<!-- Table -->
 	<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
 		<div class="overflow-x-auto">
@@ -90,50 +127,79 @@
 					</tr>
 				</thead>
 				<tbody class="divide-y divide-gray-100">
-					{#if data.categories.length === 0}
-						<tr>
-							<td colspan="4" class="px-6 py-12 text-center text-gray-400">
-								Aucune catégorie enregistrée.
+					{#each displayedList as category}
+						<tr class="hover:bg-gray-50 transition-colors">
+							<td class="px-6 py-4 font-mono text-gray-500">#{category.id}</td>
+							<td class="px-6 py-4 font-medium text-gray-900">{category.categorie}</td>
+							<td class="px-6 py-4 text-gray-600">
+								{#if category.groupeName}
+									<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+										{category.groupeName}
+									</span>
+								{:else}
+									<span class="text-gray-400">-</span>
+								{/if}
+							</td>
+							<td class="px-6 py-4">
+								<div class="flex items-center justify-center gap-2">
+									<button
+										onclick={() => openEditModal(category)}
+										class="p-1.5 text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+										title="Modifier"
+									>
+										<Pencil class="w-4 h-4" />
+									</button>
+									<button
+										onclick={() => openDeleteModal(category)}
+										class="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+										title="Supprimer"
+									>
+										<Trash2 class="w-4 h-4" />
+									</button>
+								</div>
 							</td>
 						</tr>
 					{:else}
-						{#each data.categories as category}
-							<tr class="hover:bg-gray-50 transition-colors">
-								<td class="px-6 py-4 font-mono text-gray-500">#{category.id}</td>
-								<td class="px-6 py-4 font-medium text-gray-900">{category.categorie}</td>
-								<td class="px-6 py-4 text-gray-600">
-									{#if category.groupeName}
-										<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-											{category.groupeName}
-										</span>
-									{:else}
-										<span class="text-gray-400">-</span>
-									{/if}
-								</td>
-								<td class="px-6 py-4">
-									<div class="flex items-center justify-center gap-2">
-										<button
-											onclick={() => openEditModal(category)}
-											class="p-1.5 text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-											title="Modifier"
-										>
-											<Pencil class="w-4 h-4" />
-										</button>
-										<button
-											onclick={() => openDeleteModal(category)}
-											class="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-											title="Supprimer"
-										>
-											<Trash2 class="w-4 h-4" />
-										</button>
-									</div>
-								</td>
-							</tr>
-						{/each}
-					{/if}
+						<tr>
+							<td colspan="4" class="px-6 py-12 text-center text-gray-400">
+								{#if query}
+                                    Aucun résultat pour "{query}".
+                                {:else}
+                                    Aucune catégorie enregistrée.
+                                {/if}
+							</td>
+						</tr>
+					{/each}
 				</tbody>
 			</table>
 		</div>
+
+		<!-- Pagination -->
+        {#if filteredList.length > 0}
+            <div class="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3">
+                <p class="text-sm text-gray-600">
+                    Affichage de <span class="font-semibold">{Math.min(filteredList.length, (page - 1) * perPage + 1)}</span>
+                    à <span class="font-semibold">{Math.min(filteredList.length, page * perPage)}</span>
+                    sur <span class="font-semibold">{filteredList.length}</span> résultats
+                </p>
+                <div class="flex gap-2">
+                    <button
+                        onclick={() => (page = Math.max(1, page - 1))}
+                        disabled={page === 1}
+                        class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                        Précédent
+                    </button>
+                    <button
+                        onclick={() => (page = Math.min(totalPages, page + 1))}
+                        disabled={page === totalPages}
+                        class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                        Suivant
+                    </button>
+                </div>
+            </div>
+        {/if}
 	</div>
 </div>
 
