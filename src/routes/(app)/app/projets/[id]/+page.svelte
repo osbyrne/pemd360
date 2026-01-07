@@ -139,6 +139,49 @@
 					}
 				}
 			}
+
+			// Add termite tags from database
+			if (data.termiteTags && data.termiteTags.length > 0) {
+				console.log(`Adding ${data.termiteTags.length} termite tags to the model`);
+				
+				for (const tag of data.termiteTags) {
+					try {
+						// Parse position data from JSON strings
+						const anchorPosition = JSON.parse(tag.anchorPosition);
+						const stemVector = JSON.parse(tag.stemVector);
+
+						// Determine label based on presence of termites
+						const termiteStatus = tag.presenceTermite ? 'Présence' : 'Absence';
+						const label = `Termite - ${termiteStatus}`;
+
+						// Build description
+						const description = `${tag.description}\nÉtage: ${tag.etage}`;
+
+						// Create tag descriptor
+						const tagDescriptor = {
+							label: label,
+							description: description,
+							anchorPosition: {
+								x: anchorPosition.x,
+								y: anchorPosition.y,
+								z: anchorPosition.z
+							},
+							stemVector: {
+								x: stemVector.x,
+								y: stemVector.y,
+								z: stemVector.z
+							},
+							color: tag.presenceTermite ? { r: 0.6, g: 0.3, b: 0 } : { r: 0.5, g: 1, b: 0.5 }
+						};
+
+						// Add tag to model
+						const [sid] = await mpSdk.Mattertag.add(tagDescriptor);
+						console.log(`Added termite tag ${tag.id} with sid ${sid}`);
+					} catch (tagError) {
+						console.error(`Failed to add termite tag ${tag.id}:`, tagError);
+					}
+				}
+			}
 		} catch (e) {
 			console.error('Matterport SDK connection failed:', e);
 		}
@@ -161,6 +204,10 @@
 		<span class="text-sm text-gray-600">•</span>
 		<span class="text-sm text-gray-600">
 			{data.plombTags?.length || 0} tag{data.plombTags?.length === 1 ? '' : 's'} plomb
+		</span>
+		<span class="text-sm text-gray-600">•</span>
+		<span class="text-sm text-gray-600">
+			{data.termiteTags?.length || 0} tag{data.termiteTags?.length === 1 ? '' : 's'} termite
 		</span>
 	</div>
 
