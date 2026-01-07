@@ -7,223 +7,191 @@
 	let iframe: HTMLIFrameElement;
 	let mpSdk: any;
 
-	onMount(async () => {
-		try {
-			// @ts-ignore
-			const { connect } = await import('$lib/matterport/sdk.es6.js');
-			mpSdk = await connect(iframe);
-			
-			console.log('Matterport SDK connected', mpSdk);
+	let showMail = $state(false);
+	let showAmiante = $state(false);
+	let showPlomb = $state(false);
+	let showTermite = $state(false);
+	let showStructure = $state(false);
 
-			// Add tags from database
+	let mailSids: string[] = [];
+	let amianteSids: string[] = [];
+	let plombSids: string[] = [];
+	let termiteSids: string[] = [];
+	let structureSids: string[] = [];
+
+	async function toggleMail() {
+		if (!mpSdk) return;
+		if (showMail) {
 			if (data.tags && data.tags.length > 0) {
 				console.log(`Adding ${data.tags.length} tags to the model`);
-				
 				for (const tag of data.tags) {
 					try {
-						// Parse position data from JSON strings
 						const anchorPosition = JSON.parse(tag.anchorPosition);
 						const stemVector = JSON.parse(tag.stemVector);
-
-						// Format date for display
 						const tagDate = tag.date ? new Date(tag.date).toLocaleDateString() : '';
-
-						// Create tag descriptor
 						const tagDescriptor = {
 							label: `Mail - ${tagDate}`,
 							description: tag.content,
-							anchorPosition: {
-								x: anchorPosition.x,
-								y: anchorPosition.y,
-								z: anchorPosition.z
-							},
-							stemVector: {
-								x: stemVector.x,
-								y: stemVector.y,
-								z: stemVector.z
-							}
+							anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
+							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z }
 						};
-
-						// Add tag to model
 						const [sid] = await mpSdk.Mattertag.add(tagDescriptor);
-						console.log(`Added tag ${tag.id} with sid ${sid}`);
+						mailSids.push(sid);
 					} catch (tagError) {
 						console.error(`Failed to add tag ${tag.id}:`, tagError);
 					}
 				}
 			}
+		} else {
+			for (const sid of mailSids) {
+				try { await mpSdk.Mattertag.remove(sid); } catch (e) { console.error(e); }
+			}
+			mailSids = [];
+		}
+	}
 
-			// Add amiante tags from database
+	async function toggleAmiante() {
+		if (!mpSdk) return;
+		if (showAmiante) {
 			if (data.amianteTags && data.amianteTags.length > 0) {
-				console.log(`Adding ${data.amianteTags.length} amiante tags to the model`);
-				
+				console.log(`Adding ${data.amianteTags.length} amiante tags`);
 				for (const tag of data.amianteTags) {
 					try {
-						// Parse position data from JSON strings
 						const anchorPosition = JSON.parse(tag.anchorPosition);
 						const stemVector = JSON.parse(tag.stemVector);
-
-						// Determine label based on presence of amiante
 						const amianteStatus = tag.presenceAmiante ? 'Présence' : 'Absence';
-						const label = `Amiante - ${amianteStatus}`;
-
-						// Create tag descriptor
 						const tagDescriptor = {
-							label: label,
+							label: `Amiante - ${amianteStatus}`,
 							description: `${tag.description}\nType: ${tag.type}\nÉtage: ${tag.etage}`,
-							anchorPosition: {
-								x: anchorPosition.x,
-								y: anchorPosition.y,
-								z: anchorPosition.z
-							},
-							stemVector: {
-								x: stemVector.x,
-								y: stemVector.y,
-								z: stemVector.z
-							},
+							anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
+							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
 							color: tag.presenceAmiante ? { r: 1, g: 0, b: 0 } : { r: 0, g: 1, b: 0 }
 						};
-
-						// Add tag to model
 						const [sid] = await mpSdk.Mattertag.add(tagDescriptor);
-						console.log(`Added amiante tag ${tag.id} with sid ${sid}`);
+						amianteSids.push(sid);
 					} catch (tagError) {
 						console.error(`Failed to add amiante tag ${tag.id}:`, tagError);
 					}
 				}
 			}
+		} else {
+			for (const sid of amianteSids) {
+				try { await mpSdk.Mattertag.remove(sid); } catch (e) { console.error(e); }
+			}
+			amianteSids = [];
+		}
+	}
 
-			// Add plomb tags from database
+	async function togglePlomb() {
+		if (!mpSdk) return;
+		if (showPlomb) {
 			if (data.plombTags && data.plombTags.length > 0) {
-				console.log(`Adding ${data.plombTags.length} plomb tags to the model`);
-				
+				console.log(`Adding ${data.plombTags.length} plomb tags`);
 				for (const tag of data.plombTags) {
 					try {
-						// Parse position data from JSON strings
 						const anchorPosition = JSON.parse(tag.anchorPosition);
 						const stemVector = JSON.parse(tag.stemVector);
-
-						// Determine label based on presence of plomb
 						const plombStatus = tag.presencePlomb ? 'Présence' : 'Absence';
-						const label = `Plomb - ${plombStatus}`;
-
-						// Build description with concentration if available
 						let description = tag.description;
 						if (tag.presencePlomb && tag.concentration) {
 							description += `\nConcentration: ${tag.concentration}`;
 						}
 						description += `\nÉtage: ${tag.etage}`;
-
-						// Create tag descriptor
 						const tagDescriptor = {
-							label: label,
+							label: `Plomb - ${plombStatus}`,
 							description: description,
-							anchorPosition: {
-								x: anchorPosition.x,
-								y: anchorPosition.y,
-								z: anchorPosition.z
-							},
-							stemVector: {
-								x: stemVector.x,
-								y: stemVector.y,
-								z: stemVector.z
-							},
+							anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
+							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
 							color: tag.presencePlomb ? { r: 1, g: 0.5, b: 0 } : { r: 0, g: 0.7, b: 1 }
 						};
-
-						// Add tag to model
 						const [sid] = await mpSdk.Mattertag.add(tagDescriptor);
-						console.log(`Added plomb tag ${tag.id} with sid ${sid}`);
+						plombSids.push(sid);
 					} catch (tagError) {
 						console.error(`Failed to add plomb tag ${tag.id}:`, tagError);
 					}
 				}
 			}
+		} else {
+			for (const sid of plombSids) {
+				try { await mpSdk.Mattertag.remove(sid); } catch (e) { console.error(e); }
+			}
+			plombSids = [];
+		}
+	}
 
-			// Add termite tags from database
+	async function toggleTermite() {
+		if (!mpSdk) return;
+		if (showTermite) {
 			if (data.termiteTags && data.termiteTags.length > 0) {
-				console.log(`Adding ${data.termiteTags.length} termite tags to the model`);
-				
+				console.log(`Adding ${data.termiteTags.length} termite tags`);
 				for (const tag of data.termiteTags) {
 					try {
-						// Parse position data from JSON strings
 						const anchorPosition = JSON.parse(tag.anchorPosition);
 						const stemVector = JSON.parse(tag.stemVector);
-
-						// Determine label based on presence of termites
 						const termiteStatus = tag.presenceTermite ? 'Présence' : 'Absence';
-						const label = `Termite - ${termiteStatus}`;
-
-						// Build description
-						const description = `${tag.description}\nÉtage: ${tag.etage}`;
-
-						// Create tag descriptor
 						const tagDescriptor = {
-							label: label,
-							description: description,
-							anchorPosition: {
-								x: anchorPosition.x,
-								y: anchorPosition.y,
-								z: anchorPosition.z
-							},
-							stemVector: {
-								x: stemVector.x,
-								y: stemVector.y,
-								z: stemVector.z
-							},
+							label: `Termite - ${termiteStatus}`,
+							description: `${tag.description}\nÉtage: ${tag.etage}`,
+							anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
+							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
 							color: tag.presenceTermite ? { r: 0.6, g: 0.3, b: 0 } : { r: 0.5, g: 1, b: 0.5 }
 						};
-
-						// Add tag to model
 						const [sid] = await mpSdk.Mattertag.add(tagDescriptor);
-						console.log(`Added termite tag ${tag.id} with sid ${sid}`);
+						termiteSids.push(sid);
 					} catch (tagError) {
 						console.error(`Failed to add termite tag ${tag.id}:`, tagError);
 					}
 				}
 			}
+		} else {
+			for (const sid of termiteSids) {
+				try { await mpSdk.Mattertag.remove(sid); } catch (e) { console.error(e); }
+			}
+			termiteSids = [];
+		}
+	}
 
-			// Add structure tags from database
+	async function toggleStructure() {
+		if (!mpSdk) return;
+		if (showStructure) {
 			if (data.structureTags && data.structureTags.length > 0) {
-				console.log(`Adding ${data.structureTags.length} structure tags to the model`);
-				
+				console.log(`Adding ${data.structureTags.length} structure tags`);
 				for (const tag of data.structureTags) {
 					try {
-						// Parse position data from JSON strings
 						const anchorPosition = JSON.parse(tag.anchorPosition);
 						const stemVector = JSON.parse(tag.stemVector);
-
-						// Build description with surface area if available
 						let description = tag.description;
 						if (tag.shapeSurface) {
 							description += `\nSurface: ${tag.shapeSurface} m²`;
 						}
-
-						// Create tag descriptor
 						const tagDescriptor = {
 							label: 'Structure',
 							description: description,
-							anchorPosition: {
-								x: anchorPosition.x,
-								y: anchorPosition.y,
-								z: anchorPosition.z
-							},
-							stemVector: {
-								x: stemVector.x,
-								y: stemVector.y,
-								z: stemVector.z
-							},
+							anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
+							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
 							color: { r: 0.5, g: 0.5, b: 0.5 }
 						};
-
-						// Add tag to model
 						const [sid] = await mpSdk.Mattertag.add(tagDescriptor);
-						console.log(`Added structure tag ${tag.id} with sid ${sid}`);
+						structureSids.push(sid);
 					} catch (tagError) {
 						console.error(`Failed to add structure tag ${tag.id}:`, tagError);
 					}
 				}
 			}
+		} else {
+			for (const sid of structureSids) {
+				try { await mpSdk.Mattertag.remove(sid); } catch (e) { console.error(e); }
+			}
+			structureSids = [];
+		}
+	}
+
+	onMount(async () => {
+		try {
+			// @ts-ignore
+			const { connect } = await import('$lib/matterport/sdk.es6.js');
+			mpSdk = await connect(iframe);
+			console.log('Matterport SDK connected', mpSdk);
 		} catch (e) {
 			console.error('Matterport SDK connection failed:', e);
 		}
@@ -235,26 +203,31 @@
 		<h1 class="text-2xl font-bold text-gray-900">{data.projet.libelle}</h1>
 	</div>
 
-	<div class="mb-6 flex items-center gap-4">
-		<span class="text-sm text-gray-600">
-			{data.tags?.length || 0} tag{data.tags?.length === 1 ? '' : 's'} mail
-		</span>
-		<span class="text-sm text-gray-600">•</span>
-		<span class="text-sm text-gray-600">
-			{data.amianteTags?.length || 0} tag{data.amianteTags?.length === 1 ? '' : 's'} amiante
-		</span>
-		<span class="text-sm text-gray-600">•</span>
-		<span class="text-sm text-gray-600">
-			{data.plombTags?.length || 0} tag{data.plombTags?.length === 1 ? '' : 's'} plomb
-		</span>
-		<span class="text-sm text-gray-600">•</span>
-		<span class="text-sm text-gray-600">
-			{data.termiteTags?.length || 0} tag{data.termiteTags?.length === 1 ? '' : 's'} termite
-		</span>
-		<span class="text-sm text-gray-600">•</span>
-		<span class="text-sm text-gray-600">
-			{data.structureTags?.length || 0} tag{data.structureTags?.length === 1 ? '' : 's'} structure
-		</span>
+	<div class="mb-6 flex flex-wrap items-center gap-6">
+		<label class="flex cursor-pointer items-center gap-2 rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
+			<input type="checkbox" bind:checked={showMail} onchange={toggleMail} class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+			<span>{data.tags?.length || 0} mail</span>
+		</label>
+
+		<label class="flex cursor-pointer items-center gap-2 rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
+			<input type="checkbox" bind:checked={showAmiante} onchange={toggleAmiante} class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+			<span>{data.amianteTags?.length || 0} amiante</span>
+		</label>
+
+		<label class="flex cursor-pointer items-center gap-2 rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
+			<input type="checkbox" bind:checked={showPlomb} onchange={togglePlomb} class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+			<span>{data.plombTags?.length || 0} plomb</span>
+		</label>
+
+		<label class="flex cursor-pointer items-center gap-2 rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
+			<input type="checkbox" bind:checked={showTermite} onchange={toggleTermite} class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+			<span>{data.termiteTags?.length || 0} termite</span>
+		</label>
+
+		<label class="flex cursor-pointer items-center gap-2 rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
+			<input type="checkbox" bind:checked={showStructure} onchange={toggleStructure} class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
+			<span>{data.structureTags?.length || 0} structure</span>
+		</label>
 	</div>
 
 	<div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm h-[80vh]">
