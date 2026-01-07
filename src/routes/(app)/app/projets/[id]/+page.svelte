@@ -182,6 +182,48 @@
 					}
 				}
 			}
+
+			// Add structure tags from database
+			if (data.structureTags && data.structureTags.length > 0) {
+				console.log(`Adding ${data.structureTags.length} structure tags to the model`);
+				
+				for (const tag of data.structureTags) {
+					try {
+						// Parse position data from JSON strings
+						const anchorPosition = JSON.parse(tag.anchorPosition);
+						const stemVector = JSON.parse(tag.stemVector);
+
+						// Build description with surface area if available
+						let description = tag.description;
+						if (tag.shapeSurface) {
+							description += `\nSurface: ${tag.shapeSurface} m²`;
+						}
+
+						// Create tag descriptor
+						const tagDescriptor = {
+							label: 'Structure',
+							description: description,
+							anchorPosition: {
+								x: anchorPosition.x,
+								y: anchorPosition.y,
+								z: anchorPosition.z
+							},
+							stemVector: {
+								x: stemVector.x,
+								y: stemVector.y,
+								z: stemVector.z
+							},
+							color: { r: 0.5, g: 0.5, b: 0.5 }
+						};
+
+						// Add tag to model
+						const [sid] = await mpSdk.Mattertag.add(tagDescriptor);
+						console.log(`Added structure tag ${tag.id} with sid ${sid}`);
+					} catch (tagError) {
+						console.error(`Failed to add structure tag ${tag.id}:`, tagError);
+					}
+				}
+			}
 		} catch (e) {
 			console.error('Matterport SDK connection failed:', e);
 		}
@@ -208,6 +250,10 @@
 		<span class="text-sm text-gray-600">•</span>
 		<span class="text-sm text-gray-600">
 			{data.termiteTags?.length || 0} tag{data.termiteTags?.length === 1 ? '' : 's'} termite
+		</span>
+		<span class="text-sm text-gray-600">•</span>
+		<span class="text-sm text-gray-600">
+			{data.structureTags?.length || 0} tag{data.structureTags?.length === 1 ? '' : 's'} structure
 		</span>
 	</div>
 
