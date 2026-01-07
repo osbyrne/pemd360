@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
+	import tagAmianteImg from '$lib/assets/img/tagamiante.gif';
+	import tagPlombImg from '$lib/assets/img/tagplomb.gif';
+	import tagTermiteImg from '$lib/assets/img/tagtermite.gif';
+	import tagStructureImg from '$lib/assets/img/tagstructure.gif';
+	import {
+		Mail
+	} from 'lucide-svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -204,30 +211,55 @@
 	</div>
 
 	<div class="mb-6 flex flex-wrap items-center gap-6">
-		<label class="flex cursor-pointer items-center gap-2 rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
-			<input type="checkbox" bind:checked={showMail} onchange={toggleMail} class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
-			<span>{data.tags?.length || 0} mail</span>
-		</label>
+		<button
+			type="button"
+			title="Afficher les mail tags"
+			aria-pressed={showMail}
+			on:click={() => { showMail = !showMail; toggleMail(); }}
+			class={`w-16 h-16 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showMail ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
+		>
+			<Mail size={28} class={`transition-transform ${showMail ? 'scale-110 text-blue-700' : 'text-gray-700'}`} />
+		</button>
 
-		<label class="flex cursor-pointer items-center gap-2 rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
-			<input type="checkbox" bind:checked={showAmiante} onchange={toggleAmiante} class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
-			<span>{data.amianteTags?.length || 0} amiante</span>
-		</label>
+		<button
+			type="button"
+			title="Afficher les tags amiante"
+			aria-pressed={showAmiante}
+			on:click={() => { showAmiante = !showAmiante; toggleAmiante(); }}
+			class={`w-16 h-16 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showAmiante ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
+		>
+			<img src={tagAmianteImg} alt="amiante" class={`h-8 w-8 transition-transform ${showAmiante ? 'scale-110' : ''}`} />
+		</button>
 
-		<label class="flex cursor-pointer items-center gap-2 rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
-			<input type="checkbox" bind:checked={showPlomb} onchange={togglePlomb} class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
-			<span>{data.plombTags?.length || 0} plomb</span>
-		</label>
+		<button
+			type="button"
+			title="Afficher les tags plomb"
+			aria-pressed={showPlomb}
+			on:click={() => { showPlomb = !showPlomb; togglePlomb(); }}
+			class={`w-16 h-16 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showPlomb ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
+		>
+			<img src={tagPlombImg} alt="plomb" class={`h-8 w-8 transition-transform ${showPlomb ? 'scale-110' : ''}`} />
+		</button>
 
-		<label class="flex cursor-pointer items-center gap-2 rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
-			<input type="checkbox" bind:checked={showTermite} onchange={toggleTermite} class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
-			<span>{data.termiteTags?.length || 0} termite</span>
-		</label>
+		<button
+			type="button"
+			title="Afficher les tags termite"
+			aria-pressed={showTermite}
+			on:click={() => { showTermite = !showTermite; toggleTermite(); }}
+			class={`w-16 h-16 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showTermite ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
+		>
+			<img src={tagTermiteImg} alt="termite" class={`h-8 w-8 transition-transform ${showTermite ? 'scale-110' : ''}`} />
+		</button>
 
-		<label class="flex cursor-pointer items-center gap-2 rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">
-			<input type="checkbox" bind:checked={showStructure} onchange={toggleStructure} class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" />
-			<span>{data.structureTags?.length || 0} structure</span>
-		</label>
+		<button
+			type="button"
+			title="Afficher les tags structure"
+			aria-pressed={showStructure}
+			on:click={() => { showStructure = !showStructure; toggleStructure(); }}
+			class={`w-16 h-16 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showStructure ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
+		>
+			<img src={tagStructureImg} alt="structure" class={`h-8 w-8 transition-transform ${showStructure ? 'scale-110' : ''}`} />
+		</button>
 	</div>
 
 	<div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm h-[80vh]">
