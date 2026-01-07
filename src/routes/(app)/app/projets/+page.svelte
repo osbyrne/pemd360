@@ -227,7 +227,7 @@
 									Détails
 								</a>
 								<a
-									href="/app/projets/matterport/{projet.id}"
+									href="/app/projets/{projet.id}"
 									class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors"
 								>
 									<Box class="h-4 w-4" />
@@ -286,7 +286,7 @@
 										<Info class="h-5 w-5" />
 									</a>
 									<a
-										href="/app/projets/matterport/{projet.id}"
+										href="/app/projets/{projet.id}"
 										class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors"
 									>
 										<Box class="h-4 w-4" />

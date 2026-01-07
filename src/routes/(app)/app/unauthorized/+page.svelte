@@ -30,7 +30,7 @@
 			on:click={goBack}
 			class="rounded-lg bg-emerald-600 px-8 py-3 font-medium text-white transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-300"
 		>
-			Retour au Dashboard
+			Retour
 		</button>
 	</div>
 </div>
