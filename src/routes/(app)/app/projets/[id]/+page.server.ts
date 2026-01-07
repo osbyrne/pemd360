@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/db/client';
-import { projet, etablissement, user } from '$lib/server/db/schema';
+import { projet, etablissement, user, tagMail } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
@@ -38,7 +38,11 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         }
     }
 
+    // Load tags for this project
+    const tags = await db.select().from(tagMail).where(eq(tagMail.projetIdId, id));
+
     return {
-        projet: project
+        projet: project,
+        tags: tags
     };
 };
