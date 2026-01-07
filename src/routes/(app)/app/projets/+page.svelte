@@ -225,7 +225,7 @@
 								</a>
 								<a
 									href="/app/projets/{projet.id}"
-									class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors"
+									class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-100 transition-colors"
 								>
 									<Box class="h-4 w-4" />
 									Modèle 3D
@@ -245,9 +245,7 @@
 								animate:flip={{ duration: 300 }}
 							>
 								<!-- Icon -->
-								<div class="hidden sm:flex p-3 rounded-xl bg-emerald-600 text-white">
-									<Building2 class="h-5 w-5" />
-								</div>
+	
 
 								<!-- Info -->
 								<div class="flex-1 min-w-0">
@@ -284,7 +282,7 @@
 									</a>
 									<a
 										href="/app/projets/{projet.id}"
-										class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors"
+										class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors"
 									>
 										<Box class="h-4 w-4" />
 										<span class="hidden sm:inline">Modèle 3D</span>
