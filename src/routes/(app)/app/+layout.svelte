@@ -18,7 +18,8 @@
 		ChevronDown,
 		ChevronRight,
 		Settings,
-		Files
+		Files,
+		Hammer
 	} from 'lucide-svelte';
 	import { slide } from 'svelte/transition';
 
@@ -52,7 +53,7 @@
 		{
 			href: '/app/projets',
 			label: 'Projets',
-			icon: Menu
+			icon: Hammer
 		},
 		{
 			label: 'Administration',
