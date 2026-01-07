@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db/client';
-import { projet, etablissement, user, societe } from '$lib/server/db/schema';
+import { projet, etablissement, societe, userProjet } from '$lib/server/db/schema';
 import { desc, eq, inArray } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -9,10 +9,6 @@ export const load: PageServerLoad = async ({ locals }) => {
 	if (!currentUser) {
 		return { projets: [] };
 	}
-
-	// Récupérer l'utilisateur avec sa société
-	const userWithSociete = await db.select().from(user).where(eq(user.id, currentUser.id));
-	const societeId = userWithSociete[0]?.societeId;
 
 	// Si l'utilisateur est admin, afficher tous les projets avec leurs établissements et sociétés
 	if (currentUser.role === 'admin') {
@@ -42,23 +38,19 @@ export const load: PageServerLoad = async ({ locals }) => {
 		return { projets: projetsWithEtab };
 	}
 
-	// Si l'utilisateur n'a pas de société assignée, ne montrer aucun projet
-	if (!societeId) {
+	// Récupérer les IDs des projets associés à l'utilisateur
+	const userProjets = await db.select({ projetId: userProjet.projetId })
+		.from(userProjet)
+		.where(eq(userProjet.userId, currentUser.id));
+
+	const projetIds = userProjets.map(up => up.projetId);
+
+	// Si l'utilisateur n'a pas de projets associés, ne montrer aucun projet
+	if (projetIds.length === 0) {
 		return { projets: [] };
 	}
 
-	// Récupérer les établissements de la société de l'utilisateur
-	const etablissements = await db.select({ id: etablissement.id })
-		.from(etablissement)
-		.where(eq(etablissement.idSocieteId, societeId));
-
-	const etablissementIds = etablissements.map(e => e.id);
-
-	if (etablissementIds.length === 0) {
-		return { projets: [] };
-	}
-
-	// Récupérer les projets des établissements de la société avec les infos
+	// Récupérer les projets associés à l'utilisateur avec les infos établissement/société
 	const projetsWithEtab = await db.select({
 		id: projet.id,
 		libelle: projet.libelle,
@@ -80,7 +72,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	.from(projet)
 	.leftJoin(etablissement, eq(projet.idEtabId, etablissement.id))
 	.leftJoin(societe, eq(etablissement.idSocieteId, societe.id))
-	.where(inArray(projet.idEtabId, etablissementIds))
+	.where(inArray(projet.id, projetIds))
 	.orderBy(desc(projet.dateDemarrage));
 
 	return {

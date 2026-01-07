@@ -20,10 +20,7 @@ export const user = sqliteTable("user", {
   banned: integer("banned", { mode: "boolean" }).default(false),
   banReason: text("ban_reason"),
   banExpires: integer("ban_expires", { mode: "timestamp_ms" }),
-  societeId: integer("societe_id").references(() => societe.id),
-}, (table) => ({
-  societeIdIdx: index("user_societe_id_idx").on(table.societeId),
-}));
+});
 
 export const session = sqliteTable(
   "session",
@@ -95,13 +92,10 @@ export const verification = sqliteTable(
   (table) => [index("verification_identifier_idx").on(table.identifier)],
 );
 
-export const userRelations = relations(user, ({ one, many }) => ({
+export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
-  societe: one(societe, {
-    fields: [user.societeId],
-    references: [societe.id],
-  }),
+  projets: many(userProjet),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -209,7 +203,6 @@ export const societe = sqliteTable('societe', {
 
 export const societeRelations = relations(societe, ({ many }) => ({
   etablissements: many(etablissement),
-  users: many(user),
 }));
 
 export const etablissement = sqliteTable('etablissement', {
@@ -280,6 +273,7 @@ export const projetRelations = relations(projet, ({ one, many }) => ({
   tagsStructure: many(tagsStructure),
   tagsTermite: many(tagsTermite),
   users: many(projetUser),
+  userProjets: many(userProjet),
   tagMails: many(tagMail),
 }));
 
@@ -584,5 +578,34 @@ export const tagMailRelations = relations(tagMail, ({ one }) => ({
   user: one(userLegacy, {
     fields: [tagMail.userIdId],
     references: [userLegacy.id],
+  }),
+}));
+
+// --- Association User (Better Auth) <-> Projet ---
+
+export const userProjet = sqliteTable(
+  'user_projet',
+  {
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    projetId: text('projet_id', { length: 50 })
+      .notNull()
+      .references(() => projet.id, { onDelete: 'cascade' }),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.userId, table.projetId] }),
+    projetIdIdx: index('user_projet_projet_id_idx').on(table.projetId),
+  })
+);
+
+export const userProjetRelations = relations(userProjet, ({ one }) => ({
+  user: one(user, {
+    fields: [userProjet.userId],
+    references: [user.id],
+  }),
+  projet: one(projet, {
+    fields: [userProjet.projetId],
+    references: [projet.id],
   }),
 }));

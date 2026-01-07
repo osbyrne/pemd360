@@ -18,13 +18,13 @@
 		image?: string;
 		createdAt: Date;
 		emailVerified: boolean;
-		societeId?: number | null;
+		projetIds?: string[];
 	};
 
-	type Societe = {
-		id: number;
-		nom: string;
-		raisonSocial: string;
+	type Projet = {
+		id: string;
+		libelle: string;
+		reference: string;
 	};
 
 	// State
@@ -32,9 +32,9 @@
 	let loading = true;
 	let error: string | null = null;
 
-	// Sociétés from server
-	$: societes = (data.societes || []) as Societe[];
-	$: usersWithSociete = (data.usersWithSociete || []) as { id: string; societeId: number | null }[];
+	// Projets from server
+	$: projets = (data.projets || []) as Projet[];
+	$: usersWithProjets = (data.usersWithProjets || []) as { userId: string; projetId: string }[];
 
 	// Pagination & Search
 	let query = '';
@@ -47,7 +47,7 @@
 	let isPasswordModalOpen = false;
 	let isBanModalOpen = false;
 	let isDeleteModalOpen = false;
-	let isSocieteModalOpen = false;
+	let isProjetsModalOpen = false;
 
 	// Toast/Notification
 	let toast: { message: string; type: 'success' | 'error' } | null = null;
@@ -76,28 +76,38 @@
 		password: '',
 		name: '',
 		role: 'user',
-		societeId: ''
+		projetIds: [] as string[]
 	};
 
 	let passwordForm = {
 		newPassword: ''
 	};
 
-	let societeForm = {
-		societeId: ''
+	let projetsForm = {
+		projetIds: [] as string[]
 	};
 
-	// Get user's societe
-	function getUserSociete(userId: string): number | null {
-		const userSociete = usersWithSociete.find(u => u.id === userId);
-		return userSociete?.societeId ?? null;
+	// Get user's projets
+	function getUserProjets(userId: string): string[] {
+		return usersWithProjets
+			.filter(up => up.userId === userId)
+			.map(up => up.projetId);
 	}
 
-	// Get societe name
-	function getSocieteName(societeId: number | null): string {
-		if (!societeId) return 'Aucune';
-		const s = societes.find(soc => soc.id === societeId);
-		return s?.nom || 'Inconnue';
+	// Get projets names
+	function getProjetsNames(projetIds: string[]): string {
+		if (!projetIds || projetIds.length === 0) return 'Aucun';
+		const names = projetIds.map(id => {
+			const p = projets.find(proj => proj.id === id);
+			return p?.libelle || 'Inconnu';
+		});
+		if (names.length <= 2) return names.join(', ');
+		return `${names.slice(0, 2).join(', ')} +${names.length - 2}`;
+	}
+
+	// Get projets count
+	function getProjetsCount(userId: string): number {
+		return getUserProjets(userId).length;
 	}
 
 	async function loadUsers() {
@@ -116,7 +126,7 @@
 			if (res.data) {
 				users = (res.data.users as unknown as User[]).map(u => ({
 					...u,
-					societeId: getUserSociete(u.id)
+					projetIds: getUserProjets(u.id)
 				}));
 			} else {
 				if (res.error) error = res.error.message;
@@ -145,15 +155,15 @@
 
 	// --- Actions ---
 
-	// SOCIETE MODAL
-	function openSocieteModal(user: User) {
+	// PROJETS MODAL
+	function openProjetsModal(user: User) {
 		selectedUser = user;
-		societeForm.societeId = getUserSociete(user.id)?.toString() || '';
-		isSocieteModalOpen = true;
+		projetsForm.projetIds = getUserProjets(user.id);
+		isProjetsModalOpen = true;
 	}
 
-	function closeSocieteModal() {
-		isSocieteModalOpen = false;
+	function closeProjetsModal() {
+		isProjetsModalOpen = false;
 		selectedUser = null;
 	}
 
@@ -196,7 +206,7 @@
 
 	// CREATE USER
 	function openCreateModal() {
-		createForm = { email: '', password: '', name: '', role: 'user', societeId: '' };
+		createForm = { email: '', password: '', name: '', role: 'user', projetIds: [] };
 		isCreateModalOpen = true;
 	}
 
@@ -214,22 +224,18 @@
 			});
 
 			if (res.data) {
-				// Si une société est sélectionnée, l'assigner via l'action serveur
-				if (createForm.societeId) {
+				const newUserId = res.data.user.id;
+				
+				// Assigner les projets si sélectionnés
+				if (createForm.projetIds.length > 0) {
 					const formData = new FormData();
-					// @ts-ignore - res.data contient l'utilisateur créé avec son id
-					const userId = res.data.user?.id || res.data.id;
-					formData.append('userId', userId);
-					formData.append('societeId', createForm.societeId);
+					formData.append('userId', newUserId);
+					createForm.projetIds.forEach(id => formData.append('projetIds', id));
 					
-					const response = await fetch('?/setSociete', {
+					await fetch('?/setProjets', {
 						method: 'POST',
 						body: formData
 					});
-					
-					if (!response.ok) {
-						showToast('Société assignée, mais erreur lors de la mise à jour', 'error');
-					}
 				}
 				
 				// Recharger les données du serveur pour obtenir les associations mises à jour
@@ -531,23 +537,23 @@
 							<p class="text-sm font-medium text-slate-600 whitespace-nowrap">{formatDate(user.createdAt)}</p>
 						</div>
 
-						<!-- Société -->
+						<!-- Projets -->
 						<div class="hidden lg:flex lg:flex-col lg:items-end w-32 mr-4">
-							<p class="text-xs text-slate-400">Société</p>
-							<p class="text-sm font-medium text-slate-600 whitespace-nowrap truncate max-w-[120px]" title={getSocieteName(getUserSociete(user.id))}>
-								{getSocieteName(getUserSociete(user.id))}
+							<p class="text-xs text-slate-400">Projets</p>
+							<p class="text-sm font-medium text-slate-600 whitespace-nowrap truncate max-w-[120px]" title={getProjetsNames(getUserProjets(user.id))}>
+								{getProjetsCount(user.id)} projet{getProjetsCount(user.id) > 1 ? 's' : ''}
 							</p>
 						</div>
 
 						<!-- Actions -->
 						<div class="flex items-center gap-1 pl-2 border-l border-slate-200">
 							<button
-								on:click={() => openSocieteModal(user)}
+								on:click={() => openProjetsModal(user)}
 								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-indigo-600"
-								title="Assigner une société"
+								title="Gérer les projets"
 							>
 								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-									<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>
+									<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
 								</svg>
 							</button>
 
@@ -693,17 +699,34 @@
 								</select>
 							</div>
 							<div>
-								<label for="create-societe" class="block text-sm font-medium text-slate-700 mb-1.5">Société</label>
-								<select
-									id="create-societe"
-									bind:value={createForm.societeId}
-									class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-								>
-									<option value="">Aucune société</option>
-									{#each societes as s}
-										<option value={s.id}>{s.nom}</option>
-									{/each}
-								</select>
+								<label for="create-projets" class="block text-sm font-medium text-slate-700 mb-1.5">Projets</label>
+								<div class="max-h-40 overflow-y-auto rounded-lg border border-slate-300 bg-white p-2">
+									{#if projets.length === 0}
+										<p class="text-sm text-slate-500 py-2 px-2">Aucun projet disponible</p>
+									{:else}
+										{#each projets as p}
+											<label class="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-slate-50 cursor-pointer">
+												<input
+													type="checkbox"
+													value={p.id}
+													checked={createForm.projetIds.includes(p.id)}
+													on:change={(e) => {
+														if (e.currentTarget.checked) {
+															createForm.projetIds = [...createForm.projetIds, p.id];
+														} else {
+															createForm.projetIds = createForm.projetIds.filter(id => id !== p.id);
+														}
+													}}
+													class="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+												/>
+												<span class="text-sm text-slate-700">{p.libelle} <span class="text-slate-400">({p.reference})</span></span>
+											</label>
+										{/each}
+									{/if}
+								</div>
+								{#if createForm.projetIds.length > 0}
+									<p class="text-xs text-slate-500 mt-1">{createForm.projetIds.length} projet(s) sélectionné(s)</p>
+								{/if}
 							</div>
 						</div>
 					</div>
@@ -976,44 +999,44 @@
 	</div>
 {/if}
 
-<!-- MODAL : Modifier la société -->
-{#if isSocieteModalOpen && selectedUser}
+<!-- MODAL : Gérer les projets -->
+{#if isProjetsModalOpen && selectedUser}
 	<div class="relative z-50" role="dialog" aria-modal="true">
 		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
-					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+					class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
 					transition:scale
 				>
 					<form
 						method="POST"
-						action="?/setSociete"
+						action="?/setProjets"
 						use:enhance={() => {
 							return async ({ result }) => {
 								if (result.type === 'success') {
 									// Invalider les données du serveur pour les recharger
 									await invalidateAll();
 									
-									// Mettre à jour le usersWithSociete localement pour une mise à jour immédiate
-									const societeIdValue = societeForm.societeId ? parseInt(societeForm.societeId) : null;
-									const idx = usersWithSociete.findIndex(u => u.id === selectedUser?.id);
-									if (idx >= 0) {
-										usersWithSociete[idx].societeId = societeIdValue;
-									} else {
-										usersWithSociete = [...usersWithSociete, { id: selectedUser!.id, societeId: societeIdValue }];
-									}
-									usersWithSociete = usersWithSociete;
+									// Mettre à jour usersWithProjets localement
+									// D'abord retirer toutes les associations pour cet utilisateur
+									usersWithProjets = usersWithProjets.filter(up => up.userId !== selectedUser?.id);
+									// Puis ajouter les nouvelles
+									const newAssocs = projetsForm.projetIds.map(projetId => ({
+										userId: selectedUser!.id,
+										projetId
+									}));
+									usersWithProjets = [...usersWithProjets, ...newAssocs];
 									
-									// Mettre à jour aussi le tableau users pour refléter le changement immédiatement
+									// Mettre à jour aussi le tableau users
 									users = users.map(u => 
 										u.id === selectedUser?.id 
-											? { ...u, societeId: societeIdValue } 
+											? { ...u, projetIds: projetsForm.projetIds } 
 											: u
 									);
 									
-									closeSocieteModal();
-									showToast('Société mise à jour avec succès');
+									closeProjetsModal();
+									showToast('Projets mis à jour avec succès');
 								} else {
 									showToast('Échec de la mise à jour', 'error');
 								}
@@ -1025,29 +1048,46 @@
 							<div class="flex items-center gap-3 mb-6">
 								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100">
 									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-600">
-										<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>
+										<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
 									</svg>
 								</div>
 								<div>
-									<h3 class="text-lg font-semibold text-slate-900">Assigner une société</h3>
+									<h3 class="text-lg font-semibold text-slate-900">Gérer les projets</h3>
 									<p class="text-sm text-slate-500">{selectedUser.name}</p>
 								</div>
 							</div>
 							<div>
-								<label for="assign-societe" class="block text-sm font-medium text-slate-700 mb-1.5">Société</label>
-								<select
-									id="assign-societe"
-									name="societeId"
-									bind:value={societeForm.societeId}
-									class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-								>
-									<option value="">Aucune société</option>
-									{#each societes as s}
-										<option value={s.id}>{s.nom} ({s.raisonSocial})</option>
-									{/each}
-								</select>
+								<label class="block text-sm font-medium text-slate-700 mb-1.5">Projets assignés</label>
+								<div class="max-h-64 overflow-y-auto border border-slate-200 rounded-lg divide-y divide-slate-100">
+									{#if projets.length === 0}
+										<p class="p-4 text-sm text-slate-500 text-center">Aucun projet disponible</p>
+									{:else}
+										{#each projets as p}
+											<label class="flex items-center gap-3 p-3 hover:bg-slate-50 cursor-pointer">
+												<input 
+													type="checkbox" 
+													name="projetIds" 
+													value={p.id}
+													checked={projetsForm.projetIds.includes(p.id)}
+													on:change={(e) => {
+														if (e.currentTarget.checked) {
+															projetsForm.projetIds = [...projetsForm.projetIds, p.id];
+														} else {
+															projetsForm.projetIds = projetsForm.projetIds.filter(id => id !== p.id);
+														}
+													}}
+													class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+												/>
+												<div class="flex-1 min-w-0">
+													<p class="text-sm font-medium text-slate-900 truncate">{p.libelle}</p>
+													<p class="text-xs text-slate-500 truncate">Réf: {p.reference}</p>
+												</div>
+											</label>
+										{/each}
+									{/if}
+								</div>
 								<p class="mt-2 text-xs text-slate-500">
-									L'utilisateur ne verra que les projets des établissements de cette société.
+									{projetsForm.projetIds.length} projet{projetsForm.projetIds.length > 1 ? 's' : ''} sélectionné{projetsForm.projetIds.length > 1 ? 's' : ''}
 								</p>
 							</div>
 						</div>
@@ -1055,7 +1095,7 @@
 							<button
 								type="button"
 								class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
-								on:click={closeSocieteModal}
+								on:click={closeProjetsModal}
 							>
 								Annuler
 							</button>

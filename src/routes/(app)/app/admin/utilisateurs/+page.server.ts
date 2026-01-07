@@ -1,43 +1,55 @@
 import type { PageServerLoad, Actions } from './$types';
 import { db } from '$lib/server/db/client';
-import { societe, user } from '$lib/server/db/schema';
+import { projet, userProjet } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { fail } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async () => {
-  // Charger toutes les sociétés pour le dropdown
-  const societes = await db.select().from(societe);
+  // Charger tous les projets pour le dropdown
+  const projets = await db.select({
+    id: projet.id,
+    libelle: projet.libelle,
+    reference: projet.reference
+  }).from(projet);
   
-  // Charger les utilisateurs avec leur société
-  const usersWithSociete = await db.select({
-    id: user.id,
-    societeId: user.societeId,
-  }).from(user);
+  // Charger les associations utilisateur-projet
+  const usersWithProjets = await db.select({
+    userId: userProjet.userId,
+    projetId: userProjet.projetId,
+  }).from(userProjet);
 
   return {
-    societes,
-    usersWithSociete
+    projets,
+    usersWithProjets
   };
 };
 
 export const actions: Actions = {
-  setSociete: async ({ request }) => {
+  setProjets: async ({ request }) => {
     const formData = await request.formData();
     const userId = formData.get('userId') as string;
-    const societeId = formData.get('societeId') as string;
+    const projetIds = formData.getAll('projetIds') as string[];
 
     if (!userId) {
       return fail(400, { error: 'userId requis' });
     }
 
     try {
-      await db.update(user)
-        .set({ societeId: societeId ? parseInt(societeId) : null })
-        .where(eq(user.id, userId));
+      // Supprimer toutes les associations existantes pour cet utilisateur
+      await db.delete(userProjet).where(eq(userProjet.userId, userId));
+
+      // Insérer les nouvelles associations
+      if (projetIds.length > 0) {
+        const newAssociations = projetIds.map(projetId => ({
+          userId,
+          projetId
+        }));
+        await db.insert(userProjet).values(newAssociations);
+      }
 
       return { success: true };
     } catch (e) {
-      console.error('Erreur mise à jour société:', e);
+      console.error('Erreur mise à jour projets:', e);
       return fail(500, { error: 'Erreur lors de la mise à jour' });
     }
   }
