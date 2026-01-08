@@ -48,6 +48,7 @@
     "better-sqlite3": "^12.5.0",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.0",
+    "exceljs": "^4.4.0",
     "lucide-svelte": "^0.556.0"
   },
   "trustedDependencies": [

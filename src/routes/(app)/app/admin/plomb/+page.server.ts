@@ -33,6 +33,8 @@ export const load: PageServerLoad = async ({ url, locals }) => {
         id: tagsPlomb.id,
         label: tagsPlomb.label,
         description: tagsPlomb.description,
+        etage: tagsPlomb.etage,
+        customImage: tagsPlomb.customImage,
         presencePlomb: tagsPlomb.presencePlomb,
         concentration: tagsPlomb.concentration,
         projetId: tagsPlomb.sidId,

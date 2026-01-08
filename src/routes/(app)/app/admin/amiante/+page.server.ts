@@ -33,6 +33,9 @@ export const load: PageServerLoad = async ({ url, locals }) => {
         id: tagsAmiante.id,
         label: tagsAmiante.label,
         description: tagsAmiante.description,
+        etage: tagsAmiante.etage,
+        type: tagsAmiante.type,
+        customImage: tagsAmiante.customImage,
         presenceAmiante: tagsAmiante.presenceAmiante,
         projetId: tagsAmiante.sidId,
         projetNom: projet.libelle

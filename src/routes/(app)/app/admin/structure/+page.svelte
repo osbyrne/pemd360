@@ -3,7 +3,7 @@
 	import { fade, scale } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { page as pageStore } from '$app/stores';
-	import { Trash2 } from 'lucide-svelte';
+	import { Trash2, Download } from 'lucide-svelte';
 	import RiskTabs from '$lib/components/RiskTabs.svelte';
 
 	let { data } = $props();
@@ -75,6 +75,13 @@
 			<h1 class="text-2xl font-bold text-gray-900">Inventaire Structure</h1>
 			<p class="text-sm text-gray-500 mt-1">Liste des tags structure détectés.</p>
 		</div>
+        <a
+            href="structure/export{$pageStore.url.search}"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+        >
+            <Download class="w-4 h-4" />
+            Exporter en Excel
+        </a>
 	</div>
 
     <!-- Filters -->
@@ -114,17 +121,18 @@
 			<table class="w-full text-left text-sm text-gray-600">
 				<thead class="bg-gray-50 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200">
 					<tr>
-						<th class="px-6 py-4">Label</th>
-						<th class="px-6 py-4">Projet</th>
-						<th class="px-6 py-4">S. Screen</th>
-                        <th class="px-6 py-4">S. Shape</th>
+						<th class="px-6 py-4">Nom du prélèvement</th>
+						<th class="px-6 py-4">Description</th>
+						<th class="px-6 py-4">Localisation</th>
+						<th class="px-6 py-4">Type</th>
+						<th class="px-6 py-4">Miniature</th>
 						<th class="px-6 py-4 text-center w-32">Actions</th>
 					</tr>
 				</thead>
 				<tbody class="divide-y divide-gray-100">
 					{#if displayedList.length === 0}
 						<tr>
-							<td colspan="5" class="px-6 py-12 text-center text-gray-400">
+							<td colspan="6" class="px-6 py-12 text-center text-gray-400">
                                 {#if query}
 								    Aucun résultat pour "{query}".
                                 {:else}
@@ -137,15 +145,23 @@
 							<tr class="hover:bg-gray-50 transition-colors">
 								<td class="px-6 py-4 font-medium text-gray-900">
                                     {item.label}
-                                    <div class="text-xs text-gray-400 font-normal">{item.description || ''}</div>
                                 </td>
 								<td class="px-6 py-4">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                        {item.projetNom || 'Projet inconnu'}
-                                    </span>
+                                    {item.description || '-'}
                                 </td>
-                                <td class="px-6 py-4 text-gray-600">{item.screenSurface || '-'}</td>
-                                <td class="px-6 py-4 text-gray-600">{item.shapeSurface || '-'}</td>
+                                <td class="px-6 py-4">
+                                    -
+                                </td>
+                                <td class="px-6 py-4">
+                                    Structure
+                                </td>
+                                <td class="px-6 py-4">
+                                    {#if item.customImage}
+                                        <img src={item.customImage} alt={item.label} class="h-12 w-12 object-cover rounded shadow-sm bg-white" />
+                                    {:else}
+                                        <span class="text-xs text-gray-400">N/A</span>
+                                    {/if}
+                                </td>
 								<td class="px-6 py-4">
 									<div class="flex items-center justify-center gap-2">
 										<button

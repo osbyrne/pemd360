@@ -33,6 +33,8 @@ export const load: PageServerLoad = async ({ url, locals }) => {
         id: tagsTermite.id,
         label: tagsTermite.label,
         description: tagsTermite.description,
+        etage: tagsTermite.etage,
+        customImage: tagsTermite.customImage,
         presenceTermite: tagsTermite.presenceTermite,
         projetId: tagsTermite.sidId,
         projetNom: projet.libelle
