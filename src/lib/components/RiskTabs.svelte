@@ -10,6 +10,7 @@
     ];
 
     const currentPath = $derived($page.url.pathname);
+    const queryParams = $derived($page.url.search);
 </script>
 
 <div class="border-b border-gray-200 mb-6 -mx-6 px-6 bg-white sticky top-0 z-10">
@@ -17,7 +18,7 @@
         {#each tabs as tab}
             {@const isActive = currentPath.includes(tab.href)}
             <a
-                href={tab.href}
+                href="{tab.href}{queryParams}"
                 class="
                     group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap
                     {isActive 

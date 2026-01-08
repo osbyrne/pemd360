@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { fade, scale } from 'svelte/transition';
+	import { goto } from '$app/navigation';
+	import { page as pageStore } from '$app/stores';
 	import { Trash2 } from 'lucide-svelte';
 	import RiskTabs from '$lib/components/RiskTabs.svelte';
 
@@ -29,6 +31,18 @@
 
     const totalPages = $derived(Math.ceil(filteredList.length / perPage));
     const displayedList = $derived(filteredList.slice((page - 1) * perPage, page * perPage));
+
+    function handleProjectChange(event: Event) {
+        const select = event.target as HTMLSelectElement;
+        const value = select.value;
+        const url = new URL($pageStore.url);
+        if (value) {
+            url.searchParams.set('projectId', value);
+        } else {
+            url.searchParams.delete('projectId');
+        }
+        goto(url);
+    }
 
 	function openDeleteModal(item: any) {
 		currentItem = item;
@@ -63,9 +77,24 @@
 		</div>
 	</div>
 
-    <!-- Search Bar -->
-    <div class="mb-6">
-        <div class="relative">
+    <!-- Filters -->
+    <div class="mb-6 flex flex-col sm:flex-row gap-4">
+        <!-- Project Selector -->
+        <div class="w-full sm:w-64">
+             <select
+                class="block w-full rounded-xl border border-gray-300 bg-white py-3 px-4 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                value={data.selectedProjectId || ''}
+                onchange={handleProjectChange}
+            >
+                <option value="">Tous les projets</option>
+                {#each data.projects as project}
+                    <option value={project.id}>{project.libelle}</option>
+                {/each}
+            </select>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="relative flex-1">
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
                 <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
