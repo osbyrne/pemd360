@@ -1,4 +1,4 @@
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import { DATABASE_URL } from '$env/static/private';
+import { drizzle } from 'drizzle-orm/d1';
+import { Resource } from 'sst';
 
-export const db = drizzle({ connection: { source: DATABASE_URL } });
+export const db = drizzle(Resource.Database);
