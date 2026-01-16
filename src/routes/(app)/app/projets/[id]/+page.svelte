@@ -5,6 +5,7 @@
 	import tagPlombImg from '$lib/assets/img/tagplomb.gif';
 	import tagTermiteImg from '$lib/assets/img/tagtermite.gif';
 	import tagStructureImg from '$lib/assets/img/tagstructure.gif';
+	import tagPemdImg from '$lib/assets/img/pemd360.png';
 	import { Mail } from 'lucide-svelte';
 
 	let { data }: { data: PageData } = $props();
@@ -17,6 +18,7 @@
 	let showPlomb = $state(false);
 	let showTermite = $state(false);
 	let showStructure = $state(false);
+	let showPemd = $state(false);
 
 	// modal states and selected presence filters (defaults: both checked)
 	let showAmianteModal = $state(false);
@@ -43,6 +45,7 @@
 	let plombSids: string[] = [];
 	let termiteSids: string[] = [];
 	let structureSids: string[] = [];
+	let pemdSids: string[] = [];
 
 	async function toggleMail() {
 		if (!mpSdk) return;
@@ -240,6 +243,47 @@
 		}
 	}
 
+	async function togglePemd() {
+		if (!mpSdk) return;
+		if (showPemd) {
+			if (data.pemdTags && data.pemdTags.length > 0) {
+				console.log(`Adding ${data.pemdTags.length} pemd tags`);
+				for (const tag of data.pemdTags) {
+					try {
+						if (!tag.anchorPosition || !tag.stemVector) continue;
+						const anchorPosition = JSON.parse(tag.anchorPosition);
+						const stemVector = JSON.parse(tag.stemVector);
+						let description = tag.description || '';
+						if (tag.quantite) description += `\nQuantité: ${tag.quantite}`;
+						if (tag.etage) description += `\nÉtage: ${tag.etage}`;
+						if (tag.etat) description += `\nÉtat: ${tag.etat}`;
+
+						const tagDescriptor = {
+							label: 'PEMD',
+							description: description,
+							anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
+							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
+							color: { r: 0.6, g: 0.2, b: 0.8 }
+						};
+						const [sid] = await mpSdk.Mattertag.add(tagDescriptor);
+						pemdSids.push(sid);
+					} catch (tagError) {
+						console.error(`Failed to add pemd tag ${tag.id}:`, tagError);
+					}
+				}
+			}
+		} else {
+			for (const sid of pemdSids) {
+				try {
+					await mpSdk.Mattertag.remove(sid);
+				} catch (e) {
+					console.error(e);
+				}
+			}
+			pemdSids = [];
+		}
+	}
+
 	onMount(async () => {
 		try {
 			// @ts-ignore
@@ -253,32 +297,6 @@
 </script>
 
 <div class="h-screen w-full p-6 font-[Poppins] flex flex-col">
-	<div class="mb-6 flex items-center justify-between gap-4">
-		<h1 class="text-2xl font-bold text-gray-900">{data.projet.libelle}</h1>
-		<a
-			href="/app/projets/{data.projet.id}/cerfa"
-			download
-			class="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-		>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="20"
-				height="20"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-			>
-				<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-				<polyline points="7 10 12 15 17 10"></polyline>
-				<line x1="12" y1="15" x2="12" y2="3"></line>
-			</svg>
-			Télécharger Cerfa
-		</a>
-	</div>
-
 	<!-- Modals -->
 	{#if showAmianteModal}
 		<div class="fixed inset-0 z-50 flex items-center justify-center">
@@ -424,7 +442,7 @@
 		</div>
 	{/if}
 
-	<div class="mb-6 grid grid-cols-5 gap-4 w-full">
+	<div class="mb-6 grid grid-cols-6 gap-4 w-full">
 		<button
 			type="button"
 			title="Afficher les mail tags"
@@ -518,6 +536,23 @@
 				src={tagStructureImg}
 				alt="structure"
 				class={`h-10 w-10 transition-transform ${showStructure ? 'scale-110' : ''}`}
+			/>
+		</button>
+
+		<button
+			type="button"
+			title="Afficher les tags PEMD"
+			aria-pressed={showPemd}
+			on:click={() => {
+				showPemd = !showPemd;
+				togglePemd();
+			}}
+			class={`w-full h-20 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showPemd ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
+		>
+			<img
+				src={tagPemdImg}
+				alt="pemd"
+				class={`h-10 w-10 object-contain transition-transform ${showPemd ? 'scale-110' : ''}`}
 			/>
 		</button>
 	</div>
