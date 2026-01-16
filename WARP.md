@@ -210,7 +210,7 @@ When modifying `schema.ts`:
 1. Run `npx drizzle-kit generate` to create migration
 2. Review migration SQL in `drizzle/` directory
 3. Run `npx drizzle-kit migrate` to apply
-4. For production (Cloudflare D1), migrations are in `wrangler.json` config
+4. For production (Cloudflare D1)
 
 ### Code Style
 - Use Prettier for formatting (config in `.prettierrc`)
@@ -239,8 +239,7 @@ Use wrapper functions from `$lib/server/admin.ts` instead of calling `auth.api` 
 
 Target platform: Cloudflare Pages
 - Adapter: `@sveltejs/adapter-cloudflare`
-- Config: `wrangler.json` for D1 database binding
-- R2 storage must be configured via Cloudflare dashboard
+- Config: sst for clouflare binding
 
 Build output uses Cloudflare Workers runtime with Node.js compatibility enabled.
 
