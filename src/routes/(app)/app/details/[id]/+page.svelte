@@ -1,5 +1,14 @@
 <script lang="ts">
-	import { ArrowLeft, Calendar, MapPin, Building2, Hash, FileText, Target } from 'lucide-svelte';
+	import {
+		ArrowLeft,
+		Calendar,
+		MapPin,
+		Building2,
+		Hash,
+		FileText,
+		Target,
+		Download
+	} from 'lucide-svelte';
 	import type { PageData } from './$types';
 	import { fade, fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
@@ -28,30 +37,52 @@
 	{#if mounted}
 		<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6" in:fade={{ duration: 300 }}>
 			<!-- Header compact -->
-			<div in:fly={{ y: -20, duration: 500 }} class="relative bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 rounded-xl p-6 mb-6 overflow-hidden">
+			<div
+				in:fly={{ y: -20, duration: 500 }}
+				class="relative bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 rounded-xl p-6 mb-6 overflow-hidden"
+			>
 				<div class="absolute inset-0 bg-black/5"></div>
 				<div class="relative z-10">
-					<a href="/app/projets" class="inline-flex items-center gap-2 text-white/90 hover:text-white mb-4 transition-colors">
-						<ArrowLeft class="h-4 w-4" />
-						<span class="text-sm font-medium">Retour aux projets</span>
-					</a>
+					<div class="flex items-center justify-between mb-4">
+						<a
+							href="/app/projets"
+							class="inline-flex items-center gap-2 text-white/90 hover:text-white transition-colors"
+						>
+							<ArrowLeft class="h-4 w-4" />
+							<span class="text-sm font-medium">Retour aux projets</span>
+						</a>
+						<a
+							href="/app/projets/{data.projet.id}/cerfa"
+							download
+							class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border border-white/20"
+						>
+							<Download class="h-4 w-4" />
+							<span>Télécharger Cerfa</span>
+						</a>
+					</div>
 
 					<h1 class="text-3xl font-bold text-white mb-3">{data.projet.libelle}</h1>
-					
+
 					<div class="flex flex-wrap items-center gap-3">
-						<span class="inline-flex items-center gap-2 text-white/90 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-lg text-sm">
+						<span
+							class="inline-flex items-center gap-2 text-white/90 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-lg text-sm"
+						>
 							<Hash class="h-3.5 w-3.5" />
 							<span class="font-medium">{data.projet.reference}</span>
 						</span>
-						
+
 						{#if data.projet.societeNom}
-							<span class="inline-flex items-center gap-2 text-white/90 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-lg text-sm">
+							<span
+								class="inline-flex items-center gap-2 text-white/90 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-lg text-sm"
+							>
 								<Building2 class="h-3.5 w-3.5" />
 								<span class="font-medium">{data.projet.societeNom}</span>
 							</span>
 						{/if}
-						
-						<span class="inline-flex items-center gap-2 text-white/90 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-lg text-sm">
+
+						<span
+							class="inline-flex items-center gap-2 text-white/90 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-lg text-sm"
+						>
 							<MapPin class="h-3.5 w-3.5" />
 							<span class="font-medium">{data.projet.ville}</span>
 						</span>
@@ -77,7 +108,7 @@
 								<p class="text-xs text-gray-500 mb-1 uppercase tracking-wide">Adresse</p>
 								<p class="text-sm text-gray-900 font-medium">{data.projet.rue}</p>
 							</div>
-							
+
 							<div class="grid grid-cols-2 gap-3">
 								<div class="p-3 bg-gray-50 rounded-lg">
 									<p class="text-xs text-gray-500 mb-1 uppercase tracking-wide">CP</p>
@@ -102,10 +133,12 @@
 
 						<div class="space-y-3">
 							<div class="p-3 bg-violet-50 rounded-lg border border-violet-100">
-								<p class="text-xs text-violet-600 mb-1 uppercase tracking-wide font-medium">Code INSEE</p>
+								<p class="text-xs text-violet-600 mb-1 uppercase tracking-wide font-medium">
+									Code INSEE
+								</p>
 								<p class="text-sm text-gray-900 font-semibold">{data.projet.codeInsee}</p>
 							</div>
-							
+
 							<div class="grid grid-cols-2 gap-3">
 								<div class="p-3 bg-gray-50 rounded-lg">
 									<p class="text-xs text-gray-500 mb-1 uppercase tracking-wide">Section</p>
@@ -132,15 +165,27 @@
 						</div>
 
 						<div class="space-y-3">
-							<div class="p-3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
-								<p class="text-xs text-blue-600 mb-1 uppercase tracking-wide font-medium">Démarrage</p>
-								<p class="text-sm text-gray-900 font-semibold">{formatDate(data.projet.dateDemarrage)}</p>
+							<div
+								class="p-3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-100"
+							>
+								<p class="text-xs text-blue-600 mb-1 uppercase tracking-wide font-medium">
+									Démarrage
+								</p>
+								<p class="text-sm text-gray-900 font-semibold">
+									{formatDate(data.projet.dateDemarrage)}
+								</p>
 							</div>
-							
+
 							{#if data.projet.dateDeFin}
-								<div class="p-3 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border border-purple-100">
-									<p class="text-xs text-purple-600 mb-1 uppercase tracking-wide font-medium">Fin prévue</p>
-									<p class="text-sm text-gray-900 font-semibold">{formatDate(data.projet.dateDeFin)}</p>
+								<div
+									class="p-3 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border border-purple-100"
+								>
+									<p class="text-xs text-purple-600 mb-1 uppercase tracking-wide font-medium">
+										Fin prévue
+									</p>
+									<p class="text-sm text-gray-900 font-semibold">
+										{formatDate(data.projet.dateDeFin)}
+									</p>
 								</div>
 							{/if}
 						</div>
@@ -158,11 +203,13 @@
 						<div class="space-y-3">
 							{#if data.projet.etablissementNom}
 								<div class="p-3 bg-orange-50 rounded-lg border border-orange-100">
-									<p class="text-xs text-orange-600 mb-1 uppercase tracking-wide font-medium">Établissement</p>
+									<p class="text-xs text-orange-600 mb-1 uppercase tracking-wide font-medium">
+										Établissement
+									</p>
 									<p class="text-sm text-gray-900 font-semibold">{data.projet.etablissementNom}</p>
 								</div>
 							{/if}
-							
+
 							<div class="p-3 bg-gray-50 rounded-lg">
 								<p class="text-xs text-gray-500 mb-1 uppercase tracking-wide">Maître d'ouvrage</p>
 								<p class="text-sm text-gray-900 font-medium">{data.projet.maitreDOuvrage}</p>
