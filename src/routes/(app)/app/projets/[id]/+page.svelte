@@ -24,10 +24,27 @@
 	let showAmianteModal = $state(false);
 	let showPlombModal = $state(false);
 	let showTermiteModal = $state(false);
+	// Modal pour PEMD
+	let showPemdModal = $state(false);
 
 	let amiantePresenceSelected: number[] = [0, 1, 2];
 	let plombPresenceSelected: number[] = [0, 1, 2];
 	let termitePresenceSelected: number[] = [0, 1, 2];
+
+	// PEMD filter / autocomplete state
+	let pemdGroups = $state([] as { id: number | null; name: string | null }[]); // used for project-specific facets as before
+	let pemdCategories = $state([] as { id: number | null; name: string | null; groupeId: number | null }[]);
+	let pemdObjects = $state([] as { id: number | null; name: string | null; categorieId: number | null }[]);
+	// Master lists coming from server (categorie_v2 and groupe)
+	let allPemdGroups = $state([] as { id: number | null; name: string | null }[]);
+	let categoriesV2 = $state([] as { id: number | null; name: string | null; groupeId: number | null }[]);
+	let selectedPemdGroup = $state('');
+	let selectedPemdCategory = $state('');
+	let selectedPemdObject = $state('');
+	// Filtered lists (depend on selection)
+	let pemdCategoriesFiltered = $state([] as { id: number | null; name: string | null; groupeId: number | null }[]);
+	let pemdObjectsFiltered = $state([] as { id: number | null; name: string | null; categorieId: number | null }[]);
+
 
 	// helper booleans for modal checkboxes
 	let amiantePresent = $state(true);
@@ -45,7 +62,7 @@
 	let plombSids: string[] = [];
 	let termiteSids: string[] = [];
 	let structureSids: string[] = [];
-	let pemdSids: string[] = [];
+	let pemdSids = $state([] as string[]);
 
 	// SDK helper to support the new Tag API and fallback to Mattertag when needed
 	async function addTag(descriptor: any) {
@@ -266,79 +283,203 @@
 		}
 	}
 
-	async function togglePemd() {
-		if (!mpSdk) return;
-		if (showPemd) {
-			if (data.pemdTags && data.pemdTags.length > 0) {
-				console.log(`Adding ${data.pemdTags.length} pemd tags`);
-				for (const tag of data.pemdTags) {
-					try {
-						if (!tag.anchorPosition || !tag.stemVector) continue;
-						const anchorPosition = JSON.parse(tag.anchorPosition);
-						const stemVector = JSON.parse(tag.stemVector);
-						let description = tag.description || '';
-						if (tag.quantite) description += `\nQuantité: ${tag.quantite}`;
-						if (tag.etage) description += `\nÉtage: ${tag.etage}`;
-						if (tag.etat) description += `\nÉtat: ${tag.etat}`;
+	// Build cache of PEMD facet lists for client-side filtering
+	function buildPemdFacets() {
+		const groups: { id: number | null; name: string | null }[] = [];
+		const categories: { id: number | null; name: string | null; groupeId: number | null }[] = [];
+		const objects: { id: number | null; name: string | null; categorieId: number | null }[] = [];
+		if (!data.pemdFacets) {
+			pemdGroups = groups;
+			pemdCategories = categories;
+			pemdObjects = objects;
+			// set master lists
+			allPemdGroups = data.groups || [];
+			categoriesV2 = data.categoriesV2 || [];
+			return;
+		}
+		for (const f of data.pemdFacets) {
+			if (f.groupeName != null) {
+				if (!groups.some(g => g.name === f.groupeName)) {
+					groups.push({ id: f.groupeId, name: f.groupeName });
+				}
+			}
+			if (f.categorieName != null) {
+				if (!categories.some(c => c.name === f.categorieName)) {
+					categories.push({ id: f.categorieId, name: f.categorieName, groupeId: f.groupeId });
+				}
+			}
+			if (f.objetName != null) {
+				if (!objects.some(o => o.name === f.objetName)) {
+					objects.push({ id: f.objetId, name: f.objetName, categorieId: f.categorieId });
+				}
+			}
+		}
+		pemdGroups = groups;
+		pemdCategories = categories;
+		pemdObjects = objects;
+		// set master lists from server response if available, otherwise keep what we derived
+		allPemdGroups = data.groups || groups;
+		categoriesV2 = data.categoriesV2 || categories;
+	}
 
-						const tagDescriptor = {
-							label: 'PEMD',
-							description: description,
-							anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
-							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
-							color: { r: 0.6, g: 0.2, b: 0.8 }
-						};
-					const [sid] = await addTag(tagDescriptor);
-						pemdSids.push(sid);
-					} catch (tagError) {
-						console.error(`Failed to add pemd tag ${tag.id}:`, tagError);
-					}
-				}
+	function isPemdFilterSelected() {
+		return selectedPemdGroup.trim() !== '' || selectedPemdCategory.trim() !== '' || selectedPemdObject.trim() !== '';
+	}
+
+	// Handlers for group/category changes (run on input) — avoids using rune reactive statements
+	function handleGroupChange() {
+		if (selectedPemdGroup && selectedPemdGroup.trim() !== '') {
+			const group = allPemdGroups.find(g => g.name === selectedPemdGroup || String(g.id) === selectedPemdGroup);
+			if (group) {
+				pemdCategoriesFiltered = categoriesV2.filter(c => c.groupeId === group.id);
+			} else {
+				pemdCategoriesFiltered = [];
 			}
+			// Clear downstream selections
+			selectedPemdCategory = '';
+			selectedPemdObject = '';
 		} else {
-			for (const sid of pemdSids) {
-				try {
-					await mpSdk.Mattertag.remove(sid);
-				} catch (e) {
-					console.error(e);
-				}
-			}
-			pemdSids = [];
+			pemdCategoriesFiltered = [];
+			pemdObjectsFiltered = [];
+			selectedPemdCategory = '';
+			selectedPemdObject = '';
 		}
 	}
 
-	onMount(async () => {
-		let handleUnhandledRejection: (ev: PromiseRejectionEvent) => void;
-		try {
-			// @ts-ignore
-			const { connect } = await import('$lib/matterport/sdk.es6.js');
-			mpSdk = await connect(iframe);
-			// Shim: if SDK supports Tag API, forward Mattertag calls to Tag to avoid deprecation warnings
-			if (mpSdk && mpSdk.Tag) {
-				mpSdk.Mattertag = mpSdk.Mattertag || {};
-				mpSdk.Mattertag.add = (...args: any[]) => mpSdk.Tag.add(...args);
-				mpSdk.Mattertag.remove = (...args: any[]) => mpSdk.Tag.remove(...args);
+	function handleCategoryChange() {
+		if (selectedPemdCategory && selectedPemdCategory.trim() !== '') {
+			const cat = categoriesV2.find(c => c.name === selectedPemdCategory || String(c.id) === selectedPemdCategory);
+			if (cat) {
+				pemdObjectsFiltered = pemdObjects.filter(o => o.categorieId === cat.id);
+			} else {
+				pemdObjectsFiltered = [];
 			}
-
-			// Suppress noisy analytics/network errors coming from the Matterport SDK (often caused by ad-blockers)
-			handleUnhandledRejection = (ev: PromiseRejectionEvent) => {
-				try {
-					const r: any = ev.reason;
-					const msg = typeof r === 'string' ? r : r && (r.message || r.error && r.error.message || r.url || '');
-					if (msg && String(msg).includes('events.matterport.com')) {
-						ev.preventDefault();
-						console.debug('Ignored blocked Matterport analytics request:', r);
-					}
-				} catch (ignored) {
-					// ignore handler errors
-				}
-			};
-			window.addEventListener('unhandledrejection', handleUnhandledRejection);
-
-			console.log('Matterport SDK connected', mpSdk);
-		} catch (e) {
-			console.error('Matterport SDK connection failed:', e);
+			selectedPemdObject = '';
+		} else {
+			pemdObjectsFiltered = [];
+			selectedPemdObject = '';
 		}
+	}
+
+	function getAllowedObjetIds() {
+		const allowed = new Set<number>();
+		if (selectedPemdObject.trim() !== '') {
+			for (const o of pemdObjects) {
+				if (o.name === selectedPemdObject && o.id != null) allowed.add(o.id);
+			}
+			return Array.from(allowed).filter((v): v is number => v != null);
+		}
+
+		if (selectedPemdCategory.trim() !== '') {
+			const cat = categoriesV2.find(c => (c.id === Number(selectedPemdCategory) || c.name === selectedPemdCategory));
+			if (cat) {
+				for (const o of pemdObjects) {
+					if (o.categorieId === cat.id && o.id != null) allowed.add(o.id);
+				}
+			}
+			return Array.from(allowed).filter((v): v is number => v != null);
+		}
+
+		if (selectedPemdGroup.trim() !== '') {
+			const group = allPemdGroups.find(g => g.name === selectedPemdGroup || String(g.id) === selectedPemdGroup);
+			if (group) {
+				const allowedCatIds = categoriesV2.filter(c => c.groupeId === group.id).map(c => c.id);
+				for (const o of pemdObjects) {
+					if (o.categorieId != null && allowedCatIds.includes(o.categorieId) && o.id != null) allowed.add(o.id);
+				}
+			}
+			return Array.from(allowed).filter((v): v is number => v != null);
+		}
+
+		// no filter: return empty array (do not add everything by default)
+		return [];
+	}
+
+	async function addFilteredPemdTags() {
+		if (!mpSdk) return;
+		if (!isPemdFilterSelected()) {
+			alert('Veuillez sélectionner au moins un filtre (groupe, catégorie ou objet).');
+			return;
+		}
+		const allowedIds = getAllowedObjetIds();
+		if (!data.pemdTags || data.pemdTags.length === 0) return;
+		const filtered = data.pemdTags.filter((t: any) => t.objetId != null && allowedIds.includes(Number(t.objetId)));
+		console.log(`Adding ${filtered.length} pemd tags (filtered)`);
+		for (const tag of filtered) {
+			try {
+				if (!tag.anchorPosition || !tag.stemVector) continue;
+				const anchorPosition = JSON.parse(tag.anchorPosition);
+				const stemVector = JSON.parse(tag.stemVector);
+				let description = tag.description || '';
+				if (tag.quantite) description += `\nQuantité: ${tag.quantite}`;
+				if (tag.etage) description += `\nÉtage: ${tag.etage}`;
+				if (tag.etat) description += `\nÉtat: ${tag.etat}`;
+
+				const tagDescriptor = {
+					label: 'PEMD',
+					description: description,
+					anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
+					stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
+					color: { r: 0.6, g: 0.2, b: 0.8 }
+				};
+			const [sid] = await addTag(tagDescriptor);
+				pemdSids.push(sid);
+			} catch (tagError) {
+				console.error(`Failed to add pemd tag ${tag.id}:`, tagError);
+			}
+		}
+		showPemd = pemdSids.length > 0;
+		showPemdModal = false;
+	}
+
+	async function removePemdTags() {
+		if (!mpSdk) return;
+		for (const sid of pemdSids) {
+			try {
+				await mpSdk.Mattertag.remove(sid);
+			} catch (e) {
+				console.error(e);
+			}
+		}
+		pemdSids = [];
+		showPemd = false;
+	}
+
+
+	onMount(() => {
+		let handleUnhandledRejection: (ev: PromiseRejectionEvent) => void;
+		(async () => {
+			try {
+				// @ts-ignore
+				const { connect } = await import('$lib/matterport/sdk.es6.js');
+				mpSdk = await connect(iframe);
+				// Shim: if SDK supports Tag API, forward Mattertag calls to Tag to avoid deprecation warnings
+				if (mpSdk && mpSdk.Tag) {
+					mpSdk.Mattertag = mpSdk.Mattertag || {};
+					mpSdk.Mattertag.add = (...args: any[]) => mpSdk.Tag.add(...args);
+					mpSdk.Mattertag.remove = (...args: any[]) => mpSdk.Tag.remove(...args);
+				}
+
+				// Suppress noisy analytics/network errors coming from the Matterport SDK (often caused by ad-blockers)
+				handleUnhandledRejection = (ev: PromiseRejectionEvent) => {
+					try {
+						const r: any = ev.reason;
+						const msg = typeof r === 'string' ? r : r && (r.message || r.error && r.error.message || r.url || '');
+						if (msg && String(msg).includes('events.matterport.com')) {
+							ev.preventDefault();
+							console.debug('Ignored blocked Matterport analytics request:', r);
+						}
+					} catch (ignored) {
+						// ignore handler errors
+					}
+				};
+				window.addEventListener('unhandledrejection', handleUnhandledRejection);
+
+				console.log('Matterport SDK connected', mpSdk);
+			} catch (e) {
+				console.error('Matterport SDK connection failed:', e);
+			}
+		})();
 
 		return () => {
 			if (handleUnhandledRejection) window.removeEventListener('unhandledrejection', handleUnhandledRejection);
@@ -404,6 +545,65 @@
 							toggleAmiante();
 						}}>Appliquer</button
 					>
+				</div>
+			</div>
+		</div>
+	{/if}
+
+	{#if showPemdModal}
+		<div class="fixed inset-0 z-50 flex items-center justify-center">
+			<div
+				class="absolute inset-0 bg-black/40"
+				role="button"
+				tabindex="0"
+				aria-label="Fermer le modal"
+				onclick={() => {
+					showPemdModal = false;
+				}}
+				onkeydown={(e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						showPemdModal = false;
+					}
+				}}
+			></div>
+			<div class="relative z-10 w-96 rounded-lg bg-white p-4 shadow-lg">
+				<h3 class="mb-3 text-lg font-semibold">Filtrer PEMD</h3>
+				<div class="mb-3 flex flex-col gap-2">
+					<label class="flex flex-col">
+						<span class="text-sm text-gray-700">Groupe</span>
+						<input list="pemd-group-list" placeholder="Choisir un groupe" bind:value={selectedPemdGroup} oninput={handleGroupChange} class="w-full border rounded px-2 py-1" />
+						<datalist id="pemd-group-list">
+							{#each allPemdGroups as g}
+							<option value={g.name}></option>
+							{/each}
+						</datalist>
+					</label>
+					<label class="flex flex-col">
+						<span class="text-sm text-gray-700">Catégorie</span>
+					<input list="pemd-category-list" placeholder="Choisir une catégorie" bind:value={selectedPemdCategory} oninput={handleCategoryChange} class="w-full border rounded px-2 py-1" disabled={selectedPemdGroup.trim() === ''} />
+					<datalist id="pemd-category-list">
+						{#each pemdCategoriesFiltered as c}
+							<option value={c.name}></option>
+							{/each}
+						</datalist>
+					</label>
+					<label class="flex flex-col">
+						<span class="text-sm text-gray-700">Objet</span>
+					<input list="pemd-object-list" placeholder="Choisir un objet" bind:value={selectedPemdObject} class="w-full border rounded px-2 py-1" disabled={selectedPemdCategory.trim() === ''} />
+					<datalist id="pemd-object-list">
+						{#each pemdObjectsFiltered as o}
+							<option value={o.name}></option>
+							{/each}
+						</datalist>
+					</label>
+				</div>
+				<div class="mb-3 text-sm text-gray-600">
+					<div>Filtres appliqués: {selectedPemdGroup || '—'} / {selectedPemdCategory || '—'} / {selectedPemdObject || '—'}</div>
+				</div>
+				<div class="flex justify-end gap-2">
+					<button class="rounded px-3 py-1 text-sm" onclick={() => { showPemdModal = false; }}>Fermer</button>
+					<button class="rounded bg-red-600 px-3 py-1 text-sm text-white" onclick={removePemdTags} disabled={pemdSids.length===0}>Supprimer les tags PEMD</button>
+					<button class="rounded bg-blue-600 px-3 py-1 text-sm text-white" onclick={addFilteredPemdTags} disabled={!isPemdFilterSelected()}>Ajouter dans le modèle</button>
 				</div>
 			</div>
 		</div>
@@ -623,8 +823,9 @@
 			title="Afficher les tags PEMD"
 			aria-pressed={showPemd}
 			onclick={() => {
-				showPemd = !showPemd;
-				togglePemd();
+				// Open modal to choose filters (group / category / object) instead of adding all tags
+				buildPemdFacets();
+				showPemdModal = true;
 			}}
 			class={`w-full h-20 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showPemd ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
 		>

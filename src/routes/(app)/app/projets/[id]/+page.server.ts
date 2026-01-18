@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/db/client';
-import { projet, etablissement, user, tagMail, tagsAmiante, tagsPlomb, tagsTermite, tagsStructure, pemd } from '$lib/server/db/schema';
+import { projet, etablissement, user, tagMail, tagsAmiante, tagsPlomb, tagsTermite, tagsStructure, pemd, groupe, categorieV2, objets } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
@@ -46,6 +46,34 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     const structureTags = await db.select().from(tagsStructure).where(eq(tagsStructure.sidId, id));
     const pemdTags = await db.select().from(pemd).where(eq(pemd.sidId, id));
 
+    // Build facets for PEMD (groupe -> categorie -> objet) to drive UI filters/autocomplete
+    const pemdFacets = await db
+        .select({
+            groupeId: groupe.id,
+            groupeName: groupe.groupe,
+            categorieId: categorieV2.id,
+            categorieName: categorieV2.categoriev2,
+            objetId: objets.id,
+            objetName: objets.objet
+        })
+        .from(pemd)
+        .leftJoin(objets, eq(pemd.objetId, objets.id))
+        .leftJoin(categorieV2, eq(objets.categorieId, categorieV2.id))
+        .leftJoin(groupe, eq(categorieV2.groupeId, groupe.id))
+        .where(eq(pemd.sidId, id))
+        .orderBy(groupe.groupe, categorieV2.categoriev2, objets.objet);
+
+    // Also load all groups and all categorie_v2 (master lists) to power the autocomplete.
+    const allGroups = await db
+        .select({ id: groupe.id, name: groupe.groupe })
+        .from(groupe)
+        .orderBy(groupe.groupe);
+
+    const categoriesV2 = await db
+        .select({ id: categorieV2.id, name: categorieV2.categoriev2, groupeId: categorieV2.groupeId })
+        .from(categorieV2)
+        .orderBy(categorieV2.categoriev2);
+
     return {
         projet: project,
         tags: tags,
@@ -53,6 +81,9 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         plombTags: plombTags,
         termiteTags: termiteTags,
         structureTags: structureTags,
-        pemdTags: pemdTags
+        pemdTags: pemdTags,
+        pemdFacets: pemdFacets,
+        groups: allGroups,
+        categoriesV2: categoriesV2
     };
 };
