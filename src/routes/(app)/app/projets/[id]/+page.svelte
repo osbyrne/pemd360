@@ -47,6 +47,29 @@
 	let structureSids: string[] = [];
 	let pemdSids: string[] = [];
 
+	// SDK helper to support the new Tag API and fallback to Mattertag when needed
+	async function addTag(descriptor: any) {
+		if (!mpSdk) return [];
+		if (mpSdk.Tag && typeof mpSdk.Tag.add === 'function') {
+			return mpSdk.Tag.add(descriptor);
+		}
+		if (mpSdk.Mattertag && typeof mpSdk.Mattertag.add === 'function') {
+			return mpSdk.Mattertag.add(descriptor);
+		}
+		throw new Error('SDK does not support Tag.add or Mattertag.add');
+	}
+
+	async function removeTag(sid: string) {
+		if (!mpSdk) return;
+		if (mpSdk.Tag && typeof mpSdk.Tag.remove === 'function') {
+			return mpSdk.Tag.remove(sid);
+		}
+		if (mpSdk.Mattertag && typeof mpSdk.Mattertag.remove === 'function') {
+			return mpSdk.Mattertag.remove(sid);
+		}
+		throw new Error('SDK does not support Tag.remove or Mattertag.remove');
+	}
+
 	async function toggleMail() {
 		if (!mpSdk) return;
 		if (showMail) {
@@ -63,7 +86,7 @@
 							anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
 							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z }
 						};
-						const [sid] = await mpSdk.Mattertag.add(tagDescriptor);
+					const [sid] = await addTag(tagDescriptor);
 						mailSids.push(sid);
 					} catch (tagError) {
 						console.error(`Failed to add tag ${tag.id}:`, tagError);
@@ -102,7 +125,7 @@
 							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
 							color: tag.presenceAmiante ? { r: 1, g: 0, b: 0 } : { r: 0, g: 1, b: 0 }
 						};
-						const [sid] = await mpSdk.Mattertag.add(tagDescriptor);
+						const [sid] = await addTag(tagDescriptor);
 						amianteSids.push(sid);
 					} catch (tagError) {
 						console.error(`Failed to add amiante tag ${tag.id}:`, tagError);
@@ -146,7 +169,7 @@
 							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
 							color: tag.presencePlomb ? { r: 1, g: 0.5, b: 0 } : { r: 0, g: 0.7, b: 1 }
 						};
-						const [sid] = await mpSdk.Mattertag.add(tagDescriptor);
+					const [sid] = await addTag(tagDescriptor);
 						plombSids.push(sid);
 					} catch (tagError) {
 						console.error(`Failed to add plomb tag ${tag.id}:`, tagError);
@@ -185,7 +208,7 @@
 							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
 							color: tag.presenceTermite ? { r: 0.6, g: 0.3, b: 0 } : { r: 0.5, g: 1, b: 0.5 }
 						};
-						const [sid] = await mpSdk.Mattertag.add(tagDescriptor);
+					const [sid] = await addTag(tagDescriptor);
 						termiteSids.push(sid);
 					} catch (tagError) {
 						console.error(`Failed to add termite tag ${tag.id}:`, tagError);
@@ -224,7 +247,7 @@
 							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
 							color: { r: 0.5, g: 0.5, b: 0.5 }
 						};
-						const [sid] = await mpSdk.Mattertag.add(tagDescriptor);
+					const [sid] = await addTag(tagDescriptor);
 						structureSids.push(sid);
 					} catch (tagError) {
 						console.error(`Failed to add structure tag ${tag.id}:`, tagError);
@@ -265,7 +288,7 @@
 							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
 							color: { r: 0.6, g: 0.2, b: 0.8 }
 						};
-						const [sid] = await mpSdk.Mattertag.add(tagDescriptor);
+					const [sid] = await addTag(tagDescriptor);
 						pemdSids.push(sid);
 					} catch (tagError) {
 						console.error(`Failed to add pemd tag ${tag.id}:`, tagError);
@@ -285,14 +308,46 @@
 	}
 
 	onMount(async () => {
+		let handleUnhandledRejection: (ev: PromiseRejectionEvent) => void;
 		try {
 			// @ts-ignore
 			const { connect } = await import('$lib/matterport/sdk.es6.js');
 			mpSdk = await connect(iframe);
+			// Shim: if SDK supports Tag API, forward Mattertag calls to Tag to avoid deprecation warnings
+			if (mpSdk && mpSdk.Tag) {
+				mpSdk.Mattertag = mpSdk.Mattertag || {};
+				mpSdk.Mattertag.add = (...args: any[]) => mpSdk.Tag.add(...args);
+				mpSdk.Mattertag.remove = (...args: any[]) => mpSdk.Tag.remove(...args);
+			}
+
+			// Suppress noisy analytics/network errors coming from the Matterport SDK (often caused by ad-blockers)
+			handleUnhandledRejection = (ev: PromiseRejectionEvent) => {
+				try {
+					const r: any = ev.reason;
+					const msg = typeof r === 'string' ? r : r && (r.message || r.error && r.error.message || r.url || '');
+					if (msg && String(msg).includes('events.matterport.com')) {
+						ev.preventDefault();
+						console.debug('Ignored blocked Matterport analytics request:', r);
+					}
+				} catch (ignored) {
+					// ignore handler errors
+				}
+			};
+			window.addEventListener('unhandledrejection', handleUnhandledRejection);
+
 			console.log('Matterport SDK connected', mpSdk);
 		} catch (e) {
 			console.error('Matterport SDK connection failed:', e);
 		}
+
+		return () => {
+			if (handleUnhandledRejection) window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+			try {
+				if (mpSdk && mpSdk.disconnect) mpSdk.disconnect();
+			} catch (err) {
+				// ignore disconnect errors
+			}
+		};
 	});
 </script>
 
