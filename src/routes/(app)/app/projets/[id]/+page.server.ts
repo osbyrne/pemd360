@@ -74,6 +74,11 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         .from(categorieV2)
         .orderBy(categorieV2.categoriev2);
 
+    const allPemdObjects = await db
+        .select({ id: objets.id, name: objets.objet, categorieId: objets.categorieId })
+        .from(objets)
+        .orderBy(objets.objet);
+
     return {
         projet: project,
         tags: tags,
@@ -84,6 +89,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         pemdTags: pemdTags,
         pemdFacets: pemdFacets,
         groups: allGroups,
-        categoriesV2: categoriesV2
+        categoriesV2: categoriesV2,
+        allPemdObjects: allPemdObjects
     };
 };

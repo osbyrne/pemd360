@@ -35,6 +35,8 @@
 	let pemdGroups = $state([] as { id: number | null; name: string | null }[]); // used for project-specific facets as before
 	let pemdCategories = $state([] as { id: number | null; name: string | null; groupeId: number | null }[]);
 	let pemdObjects = $state([] as { id: number | null; name: string | null; categorieId: number | null }[]);
+	// Master list of objects (complete set) coming from server
+	let allPemdObjects = $state([] as { id: number | null; name: string | null; categorieId: number | null }[]);
 	// Master lists coming from server (categorie_v2 and groupe)
 	let allPemdGroups = $state([] as { id: number | null; name: string | null }[]);
 	let categoriesV2 = $state([] as { id: number | null; name: string | null; groupeId: number | null }[]);
@@ -113,7 +115,7 @@
 		} else {
 			for (const sid of mailSids) {
 				try {
-					await mpSdk.Mattertag.remove(sid);
+					await removeTag(sid);
 				} catch (e) {
 					console.error(e);
 				}
@@ -125,6 +127,15 @@
 	async function toggleAmiante() {
 		if (!mpSdk) return;
 		if (showAmiante) {
+			// Remove any previously added amiante tags so we don't duplicate or keep stale tags
+			for (const sid of amianteSids) {
+				try {
+					await removeTag(sid);
+				} catch (e) {
+					console.error('Failed to remove previous amiante sid', sid, e);
+				}
+			}
+			amianteSids = [];
 			if (data.amianteTags && data.amianteTags.length > 0) {
 				const filtered = data.amianteTags.filter((t: any) =>
 					amiantePresenceSelected.includes(Number(t.presenceAmiante))
@@ -152,7 +163,7 @@
 		} else {
 			for (const sid of amianteSids) {
 				try {
-					await mpSdk.Mattertag.remove(sid);
+					await removeTag(sid);
 				} catch (e) {
 					console.error(e);
 				}
@@ -164,6 +175,15 @@
 	async function togglePlomb() {
 		if (!mpSdk) return;
 		if (showPlomb) {
+			// remove previous plomb tags to avoid duplicates / stale display
+			for (const sid of plombSids) {
+				try {
+					await removeTag(sid);
+				} catch (e) {
+					console.error('Failed to remove previous plomb sid', sid, e);
+				}
+			}
+			plombSids = [];
 			if (data.plombTags && data.plombTags.length > 0) {
 				const filtered = data.plombTags.filter((t: any) =>
 					plombPresenceSelected.includes(Number(t.presencePlomb))
@@ -196,7 +216,7 @@
 		} else {
 			for (const sid of plombSids) {
 				try {
-					await mpSdk.Mattertag.remove(sid);
+					await removeTag(sid);
 				} catch (e) {
 					console.error(e);
 				}
@@ -208,6 +228,15 @@
 	async function toggleTermite() {
 		if (!mpSdk) return;
 		if (showTermite) {
+			// remove any previous termite tags
+			for (const sid of termiteSids) {
+				try {
+					await removeTag(sid);
+				} catch (e) {
+					console.error('Failed to remove previous termite sid', sid, e);
+				}
+			}
+			termiteSids = [];
 			if (data.termiteTags && data.termiteTags.length > 0) {
 				const filtered = data.termiteTags.filter((t: any) =>
 					termitePresenceSelected.includes(Number(t.presenceTermite))
@@ -225,7 +254,7 @@
 							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
 							color: tag.presenceTermite ? { r: 0.6, g: 0.3, b: 0 } : { r: 0.5, g: 1, b: 0.5 }
 						};
-					const [sid] = await addTag(tagDescriptor);
+						const [sid] = await addTag(tagDescriptor);
 						termiteSids.push(sid);
 					} catch (tagError) {
 						console.error(`Failed to add termite tag ${tag.id}:`, tagError);
@@ -235,7 +264,7 @@
 		} else {
 			for (const sid of termiteSids) {
 				try {
-					await mpSdk.Mattertag.remove(sid);
+					await removeTag(sid);
 				} catch (e) {
 					console.error(e);
 				}
@@ -247,6 +276,15 @@
 	async function toggleStructure() {
 		if (!mpSdk) return;
 		if (showStructure) {
+			// remove any previously added structure tags
+			for (const sid of structureSids) {
+				try {
+					await removeTag(sid);
+				} catch (e) {
+					console.error('Failed to remove previous structure sid', sid, e);
+				}
+			}
+			structureSids = [];
 			if (data.structureTags && data.structureTags.length > 0) {
 				console.log(`Adding ${data.structureTags.length} structure tags`);
 				for (const tag of data.structureTags) {
@@ -264,7 +302,7 @@
 							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
 							color: { r: 0.5, g: 0.5, b: 0.5 }
 						};
-					const [sid] = await addTag(tagDescriptor);
+						const [sid] = await addTag(tagDescriptor);
 						structureSids.push(sid);
 					} catch (tagError) {
 						console.error(`Failed to add structure tag ${tag.id}:`, tagError);
@@ -274,13 +312,13 @@
 		} else {
 			for (const sid of structureSids) {
 				try {
-					await mpSdk.Mattertag.remove(sid);
+					await removeTag(sid);
 				} catch (e) {
 					console.error(e);
 				}
 			}
 			structureSids = [];
-		}
+		} 
 	}
 
 	// Build cache of PEMD facet lists for client-side filtering
@@ -295,6 +333,7 @@
 			// set master lists
 			allPemdGroups = data.groups || [];
 			categoriesV2 = data.categoriesV2 || [];
+			allPemdObjects = data.allPemdObjects || objects;
 			return;
 		}
 		for (const f of data.pemdFacets) {
@@ -320,6 +359,7 @@
 		// set master lists from server response if available, otherwise keep what we derived
 		allPemdGroups = data.groups || groups;
 		categoriesV2 = data.categoriesV2 || categories;
+		allPemdObjects = data.allPemdObjects || objects;
 	}
 
 	function isPemdFilterSelected() {
@@ -350,7 +390,7 @@
 		if (selectedPemdCategory && selectedPemdCategory.trim() !== '') {
 			const cat = categoriesV2.find(c => c.name === selectedPemdCategory || String(c.id) === selectedPemdCategory);
 			if (cat) {
-				pemdObjectsFiltered = pemdObjects.filter(o => o.categorieId === cat.id);
+				pemdObjectsFiltered = allPemdObjects.filter(o => o.categorieId === cat.id);
 			} else {
 				pemdObjectsFiltered = [];
 			}
@@ -364,7 +404,7 @@
 	function getAllowedObjetIds() {
 		const allowed = new Set<number>();
 		if (selectedPemdObject.trim() !== '') {
-			for (const o of pemdObjects) {
+			for (const o of allPemdObjects) {
 				if (o.name === selectedPemdObject && o.id != null) allowed.add(o.id);
 			}
 			return Array.from(allowed).filter((v): v is number => v != null);
@@ -373,7 +413,7 @@
 		if (selectedPemdCategory.trim() !== '') {
 			const cat = categoriesV2.find(c => (c.id === Number(selectedPemdCategory) || c.name === selectedPemdCategory));
 			if (cat) {
-				for (const o of pemdObjects) {
+				for (const o of allPemdObjects) {
 					if (o.categorieId === cat.id && o.id != null) allowed.add(o.id);
 				}
 			}
@@ -384,7 +424,7 @@
 			const group = allPemdGroups.find(g => g.name === selectedPemdGroup || String(g.id) === selectedPemdGroup);
 			if (group) {
 				const allowedCatIds = categoriesV2.filter(c => c.groupeId === group.id).map(c => c.id);
-				for (const o of pemdObjects) {
+				for (const o of allPemdObjects) {
 					if (o.categorieId != null && allowedCatIds.includes(o.categorieId) && o.id != null) allowed.add(o.id);
 				}
 			}
@@ -403,6 +443,8 @@
 		}
 		const allowedIds = getAllowedObjetIds();
 		if (!data.pemdTags || data.pemdTags.length === 0) return;
+		// remove existing PEMD tags before adding the new filtered set
+		await removePemdTags();
 		const filtered = data.pemdTags.filter((t: any) => t.objetId != null && allowedIds.includes(Number(t.objetId)));
 		console.log(`Adding ${filtered.length} pemd tags (filtered)`);
 		for (const tag of filtered) {
@@ -422,13 +464,14 @@
 					stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
 					color: { r: 0.6, g: 0.2, b: 0.8 }
 				};
-			const [sid] = await addTag(tagDescriptor);
+				const [sid] = await addTag(tagDescriptor);
 				pemdSids.push(sid);
 			} catch (tagError) {
 				console.error(`Failed to add pemd tag ${tag.id}:`, tagError);
 			}
 		}
-		showPemd = pemdSids.length > 0;
+		// keep the UI toggle state true (user wants to display PEMD tags)
+		showPemd = true;
 		showPemdModal = false;
 	}
 
@@ -436,9 +479,9 @@
 		if (!mpSdk) return;
 		for (const sid of pemdSids) {
 			try {
-				await mpSdk.Mattertag.remove(sid);
+				await removeTag(sid);
 			} catch (e) {
-				console.error(e);
+				console.error('Failed to remove pemd sid', sid, e);
 			}
 		}
 		pemdSids = [];
@@ -446,7 +489,7 @@
 	}
 
 
-	onMount(() => {
+onMount(() => {
 		let handleUnhandledRejection: (ev: PromiseRejectionEvent) => void;
 		(async () => {
 			try {
