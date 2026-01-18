@@ -886,7 +886,7 @@ onMount(() => {
 			title="Matterport Showcase"
 			class="h-full w-full"
 			src="https://my.matterport.com/show?m={data.projet
-				.id}&play=1&applicationKey=wxdq9q4dpay6wcrm41b1ynnib"
+				.id}&play=1&applicationKey={data.matterportSdkKey}"
 			frameborder="0"
 			allow="fullscreen; vr"
 		>
