@@ -30,15 +30,15 @@
 	let termitePresenceSelected: number[] = [0, 1, 2];
 
 	// helper booleans for modal checkboxes
-	let amiantePresent = true;
-	let amianteAbsent = true;
-	let amianteEnCours = true;
-	let plombPresent = true;
-	let plombAbsent = true;
-	let plombEnCours = true;
-	let termitePresent = true;
-	let termiteAbsent = true;
-	let termiteEnCours = true;
+	let amiantePresent = $state(true);
+	let amianteAbsent = $state(true);
+	let amianteEnCours = $state(true);
+	let plombPresent = $state(true);
+	let plombAbsent = $state(true);
+	let plombEnCours = $state(true);
+	let termitePresent = $state(true);
+	let termiteAbsent = $state(true);
+	let termiteEnCours = $state(true);
 
 	let mailSids: string[] = [];
 	let amianteSids: string[] = [];
@@ -302,8 +302,16 @@
 		<div class="fixed inset-0 z-50 flex items-center justify-center">
 			<div
 				class="absolute inset-0 bg-black/40"
-				on:click={() => {
+				role="button"
+				tabindex="0"
+				aria-label="Fermer le modal"
+				onclick={() => {
 					showAmianteModal = false;
+				}}
+				onkeydown={(e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						showAmianteModal = false;
+					}
 				}}
 			></div>
 			<div class="relative z-10 w-80 rounded-lg bg-white p-4 shadow-lg">
@@ -325,13 +333,13 @@
 				<div class="flex justify-end gap-2">
 					<button
 						class="rounded px-3 py-1 text-sm"
-						on:click={() => {
+					onclick={() => {
 							showAmianteModal = false;
 						}}>Annuler</button
 					>
 					<button
 						class="rounded bg-blue-600 px-3 py-1 text-sm text-white"
-						on:click={() => {
+					onclick={() => {
 							amiantePresenceSelected = [];
 							if (amiantePresent) amiantePresenceSelected.push(1);
 							if (amianteAbsent) amiantePresenceSelected.push(0);
@@ -350,8 +358,16 @@
 		<div class="fixed inset-0 z-50 flex items-center justify-center">
 			<div
 				class="absolute inset-0 bg-black/40"
-				on:click={() => {
+				role="button"
+				tabindex="0"
+				aria-label="Fermer le modal"
+				onclick={() => {
 					showPlombModal = false;
+				}}
+				onkeydown={(e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						showPlombModal = false;
+					}
 				}}
 			></div>
 			<div class="relative z-10 w-80 rounded-lg bg-white p-4 shadow-lg">
@@ -373,13 +389,13 @@
 				<div class="flex justify-end gap-2">
 					<button
 						class="rounded px-3 py-1 text-sm"
-						on:click={() => {
+					onclick={() => {
 							showPlombModal = false;
 						}}>Annuler</button
 					>
 					<button
 						class="rounded bg-blue-600 px-3 py-1 text-sm text-white"
-						on:click={() => {
+					onclick={() => {
 							plombPresenceSelected = [];
 							if (plombPresent) plombPresenceSelected.push(1);
 							if (plombAbsent) plombPresenceSelected.push(0);
@@ -398,8 +414,16 @@
 		<div class="fixed inset-0 z-50 flex items-center justify-center">
 			<div
 				class="absolute inset-0 bg-black/40"
-				on:click={() => {
+				role="button"
+				tabindex="0"
+				aria-label="Fermer le modal"
+				onclick={() => {
 					showTermiteModal = false;
+				}}
+				onkeydown={(e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						showTermiteModal = false;
+					}
 				}}
 			></div>
 			<div class="relative z-10 w-80 rounded-lg bg-white p-4 shadow-lg">
@@ -421,13 +445,13 @@
 				<div class="flex justify-end gap-2">
 					<button
 						class="rounded px-3 py-1 text-sm"
-						on:click={() => {
+					onclick={() => {
 							showTermiteModal = false;
 						}}>Annuler</button
 					>
 					<button
 						class="rounded bg-blue-600 px-3 py-1 text-sm text-white"
-						on:click={() => {
+					onclick={() => {
 							termitePresenceSelected = [];
 							if (termitePresent) termitePresenceSelected.push(1);
 							if (termiteAbsent) termitePresenceSelected.push(0);
@@ -447,7 +471,7 @@
 			type="button"
 			title="Afficher les mail tags"
 			aria-pressed={showMail}
-			on:click={() => {
+			onclick={() => {
 				showMail = !showMail;
 				toggleMail();
 			}}
@@ -463,7 +487,7 @@
 			type="button"
 			title="Afficher les tags amiante"
 			aria-pressed={showAmiante}
-			on:click={() => {
+			onclick={() => {
 				if (showAmiante) {
 					showAmiante = false;
 					toggleAmiante();
@@ -484,7 +508,7 @@
 			type="button"
 			title="Afficher les tags plomb"
 			aria-pressed={showPlomb}
-			on:click={() => {
+			onclick={() => {
 				if (showPlomb) {
 					showPlomb = false;
 					togglePlomb();
@@ -505,7 +529,7 @@
 			type="button"
 			title="Afficher les tags termite"
 			aria-pressed={showTermite}
-			on:click={() => {
+			onclick={() => {
 				if (showTermite) {
 					showTermite = false;
 					toggleTermite();
@@ -526,7 +550,7 @@
 			type="button"
 			title="Afficher les tags structure"
 			aria-pressed={showStructure}
-			on:click={() => {
+			onclick={() => {
 				showStructure = !showStructure;
 				toggleStructure();
 			}}
@@ -543,7 +567,7 @@
 			type="button"
 			title="Afficher les tags PEMD"
 			aria-pressed={showPemd}
-			on:click={() => {
+			onclick={() => {
 				showPemd = !showPemd;
 				togglePemd();
 			}}
