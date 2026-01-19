@@ -1,12 +1,22 @@
 <script lang="ts">
-	import { Info, Search, MapPin, Calendar, Building2, Grid3x3, List, ChevronRight, Box } from 'lucide-svelte';
+	import {
+		Info,
+		Search,
+		MapPin,
+		Calendar,
+		Building2,
+		Grid3x3,
+		List,
+		ChevronRight,
+		Box
+	} from 'lucide-svelte';
 	import type { PageData } from './$types';
 	import { fade, fly } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { onMount } from 'svelte';
 
 	let { data }: { data: PageData } = $props();
-	
+
 	let mounted = $state(false);
 	let searchQuery = $state('');
 	let viewMode = $state<'grid' | 'list'>('list');
@@ -29,34 +39,39 @@
 		const now = new Date();
 		const d = new Date(date);
 		const diffDays = Math.floor((now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
-		
+
 		if (diffDays === 0) return "Aujourd'hui";
 		if (diffDays === 1) return 'Hier';
 		if (diffDays < 7) return `Il y a ${diffDays} jours`;
-		if (diffDays < 30) return `Il y a ${Math.floor(diffDays / 7)} semaine${Math.floor(diffDays / 7) > 1 ? 's' : ''}`;
+		if (diffDays < 30)
+			return `Il y a ${Math.floor(diffDays / 7)} semaine${Math.floor(diffDays / 7) > 1 ? 's' : ''}`;
 		if (diffDays < 365) return `Il y a ${Math.floor(diffDays / 30)} mois`;
 		return `Il y a ${Math.floor(diffDays / 365)} an${Math.floor(diffDays / 365) > 1 ? 's' : ''}`;
 	}
 
-	let filteredProjets = $derived(data.projets
-		.filter(p => {
-			if (!searchQuery) return true;
-			const q = searchQuery.toLowerCase();
-			return p.libelle.toLowerCase().includes(q) || 
-				   p.reference.toLowerCase().includes(q) ||
-				   p.ville.toLowerCase().includes(q);
-		})
-		.sort((a, b) => {
-			let comparison = 0;
-			if (sortBy === 'date') {
-				comparison = new Date(a.dateDemarrage).getTime() - new Date(b.dateDemarrage).getTime();
-			} else if (sortBy === 'name') {
-				comparison = a.libelle.localeCompare(b.libelle);
-			} else if (sortBy === 'ville') {
-				comparison = a.ville.localeCompare(b.ville);
-			}
-			return sortOrder === 'asc' ? comparison : -comparison;
-		}));
+	let filteredProjets = $derived(
+		data.projets
+			.filter((p) => {
+				if (!searchQuery) return true;
+				const q = searchQuery.toLowerCase();
+				return (
+					p.libelle.toLowerCase().includes(q) ||
+					p.reference.toLowerCase().includes(q) ||
+					p.ville.toLowerCase().includes(q)
+				);
+			})
+			.sort((a, b) => {
+				let comparison = 0;
+				if (sortBy === 'date') {
+					comparison = new Date(a.dateDemarrage).getTime() - new Date(b.dateDemarrage).getTime();
+				} else if (sortBy === 'name') {
+					comparison = a.libelle.localeCompare(b.libelle);
+				} else if (sortBy === 'ville') {
+					comparison = a.ville.localeCompare(b.ville);
+				}
+				return sortOrder === 'asc' ? comparison : -comparison;
+			})
+	);
 
 	function toggleSort(field: 'date' | 'name' | 'ville') {
 		if (sortBy === field) {
@@ -69,16 +84,13 @@
 </script>
 
 <svelte:head>
-	<title>Mes Projets</title>
+	<title>Projets</title>
 </svelte:head>
 
 <div class="min-h-screen">
 	{#if mounted}
-		<!-- Header Section -->
-		
-
 		<!-- Search & Filters Bar -->
-		<div class="max-w-7xl mx-auto px-4 mt-6 sm:px-6 lg:px-8 -mt-6 relative z-10">
+		<div class="max-w-7xl mx-auto px-4 mt-6 sm:px-6 lg:px-8 relative z-10">
 			<div class="bg-white rounded-2xl border border-slate-200 p-4">
 				<div class="flex flex-col sm:flex-row gap-4">
 					<!-- Search -->
@@ -91,26 +103,33 @@
 							class="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
 						/>
 					</div>
-					
+
 					<!-- View Toggle & Sort -->
 					<div class="flex items-center gap-2">
 						<!-- Sort Buttons -->
 						<div class="hidden sm:flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-100">
 							<button
 								onclick={() => toggleSort('date')}
-								class="px-3 py-2 rounded-lg text-xs font-medium transition-colors {sortBy === 'date' ? 'bg-white text-emerald-600' : 'text-slate-600 hover:text-slate-900'}"
+								class="px-3 py-2 rounded-lg text-xs font-medium transition-colors {sortBy === 'date'
+									? 'bg-white text-emerald-600'
+									: 'text-slate-600 hover:text-slate-900'}"
 							>
 								Date
 							</button>
 							<button
 								onclick={() => toggleSort('name')}
-								class="px-3 py-2 rounded-lg text-xs font-medium transition-colors {sortBy === 'name' ? 'bg-white text-emerald-600' : 'text-slate-600 hover:text-slate-900'}"
+								class="px-3 py-2 rounded-lg text-xs font-medium transition-colors {sortBy === 'name'
+									? 'bg-white text-emerald-600'
+									: 'text-slate-600 hover:text-slate-900'}"
 							>
 								Nom
 							</button>
 							<button
 								onclick={() => toggleSort('ville')}
-								class="px-3 py-2 rounded-lg text-xs font-medium transition-colors {sortBy === 'ville' ? 'bg-white text-emerald-600' : 'text-slate-600 hover:text-slate-900'}"
+								class="px-3 py-2 rounded-lg text-xs font-medium transition-colors {sortBy ===
+								'ville'
+									? 'bg-white text-emerald-600'
+									: 'text-slate-600 hover:text-slate-900'}"
 							>
 								Ville
 							</button>
@@ -119,14 +138,18 @@
 						<!-- View Toggle -->
 						<div class="flex items-center gap-1 p-1 rounded-lg bg-slate-100">
 							<button
-								onclick={() => viewMode = 'grid'}
-								class="p-2 rounded-lg transition-colors {viewMode === 'grid' ? 'bg-white text-emerald-600' : 'text-slate-500 hover:text-slate-700'}"
+								onclick={() => (viewMode = 'grid')}
+								class="p-2 rounded-lg transition-colors {viewMode === 'grid'
+									? 'bg-white text-emerald-600'
+									: 'text-slate-500 hover:text-slate-700'}"
 							>
 								<Grid3x3 class="h-5 w-5" />
 							</button>
 							<button
-								onclick={() => viewMode = 'list'}
-								class="p-2 rounded-lg transition-colors {viewMode === 'list' ? 'bg-white text-emerald-600' : 'text-slate-500 hover:text-slate-700'}"
+								onclick={() => (viewMode = 'list')}
+								class="p-2 rounded-lg transition-colors {viewMode === 'list'
+									? 'bg-white text-emerald-600'
+									: 'text-slate-500 hover:text-slate-700'}"
 							>
 								<List class="h-5 w-5" />
 							</button>
@@ -140,7 +163,7 @@
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 			{#if filteredProjets.length === 0}
 				<!-- Empty State -->
-				<div 
+				<div
 					class="flex flex-col items-center justify-center py-20 text-center"
 					in:fade={{ duration: 300 }}
 				>
@@ -151,13 +174,13 @@
 						{searchQuery ? 'Aucun résultat' : 'Aucun projet disponible'}
 					</h3>
 					<p class="text-slate-500 max-w-md">
-						{searchQuery 
+						{searchQuery
 							? `Aucun projet ne correspond à "${searchQuery}". Essayez une autre recherche.`
 							: "Vous n'avez pas encore de projets assignés. Contactez votre administrateur."}
 					</p>
 					{#if searchQuery}
 						<button
-							onclick={() => searchQuery = ''}
+							onclick={() => (searchQuery = '')}
 							class="mt-4 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors"
 						>
 							Effacer la recherche
@@ -189,16 +212,16 @@
 							<div class="px-6 pb-4 space-y-2">
 								{#if projet.societeNom}
 									<div class="flex items-center gap-2 text-sm text-emerald-700 font-medium">
-										<Building2 class="h-4 w-4 text-emerald-600 flex-shrink-0" />
+										<Building2 class="h-4 w-4 text-emerald-600 shrink-0" />
 										<span class="truncate">{projet.societeNom}</span>
 									</div>
 								{/if}
 								<div class="flex items-center gap-2 text-sm text-slate-600">
-									<MapPin class="h-4 w-4 text-slate-400 flex-shrink-0" />
+									<MapPin class="h-4 w-4 text-slate-400 shrink-0" />
 									<span class="truncate">{projet.ville} ({projet.cp})</span>
 								</div>
 								<div class="flex items-center gap-2 text-sm text-slate-600">
-									<Calendar class="h-4 w-4 text-slate-400 flex-shrink-0" />
+									<Calendar class="h-4 w-4 text-slate-400 shrink-0" />
 									<span>{formatDate(projet.dateDemarrage)}</span>
 								</div>
 							</div>
@@ -233,9 +256,6 @@
 								in:fly={{ x: -20, duration: 300, delay: 300 + i * 30 }}
 								animate:flip={{ duration: 300 }}
 							>
-								<!-- Icon -->
-	
-
 								<!-- Info -->
 								<div class="flex-1 min-w-0">
 									<h3 class="font-semibold text-slate-900 truncate mb-1">
