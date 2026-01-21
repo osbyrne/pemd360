@@ -135,13 +135,22 @@
 						const anchorPosition = JSON.parse(tag.anchorPosition);
 						const stemVector = JSON.parse(tag.stemVector);
 						const amianteStatus = tag.presenceAmiante ? 'Présence' : 'Absence';
-						const tagDescriptor = {
+						const tagDescriptor: any = {
 							label: `Amiante - ${amianteStatus}`,
 							description: `${tag.description}\nType: ${tag.type}\nÉtage: ${tag.etage}`,
 							anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
 							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
 							color: tag.presenceAmiante ? { r: 1, g: 0, b: 0 } : { r: 0, g: 1, b: 0 }
 						};
+
+						// Add image if available
+						if (tag.imageUrl) {
+							tagDescriptor.media = {
+								type: 'mattertag.media.photo',
+								src: tag.imageUrl
+							};
+						}
+
 						const [sid] = await mpSdk.Tag.add(tagDescriptor);
 						amianteSids.push(sid);
 					} catch (tagError) {

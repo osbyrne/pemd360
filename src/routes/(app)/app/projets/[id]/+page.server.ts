@@ -41,11 +41,17 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 
     // Load tags for this project
     const tags = await db.select().from(tagMail).where(eq(tagMail.projetIdId, id));
-    const amianteTags = await db.select().from(tagsAmiante).where(eq(tagsAmiante.sidId, id));
+    const amianteTagsRaw = await db.select().from(tagsAmiante).where(eq(tagsAmiante.sidId, id));
     const plombTags = await db.select().from(tagsPlomb).where(eq(tagsPlomb.sidId, id));
     const termiteTags = await db.select().from(tagsTermite).where(eq(tagsTermite.sidId, id));
     const structureTags = await db.select().from(tagsStructure).where(eq(tagsStructure.sidId, id));
     const pemdTags = await db.select().from(pemd).where(eq(pemd.sidId, id));
+
+    // Add image URLs to amiante tags
+    const amianteTags = amianteTagsRaw.map(tag => ({
+        ...tag,
+        imageUrl: tag.image ? `/app/projets/${id}/image/${tag.image}` : null
+    }));
 
     // Build facets for PEMD (groupe -> categorie -> objet) to drive UI filters/autocomplete
     const pemdFacets = await db
