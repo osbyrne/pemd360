@@ -130,11 +130,6 @@
 			href: '/app/tableau-synthese',
 			label: 'Tableau Synthèse',
 			icon: Grid3x3
-		},
-		{
-			href: '/app/cerfa',
-			label: 'Cerfa',
-			icon: FolderOpen
 		}
 	];
 

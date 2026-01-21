@@ -8,12 +8,15 @@
 		Grid3x3,
 		List,
 		ChevronRight,
-		Box
+		Box,
+		FileText,
+		ChevronDown
 	} from 'lucide-svelte';
 	import type { PageData } from './$types';
 	import { fade, fly } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { onMount } from 'svelte';
+	import { slide } from 'svelte/transition';
 
 	let { data }: { data: PageData } = $props();
 
@@ -22,6 +25,7 @@
 	let viewMode = $state<'grid' | 'list'>('list');
 	let sortBy = $state<'date' | 'name' | 'ville'>('date');
 	let sortOrder = $state<'asc' | 'desc'>('desc');
+	let openCerfaMenu = $state<string | null>(null);
 
 	onMount(() => {
 		mounted = true;
@@ -80,6 +84,10 @@
 			sortBy = field;
 			sortOrder = 'desc';
 		}
+	}
+
+	function toggleCerfaMenu(projetId: string) {
+		openCerfaMenu = openCerfaMenu === projetId ? null : projetId;
 	}
 </script>
 
@@ -242,6 +250,41 @@
 									<Box class="h-4 w-4" />
 									Modèle 3D
 								</a>
+								<div class="relative flex-1">
+									<button
+										onclick={() => toggleCerfaMenu(projet.id)}
+										class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 border border-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors"
+									>
+										<FileText class="h-4 w-4" />
+										Cerfa
+										<ChevronDown class="h-4 w-4" />
+									</button>
+									{#if openCerfaMenu === projet.id}
+										<div 
+											class="absolute bottom-full mb-2 left-0 right-0 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden z-10"
+											transition:slide={{duration: 200}}
+										>
+											<a
+												href="/app/cerfa/informations?projetId={projet.id}"
+												class="block px-4 py-3 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
+											>
+												Informations
+											</a>
+											<a
+												href="/app/cerfa/pem?projetId={projet.id}"
+												class="block px-4 py-3 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors border-t border-slate-100"
+											>
+												Caractérisation PEM
+											</a>
+											<a
+												href="/app/cerfa/dechets?projetId={projet.id}"
+												class="block px-4 py-3 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors border-t border-slate-100"
+											>
+												Caractérisation Déchets
+											</a>
+										</div>
+									{/if}
+								</div>
 							</div>
 						</div>
 					{/each}
@@ -297,6 +340,41 @@
 										<span class="hidden sm:inline">Modèle 3D</span>
 										<ChevronRight class="h-4 w-4" />
 									</a>
+									<div class="relative">
+										<button
+											onclick={() => toggleCerfaMenu(projet.id)}
+											class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 border border-emerald-600 text-white hover:bg-emerald-700 transition-colors"
+										>
+											<FileText class="h-4 w-4" />
+											<span class="hidden sm:inline">Cerfa</span>
+											<ChevronDown class="h-4 w-4" />
+										</button>
+										{#if openCerfaMenu === projet.id}
+											<div 
+												class="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden z-10"
+												transition:slide={{duration: 200}}
+											>
+												<a
+													href="/app/cerfa/informations?projetId={projet.id}"
+													class="block px-4 py-3 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
+												>
+													Informations
+												</a>
+												<a
+													href="/app/cerfa/pem?projetId={projet.id}"
+													class="block px-4 py-3 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors border-t border-slate-100"
+												>
+													Caractérisation PEM
+												</a>
+												<a
+													href="/app/cerfa/dechets?projetId={projet.id}"
+													class="block px-4 py-3 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors border-t border-slate-100"
+												>
+													Caractérisation Déchets
+												</a>
+											</div>
+										{/if}
+									</div>
 								</div>
 							</div>
 						{/each}
