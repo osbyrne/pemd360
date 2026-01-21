@@ -614,55 +614,104 @@
 				<div class="mb-3 flex flex-col gap-2">
 					<label class="flex flex-col">
 						<span class="text-sm text-gray-700">Groupe</span>
-						<input
-							list="pemd-group-list"
-							placeholder="Choisir un groupe"
+						<select
 							bind:value={selectedPemdGroup}
-							oninput={handleGroupChange}
+							onchange={handleGroupChange}
 							class="w-full border rounded px-2 py-1"
-						/>
-						<datalist id="pemd-group-list">
+						>
+							<option value="">-- Choisir un groupe --</option>
 							{#each allPemdGroups as g}
-								<option value={g.name}></option>
+								<option value={g.name}>{g.name}</option>
 							{/each}
-						</datalist>
+						</select>
 					</label>
 					<label class="flex flex-col">
 						<span class="text-sm text-gray-700">Catégorie</span>
-						<input
-							list="pemd-category-list"
-							placeholder="Choisir une catégorie"
+						<select
 							bind:value={selectedPemdCategory}
-							oninput={handleCategoryChange}
+							onchange={handleCategoryChange}
 							class="w-full border rounded px-2 py-1"
 							disabled={selectedPemdGroup.trim() === ''}
-						/>
-						<datalist id="pemd-category-list">
+						>
+							<option value="">-- Choisir une catégorie --</option>
 							{#each pemdCategoriesFiltered as c}
-								<option value={c.name}></option>
+								<option value={c.name}>{c.name}</option>
 							{/each}
-						</datalist>
+						</select>
 					</label>
 					<label class="flex flex-col">
 						<span class="text-sm text-gray-700">Objet</span>
-						<input
-							list="pemd-object-list"
-							placeholder="Choisir un objet"
+						<select
 							bind:value={selectedPemdObject}
 							class="w-full border rounded px-2 py-1"
 							disabled={selectedPemdCategory.trim() === ''}
-						/>
-						<datalist id="pemd-object-list">
+						>
+							<option value="">-- Choisir un objet --</option>
 							{#each pemdObjectsFiltered as o}
-								<option value={o.name}></option>
+								<option value={o.name}>{o.name}</option>
 							{/each}
-						</datalist>
+						</select>
 					</label>
 				</div>
-				<div class="mb-3 text-sm text-gray-600">
-					<div>
-						Filtres appliqués: {selectedPemdGroup || '—'} / {selectedPemdCategory || '—'} / {selectedPemdObject ||
-							'—'}
+				<div class="mb-3">
+					<span class="text-sm text-gray-700 mb-2 block">Filtres appliqués:</span>
+					<div class="flex flex-wrap gap-2">
+						{#if selectedPemdGroup.trim() !== ''}
+							<span class="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+								Groupe: {selectedPemdGroup}
+								<button
+									type="button"
+									onclick={() => {
+										selectedPemdGroup = '';
+										handleGroupChange();
+									}}
+									class="hover:bg-blue-200 rounded-full p-0.5"
+									aria-label="Supprimer le filtre groupe"
+								>
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+										<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+									</svg>
+								</button>
+							</span>
+						{/if}
+						{#if selectedPemdCategory.trim() !== ''}
+							<span class="inline-flex items-center gap-1 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+								Catégorie: {selectedPemdCategory}
+								<button
+									type="button"
+									onclick={() => {
+										selectedPemdCategory = '';
+										handleCategoryChange();
+									}}
+									class="hover:bg-green-200 rounded-full p-0.5"
+									aria-label="Supprimer le filtre catégorie"
+								>
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+										<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+									</svg>
+								</button>
+							</span>
+						{/if}
+						{#if selectedPemdObject.trim() !== ''}
+							<span class="inline-flex items-center gap-1 bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+								Objet: {selectedPemdObject}
+								<button
+									type="button"
+									onclick={() => {
+										selectedPemdObject = '';
+									}}
+									class="hover:bg-purple-200 rounded-full p-0.5"
+									aria-label="Supprimer le filtre objet"
+								>
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+										<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+									</svg>
+								</button>
+							</span>
+						{/if}
+						{#if selectedPemdGroup.trim() === '' && selectedPemdCategory.trim() === '' && selectedPemdObject.trim() === ''}
+							<span class="text-sm text-gray-400">Aucun filtre appliqué</span>
+						{/if}
 					</div>
 				</div>
 				<div class="flex justify-end gap-2">
