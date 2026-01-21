@@ -1,34 +1,21 @@
 import { db } from '$lib/server/db/client';
-import { pemd, natureV2, objets, categorieV2, projet } from '$lib/server/db/schema';
+import { pemd, natureV2, objets, categorieV2 } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
-import type { PageServerLoad } from './$types';
+import { generateDechetsExcel } from '$lib/server/excel';
+import type { RequestHandler } from './$types';
 
-export const load: PageServerLoad = async ({ url }) => {
+export const GET: RequestHandler = async ({ url }) => {
     const projetId = url.searchParams.get('projetId');
     
     if (!projetId) {
-        return {
-            dechets: [],
-            projetInfo: null
-        };
+        return new Response('Project ID required', { status: 400 });
     }
-
-    // Récupération des informations du projet
-    const projetInfo = await db.select({
-        id: projet.id,
-        libelle: projet.libelle,
-        reference: projet.reference
-    })
-    .from(projet)
-    .where(eq(projet.id, projetId))
-    .get();
 
     // Récupération des déchets/PEMD pour ce projet avec toutes les infos de traitement
     const dechets = await db.select({
         id: pemd.id,
         sidId: pemd.sidId,
         reemploi: pemd.reemploi,
-        potentielReemploi: pemd.potentielReemploi,
         categorie: categorieV2.categoriev2,
         objet: objets.objet,
         codeDechet: natureV2.codeDechet,
@@ -79,8 +66,12 @@ export const load: PageServerLoad = async ({ url }) => {
 
     const uniqueDechets = Array.from(groupedDechets.values());
 
-    return {
-        dechets: uniqueDechets,
-        projetInfo
-    };
+    const buffer = await generateDechetsExcel(uniqueDechets);
+
+    return new Response(buffer, {
+        headers: {
+            'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition': `attachment; filename="caracterisation_dechets.xlsx"`
+        }
+    });
 };
