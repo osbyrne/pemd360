@@ -9,6 +9,14 @@
     ];
 
     const currentPath = $derived($page.url.pathname);
+    
+    // Fonction pour construire l'URL avec les paramètres actuels
+    function buildHref(baseHref: string) {
+        const searchParams = $page.url.searchParams;
+        const params = new URLSearchParams(searchParams);
+        const queryString = params.toString();
+        return queryString ? `${baseHref}?${queryString}` : baseHref;
+    }
 </script>
 
 <div class="border-b border-gray-200 mb-6 -mx-6 px-6 bg-white sticky top-0 z-10">
@@ -16,7 +24,7 @@
         {#each tabs as tab}
             {@const isActive = currentPath.includes(tab.href)}
             <a
-                href={tab.href}
+                href={buildHref(tab.href)}
                 class="
                     group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap
                     {isActive 
