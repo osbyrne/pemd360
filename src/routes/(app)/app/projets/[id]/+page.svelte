@@ -529,7 +529,7 @@
 			try {
 				if (mpSdk && mpSdk.disconnect) mpSdk.disconnect();
 			} catch (err) {
-				// ignore disconnect errors
+				console.error('Matterport SDK disconnect failed:', err);
 			}
 		};
 	});
