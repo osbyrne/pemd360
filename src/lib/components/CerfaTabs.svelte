@@ -9,6 +9,11 @@
     ];
 
     const currentPath = $derived($page.url.pathname);
+    const projetId = $derived($page.url.searchParams.get('projetId'));
+    
+    function getTabUrl(baseHref: string): string {
+        return projetId ? `${baseHref}?projetId=${projetId}` : baseHref;
+    }
 </script>
 
 <div class="border-b border-gray-200 mb-6 -mx-6 px-6 bg-white sticky top-0 z-10">
@@ -16,7 +21,7 @@
         {#each tabs as tab}
             {@const isActive = currentPath.includes(tab.href)}
             <a
-                href={tab.href}
+                href={getTabUrl(tab.href)}
                 class="
                     group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap
                     {isActive 
