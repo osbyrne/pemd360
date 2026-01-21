@@ -3,7 +3,7 @@
 	import { fade, scale } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { page as pageStore } from '$app/stores';
-	import { Trash2 } from 'lucide-svelte';
+	import { Trash2, Download } from 'lucide-svelte';
     import PemdTabs from '$lib/components/PemdTabs.svelte';
 
     let { data } = $props();
@@ -82,6 +82,13 @@
             <h1 class="text-2xl font-bold text-gray-900">Inventaire PEMD - Tableau Général</h1>
             <p class="text-sm text-gray-500 mt-1">Vue d'ensemble de l'inventaire Produits, Équipements, Matériaux et Déchets par projet.</p>
         </div>
+        <a
+            href="pemd-tableau/export{$pageStore.url.search}"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+        >
+            <Download class="w-4 h-4" />
+            Exporter en Excel
+        </a>
     </div>
 
     <!-- Filters -->
