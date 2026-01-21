@@ -1,84 +1,31 @@
 import { redirect, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { db } from '$lib/server/db/client';
-import { pemd, objets, categorieV2, groupe, projet, userProjet } from '$lib/server/db/schema';
-import { eq, and, inArray } from 'drizzle-orm';
+import { objets, categorieV2, groupe } from '$lib/server/db/schema';
+import { eq, isNotNull, not } from 'drizzle-orm';
 
-export const load: PageServerLoad = async ({ url, locals }) => {
-    const user = locals.user;
+export const load: PageServerLoad = async ({ parent }) => {
+    const { isAdmin } = await parent();
 
-    if (!user) {
-        throw redirect(302, '/login');
+    if (!isAdmin) {
+        throw redirect(303, '/app/unauthorized');
     }
 
-    const projectId = url.searchParams.get('projectId');
-    let projects;
-
-    if (user.role === 'admin') {
-        projects = await db.select({
-            id: projet.id,
-            libelle: projet.libelle
-        }).from(projet);
-    } else {
-        projects = await db.select({
-            id: projet.id,
-            libelle: projet.libelle
-        })
-        .from(projet)
-        .innerJoin(userProjet, eq(projet.id, userProjet.projetId))
-        .where(eq(userProjet.userId, user.id));
-    }
-
-    let query = db.select({
-        id: pemd.id,
-        description: pemd.description,
-        quantite: pemd.quantite,
-        etage: pemd.etage,
-        volume: pemd.volume,
-        masse: pemd.masse,
-        surface: pemd.surface,
-        potentielReemploi: pemd.potentielReemploi,
+    // On récupère tout pour le moment, le filtrage strict nécessiterait de connaître les valeurs exactes
+    const items = await db.select({
+        id: objets.id,
         objet: objets.objet,
-        unite: objets.unite,
-        deposeReemlpoi: objets.deposeReemlpoi,
         categorie: categorieV2.categoriev2,
         groupe: groupe.groupe,
-        projetId: pemd.sidId,
-        projetNom: projet.libelle
+        deposeReemlpoi: objets.deposeReemlpoi,
+        unite: objets.unite
     })
-    .from(pemd)
-    .leftJoin(objets, eq(pemd.objetId, objets.id))
+    .from(objets)
     .leftJoin(categorieV2, eq(objets.categorieId, categorieV2.id))
-    .leftJoin(groupe, eq(categorieV2.groupeId, groupe.id))
-    .leftJoin(projet, eq(pemd.sidId, projet.id));
-
-    const conditions = [eq(pemd.reemploi, 1)];
-
-    if (user.role !== 'admin') {
-        const allowedids = projects.map(p => p.id);
-        if (allowedids.length > 0) {
-            conditions.push(inArray(pemd.sidId, allowedids));
-        } else {
-            return {
-                list: [],
-                projects: [],
-                selectedProjectId: projectId
-            };
-        }
-    }
-
-    if (projectId) {
-        conditions.push(eq(pemd.sidId, projectId));
-    }
-
-    // @ts-ignore
-    query.where(and(...conditions));
-
-    const list = await query.all();
+    .leftJoin(groupe, eq(categorieV2.groupeId, groupe.id));
+    // .where(isNotNull(objets.deposeReemlpoi)); // Optionnel : filtrer si on est sûr que null = pas réemploi
 
     return {
-        list,
-        projects,
-        selectedProjectId: projectId
+        items
     };
 };
