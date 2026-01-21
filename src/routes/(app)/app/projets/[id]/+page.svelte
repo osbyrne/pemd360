@@ -2,10 +2,10 @@
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import type { MpSdk } from '@matterport/sdk';
-	import tagAmianteImg from '$lib/assets/img/tagamiante.gif';
-	import tagPlombImg from '$lib/assets/img/tagplomb.gif';
-	import tagTermiteImg from '$lib/assets/img/tagtermite.gif';
-	import tagStructureImg from '$lib/assets/img/tagstructure.gif';
+	import tagAmianteImg from '$lib/assets/img/tagamiante.png';
+	import tagPlombImg from '$lib/assets/img/tagplomb.png';
+	import tagTermiteImg from '$lib/assets/img/tagtermite.png';
+	import tagStructureImg from '$lib/assets/img/tagstructure.png';
 	import tagPemdImg from '$lib/assets/img/pemd360.png';
 	import { Mail } from 'lucide-svelte';
 
