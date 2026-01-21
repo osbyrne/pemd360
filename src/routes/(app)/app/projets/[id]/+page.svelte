@@ -374,8 +374,9 @@
 			selectedPemdCategory = '';
 			selectedPemdObject = '';
 		} else {
-			pemdCategoriesFiltered = [];
-			pemdObjectsFiltered = [];
+			// Show all categories when no group is selected
+			pemdCategoriesFiltered = categoriesV2;
+			pemdObjectsFiltered = allPemdObjects;
 			selectedPemdCategory = '';
 			selectedPemdObject = '';
 		}
@@ -393,7 +394,8 @@
 			}
 			selectedPemdObject = '';
 		} else {
-			pemdObjectsFiltered = [];
+			// Show all objects when no category is selected
+			pemdObjectsFiltered = allPemdObjects;
 			selectedPemdObject = '';
 		}
 	}
@@ -433,16 +435,15 @@
 			return Array.from(allowed).filter((v): v is number => v != null);
 		}
 
-		// no filter: return empty array (do not add everything by default)
-		return [];
+		// no filter: return all object IDs
+		for (const o of allPemdObjects) {
+			if (o.id != null) allowed.add(o.id);
+		}
+		return Array.from(allowed).filter((v): v is number => v != null);
 	}
 
 	async function addFilteredPemdTags() {
 		if (!mpSdk) return;
-		if (!isPemdFilterSelected()) {
-			alert('Veuillez sélectionner au moins un filtre (groupe, catégorie ou objet).');
-			return;
-		}
 		const allowedIds = getAllowedObjetIds();
 		if (!data.pemdTags || data.pemdTags.length === 0) return;
 		// remove existing PEMD tags before adding the new filtered set
@@ -617,9 +618,9 @@
 						<select
 							bind:value={selectedPemdGroup}
 							onchange={handleGroupChange}
-							class="w-full border rounded px-2 py-1"
+							class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 						>
-							<option value="">-- Choisir un groupe --</option>
+							<option value="">Tous groupes</option>
 							{#each allPemdGroups as g}
 								<option value={g.name}>{g.name}</option>
 							{/each}
@@ -630,10 +631,9 @@
 						<select
 							bind:value={selectedPemdCategory}
 							onchange={handleCategoryChange}
-							class="w-full border rounded px-2 py-1"
-							disabled={selectedPemdGroup.trim() === ''}
+							class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 						>
-							<option value="">-- Choisir une catégorie --</option>
+							<option value="">Toutes catégories</option>
 							{#each pemdCategoriesFiltered as c}
 								<option value={c.name}>{c.name}</option>
 							{/each}
@@ -643,93 +643,30 @@
 						<span class="text-sm text-gray-700">Objet</span>
 						<select
 							bind:value={selectedPemdObject}
-							class="w-full border rounded px-2 py-1"
-							disabled={selectedPemdCategory.trim() === ''}
+							class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 						>
-							<option value="">-- Choisir un objet --</option>
+							<option value="">Tous objets</option>
 							{#each pemdObjectsFiltered as o}
 								<option value={o.name}>{o.name}</option>
 							{/each}
 						</select>
 					</label>
 				</div>
-				<div class="mb-3">
-					<span class="text-sm text-gray-700 mb-2 block">Filtres appliqués:</span>
-					<div class="flex flex-wrap gap-2">
-						{#if selectedPemdGroup.trim() !== ''}
-							<span class="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-								Groupe: {selectedPemdGroup}
-								<button
-									type="button"
-									onclick={() => {
-										selectedPemdGroup = '';
-										handleGroupChange();
-									}}
-									class="hover:bg-blue-200 rounded-full p-0.5"
-									aria-label="Supprimer le filtre groupe"
-								>
-									<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-										<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-									</svg>
-								</button>
-							</span>
-						{/if}
-						{#if selectedPemdCategory.trim() !== ''}
-							<span class="inline-flex items-center gap-1 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-								Catégorie: {selectedPemdCategory}
-								<button
-									type="button"
-									onclick={() => {
-										selectedPemdCategory = '';
-										handleCategoryChange();
-									}}
-									class="hover:bg-green-200 rounded-full p-0.5"
-									aria-label="Supprimer le filtre catégorie"
-								>
-									<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-										<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-									</svg>
-								</button>
-							</span>
-						{/if}
-						{#if selectedPemdObject.trim() !== ''}
-							<span class="inline-flex items-center gap-1 bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
-								Objet: {selectedPemdObject}
-								<button
-									type="button"
-									onclick={() => {
-										selectedPemdObject = '';
-									}}
-									class="hover:bg-purple-200 rounded-full p-0.5"
-									aria-label="Supprimer le filtre objet"
-								>
-									<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-										<path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-									</svg>
-								</button>
-							</span>
-						{/if}
-						{#if selectedPemdGroup.trim() === '' && selectedPemdCategory.trim() === '' && selectedPemdObject.trim() === ''}
-							<span class="text-sm text-gray-400">Aucun filtre appliqué</span>
-						{/if}
-					</div>
-				</div>
-				<div class="flex justify-end gap-2">
+				<div class="flex justify-end gap-3">
 					<button
-						class="rounded px-3 py-1 text-sm"
+						class="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
 						onclick={() => {
 							showPemdModal = false;
 						}}>Fermer</button
 					>
 					<button
-						class="rounded bg-red-600 px-3 py-1 text-sm text-white"
+						class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
 						onclick={removePemdTags}
 						disabled={pemdSids.length === 0}>Supprimer les tags PEMD</button
 					>
 					<button
-						class="rounded bg-blue-600 px-3 py-1 text-sm text-white"
-						onclick={addFilteredPemdTags}
-						disabled={!isPemdFilterSelected()}>Ajouter dans le modèle</button
+						class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+						onclick={addFilteredPemdTags}>Ajouter dans le modèle</button
 					>
 				</div>
 			</div>
