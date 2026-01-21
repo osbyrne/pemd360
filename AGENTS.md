@@ -1,3 +1,4 @@
+
 # CLAUDE.md - Project Context for AI Assistants
 
 This document provides essential context about the project for AI assistants like Claude.
