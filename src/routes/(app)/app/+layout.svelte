@@ -127,9 +127,20 @@
 			]
 		},
 		{
-			href: '/app/tableau-synthese',
-			label: 'Tableau Synthèse',
-			icon: Grid3x3
+			label: 'Synthèse',
+			icon: Grid3x3,
+			subItems: [
+				{
+					href: '/app/tableau-synthese',
+					label: 'Tableau Synthèse PEMD',
+					icon: null
+				},
+				{
+					href: '/app/tableau-synthese-reemploi',
+					label: 'Tableau Synthèse Réemploi',
+					icon: null
+				}
+			]
 		}
 	];
 
