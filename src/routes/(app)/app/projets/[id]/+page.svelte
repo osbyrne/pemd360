@@ -262,54 +262,6 @@
 		}
 	}
 
-	async function toggleStructure() {
-		if (!mpSdk) return;
-		if (showStructure) {
-			// remove any previously added structure tags
-			for (const sid of structureSids) {
-				try {
-					await mpSdk.Tag.remove(sid);
-				} catch (e) {
-					console.error('Failed to remove previous structure sid', sid, e);
-				}
-			}
-			structureSids = [];
-			if (data.structureTags && data.structureTags.length > 0) {
-				console.log(`Adding ${data.structureTags.length} structure tags`);
-				for (const tag of data.structureTags) {
-					try {
-						const anchorPosition = JSON.parse(tag.anchorPosition);
-						const stemVector = JSON.parse(tag.stemVector);
-						let description = tag.description;
-						if (tag.shapeSurface) {
-							description += `\nSurface: ${tag.shapeSurface} m²`;
-						}
-						const tagDescriptor = {
-							label: 'Structure',
-							description: description,
-							anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
-							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
-							color: { r: 0.5, g: 0.5, b: 0.5 }
-						};
-						const [sid] = await mpSdk.Tag.add(tagDescriptor);
-						structureSids.push(sid);
-					} catch (tagError) {
-						console.error(`Failed to add structure tag ${tag.id}:`, tagError);
-					}
-				}
-			}
-		} else {
-			for (const sid of structureSids) {
-				try {
-					await mpSdk.Tag.remove(sid);
-				} catch (e) {
-					console.error(e);
-				}
-			}
-			structureSids = [];
-		}
-	}
-
 	// Build cache of PEMD facet lists for client-side filtering
 	function buildPemdFacets() {
 		const groups: { id: number | null; name: string | null }[] = [];
@@ -350,56 +302,7 @@
 		categoriesV2 = data.categoriesV2 || categories;
 		allPemdObjects = data.allPemdObjects || objects;
 	}
-
-	function isPemdFilterSelected() {
-		return (
-			selectedPemdGroup.trim() !== '' ||
-			selectedPemdCategory.trim() !== '' ||
-			selectedPemdObject.trim() !== ''
-		);
-	}
-
-	// Handlers for group/category changes (run on input) — avoids using rune reactive statements
-	function handleGroupChange() {
-		if (selectedPemdGroup && selectedPemdGroup.trim() !== '') {
-			const group = allPemdGroups.find(
-				(g) => g.name === selectedPemdGroup || String(g.id) === selectedPemdGroup
-			);
-			if (group) {
-				pemdCategoriesFiltered = categoriesV2.filter((c) => c.groupeId === group.id);
-			} else {
-				pemdCategoriesFiltered = [];
-			}
-			// Clear downstream selections
-			selectedPemdCategory = '';
-			selectedPemdObject = '';
-		} else {
-			// Show all categories when no group is selected
-			pemdCategoriesFiltered = categoriesV2;
-			pemdObjectsFiltered = allPemdObjects;
-			selectedPemdCategory = '';
-			selectedPemdObject = '';
-		}
-	}
-
-	function handleCategoryChange() {
-		if (selectedPemdCategory && selectedPemdCategory.trim() !== '') {
-			const cat = categoriesV2.find(
-				(c) => c.name === selectedPemdCategory || String(c.id) === selectedPemdCategory
-			);
-			if (cat) {
-				pemdObjectsFiltered = allPemdObjects.filter((o) => o.categorieId === cat.id);
-			} else {
-				pemdObjectsFiltered = [];
-			}
-			selectedPemdObject = '';
-		} else {
-			// Show all objects when no category is selected
-			pemdObjectsFiltered = allPemdObjects;
-			selectedPemdObject = '';
-		}
-	}
-
+    
 	function getAllowedObjetIds() {
 		const allowed = new Set<number>();
 		if (selectedPemdObject.trim() !== '') {

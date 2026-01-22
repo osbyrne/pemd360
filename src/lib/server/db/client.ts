@@ -1,4 +1,9 @@
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import { DATABASE_URL } from '$env/static/private';
+import { drizzle } from "drizzle-orm/libsql";
+import { createClient } from "@libsql/client";
 
-export const db = drizzle({ connection: { source: DATABASE_URL } });
+const turso = createClient({
+  url: process.env.TURSO_DATABASE_URL!,
+  authToken: process.env.TURSO_AUTH_TOKEN,
+});
+
+export const db = drizzle(turso);
