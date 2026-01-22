@@ -3,7 +3,7 @@
 	import { fade, scale } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { page as pageStore } from '$app/stores';
-	import { Trash2, Download } from 'lucide-svelte';
+	import { Trash2, Download, Scale } from 'lucide-svelte';
     import PemdTabs from '$lib/components/PemdTabs.svelte';
 
     let { data } = $props();
@@ -32,6 +32,10 @@
 
     const totalPages = $derived(Math.ceil(filteredList.length / perPage));
     const displayedList = $derived(filteredList.slice((page - 1) * perPage, page * perPage));
+
+    const totalMass = $derived(
+        filteredList.reduce((sum: number, item: any) => sum + (Number(item.masse) || 0), 0)
+    );
 
     function handleProjectChange(event: Event) {
         const select = event.target as HTMLSelectElement;
@@ -84,10 +88,10 @@
             Exporter en Excel
         </a>    </div>
 
-    <!-- Filters -->
-    <div class="mb-6 flex flex-col sm:flex-row gap-4">
+    <!-- Filters & Stats -->
+    <div class="mb-6 flex flex-col md:flex-row gap-4 items-center">
         <!-- Project Selector -->
-        <div class="w-full sm:w-64">
+        <div class="w-full md:w-64">
              <select
                 class="block w-full rounded-xl border border-gray-300 bg-white py-3 px-4 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 value={data.selectedProjectId || ''}
@@ -101,7 +105,7 @@
         </div>
 
         <!-- Search Bar -->
-        <div class="relative flex-1">
+        <div class="relative flex-1 w-full">
             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
                 <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
@@ -113,6 +117,17 @@
                 placeholder="Rechercher par nature, code déchet, éco-organisme..."
                 class="block w-full rounded-xl border border-gray-300 bg-white py-3 pl-11 pr-4 text-sm placeholder-gray-400 shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
             />
+        </div>
+
+        <!-- Total Mass Card -->
+        <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2 rounded-xl shadow-sm flex items-center gap-3 w-full md:w-auto hover:bg-emerald-100 transition-colors whitespace-nowrap lg:h-[46px]">
+            <div class="p-1.5 bg-emerald-100 rounded-lg">
+                <Scale class="w-5 h-5 text-emerald-600" />
+            </div>
+            <div class="flex flex-col md:flex-row md:items-baseline md:gap-2">
+                <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600/80">Masse Totale</span>
+                <span class="text-lg font-bold">{totalMass.toLocaleString('fr-FR', { minimumFractionDigits: 3, maximumFractionDigits: 3 })} t</span>
+            </div>
         </div>
     </div>
 
