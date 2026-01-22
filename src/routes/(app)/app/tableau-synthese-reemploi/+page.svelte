@@ -86,17 +86,17 @@
 </script>
 
 <svelte:head>
-    <title>Tableaux Synthèse PEMD</title>
+    <title>Tableaux Synthèse Réemploi</title>
 </svelte:head>
 
 <div class="p-6 max-w-7xl mx-auto">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Tableaux Synthèse PEMD</h1>
-            <p class="text-sm text-gray-500 mt-1">Vue de synthèse des éléments PEMD par projet.</p>
+            <h1 class="text-2xl font-bold text-gray-900">Tableaux Synthèse Réemploi</h1>
+            <p class="text-sm text-gray-500 mt-1">Vue de synthèse des éléments PEMD avec potentiel de réemploi par projet.</p>
         </div>
         <a
-            href="tableau-synthese/export{$pageStore.url.search}"
+            href="tableau-synthese-reemploi/export{$pageStore.url.search}"
             class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
         >
             <Download class="w-4 h-4" />
@@ -141,7 +141,6 @@
             <table class="w-full text-left text-sm text-gray-600">
                 <thead class="bg-gray-50 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200">
                     <tr>
-                        <th class="px-6 py-4">PEMD</th>
                         <th class="px-6 py-4">Description</th>
                         <th class="px-6 py-4">État</th>
                         <th class="px-6 py-4">Étage</th>
@@ -155,19 +154,18 @@
                 <tbody class="divide-y divide-gray-100">
                     {#if displayedList.length === 0}
 						<tr>
-							<td colspan="9" class="px-6 py-12 text-center text-gray-400">
+							<td colspan="8" class="px-6 py-12 text-center text-gray-400">
                                 {#if query}
 								    Aucun résultat pour "{query}".
                                 {:else}
-								    Aucun élément PEMD enregistré.
+								    Aucun élément PEMD avec potentiel de réemploi.
                                 {/if}
 							</td>
 						</tr>
 					{:else}
                         {#each displayedList as item}
                             <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-4 font-medium text-gray-900">{item.objet || '-'}</td>
-                                <td class="px-6 py-4">{item.description || '-'}</td>
+                                <td class="px-6 py-4 font-medium text-gray-900">{item.description || item.objet || '-'}</td>
                                 <td class="px-6 py-4">
                                     {#if item.etat}
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -319,8 +317,8 @@
 						<span class="text-gray-400 text-sm text-center">QR Code<br/>{qrItem?.id}</span>
 					</div>
 				</div>
-				<p class="text-sm text-gray-600 mt-4 text-center font-medium">{qrItem?.objet}</p>
-				{#if qrItem?.description}
+				<p class="text-sm text-gray-600 mt-4 text-center font-medium">{qrItem?.objet || qrItem?.description}</p>
+				{#if qrItem?.description && qrItem?.objet}
 					<p class="text-xs text-gray-500 mt-1 text-center">{qrItem.description}</p>
 				{/if}
 			</div>

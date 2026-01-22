@@ -71,8 +71,14 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 
     const list = await query;
 
+    // Filtrer côté serveur les éléments avec potentiel de réemploi
+    const filteredList = list.filter(item => 
+        item.reemploi === 1 || 
+        (item.potentielReemploi && item.potentielReemploi.trim() !== '')
+    );
+
     return {
-        list,
+        list: filteredList,
         projects,
         selectedProjectId: projectId
     };
