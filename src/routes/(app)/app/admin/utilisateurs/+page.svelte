@@ -573,9 +573,15 @@
 						<!-- Projets -->
 						<div class="hidden lg:flex lg:flex-col lg:items-end w-32 mr-4">
 							<p class="text-xs text-slate-400">Projets</p>
-							<p class="text-sm font-medium text-slate-600 whitespace-nowrap truncate max-w-[120px]" title={getProjetsNames(getUserProjets(user.id))}>
-								{getProjetsCount(user.id)} projet{getProjetsCount(user.id) > 1 ? 's' : ''}
-							</p>
+							{#if user.role === 'admin'}
+								<p class="text-sm font-medium text-slate-600 whitespace-nowrap truncate max-w-[120px]">
+									-
+								</p>
+							{:else}
+								<p class="text-sm font-medium text-slate-600 whitespace-nowrap truncate max-w-[120px]" title={getProjetsNames(getUserProjets(user.id))}>
+									{getProjetsCount(user.id)} projet{getProjetsCount(user.id) > 1 ? 's' : ''}
+								</p>
+							{/if}
 						</div>
 
 						<!-- Actions -->
