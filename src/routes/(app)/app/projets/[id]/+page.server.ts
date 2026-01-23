@@ -1,9 +1,10 @@
-import type { PageServerLoad } from './$types';
-import { error } from '@sveltejs/kit';
+import type { PageServerLoad, Actions } from './$types';
+import { error, fail } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import { db } from '$lib/server/db/client';
 import { projet, etablissement, user, tagMail, tagsAmiante, tagsPlomb, tagsTermite, tagsStructure, pemd, groupe, categorieV2, objets } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
+import { nanoid } from 'nanoid';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
     const { id } = params;
@@ -94,4 +95,97 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         allPemdObjects: allPemdObjects,
         matterportSdkKey: env.MATTERPORT_SDK_KEY
     };
+};
+
+export const actions: Actions = {
+    createPemdTag: async ({ request, params, locals }) => {
+        const currentUser = locals.user;
+        if (!currentUser) {
+            return fail(401, { error: 'Non autorisé' });
+        }
+
+        const formData = await request.formData();
+        const projetId = params.id;
+
+        // Extract form fields
+        const objetId = formData.get('objetId');
+        const natureId = formData.get('natureId');
+        const description = formData.get('description');
+        const quantite = formData.get('quantite');
+        const etage = formData.get('etage');
+        const etat = formData.get('etat');
+        const anchorPosition = formData.get('anchorPosition');
+        const stemVector = formData.get('stemVector');
+        const longueur = formData.get('longueur');
+        const largeur = formData.get('largeur');
+        const epaisseur = formData.get('epaisseur');
+        const potentielReemploi = formData.get('potentielReemploi');
+
+        if (!anchorPosition || !stemVector) {
+            return fail(400, { error: 'Position manquante' });
+        }
+
+        try {
+            const newId = nanoid();
+            
+            await db.insert(pemd).values({
+                id: newId,
+                sidId: projetId,
+                objetId: objetId ? Number(objetId) : null,
+                natureId: natureId ? Number(natureId) : null,
+                description: description?.toString() || null,
+                quantite: quantite ? Number(quantite) : null,
+                etage: etage?.toString() || null,
+                etat: etat?.toString() || null,
+                anchorPosition: anchorPosition.toString(),
+                stemVector: stemVector.toString(),
+                longueur: longueur ? Number(longueur) : null,
+                largeur: largeur ? Number(largeur) : null,
+                epaisseur: epaisseur ? Number(epaisseur) : null,
+                potentielReemploi: potentielReemploi?.toString() || null,
+                color: '#9933FF', // Purple color for PEMD tags
+            });
+
+            // Return the newly created tag data for immediate display
+            return { 
+                success: true, 
+                tag: {
+                    id: newId,
+                    sidId: projetId,
+                    objetId: objetId ? Number(objetId) : null,
+                    description: description?.toString() || null,
+                    quantite: quantite ? Number(quantite) : null,
+                    etage: etage?.toString() || null,
+                    etat: etat?.toString() || null,
+                    anchorPosition: anchorPosition.toString(),
+                    stemVector: stemVector.toString(),
+                }
+            };
+        } catch (e) {
+            console.error('Failed to create PEMD tag:', e);
+            return fail(500, { error: 'Échec de la création du tag' });
+        }
+    },
+
+    deletePemdTag: async ({ request, locals }) => {
+        const currentUser = locals.user;
+        if (!currentUser) {
+            return fail(401, { error: 'Non autorisé' });
+        }
+
+        const formData = await request.formData();
+        const tagId = formData.get('tagId');
+
+        if (!tagId) {
+            return fail(400, { error: 'ID du tag manquant' });
+        }
+
+        try {
+            await db.delete(pemd).where(eq(pemd.id, tagId.toString()));
+            return { success: true, deletedId: tagId.toString() };
+        } catch (e) {
+            console.error('Failed to delete PEMD tag:', e);
+            return fail(500, { error: 'Échec de la suppression du tag' });
+        }
+    }
 };
