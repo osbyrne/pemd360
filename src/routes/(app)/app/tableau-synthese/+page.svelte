@@ -6,7 +6,6 @@
 	import { Trash2, QrCode, Download } from 'lucide-svelte';
 
     let { data } = $props();
-
     // Pagination & Search
     let query = $state('');
     let perPage = 25;
