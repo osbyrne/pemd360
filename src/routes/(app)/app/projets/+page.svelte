@@ -260,9 +260,9 @@
 										<ChevronDown class="h-4 w-4" />
 									</button>
 									{#if openCerfaMenu === projet.id}
-										<div 
+										<div
 											class="absolute bottom-full mb-2 left-0 right-0 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden z-10"
-											transition:slide={{duration: 200}}
+											transition:slide={{ duration: 200 }}
 										>
 											<a
 												href="/app/cerfa/informations?projetId={projet.id}"
@@ -343,16 +343,16 @@
 									<div class="relative">
 										<button
 											onclick={() => toggleCerfaMenu(projet.id)}
-											class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 border border-emerald-600 text-white hover:bg-emerald-700 transition-colors"
+											class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors"
 										>
 											<FileText class="h-4 w-4" />
 											<span class="hidden sm:inline">Cerfa</span>
 											<ChevronDown class="h-4 w-4" />
 										</button>
 										{#if openCerfaMenu === projet.id}
-											<div 
+											<div
 												class="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden z-10"
-												transition:slide={{duration: 200}}
+												transition:slide={{ duration: 200 }}
 											>
 												<a
 													href="/app/cerfa/informations?projetId={projet.id}"
