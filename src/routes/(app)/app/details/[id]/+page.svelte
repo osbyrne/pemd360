@@ -52,7 +52,7 @@
 							<span class="text-sm font-medium">Retour aux projets</span>
 						</a>
 						<a
-							href="/app/projets/{data.projet.id}/cerfa"
+							href="/api/projects/{data.projet.id}/cerfa"
 							download
 							class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border border-white/20"
 						>
