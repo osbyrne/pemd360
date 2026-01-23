@@ -109,24 +109,7 @@ The database uses SQLite (dev) / Cloudflare D1 (prod) with Drizzle ORM. Main tab
 
 ## Environment Variables
 
-Required `.env` variables:
-
-```bash
-# Database
-DATABASE_URL=./betterauth_pemd.sqlite
-
-# Better Auth
-BETTER_AUTH_SECRET=your_secret_key
-BETTER_AUTH_URL=http://localhost:5173
-
-# Cloudflare R2 (S3-compatible)
-S3_API_URL=https://[account-id].eu.r2.cloudflarestorage.com
-R2_ACCESS_KEY_ID=your_access_key
-R2_SECRET_ACCESS_KEY=your_secret_key
-
-# Matterport
-MATTERPORT_SDK_KEY=your_matterport_sdk_key
-```
+See `/.env.example`
 
 ## Database Migration
 
@@ -235,7 +218,6 @@ npm run format
 
 ### Authentication Errors
 - Verify `BETTER_AUTH_SECRET` is set
-- Check `BETTER_AUTH_URL` matches your dev/prod URL
 - Clear cookies and sessions if having issues
 
 ## Resources
