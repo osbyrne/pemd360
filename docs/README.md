@@ -4,21 +4,19 @@ PEMD360 is a web application for building diagnostics and waste management (PEMD
 
 # Setup
 
-- Have Node.js installed
-- Move the [the database](https://drive.google.com/file/d/1xZv6q7fxx1G4mHQd2SnZJblujByCaOJv/view?usp=drive_link) to project root
+## Pre-Requisite
 
-```bash
-npm install
-npm run dev
-```
+- Node.js ^22
 
-Copy `.env.example` to a new `.env` file, and fill the missing fields.
+## Installation
 
-Replace `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY` by [your generated tokens](https://dash.cloudflare.com/f3ce197a7566316351089c61b0c859b8/r2/api-tokens/create?type=user).
+1. `npm install`
+2. Copy `.env.example` to a new `.env` file, and fill the values.
+3. `npm run dev`
 
 # Database Migration
 
-```bash
+```sh
 # Generate migration
 npm run drizzle-kit generate
 
