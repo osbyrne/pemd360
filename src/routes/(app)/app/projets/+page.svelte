@@ -343,7 +343,7 @@
 									<div class="relative">
 										<button
 											onclick={() => toggleCerfaMenu(projet.id)}
-											class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 border border-emerald-600 text-white hover:bg-emerald-700 transition-colors"
+										class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors"
 										>
 											<FileText class="h-4 w-4" />
 											<span class="hidden sm:inline">Cerfa</span>
