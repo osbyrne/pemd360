@@ -4,7 +4,6 @@
 	import { page } from '$app/stores';
 	import { fade } from 'svelte/transition';
 	import logoPEMD from '$lib/assets/img/pemd360.png';
-	import favicon from '$lib/assets/favicon.png';
 	import {
 		Menu,
 		Gauge,
@@ -202,7 +201,7 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" href="/favicon.png" />
 	<title>PEMD360</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />

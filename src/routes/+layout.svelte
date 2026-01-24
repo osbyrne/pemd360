@@ -2,8 +2,8 @@
 	import './layout.css';
 	import logoPEMD from '$lib/assets/img/pemd360.png';
 	import logoDC from '$lib/assets/img/depollution_conseil.png';
-	import favicon from '$lib/assets/favicon.png';
 	import { authClient } from '$lib/auth-client';
+	import { pwaInfo } from 'virtual:pwa-info';
 
 	let { children } = $props();
 	let mobileMenuOpen = $state(false);
@@ -13,8 +13,9 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" href="/favicon.png" />
 	<title>PEMD360</title>
+	{@html pwaInfo!.webManifest.linkTag}
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 	<link
