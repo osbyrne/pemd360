@@ -1,6 +1,7 @@
 <script lang="ts">
-	import logoPEMD from '$lib/assets/img/pemd360.png';
 	import logoDC from '$lib/assets/img/depollution_conseil.png';
+	import logoPEMD from '$lib/assets/img/pemd360.png';
+	import { resolve } from '$app/paths';
 
 	let { user = null } = $props<{ user: any }>();
 	let mobileMenuOpen = $state(false);
@@ -11,7 +12,7 @@
 		<div class="flex items-center justify-between">
 			<!-- Logos -->
 			<div class="flex items-center gap-4">
-				<a href="/">
+				<a href={resolve('/')}>
 					<img src={logoPEMD} alt="PEMD 360" class="h-16 w-auto object-contain" />
 				</a>
 				<a href="https://depollution-conseil.fr" target="_blank" rel="noopener noreferrer">
@@ -21,30 +22,27 @@
 
 			<!-- Desktop Navigation -->
 			<div class="hidden items-center gap-6 md:flex">
-				<a href="/" class="font-medium text-gray-700 transition-colors hover:text-emerald-600"
-					>Accueil</a
-				>
-				<a href="/about" class="font-medium text-gray-700 transition-colors hover:text-emerald-600"
-					>À propos</a
+				<a
+					href={resolve('/')}
+					class="font-medium text-gray-700 transition-colors hover:text-emerald-600">Accueil</a
 				>
 				<a
-					href="/contact"
+					href={resolve('/about')}
+					class="font-medium text-gray-700 transition-colors hover:text-emerald-600">À propos</a
+				>
+				<a
+					href={resolve('/contact')}
 					class="font-medium text-gray-700 transition-colors hover:text-emerald-600">Contact</a
 				>
 				{#if user}
 					<a
-						href="/app/projets"
+						href={resolve('/app/projets')}
 						class="rounded-md border-2 border-emerald-600 bg-emerald-600 px-4 py-2 font-medium text-white transition-colors hover:bg-emerald-700"
 					>
 						Tableau de bord
 					</a>
 				{:else}
-					<a
-						href="/login"
-						class="rounded-md border-2 border-emerald-600 px-4 py-2 font-medium text-emerald-600 transition-colors hover:bg-emerald-600 hover:text-white"
-					>
-						Se connecter
-					</a>
+					<a href={resolve('/login')} class="btn btn-outline btn-success"> Se connecter </a>
 				{/if}
 			</div>
 
@@ -79,23 +77,23 @@
 			<div class="mt-4 border-t pt-4 md:hidden">
 				<div class="flex flex-col gap-3">
 					<a
-						href="/"
+						href={resolve('/')}
 						class="font-medium text-gray-700 transition-colors hover:text-emerald-600"
 						onclick={() => (mobileMenuOpen = false)}>Accueil</a
 					>
 					<a
-						href="/about"
+						href={resolve('/about')}
 						class="font-medium text-gray-700 transition-colors hover:text-emerald-600"
 						onclick={() => (mobileMenuOpen = false)}>À propos</a
 					>
 					<a
-						href="/contact"
+						href={resolve('/contact')}
 						class="font-medium text-gray-700 transition-colors hover:text-emerald-600"
 						onclick={() => (mobileMenuOpen = false)}>Contact</a
 					>
 					{#if user}
 						<a
-							href="/app/projets"
+							href={resolve('/app/projets')}
 							class="w-fit rounded-md border-2 border-emerald-600 bg-emerald-600 px-4 py-2 font-medium text-white transition-colors hover:bg-emerald-700"
 							onclick={() => (mobileMenuOpen = false)}
 						>
@@ -103,8 +101,8 @@
 						</a>
 					{:else}
 						<a
-							href="/login"
-							class="w-fit rounded-md border-2 border-emerald-600 px-4 py-2 font-medium text-emerald-600 transition-colors hover:bg-emerald-600 hover:text-white"
+							href={resolve('/login')}
+							class="btn btn-outline btn-success w-fit"
 							onclick={() => (mobileMenuOpen = false)}
 						>
 							Se connecter
