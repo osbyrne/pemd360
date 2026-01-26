@@ -60,7 +60,7 @@
 
 <!-- Hero Carousel -->
 <section class="relative h-[600px] w-full overflow-hidden">
-	{#each slides as slide, index}
+	{#each slides as slide, index (index)}
 		<div
 			class="absolute inset-0 transition-opacity duration-700 ease-in-out {index === currentSlide
 				? 'opacity-100'
@@ -120,7 +120,7 @@
 
 	<!-- Pagination Dots -->
 	<div class="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 gap-2">
-		{#each slides as _, index}
+		{#each slides as _, index (index)}
 			<button
 				onclick={() => goToSlide(index)}
 				class="h-3 w-3 rounded-full transition-colors {index === currentSlide
@@ -170,7 +170,7 @@
 
 				<!-- Diagnostics List -->
 				<div class="my-6 grid grid-cols-2 gap-3">
-					{#each ['Diagnostic amiante', 'Diagnostic plomb', 'Diagnostic termites', 'Diagnostic structure'] as diagnostic}
+					{#each ['Diagnostic amiante', 'Diagnostic plomb', 'Diagnostic termites', 'Diagnostic structure'] as diagnostic (diagnostic)}
 						<div class="flex items-center gap-2 text-sm text-gray-600">
 							<svg class="h-5 w-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
 								<path
@@ -248,7 +248,7 @@
 			</h2>
 
 			<ol class="space-y-8">
-				{#each [{ num: '01', title: 'Digitalisation de vos chantiers', desc: "A l'aide d'une caméra 3D, nous digitalisons vos chantiers pour leur créer un jumeau numérique" }, { num: '02', title: 'Centralisation de vos données', desc: "Nous regroupons l'ensemble de vos données sur notre plateforme afin de vous en faciliter l'accès" }, { num: '03', title: 'Collaboration entre partenaires', desc: 'Vous avez un accès facile à notre réseau de partenaires pour une collaboration optimale' }, { num: '04', title: 'Réduction de vos coûts', desc: 'Réduisez vos coûts grâce à notre solution digitale' }] as item}
+				{#each [{ num: '01', title: 'Digitalisation de vos chantiers', desc: "A l'aide d'une caméra 3D, nous digitalisons vos chantiers pour leur créer un jumeau numérique" }, { num: '02', title: 'Centralisation de vos données', desc: "Nous regroupons l'ensemble de vos données sur notre plateforme afin de vous en faciliter l'accès" }, { num: '03', title: 'Collaboration entre partenaires', desc: 'Vous avez un accès facile à notre réseau de partenaires pour une collaboration optimale' }, { num: '04', title: 'Réduction de vos coûts', desc: 'Réduisez vos coûts grâce à notre solution digitale' }] as item (item.num)}
 					<li class="flex gap-6">
 						<div
 							class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-lg font-bold text-emerald-600"

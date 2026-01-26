@@ -151,7 +151,7 @@
 	// Fonction pour vérifier si un menu contient la page active
 	function hasActiveSubItem(link: NavLink): boolean {
 		if (!link.subItems) return false;
-		return link.subItems.some(sub => isActive(sub.href));
+		return link.subItems.some((sub) => isActive(sub.href));
 	}
 
 	// Initialiser les menus étendus en fonction de la page active
@@ -184,15 +184,17 @@
 	}
 
 	// Filtrer les liens selon le rôle de l'utilisateur
-	const navLinks = $derived(allNavLinks.filter((link) => {
-		if (link.adminOnly && !isAdmin) return false;
-		// If it has subItems, check if at least one visible subItem exists
-		if (link.subItems) {
-			const visibleSubItems = link.subItems.filter(sub => !sub.adminOnly || isAdmin);
-			return visibleSubItems.length > 0;
-		}
-		return true;
-	}));
+	const navLinks = $derived(
+		allNavLinks.filter((link) => {
+			if (link.adminOnly && !isAdmin) return false;
+			// If it has subItems, check if at least one visible subItem exists
+			if (link.subItems) {
+				const visibleSubItems = link.subItems.filter((sub) => !sub.adminOnly || isAdmin);
+				return visibleSubItems.length > 0;
+			}
+			return true;
+		})
+	);
 
 	async function handleLogout() {
 		await authClient.signOut();
@@ -216,9 +218,9 @@
 	{#if sidebarOpen}
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div 
+		<div
 			class="fixed inset-0 z-40 bg-gray-900/50 lg:hidden"
-			onclick={() => sidebarOpen = false}
+			onclick={() => (sidebarOpen = false)}
 			transition:fade={{ duration: 200 }}
 		></div>
 	{/if}
@@ -231,7 +233,12 @@
 	>
 		<!-- Logo -->
 		<div class="flex h-20 shrink-0 items-center justify-center border-b border-gray-200 px-4">
-			<a href="/app/" onclick={() => { if (window.innerWidth < 1024) sidebarOpen = false; }}>
+			<a
+				href="/app/"
+				onclick={() => {
+					if (window.innerWidth < 1024) sidebarOpen = false;
+				}}
+			>
 				<img src={logoPEMD} alt="PEMD 360" class="h-16 w-auto object-contain" />
 			</a>
 		</div>
@@ -240,7 +247,7 @@
 		<nav class="flex-1 space-y-1 overflow-y-auto p-4 custom-scrollbar">
 			{#each navLinks as link}
 				{@const IconComponent = link.icon}
-				
+
 				{#if link.subItems && link.subItems.length > 0}
 					<div class="rounded-lg overflow-hidden">
 						<button
@@ -257,14 +264,16 @@
 								<ChevronRight class="h-4 w-4" />
 							{/if}
 						</button>
-						
+
 						{#if expandedMenus[link.label]}
 							<div class="bg-gray-50 space-y-1 py-1" transition:slide={{ duration: 200 }}>
 								{#each link.subItems as subLink}
 									{#if !subLink.adminOnly || isAdmin}
 										<a
 											href={subLink.href}
-											class="flex items-center gap-3 pl-11 pr-4 py-2 text-sm transition-colors {isActive(subLink.href)
+											class="flex items-center gap-3 pl-11 pr-4 py-2 text-sm transition-colors {isActive(
+												subLink.href
+											)
 												? 'text-emerald-600 font-medium'
 												: 'text-gray-600 hover:text-emerald-600'}"
 											onclick={() => {
@@ -281,7 +290,9 @@
 				{:else}
 					<a
 						href={link.href}
-						class="flex items-center gap-3 rounded-lg px-4 py-3 transition-colors {isActive(link.href!)
+						class="flex items-center gap-3 rounded-lg px-4 py-3 transition-colors {isActive(
+							link.href!
+						)
 							? 'bg-emerald-600 text-white shadow-md'
 							: 'text-gray-700 hover:bg-emerald-50 hover:text-emerald-600'}"
 						onclick={() => {
@@ -316,8 +327,8 @@
 				</div>
 			{/if}
 
-			<button 
-				onclick={handleLogout} 
+			<button
+				onclick={handleLogout}
 				class="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-red-600 transition-colors hover:bg-red-50"
 			>
 				<LogOut class="h-5 w-5 flex-shrink-0" />
@@ -329,10 +340,12 @@
 	<!-- Main Content -->
 	<main class="flex-1 overflow-y-auto min-w-0 w-full relative">
 		<!-- Mobile Header for Hamburger -->
-		<div class="sticky top-0 z-30 flex items-center border-b border-gray-200 bg-white px-4 py-2 lg:hidden">
-			<button 
+		<div
+			class="sticky top-0 z-30 flex items-center border-b border-gray-200 bg-white px-4 py-2 lg:hidden"
+		>
+			<button
 				class="rounded-lg p-2 text-gray-600 hover:bg-gray-100"
-				onclick={() => sidebarOpen = !sidebarOpen}
+				onclick={() => (sidebarOpen = !sidebarOpen)}
 			>
 				<Menu class="h-6 w-6" />
 			</button>
