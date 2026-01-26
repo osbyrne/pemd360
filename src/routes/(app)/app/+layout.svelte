@@ -6,14 +6,10 @@
 	import logoPEMD from '$lib/assets/img/pemd360.png';
 	import {
 		Menu,
-		Gauge,
 		ClipboardList,
 		ClipboardList as ClipboardListAlt,
 		Grid3x3,
-		FolderOpen,
 		LogOut,
-		ShieldUser,
-		TestTube2,
 		ChevronDown,
 		ChevronRight,
 		Settings,
