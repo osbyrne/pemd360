@@ -52,6 +52,7 @@
     "drizzle-orm": "^0.45.0",
     "exceljs": "^4.4.0",
     "lucide-svelte": "^0.556.0",
+    "nanoid": "^5.1.6",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^5.4.530"
   },
