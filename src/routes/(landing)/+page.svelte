@@ -59,7 +59,7 @@
 </svelte:head>
 
 <!-- Hero Carousel -->
-<section class="relative h-[600px] w-full overflow-hidden">
+<section class="relative h-150 w-full overflow-hidden">
 	{#each slides as slide, index (index)}
 		<div
 			class="absolute inset-0 transition-opacity duration-700 ease-in-out {index === currentSlide
@@ -71,7 +71,7 @@
 				class="absolute inset-0 bg-cover bg-center"
 				style="background-image: url('{slide.image}')"
 			>
-				<div class="absolute inset-0 bg-black/50"></div>
+				<div class="absolute inset-0"></div>
 			</div>
 
 			<!-- Content -->
@@ -134,7 +134,7 @@
 
 <!-- Diagnostic PEMD Section -->
 <section id="pemd" class="bg-gray-50 py-16 lg:py-24">
-	<div class="container mx-auto px-4">
+	<div class="container mx-auto px-4 mb-6">
 		<div class="grid items-center gap-12 lg:grid-cols-2">
 			<!-- Content -->
 			<div class="order-2 lg:order-1">
@@ -142,7 +142,7 @@
 					>NOTRE ACTIVITÉ</span
 				>
 				<h2 class="mb-6 text-3xl font-bold text-gray-900 lg:text-4xl">Le Diagnostic PEMD</h2>
-				<div class="space-y-4 text-gray-600">
+				<div class="space-y-4">
 					<p class="text-justify leading-relaxed">
 						<a
 							href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000047506328"
@@ -150,44 +150,64 @@
 							rel="noopener noreferrer"
 							class="text-emerald-600 hover:underline"
 						>
-							L'arrêté d'application du 26 mars 2023
-						</a>, impose au maître d'ouvrage de réaliser depuis le 1<sup>er</sup> juillet 2023 un diagnostic
-						Produits, Équipements, Matériaux et Déchets (PEMD) pour tout projet de démolition ou de rénovation
-						significative de bâtiments.
+							L'arrêté d'application du <b>26 mars 2023</b>
+						</a>
+						impose au maître d'ouvrage, depuis le 1<sup>er</sup> juillet 2023, la réalisation d'un
+						diagnostic Produits, Équipements, Matériaux et Déchets (PEMD) pour tout projet de
+						démolition ou de rénovation significative de bâtiments.
+						<br />
 					</p>
 					<p class="text-justify leading-relaxed">
-						Dans un contexte d'économie circulaire, ce diagnostic vise à réduire la quantité de
-						déchets provenant des chantiers du BTP en accordant une part plus importante au
-						réemploi.
+						Dans un contexte de transition vers l’économie circulaire, ce diagnostic vise à réduire
+						la quantité de déchets issus des chantiers du BTP, en favorisant en priorité le
+						réemploi, puis le recyclage et la valorisation des matériaux, conformément à la
+						hiérarchie des modes de traitement des déchets.
 					</p>
 					<p class="text-justify leading-relaxed">
-						Conformément au décret n°2021-872 du 30 juin 2021 recodifiant la partie réglementaire du
-						livre 1<sup>er</sup> du code de la construction et de l'habitation, le diagnostic PEMD doit
-						permettre de réaliser un inventaire des éléments constitutifs d'un bâtiment en intégrant les
-						risques amiante, plomb, termite et structure.
+						Conformément au décret n°2021-872 du 30 juin 2021, recodifiant la partie réglementaire
+						du livre I<sup>er</sup> du code de la construction et de l'habitation, le diagnostic PEMD
+						permet de réaliser un inventaire exhaustif des éléments constitutifs d'un bâtiment en intégrant
+						notamment :
 					</p>
-				</div>
 
-				<!-- Diagnostics List -->
-				<div class="my-6 grid grid-cols-2 gap-3">
-					{#each ['Diagnostic amiante', 'Diagnostic plomb', 'Diagnostic termites', 'Diagnostic structure'] as diagnostic (diagnostic)}
-						<div class="flex items-center gap-2 text-sm text-gray-600">
-							<svg class="h-5 w-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
-								<path
-									fill-rule="evenodd"
-									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-									clip-rule="evenodd"
-								/>
-							</svg>
-							<span>{diagnostic}</span>
-						</div>
-					{/each}
+					<ul class="list-disc list-inside">
+						<li>les produits, équipements et matériaux présents,</li>
+						<li>leur quantification et leur devenir prévisionnel,</li>
+						<li>l’identification des potentiels de réemploi,</li>
+						<li>la prise en compte des risques et contraintes sanitaires et structurelles.</li>
+					</ul>
 				</div>
+				<br />
 
-				<p class="mb-6 text-gray-600">
-					Dépollution Conseil vous propose grâce à l'utilisation de sa solution innovante de
-					réaliser le diagnostic PEMD de votre projet.
+				<p>
+					Depuis fin 2025, la réalisation du diagnostic PEMD s’appuie également sur la norme AFNOR
+					XP X46-039, qui définit le cadre méthodologique, le contenu de la mission et la structure
+					des livrables, garantissant une approche homogène, fiable et conforme aux exigences
+					réglementaires et opérationnelles. Le diagnostic PEMD intègre notamment les diagnostics et
+					investigations suivants :
 				</p>
+				<br />
+
+				<ul class="list-disc list-inside">
+					<li>Diagnostic amiante</li>
+					<li>Diagnostic plomb</li>
+					<li>Diagnostic termites</li>
+				</ul>
+				<br />
+
+				<p>
+					Dépollution Conseil vous accompagne dans la réalisation complète de votre diagnostic PEMD
+					grâce à l’utilisation d’une solution innovante et numérique, permettant :
+				</p>
+				<br />
+
+				<ul class="list-disc list-inside">
+					<li>une collecte terrain optimisée,</li>
+					<li>une traçabilité renforcée des données,</li>
+					<li>une exploitation facilitée pour la maîtrise d’ouvrage et les entreprises,</li>
+					<li>une intégration directe dans les démarches d’économie circulaire et de réemploi.</li>
+				</ul>
+				<br />
 
 				<!-- Contact Info -->
 				<div
