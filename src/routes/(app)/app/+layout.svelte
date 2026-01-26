@@ -198,6 +198,7 @@
 
 	async function handleLogout() {
 		await authClient.signOut();
+		console.log('signing out');
 		goto('/login');
 	}
 </script>
@@ -331,7 +332,7 @@
 				onclick={handleLogout}
 				class="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-red-600 transition-colors hover:bg-red-50"
 			>
-				<LogOut class="h-5 w-5 flex-shrink-0" />
+				<LogOut class="h-5 w-5 shrink-0" />
 				<span class="font-medium">Déconnexion</span>
 			</button>
 		</div>
