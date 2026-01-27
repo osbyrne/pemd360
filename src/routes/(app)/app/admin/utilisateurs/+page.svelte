@@ -216,7 +216,7 @@
 		try {
 			const res = await authClient.admin.setRole({
 				userId: selectedUser.id,
-				role: editForm.role as 'user' | 'admin'
+				role: editForm.role as 'user' | 'admin' | 'collaborator'
 			});
 			if (res.error) {
 				showToast('Échec de la mise à jour : ' + res.error.message, 'error');
@@ -251,7 +251,7 @@
 				email: createForm.email,
 				password: createForm.password,
 				name: createForm.name,
-				role: createForm.role as 'user' | 'admin'
+				role: createForm.role as 'user' | 'admin' | 'collaborator'
 			});
 
 			if (res.data) {
@@ -597,6 +597,18 @@
 									>
 										Admin
 									</span>
+								{:else if user.role === 'collaborator'}
+									<span
+										class="inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700"
+									>
+										Collaborateur
+									</span>
+								{:else}
+									<span
+										class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700"
+									>
+										Utilisateur
+									</span>
 								{/if}
 							</div>
 							<p class="truncate text-sm text-slate-500">{user.email}</p>
@@ -915,6 +927,7 @@
 									class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 								>
 									<option value="user">Utilisateur</option>
+									<option value="collaborator">Collaborateur</option>
 									<option value="admin">Administrateur</option>
 								</select>
 							</div>
@@ -1078,6 +1091,7 @@
 									class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 								>
 									<option value="user">Utilisateur</option>
+									<option value="collaborator">Collaborateur</option>
 									<option value="admin">Administrateur</option>
 								</select>
 							</div>

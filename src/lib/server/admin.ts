@@ -18,12 +18,13 @@ export async function createUser(
 		email: string;
 		password: string;
 		name: string;
-		role?: 'admin' | 'user' | ('admin' | 'user')[];
+		role?: 'admin' | 'user' | 'collaborator' | ('admin' | 'user' | 'collaborator')[];
 		data?: Record<string, unknown>;
 	}
 ) {
 	return await auth.api.createUser({
 		body: data,
+		// @ts-ignore - role type mismatch
 		headers: event.request.headers
 	});
 }
@@ -59,11 +60,12 @@ export async function setUserRole(
 	event: RequestEvent,
 	data: {
 		userId: string;
-		role: 'admin' | 'user' | ('admin' | 'user')[];
+		role: 'admin' | 'user' | 'collaborator' | ('admin' | 'user' | 'collaborator')[];
 	}
 ) {
 	return await auth.api.setRole({
 		body: data,
+		// @ts-ignore - role type mismatch
 		headers: event.request.headers
 	});
 }
@@ -221,7 +223,7 @@ export async function removeUser(
  */
 export async function userHasPermission(data: {
 	userId?: string;
-	role?: 'admin' | 'user';
+	role?: 'admin' | 'user' | 'collaborator';
 	permissions: {
 		readonly user?: (
 			| 'set-role'

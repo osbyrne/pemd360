@@ -15,6 +15,7 @@ import {
 	categorieV2,
 	objets
 } from '$lib/server/db/schema';
+import { auth } from '$lib/auth';
 import { eq } from 'drizzle-orm';
 import { nanoid } from 'nanoid';
 
@@ -115,6 +116,20 @@ export const actions: Actions = {
 			return fail(401, { error: 'Non autorisé' });
 		}
 
+		// Check permissions
+		const hasPermission = await auth.api.userHasPermission({
+			body: {
+				userId: currentUser.id,
+				permissions: {
+					tags: ['create']
+				}
+			}
+		});
+
+		if (!hasPermission.success) {
+			return fail(403, { error: 'Permission refusée' });
+		}
+
 		const formData = await request.formData();
 		const projetId = params.id;
 
@@ -182,6 +197,20 @@ export const actions: Actions = {
 		const currentUser = locals.user;
 		if (!currentUser) {
 			return fail(401, { error: 'Non autorisé' });
+		}
+
+		// Check permissions
+		const hasPermission = await auth.api.userHasPermission({
+			body: {
+				userId: currentUser.id,
+				permissions: {
+					tags: ['delete']
+				}
+			}
+		});
+
+		if (!hasPermission.success) {
+			return fail(403, { error: 'Permission refusée' });
 		}
 
 		const formData = await request.formData();

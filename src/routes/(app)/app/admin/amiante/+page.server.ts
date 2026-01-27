@@ -3,6 +3,7 @@ import { tagsAmiante, projet, userProjet } from '$lib/server/db/schema';
 import { eq, and, inArray } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
+import { auth } from '$lib/auth';
 
 export const load: PageServerLoad = async ({ url, locals }) => {
 	const user = locals.user;
@@ -82,7 +83,23 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 };
 
 export const actions: Actions = {
-	delete: async ({ request }) => {
+	delete: async ({ request, locals }) => {
+		const user = locals.user;
+		if (!user) {
+			return fail(401, { message: 'Non autorisé' });
+		}
+
+		const hasPermission = await auth.api.userHasPermission({
+			body: {
+				userId: user.id,
+				permissions: { tags: ['delete'] }
+			}
+		});
+
+		if (!hasPermission.success) {
+			return fail(403, { message: 'Permission refusée' });
+		}
+
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 

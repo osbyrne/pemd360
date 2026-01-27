@@ -6,6 +6,8 @@ import { db } from './server/db/client';
 import * as schema from './server/db/schema';
 import { admin } from 'better-auth/plugins';
 
+import { ac, admin as adminRole, user, collaborator } from './auth/permissions';
+
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
 		provider: 'sqlite',
@@ -15,5 +17,15 @@ export const auth = betterAuth({
 	emailAndPassword: {
 		enabled: true
 	},
-	plugins: [sveltekitCookies(getRequestEvent), admin()]
+	plugins: [
+		sveltekitCookies(getRequestEvent),
+		admin({
+			ac,
+			roles: {
+				admin: adminRole,
+				user,
+				collaborator
+			}
+		})
+	]
 });
