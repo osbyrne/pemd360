@@ -1,105 +1,106 @@
 {
+	"id": "00000000-0000-0000-0000-000000000000",
+	"prevId": "",
 	"version": "6",
 	"dialect": "sqlite",
-	"id": "1caf4214-55b0-431a-95f1-3a5a7a54247e",
-	"prevId": "00000000-0000-0000-0000-000000000000",
 	"tables": {
 		"account": {
 			"name": "account",
 			"columns": {
 				"id": {
+					"autoincrement": false,
 					"name": "id",
 					"type": "text",
 					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"account_id": {
+					"autoincrement": false,
 					"name": "account_id",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"provider_id": {
+					"autoincrement": false,
 					"name": "provider_id",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"user_id": {
+					"autoincrement": false,
 					"name": "user_id",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"access_token": {
+					"autoincrement": false,
 					"name": "access_token",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"refresh_token": {
+					"autoincrement": false,
 					"name": "refresh_token",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"id_token": {
+					"autoincrement": false,
 					"name": "id_token",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"access_token_expires_at": {
+					"autoincrement": false,
 					"name": "access_token_expires_at",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"refresh_token_expires_at": {
+					"autoincrement": false,
 					"name": "refresh_token_expires_at",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"scope": {
+					"autoincrement": false,
 					"name": "scope",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"password": {
+					"autoincrement": false,
 					"name": "password",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"created_at": {
+					"default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+					"autoincrement": false,
 					"name": "created_at",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false,
-					"default": "(cast(unixepoch('subsecond') * 1000 as integer))"
+					"notNull": true
 				},
 				"updated_at": {
+					"autoincrement": false,
 					"name": "updated_at",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				}
 			},
+			"compositePrimaryKeys": {},
 			"indexes": {
 				"account_userId_idx": {
 					"name": "account_userId_idx",
@@ -118,7 +119,258 @@
 					"onUpdate": "no action"
 				}
 			},
+			"uniqueConstraints": {},
+			"checkConstraints": {}
+		},
+		"session": {
+			"name": "session",
+			"columns": {
+				"id": {
+					"autoincrement": false,
+					"name": "id",
+					"type": "text",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"expires_at": {
+					"autoincrement": false,
+					"name": "expires_at",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"token": {
+					"autoincrement": false,
+					"name": "token",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"created_at": {
+					"default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+					"autoincrement": false,
+					"name": "created_at",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"updated_at": {
+					"autoincrement": false,
+					"name": "updated_at",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"ip_address": {
+					"autoincrement": false,
+					"name": "ip_address",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"user_agent": {
+					"autoincrement": false,
+					"name": "user_agent",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"user_id": {
+					"autoincrement": false,
+					"name": "user_id",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"impersonated_by": {
+					"autoincrement": false,
+					"name": "impersonated_by",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				}
+			},
 			"compositePrimaryKeys": {},
+			"indexes": {
+				"session_userId_idx": {
+					"name": "session_userId_idx",
+					"columns": ["user_id"],
+					"isUnique": false
+				},
+				"session_token_unique": {
+					"name": "session_token_unique",
+					"columns": ["token"],
+					"isUnique": true
+				}
+			},
+			"foreignKeys": {
+				"session_user_id_user_id_fk": {
+					"name": "session_user_id_user_id_fk",
+					"tableFrom": "session",
+					"tableTo": "user",
+					"columnsFrom": ["user_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
+				}
+			},
+			"uniqueConstraints": {},
+			"checkConstraints": {}
+		},
+		"user": {
+			"name": "user",
+			"columns": {
+				"id": {
+					"autoincrement": false,
+					"name": "id",
+					"type": "text",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"name": {
+					"autoincrement": false,
+					"name": "name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"email": {
+					"autoincrement": false,
+					"name": "email",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"email_verified": {
+					"default": false,
+					"autoincrement": false,
+					"name": "email_verified",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"image": {
+					"autoincrement": false,
+					"name": "image",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"created_at": {
+					"default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+					"autoincrement": false,
+					"name": "created_at",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"updated_at": {
+					"default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+					"autoincrement": false,
+					"name": "updated_at",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"role": {
+					"autoincrement": false,
+					"name": "role",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"banned": {
+					"default": false,
+					"autoincrement": false,
+					"name": "banned",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"ban_reason": {
+					"autoincrement": false,
+					"name": "ban_reason",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"ban_expires": {
+					"autoincrement": false,
+					"name": "ban_expires",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				}
+			},
+			"compositePrimaryKeys": {},
+			"indexes": {
+				"user_email_unique": {
+					"name": "user_email_unique",
+					"columns": ["email"],
+					"isUnique": true
+				}
+			},
+			"foreignKeys": {},
+			"uniqueConstraints": {},
+			"checkConstraints": {}
+		},
+		"verification": {
+			"name": "verification",
+			"columns": {
+				"id": {
+					"autoincrement": false,
+					"name": "id",
+					"type": "text",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"identifier": {
+					"autoincrement": false,
+					"name": "identifier",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"value": {
+					"autoincrement": false,
+					"name": "value",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"expires_at": {
+					"autoincrement": false,
+					"name": "expires_at",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"created_at": {
+					"default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+					"autoincrement": false,
+					"name": "created_at",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"updated_at": {
+					"default": "(cast(unixepoch('subsecond') * 1000 as integer))",
+					"autoincrement": false,
+					"name": "updated_at",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"compositePrimaryKeys": {},
+			"indexes": {
+				"verification_identifier_idx": {
+					"name": "verification_identifier_idx",
+					"columns": ["identifier"],
+					"isUnique": false
+				}
+			},
+			"foreignKeys": {},
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
@@ -126,27 +378,28 @@
 			"name": "categorie_v2",
 			"columns": {
 				"id": {
+					"autoincrement": true,
 					"name": "id",
 					"type": "integer",
 					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": true
+					"notNull": true
 				},
 				"groupe_id": {
+					"autoincrement": false,
 					"name": "groupe_id",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"categoriev2": {
+					"autoincrement": false,
 					"name": "categoriev2",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				}
 			},
+			"compositePrimaryKeys": {},
 			"indexes": {
 				"categorie_v2_groupe_id_idx": {
 					"name": "categorie_v2_groupe_id_idx",
@@ -165,227 +418,6 @@
 					"onUpdate": "no action"
 				}
 			},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"checkConstraints": {}
-		},
-		"cerfa_diagnostic": {
-			"name": "cerfa_diagnostic",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "integer",
-					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": true
-				},
-				"projet_id": {
-					"name": "projet_id",
-					"type": "text(50)",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"derniere_visite": {
-					"name": "derniere_visite",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"bat_non_visite": {
-					"name": "bat_non_visite",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"raisons_ne_pas_visite": {
-					"name": "raisons_ne_pas_visite",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"desordres": {
-					"name": "desordres",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"precaution": {
-					"name": "precaution",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"document_consultés": {
-					"name": "document_consultés",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"bat_visite": {
-					"name": "bat_visite",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				}
-			},
-			"indexes": {
-				"cerfa_diagnostic_projet_id_idx": {
-					"name": "cerfa_diagnostic_projet_id_idx",
-					"columns": ["projet_id"],
-					"isUnique": false
-				}
-			},
-			"foreignKeys": {
-				"cerfa_diagnostic_projet_id_projet_id_fk": {
-					"name": "cerfa_diagnostic_projet_id_projet_id_fk",
-					"tableFrom": "cerfa_diagnostic",
-					"tableTo": "projet",
-					"columnsFrom": ["projet_id"],
-					"columnsTo": ["id"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				}
-			},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"checkConstraints": {}
-		},
-		"cerfa_diagnostiqueur": {
-			"name": "cerfa_diagnostiqueur",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "integer",
-					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": true
-				},
-				"projet_id": {
-					"name": "projet_id",
-					"type": "text(50)",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"nom_per_phy": {
-					"name": "nom_per_phy",
-					"type": "text(255)",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"prenom_per_phy": {
-					"name": "prenom_per_phy",
-					"type": "text(255)",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"nom_per_morale": {
-					"name": "nom_per_morale",
-					"type": "text(255)",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"siret_siren": {
-					"name": "siret_siren",
-					"type": "text(255)",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"adresse": {
-					"name": "adresse",
-					"type": "text(255)",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"cp": {
-					"name": "cp",
-					"type": "text(255)",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"commune": {
-					"name": "commune",
-					"type": "text(255)",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"engagement_assurance": {
-					"name": "engagement_assurance",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"nom_assurance": {
-					"name": "nom_assurance",
-					"type": "text(255)",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"numero_police": {
-					"name": "numero_police",
-					"type": "text(255)",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"date_debut_assurance": {
-					"name": "date_debut_assurance",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"date_fin_assurance": {
-					"name": "date_fin_assurance",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"competences": {
-					"name": "competences",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				}
-			},
-			"indexes": {
-				"cerfa_diagnostiqueur_projet_id_idx": {
-					"name": "cerfa_diagnostiqueur_projet_id_idx",
-					"columns": ["projet_id"],
-					"isUnique": false
-				}
-			},
-			"foreignKeys": {
-				"cerfa_diagnostiqueur_projet_id_projet_id_fk": {
-					"name": "cerfa_diagnostiqueur_projet_id_projet_id_fk",
-					"tableFrom": "cerfa_diagnostiqueur",
-					"tableTo": "projet",
-					"columnsFrom": ["projet_id"],
-					"columnsTo": ["id"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				}
-			},
-			"compositePrimaryKeys": {},
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
@@ -393,69 +425,70 @@
 			"name": "cerfa_mtr_ouvrage",
 			"columns": {
 				"id": {
+					"autoincrement": true,
 					"name": "id",
 					"type": "integer",
 					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": true
+					"notNull": true
 				},
 				"projet_id": {
+					"autoincrement": false,
 					"name": "projet_id",
 					"type": "text(50)",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"nom_per_phy": {
+					"autoincrement": false,
 					"name": "nom_per_phy",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"prenom_per_phy": {
+					"autoincrement": false,
 					"name": "prenom_per_phy",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"nom_per_morale": {
+					"autoincrement": false,
 					"name": "nom_per_morale",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"siret_siren": {
+					"autoincrement": false,
 					"name": "siret_siren",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"adresse": {
+					"autoincrement": false,
 					"name": "adresse",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"cp": {
+					"autoincrement": false,
 					"name": "cp",
 					"type": "real",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"commune": {
+					"autoincrement": false,
 					"name": "commune",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				}
 			},
+			"compositePrimaryKeys": {},
 			"indexes": {
 				"cerfa_mtr_ouvrage_projet_id_idx": {
 					"name": "cerfa_mtr_ouvrage_projet_id_idx",
@@ -474,169 +507,6 @@
 					"onUpdate": "no action"
 				}
 			},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"checkConstraints": {}
-		},
-		"cerfa_operation": {
-			"name": "cerfa_operation",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "integer",
-					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": true
-				},
-				"projet_id": {
-					"name": "projet_id",
-					"type": "text(50)",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"adresse": {
-					"name": "adresse",
-					"type": "text(500)",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"cp": {
-					"name": "cp",
-					"type": "text(255)",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"commune": {
-					"name": "commune",
-					"type": "text(255)",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"date_de_debut": {
-					"name": "date_de_debut",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"date_de_fin": {
-					"name": "date_de_fin",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"operation": {
-					"name": "operation",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"nb_bat_demolition": {
-					"name": "nb_bat_demolition",
-					"type": "real",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"surface_a_demolir": {
-					"name": "surface_a_demolir",
-					"type": "real",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"nb_bat_renovation": {
-					"name": "nb_bat_renovation",
-					"type": "real",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"surface_a_renover": {
-					"name": "surface_a_renover",
-					"type": "real",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"typologie_bat": {
-					"name": "typologie_bat",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"date_permis_de_construire": {
-					"name": "date_permis_de_construire",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"operation_soumis": {
-					"name": "operation_soumis",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				}
-			},
-			"indexes": {
-				"cerfa_operation_projet_id_idx": {
-					"name": "cerfa_operation_projet_id_idx",
-					"columns": ["projet_id"],
-					"isUnique": false
-				}
-			},
-			"foreignKeys": {
-				"cerfa_operation_projet_id_projet_id_fk": {
-					"name": "cerfa_operation_projet_id_projet_id_fk",
-					"tableFrom": "cerfa_operation",
-					"tableTo": "projet",
-					"columnsFrom": ["projet_id"],
-					"columnsTo": ["id"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				}
-			},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"checkConstraints": {}
-		},
-		"doctrine_migration_versions": {
-			"name": "doctrine_migration_versions",
-			"columns": {
-				"version": {
-					"name": "version",
-					"type": "text(191)",
-					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"executed_at": {
-					"name": "executed_at",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"execution_time": {
-					"name": "execution_time",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				}
-			},
-			"indexes": {},
-			"foreignKeys": {},
-			"compositePrimaryKeys": {},
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
@@ -644,83 +514,84 @@
 			"name": "etablissement",
 			"columns": {
 				"id": {
+					"autoincrement": true,
 					"name": "id",
 					"type": "integer",
 					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": true
+					"notNull": true
 				},
 				"id_societe_id": {
+					"autoincrement": false,
 					"name": "id_societe_id",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"nom": {
+					"autoincrement": false,
 					"name": "nom",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"raison_social": {
+					"autoincrement": false,
 					"name": "raison_social",
 					"type": "text(50)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"rue": {
+					"autoincrement": false,
 					"name": "rue",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"cp": {
+					"autoincrement": false,
 					"name": "cp",
 					"type": "text(5)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"ville": {
+					"autoincrement": false,
 					"name": "ville",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"tel": {
+					"autoincrement": false,
 					"name": "tel",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"fax": {
+					"autoincrement": false,
 					"name": "fax",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"email": {
+					"autoincrement": false,
 					"name": "email",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"siret": {
+					"autoincrement": false,
 					"name": "siret",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				}
 			},
+			"compositePrimaryKeys": {},
 			"indexes": {
 				"etablissement_id_societe_id_idx": {
 					"name": "etablissement_id_societe_id_idx",
@@ -739,7 +610,6 @@
 					"onUpdate": "no action"
 				}
 			},
-			"compositePrimaryKeys": {},
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
@@ -747,34 +617,35 @@
 			"name": "extrapolation",
 			"columns": {
 				"id": {
+					"autoincrement": true,
 					"name": "id",
 					"type": "integer",
 					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": true
+					"notNull": true
 				},
 				"sid_id": {
+					"autoincrement": false,
 					"name": "sid_id",
 					"type": "text(50)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"extrapolation_data": {
+					"autoincrement": false,
 					"name": "extrapolation_data",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"constitution": {
+					"autoincrement": false,
 					"name": "constitution",
 					"type": "text(10000)",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				}
 			},
+			"compositePrimaryKeys": {},
 			"indexes": {
 				"extrapolation_sid_id_idx": {
 					"name": "extrapolation_sid_id_idx",
@@ -793,7 +664,6 @@
 					"onUpdate": "no action"
 				}
 			},
-			"compositePrimaryKeys": {},
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
@@ -801,23 +671,23 @@
 			"name": "groupe",
 			"columns": {
 				"id": {
+					"autoincrement": true,
 					"name": "id",
 					"type": "integer",
 					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": true
+					"notNull": true
 				},
 				"groupe": {
+					"autoincrement": false,
 					"name": "groupe",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				}
 			},
+			"compositePrimaryKeys": {},
 			"indexes": {},
 			"foreignKeys": {},
-			"compositePrimaryKeys": {},
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
@@ -825,93 +695,93 @@
 			"name": "nature_v2",
 			"columns": {
 				"id": {
+					"autoincrement": true,
 					"name": "id",
 					"type": "integer",
 					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": true
+					"notNull": true
 				},
 				"nature": {
+					"autoincrement": false,
 					"name": "nature",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"reutilisation": {
+					"autoincrement": false,
 					"name": "reutilisation",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"recyclable": {
+					"autoincrement": false,
 					"name": "recyclable",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"valorisation_matiere": {
+					"autoincrement": false,
 					"name": "valorisation_matiere",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"valorisation_energetique": {
+					"autoincrement": false,
 					"name": "valorisation_energetique",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"densite": {
+					"autoincrement": false,
 					"name": "densite",
 					"type": "real",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"stockage": {
+					"autoincrement": false,
 					"name": "stockage",
 					"type": "text(100)",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"code_dechet": {
+					"autoincrement": false,
 					"name": "code_dechet",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"eco_organisme_rep": {
+					"autoincrement": false,
 					"name": "eco_organisme_rep",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"incineration_sans_valorisation_energetique": {
+					"autoincrement": false,
 					"name": "incineration_sans_valorisation_energetique",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"non_valorisation": {
+					"autoincrement": false,
 					"name": "non_valorisation",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				}
 			},
+			"compositePrimaryKeys": {},
 			"indexes": {},
 			"foreignKeys": {},
-			"compositePrimaryKeys": {},
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
@@ -919,55 +789,56 @@
 			"name": "objets",
 			"columns": {
 				"id": {
+					"autoincrement": true,
 					"name": "id",
 					"type": "integer",
 					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": true
+					"notNull": true
 				},
 				"categorie_id": {
+					"autoincrement": false,
 					"name": "categorie_id",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"objet": {
+					"autoincrement": false,
 					"name": "objet",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"unite": {
+					"autoincrement": false,
 					"name": "unite",
 					"type": "text(100)",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"depose_reemlpoi": {
+					"autoincrement": false,
 					"name": "depose_reemlpoi",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"depose_dechet": {
+					"autoincrement": false,
 					"name": "depose_dechet",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"masse_unitaire": {
+					"autoincrement": false,
 					"name": "masse_unitaire",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				}
 			},
+			"compositePrimaryKeys": {},
 			"indexes": {
 				"objets_categorie_id_idx": {
 					"name": "objets_categorie_id_idx",
@@ -986,152 +857,6 @@
 					"onUpdate": "no action"
 				}
 			},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"checkConstraints": {}
-		},
-		"projet": {
-			"name": "projet",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "text(50)",
-					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"id_etablissement_id": {
-					"name": "id_etablissement_id",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"id_etab_id": {
-					"name": "id_etab_id",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"libelle": {
-					"name": "libelle",
-					"type": "text(255)",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"reference": {
-					"name": "reference",
-					"type": "text(255)",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"code_insee": {
-					"name": "code_insee",
-					"type": "text(5)",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"rue": {
-					"name": "rue",
-					"type": "text(255)",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"cp": {
-					"name": "cp",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"ville": {
-					"name": "ville",
-					"type": "text(255)",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"date_demarrage": {
-					"name": "date_demarrage",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"section": {
-					"name": "section",
-					"type": "text(10)",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"parcelle": {
-					"name": "parcelle",
-					"type": "text(10)",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"type_operation": {
-					"name": "type_operation",
-					"type": "text(255)",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"maitre_d_ouvrage": {
-					"name": "maitre_d_ouvrage",
-					"type": "text(255)",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"date_de_fin": {
-					"name": "date_de_fin",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				}
-			},
-			"indexes": {
-				"projet_id_etablissement_id_idx": {
-					"name": "projet_id_etablissement_id_idx",
-					"columns": ["id_etablissement_id"],
-					"isUnique": false
-				},
-				"projet_id_etab_id_idx": {
-					"name": "projet_id_etab_id_idx",
-					"columns": ["id_etab_id"],
-					"isUnique": false
-				}
-			},
-			"foreignKeys": {
-				"projet_id_etablissement_id_etablissement_id_fk": {
-					"name": "projet_id_etablissement_id_etablissement_id_fk",
-					"tableFrom": "projet",
-					"tableTo": "etablissement",
-					"columnsFrom": ["id_etablissement_id"],
-					"columnsTo": ["id"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				},
-				"projet_id_etab_id_etablissement_id_fk": {
-					"name": "projet_id_etab_id_etablissement_id_fk",
-					"tableFrom": "projet",
-					"tableTo": "etablissement",
-					"columnsFrom": ["id_etab_id"],
-					"columnsTo": ["id"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				}
-			},
-			"compositePrimaryKeys": {},
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
@@ -1139,18 +864,24 @@
 			"name": "projet_user",
 			"columns": {
 				"projet_id": {
+					"autoincrement": false,
 					"name": "projet_id",
 					"type": "text(50)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"user_id": {
+					"autoincrement": false,
 					"name": "user_id",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
+				}
+			},
+			"compositePrimaryKeys": {
+				"projet_user_projet_id_user_id_pk": {
+					"columns": ["projet_id", "user_id"],
+					"name": "projet_user_projet_id_user_id_pk"
 				}
 			},
 			"indexes": {
@@ -1161,15 +892,6 @@
 				}
 			},
 			"foreignKeys": {
-				"projet_user_projet_id_projet_id_fk": {
-					"name": "projet_user_projet_id_projet_id_fk",
-					"tableFrom": "projet_user",
-					"tableTo": "projet",
-					"columnsFrom": ["projet_id"],
-					"columnsTo": ["id"],
-					"onDelete": "cascade",
-					"onUpdate": "no action"
-				},
 				"projet_user_user_id_user_legacy_id_fk": {
 					"name": "projet_user_user_id_user_legacy_id_fk",
 					"tableFrom": "projet_user",
@@ -1178,109 +900,17 @@
 					"columnsTo": ["id"],
 					"onDelete": "cascade",
 					"onUpdate": "no action"
-				}
-			},
-			"compositePrimaryKeys": {
-				"projet_user_projet_id_user_id_pk": {
-					"columns": ["projet_id", "user_id"],
-					"name": "projet_user_projet_id_user_id_pk"
-				}
-			},
-			"uniqueConstraints": {},
-			"checkConstraints": {}
-		},
-		"session": {
-			"name": "session",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "text",
-					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": false
 				},
-				"expires_at": {
-					"name": "expires_at",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"token": {
-					"name": "token",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"created_at": {
-					"name": "created_at",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false,
-					"default": "(cast(unixepoch('subsecond') * 1000 as integer))"
-				},
-				"updated_at": {
-					"name": "updated_at",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"ip_address": {
-					"name": "ip_address",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"user_agent": {
-					"name": "user_agent",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"user_id": {
-					"name": "user_id",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"impersonated_by": {
-					"name": "impersonated_by",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				}
-			},
-			"indexes": {
-				"session_token_unique": {
-					"name": "session_token_unique",
-					"columns": ["token"],
-					"isUnique": true
-				},
-				"session_userId_idx": {
-					"name": "session_userId_idx",
-					"columns": ["user_id"],
-					"isUnique": false
-				}
-			},
-			"foreignKeys": {
-				"session_user_id_user_id_fk": {
-					"name": "session_user_id_user_id_fk",
-					"tableFrom": "session",
-					"tableTo": "user",
-					"columnsFrom": ["user_id"],
+				"projet_user_projet_id_projet_id_fk": {
+					"name": "projet_user_projet_id_projet_id_fk",
+					"tableFrom": "projet_user",
+					"tableTo": "projet",
+					"columnsFrom": ["projet_id"],
 					"columnsTo": ["id"],
 					"onDelete": "cascade",
 					"onUpdate": "no action"
 				}
 			},
-			"compositePrimaryKeys": {},
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
@@ -1288,182 +918,86 @@
 			"name": "societe",
 			"columns": {
 				"id": {
+					"autoincrement": true,
 					"name": "id",
 					"type": "integer",
 					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": true
+					"notNull": true
 				},
 				"nom": {
+					"autoincrement": false,
 					"name": "nom",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"raison_social": {
+					"autoincrement": false,
 					"name": "raison_social",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"rue": {
+					"autoincrement": false,
 					"name": "rue",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"cp": {
+					"autoincrement": false,
 					"name": "cp",
 					"type": "text(5)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"ville": {
+					"autoincrement": false,
 					"name": "ville",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"tel": {
+					"autoincrement": false,
 					"name": "tel",
 					"type": "text(15)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"fax": {
+					"autoincrement": false,
 					"name": "fax",
 					"type": "text(15)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"email": {
+					"autoincrement": false,
 					"name": "email",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"siren": {
+					"autoincrement": false,
 					"name": "siren",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"type": {
+					"autoincrement": false,
 					"name": "type",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				}
 			},
+			"compositePrimaryKeys": {},
 			"indexes": {},
 			"foreignKeys": {},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"checkConstraints": {}
-		},
-		"tag_mail": {
-			"name": "tag_mail",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "text(255)",
-					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"projet_id_id": {
-					"name": "projet_id_id",
-					"type": "text(50)",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"user_id_id": {
-					"name": "user_id_id",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"date": {
-					"name": "date",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"content": {
-					"name": "content",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"stem_vector": {
-					"name": "stem_vector",
-					"type": "text(1000)",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"anchor_position": {
-					"name": "anchor_position",
-					"type": "text(1000)",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"destinataires": {
-					"name": "destinataires",
-					"type": "text(300)",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				}
-			},
-			"indexes": {
-				"tag_mail_projet_id_id_idx": {
-					"name": "tag_mail_projet_id_id_idx",
-					"columns": ["projet_id_id"],
-					"isUnique": false
-				},
-				"tag_mail_user_id_id_idx": {
-					"name": "tag_mail_user_id_id_idx",
-					"columns": ["user_id_id"],
-					"isUnique": false
-				}
-			},
-			"foreignKeys": {
-				"tag_mail_projet_id_id_projet_id_fk": {
-					"name": "tag_mail_projet_id_id_projet_id_fk",
-					"tableFrom": "tag_mail",
-					"tableTo": "projet",
-					"columnsFrom": ["projet_id_id"],
-					"columnsTo": ["id"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				},
-				"tag_mail_user_id_id_user_legacy_id_fk": {
-					"name": "tag_mail_user_id_id_user_legacy_id_fk",
-					"tableFrom": "tag_mail",
-					"tableTo": "user_legacy",
-					"columnsFrom": ["user_id_id"],
-					"columnsTo": ["id"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				}
-			},
-			"compositePrimaryKeys": {},
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
@@ -1471,90 +1005,91 @@
 			"name": "tags_amiante",
 			"columns": {
 				"id": {
+					"autoincrement": false,
 					"name": "id",
 					"type": "text(50)",
 					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"sid_id": {
+					"autoincrement": false,
 					"name": "sid_id",
 					"type": "text(50)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"label": {
+					"autoincrement": false,
 					"name": "label",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"description": {
+					"autoincrement": false,
 					"name": "description",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"anchor_position": {
+					"autoincrement": false,
 					"name": "anchor_position",
 					"type": "text(300)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"stem_vector": {
+					"autoincrement": false,
 					"name": "stem_vector",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"image": {
+					"autoincrement": false,
 					"name": "image",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"presence_amiante": {
+					"autoincrement": false,
 					"name": "presence_amiante",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"type": {
+					"autoincrement": false,
 					"name": "type",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"brusharray": {
+					"autoincrement": false,
 					"name": "brusharray",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"custom_image": {
+					"autoincrement": false,
 					"name": "custom_image",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"etage": {
+					"autoincrement": false,
 					"name": "etage",
 					"type": "text(100)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				}
 			},
+			"compositePrimaryKeys": {},
 			"indexes": {
 				"tags_amiante_sid_id_idx": {
 					"name": "tags_amiante_sid_id_idx",
@@ -1573,7 +1108,6 @@
 					"onUpdate": "no action"
 				}
 			},
-			"compositePrimaryKeys": {},
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
@@ -1581,90 +1115,91 @@
 			"name": "tags_plomb",
 			"columns": {
 				"id": {
+					"autoincrement": false,
 					"name": "id",
 					"type": "text(50)",
 					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"sid_id": {
+					"autoincrement": false,
 					"name": "sid_id",
 					"type": "text(50)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"label": {
+					"autoincrement": false,
 					"name": "label",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"description": {
+					"autoincrement": false,
 					"name": "description",
 					"type": "text(500)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"anchor_position": {
+					"autoincrement": false,
 					"name": "anchor_position",
 					"type": "text(500)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"stem_vector": {
+					"autoincrement": false,
 					"name": "stem_vector",
 					"type": "text(500)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"image": {
+					"autoincrement": false,
 					"name": "image",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"presence_plomb": {
+					"autoincrement": false,
 					"name": "presence_plomb",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"concentration": {
+					"autoincrement": false,
 					"name": "concentration",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"brusharray": {
+					"autoincrement": false,
 					"name": "brusharray",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"custom_image": {
+					"autoincrement": false,
 					"name": "custom_image",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"etage": {
+					"autoincrement": false,
 					"name": "etage",
 					"type": "text(100)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				}
 			},
+			"compositePrimaryKeys": {},
 			"indexes": {
 				"tags_plomb_sid_id_idx": {
 					"name": "tags_plomb_sid_id_idx",
@@ -1683,110 +1218,6 @@
 					"onUpdate": "no action"
 				}
 			},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"checkConstraints": {}
-		},
-		"tags_structure": {
-			"name": "tags_structure",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "text(50)",
-					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"sid_id": {
-					"name": "sid_id",
-					"type": "text(50)",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"label": {
-					"name": "label",
-					"type": "text(255)",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"description": {
-					"name": "description",
-					"type": "text(500)",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"anchor_position": {
-					"name": "anchor_position",
-					"type": "text(500)",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"stem_vector": {
-					"name": "stem_vector",
-					"type": "text(500)",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"image": {
-					"name": "image",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"brusharray": {
-					"name": "brusharray",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"custom_image": {
-					"name": "custom_image",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"screen_surface": {
-					"name": "screen_surface",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"shape_surface": {
-					"name": "shape_surface",
-					"type": "real",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				}
-			},
-			"indexes": {
-				"tags_structure_sid_id_idx": {
-					"name": "tags_structure_sid_id_idx",
-					"columns": ["sid_id"],
-					"isUnique": false
-				}
-			},
-			"foreignKeys": {
-				"tags_structure_sid_id_projet_id_fk": {
-					"name": "tags_structure_sid_id_projet_id_fk",
-					"tableFrom": "tags_structure",
-					"tableTo": "projet",
-					"columnsFrom": ["sid_id"],
-					"columnsTo": ["id"],
-					"onDelete": "no action",
-					"onUpdate": "no action"
-				}
-			},
-			"compositePrimaryKeys": {},
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
@@ -1794,83 +1225,84 @@
 			"name": "tags_termite",
 			"columns": {
 				"id": {
+					"autoincrement": false,
 					"name": "id",
 					"type": "text(50)",
 					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"sid_id": {
+					"autoincrement": false,
 					"name": "sid_id",
 					"type": "text(50)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"label": {
+					"autoincrement": false,
 					"name": "label",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"description": {
+					"autoincrement": false,
 					"name": "description",
 					"type": "text(500)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"anchor_position": {
+					"autoincrement": false,
 					"name": "anchor_position",
 					"type": "text(500)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"stem_vector": {
+					"autoincrement": false,
 					"name": "stem_vector",
 					"type": "text(500)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"image": {
+					"autoincrement": false,
 					"name": "image",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"presence_termite": {
+					"autoincrement": false,
 					"name": "presence_termite",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"brusharray": {
+					"autoincrement": false,
 					"name": "brusharray",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"custom_image": {
+					"autoincrement": false,
 					"name": "custom_image",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"etage": {
+					"autoincrement": false,
 					"name": "etage",
 					"type": "text(100)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				}
 			},
+			"compositePrimaryKeys": {},
 			"indexes": {
 				"tags_termite_sid_id_idx": {
 					"name": "tags_termite_sid_id_idx",
@@ -1889,104 +1321,6 @@
 					"onUpdate": "no action"
 				}
 			},
-			"compositePrimaryKeys": {},
-			"uniqueConstraints": {},
-			"checkConstraints": {}
-		},
-		"user": {
-			"name": "user",
-			"columns": {
-				"id": {
-					"name": "id",
-					"type": "text",
-					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"name": {
-					"name": "name",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"email": {
-					"name": "email",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"email_verified": {
-					"name": "email_verified",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false,
-					"default": false
-				},
-				"image": {
-					"name": "image",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"created_at": {
-					"name": "created_at",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false,
-					"default": "(cast(unixepoch('subsecond') * 1000 as integer))"
-				},
-				"updated_at": {
-					"name": "updated_at",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false,
-					"default": "(cast(unixepoch('subsecond') * 1000 as integer))"
-				},
-				"role": {
-					"name": "role",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"banned": {
-					"name": "banned",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false,
-					"default": false
-				},
-				"ban_reason": {
-					"name": "ban_reason",
-					"type": "text",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				},
-				"ban_expires": {
-					"name": "ban_expires",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
-				}
-			},
-			"indexes": {
-				"user_email_unique": {
-					"name": "user_email_unique",
-					"columns": ["email"],
-					"isUnique": true
-				}
-			},
-			"foreignKeys": {},
-			"compositePrimaryKeys": {},
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
@@ -1994,83 +1328,84 @@
 			"name": "user_legacy",
 			"columns": {
 				"id": {
+					"autoincrement": true,
 					"name": "id",
 					"type": "integer",
 					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": true
+					"notNull": true
 				},
 				"id_etab_id": {
+					"autoincrement": false,
 					"name": "id_etab_id",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"email": {
+					"autoincrement": false,
 					"name": "email",
 					"type": "text(180)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"roles": {
+					"autoincrement": false,
 					"name": "roles",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"password": {
+					"autoincrement": false,
 					"name": "password",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"nom": {
+					"autoincrement": false,
 					"name": "nom",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"prenom": {
+					"autoincrement": false,
 					"name": "prenom",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"rue": {
+					"autoincrement": false,
 					"name": "rue",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"cp": {
+					"autoincrement": false,
 					"name": "cp",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"ville": {
+					"autoincrement": false,
 					"name": "ville",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				},
 				"tel": {
+					"autoincrement": false,
 					"name": "tel",
 					"type": "text(255)",
 					"primaryKey": false,
-					"notNull": false,
-					"autoincrement": false
+					"notNull": false
 				}
 			},
+			"compositePrimaryKeys": {},
 			"indexes": {
 				"user_legacy_id_etab_id_idx": {
 					"name": "user_legacy_id_etab_id_idx",
@@ -2089,7 +1424,629 @@
 					"onUpdate": "no action"
 				}
 			},
+			"uniqueConstraints": {},
+			"checkConstraints": {}
+		},
+		"cerfa_diagnostic": {
+			"name": "cerfa_diagnostic",
+			"columns": {
+				"id": {
+					"autoincrement": true,
+					"name": "id",
+					"type": "integer",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"projet_id": {
+					"autoincrement": false,
+					"name": "projet_id",
+					"type": "text(50)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"derniere_visite": {
+					"autoincrement": false,
+					"name": "derniere_visite",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"bat_non_visite": {
+					"autoincrement": false,
+					"name": "bat_non_visite",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"raisons_ne_pas_visite": {
+					"autoincrement": false,
+					"name": "raisons_ne_pas_visite",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"desordres": {
+					"autoincrement": false,
+					"name": "desordres",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"precaution": {
+					"autoincrement": false,
+					"name": "precaution",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"document_consultés": {
+					"autoincrement": false,
+					"name": "document_consultés",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"bat_visite": {
+					"autoincrement": false,
+					"name": "bat_visite",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				}
+			},
 			"compositePrimaryKeys": {},
+			"indexes": {
+				"cerfa_diagnostic_projet_id_idx": {
+					"name": "cerfa_diagnostic_projet_id_idx",
+					"columns": ["projet_id"],
+					"isUnique": false
+				}
+			},
+			"foreignKeys": {
+				"cerfa_diagnostic_projet_id_projet_id_fk": {
+					"name": "cerfa_diagnostic_projet_id_projet_id_fk",
+					"tableFrom": "cerfa_diagnostic",
+					"tableTo": "projet",
+					"columnsFrom": ["projet_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"uniqueConstraints": {},
+			"checkConstraints": {}
+		},
+		"cerfa_diagnostiqueur": {
+			"name": "cerfa_diagnostiqueur",
+			"columns": {
+				"id": {
+					"autoincrement": true,
+					"name": "id",
+					"type": "integer",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"projet_id": {
+					"autoincrement": false,
+					"name": "projet_id",
+					"type": "text(50)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"nom_per_phy": {
+					"autoincrement": false,
+					"name": "nom_per_phy",
+					"type": "text(255)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"prenom_per_phy": {
+					"autoincrement": false,
+					"name": "prenom_per_phy",
+					"type": "text(255)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"nom_per_morale": {
+					"autoincrement": false,
+					"name": "nom_per_morale",
+					"type": "text(255)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"siret_siren": {
+					"autoincrement": false,
+					"name": "siret_siren",
+					"type": "text(255)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"adresse": {
+					"autoincrement": false,
+					"name": "adresse",
+					"type": "text(255)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"cp": {
+					"autoincrement": false,
+					"name": "cp",
+					"type": "text(255)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"commune": {
+					"autoincrement": false,
+					"name": "commune",
+					"type": "text(255)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"engagement_assurance": {
+					"autoincrement": false,
+					"name": "engagement_assurance",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"nom_assurance": {
+					"autoincrement": false,
+					"name": "nom_assurance",
+					"type": "text(255)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"numero_police": {
+					"autoincrement": false,
+					"name": "numero_police",
+					"type": "text(255)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"date_debut_assurance": {
+					"autoincrement": false,
+					"name": "date_debut_assurance",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"date_fin_assurance": {
+					"autoincrement": false,
+					"name": "date_fin_assurance",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"competences": {
+					"autoincrement": false,
+					"name": "competences",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				}
+			},
+			"compositePrimaryKeys": {},
+			"indexes": {
+				"cerfa_diagnostiqueur_projet_id_idx": {
+					"name": "cerfa_diagnostiqueur_projet_id_idx",
+					"columns": ["projet_id"],
+					"isUnique": false
+				}
+			},
+			"foreignKeys": {
+				"cerfa_diagnostiqueur_projet_id_projet_id_fk": {
+					"name": "cerfa_diagnostiqueur_projet_id_projet_id_fk",
+					"tableFrom": "cerfa_diagnostiqueur",
+					"tableTo": "projet",
+					"columnsFrom": ["projet_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"uniqueConstraints": {},
+			"checkConstraints": {}
+		},
+		"cerfa_operation": {
+			"name": "cerfa_operation",
+			"columns": {
+				"id": {
+					"autoincrement": true,
+					"name": "id",
+					"type": "integer",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"projet_id": {
+					"autoincrement": false,
+					"name": "projet_id",
+					"type": "text(50)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"adresse": {
+					"autoincrement": false,
+					"name": "adresse",
+					"type": "text(500)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"cp": {
+					"autoincrement": false,
+					"name": "cp",
+					"type": "text(255)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"commune": {
+					"autoincrement": false,
+					"name": "commune",
+					"type": "text(255)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"date_de_debut": {
+					"autoincrement": false,
+					"name": "date_de_debut",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"date_de_fin": {
+					"autoincrement": false,
+					"name": "date_de_fin",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"operation": {
+					"autoincrement": false,
+					"name": "operation",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"nb_bat_demolition": {
+					"autoincrement": false,
+					"name": "nb_bat_demolition",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"surface_a_demolir": {
+					"autoincrement": false,
+					"name": "surface_a_demolir",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"nb_bat_renovation": {
+					"autoincrement": false,
+					"name": "nb_bat_renovation",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"surface_a_renover": {
+					"autoincrement": false,
+					"name": "surface_a_renover",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"typologie_bat": {
+					"autoincrement": false,
+					"name": "typologie_bat",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"date_permis_de_construire": {
+					"autoincrement": false,
+					"name": "date_permis_de_construire",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"operation_soumis": {
+					"autoincrement": false,
+					"name": "operation_soumis",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				}
+			},
+			"compositePrimaryKeys": {},
+			"indexes": {
+				"cerfa_operation_projet_id_idx": {
+					"name": "cerfa_operation_projet_id_idx",
+					"columns": ["projet_id"],
+					"isUnique": false
+				}
+			},
+			"foreignKeys": {
+				"cerfa_operation_projet_id_projet_id_fk": {
+					"name": "cerfa_operation_projet_id_projet_id_fk",
+					"tableFrom": "cerfa_operation",
+					"tableTo": "projet",
+					"columnsFrom": ["projet_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"uniqueConstraints": {},
+			"checkConstraints": {}
+		},
+		"doctrine_migration_versions": {
+			"name": "doctrine_migration_versions",
+			"columns": {
+				"version": {
+					"autoincrement": false,
+					"name": "version",
+					"type": "text(191)",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"executed_at": {
+					"autoincrement": false,
+					"name": "executed_at",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"execution_time": {
+					"autoincrement": false,
+					"name": "execution_time",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				}
+			},
+			"compositePrimaryKeys": {},
+			"indexes": {},
+			"foreignKeys": {},
+			"uniqueConstraints": {},
+			"checkConstraints": {}
+		},
+		"tag_mail": {
+			"name": "tag_mail",
+			"columns": {
+				"id": {
+					"autoincrement": false,
+					"name": "id",
+					"type": "text(255)",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"projet_id_id": {
+					"autoincrement": false,
+					"name": "projet_id_id",
+					"type": "text(50)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"user_id_id": {
+					"autoincrement": false,
+					"name": "user_id_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"date": {
+					"autoincrement": false,
+					"name": "date",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"content": {
+					"autoincrement": false,
+					"name": "content",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"stem_vector": {
+					"autoincrement": false,
+					"name": "stem_vector",
+					"type": "text(1000)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"anchor_position": {
+					"autoincrement": false,
+					"name": "anchor_position",
+					"type": "text(1000)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"destinataires": {
+					"autoincrement": false,
+					"name": "destinataires",
+					"type": "text(300)",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"compositePrimaryKeys": {},
+			"indexes": {
+				"tag_mail_user_id_id_idx": {
+					"name": "tag_mail_user_id_id_idx",
+					"columns": ["user_id_id"],
+					"isUnique": false
+				},
+				"tag_mail_projet_id_id_idx": {
+					"name": "tag_mail_projet_id_id_idx",
+					"columns": ["projet_id_id"],
+					"isUnique": false
+				}
+			},
+			"foreignKeys": {
+				"tag_mail_user_id_id_user_legacy_id_fk": {
+					"name": "tag_mail_user_id_id_user_legacy_id_fk",
+					"tableFrom": "tag_mail",
+					"tableTo": "user_legacy",
+					"columnsFrom": ["user_id_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"tag_mail_projet_id_id_projet_id_fk": {
+					"name": "tag_mail_projet_id_id_projet_id_fk",
+					"tableFrom": "tag_mail",
+					"tableTo": "projet",
+					"columnsFrom": ["projet_id_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"uniqueConstraints": {},
+			"checkConstraints": {}
+		},
+		"projet": {
+			"name": "projet",
+			"columns": {
+				"id": {
+					"autoincrement": false,
+					"name": "id",
+					"type": "text(50)",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"id_etablissement_id": {
+					"autoincrement": false,
+					"name": "id_etablissement_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"id_etab_id": {
+					"autoincrement": false,
+					"name": "id_etab_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"libelle": {
+					"autoincrement": false,
+					"name": "libelle",
+					"type": "text(255)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"reference": {
+					"autoincrement": false,
+					"name": "reference",
+					"type": "text(255)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"code_insee": {
+					"autoincrement": false,
+					"name": "code_insee",
+					"type": "text(5)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"rue": {
+					"autoincrement": false,
+					"name": "rue",
+					"type": "text(255)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"cp": {
+					"autoincrement": false,
+					"name": "cp",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"ville": {
+					"autoincrement": false,
+					"name": "ville",
+					"type": "text(255)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"date_demarrage": {
+					"autoincrement": false,
+					"name": "date_demarrage",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"section": {
+					"autoincrement": false,
+					"name": "section",
+					"type": "text(10)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"parcelle": {
+					"autoincrement": false,
+					"name": "parcelle",
+					"type": "text(10)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"type_operation": {
+					"autoincrement": false,
+					"name": "type_operation",
+					"type": "text(255)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"maitre_d_ouvrage": {
+					"autoincrement": false,
+					"name": "maitre_d_ouvrage",
+					"type": "text(255)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"date_de_fin": {
+					"autoincrement": false,
+					"name": "date_de_fin",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				}
+			},
+			"compositePrimaryKeys": {},
+			"indexes": {
+				"projet_id_etab_id_idx": {
+					"name": "projet_id_etab_id_idx",
+					"columns": ["id_etab_id"],
+					"isUnique": false
+				},
+				"projet_id_etablissement_id_idx": {
+					"name": "projet_id_etablissement_id_idx",
+					"columns": ["id_etablissement_id"],
+					"isUnique": false
+				}
+			},
+			"foreignKeys": {
+				"projet_id_etab_id_etablissement_id_fk": {
+					"name": "projet_id_etab_id_etablissement_id_fk",
+					"tableFrom": "projet",
+					"tableTo": "etablissement",
+					"columnsFrom": ["id_etab_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"projet_id_etablissement_id_etablissement_id_fk": {
+					"name": "projet_id_etablissement_id_etablissement_id_fk",
+					"tableFrom": "projet",
+					"tableTo": "etablissement",
+					"columnsFrom": ["id_etablissement_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
@@ -2097,18 +2054,24 @@
 			"name": "user_projet",
 			"columns": {
 				"user_id": {
+					"autoincrement": false,
 					"name": "user_id",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
 				},
 				"projet_id": {
+					"autoincrement": false,
 					"name": "projet_id",
 					"type": "text(50)",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": true
+				}
+			},
+			"compositePrimaryKeys": {
+				"user_projet_user_id_projet_id_pk": {
+					"columns": ["user_id", "projet_id"],
+					"name": "user_projet_user_id_projet_id_pk"
 				}
 			},
 			"indexes": {
@@ -2119,15 +2082,6 @@
 				}
 			},
 			"foreignKeys": {
-				"user_projet_user_id_user_id_fk": {
-					"name": "user_projet_user_id_user_id_fk",
-					"tableFrom": "user_projet",
-					"tableTo": "user",
-					"columnsFrom": ["user_id"],
-					"columnsTo": ["id"],
-					"onDelete": "cascade",
-					"onUpdate": "no action"
-				},
 				"user_projet_projet_id_projet_id_fk": {
 					"name": "user_projet_projet_id_projet_id_fk",
 					"tableFrom": "user_projet",
@@ -2136,74 +2090,223 @@
 					"columnsTo": ["id"],
 					"onDelete": "cascade",
 					"onUpdate": "no action"
-				}
-			},
-			"compositePrimaryKeys": {
-				"user_projet_user_id_projet_id_pk": {
-					"columns": ["user_id", "projet_id"],
-					"name": "user_projet_user_id_projet_id_pk"
+				},
+				"user_projet_user_id_user_id_fk": {
+					"name": "user_projet_user_id_user_id_fk",
+					"tableFrom": "user_projet",
+					"tableTo": "user",
+					"columnsFrom": ["user_id"],
+					"columnsTo": ["id"],
+					"onDelete": "cascade",
+					"onUpdate": "no action"
 				}
 			},
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		},
-		"verification": {
-			"name": "verification",
+		"pemd": {
+			"name": "pemd",
 			"columns": {
 				"id": {
+					"autoincrement": false,
 					"name": "id",
 					"type": "text",
-					"primaryKey": true,
-					"notNull": true,
-					"autoincrement": false
+					"primaryKey": false,
+					"notNull": false
 				},
-				"identifier": {
-					"name": "identifier",
+				"nature_id": {
+					"autoincrement": false,
+					"name": "nature_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"objet_id": {
+					"autoincrement": false,
+					"name": "objet_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"sid_id": {
+					"autoincrement": false,
+					"name": "sid_id",
+					"type": "text(50)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"description": {
+					"autoincrement": false,
+					"name": "description",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": false
 				},
-				"value": {
-					"name": "value",
+				"quantite": {
+					"autoincrement": false,
+					"name": "quantite",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"potentiel_reemploi": {
+					"autoincrement": false,
+					"name": "potentiel_reemploi",
 					"type": "text",
 					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
+					"notNull": false
 				},
-				"expires_at": {
-					"name": "expires_at",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": true,
-					"autoincrement": false
-				},
-				"created_at": {
-					"name": "created_at",
-					"type": "integer",
-					"primaryKey": false,
-					"notNull": true,
+				"longueur": {
 					"autoincrement": false,
-					"default": "(cast(unixepoch('subsecond') * 1000 as integer))"
+					"name": "longueur",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
 				},
-				"updated_at": {
-					"name": "updated_at",
+				"largeur": {
+					"autoincrement": false,
+					"name": "largeur",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"epaisseur": {
+					"autoincrement": false,
+					"name": "epaisseur",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"volume": {
+					"autoincrement": false,
+					"name": "volume",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"reemploi": {
+					"autoincrement": false,
+					"name": "reemploi",
 					"type": "integer",
 					"primaryKey": false,
-					"notNull": true,
+					"notNull": false
+				},
+				"etage": {
 					"autoincrement": false,
-					"default": "(cast(unixepoch('subsecond') * 1000 as integer))"
+					"name": "etage",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"constitution": {
+					"autoincrement": false,
+					"name": "constitution",
+					"type": "text(100)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"masse": {
+					"autoincrement": false,
+					"name": "masse",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"etat": {
+					"autoincrement": false,
+					"name": "etat",
+					"type": "text(100)",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"anchor_position": {
+					"autoincrement": false,
+					"name": "anchor_position",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"stem_vector": {
+					"autoincrement": false,
+					"name": "stem_vector",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"color": {
+					"autoincrement": false,
+					"name": "color",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"image": {
+					"autoincrement": false,
+					"name": "image",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"surface": {
+					"autoincrement": false,
+					"name": "surface",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"dimension": {
+					"autoincrement": false,
+					"name": "dimension",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"amiante": {
+					"autoincrement": false,
+					"name": "amiante",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"plombifere": {
+					"autoincrement": false,
+					"name": "plombifere",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"termite": {
+					"autoincrement": false,
+					"name": "termite",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"typologie_appart": {
+					"autoincrement": false,
+					"name": "typologie_appart",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"estimation_age": {
+					"autoincrement": false,
+					"name": "estimation_age",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"type_assemblage": {
+					"autoincrement": false,
+					"name": "type_assemblage",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": false
 				}
 			},
-			"indexes": {
-				"verification_identifier_idx": {
-					"name": "verification_identifier_idx",
-					"columns": ["identifier"],
-					"isUnique": false
-				}
-			},
-			"foreignKeys": {},
 			"compositePrimaryKeys": {},
+			"indexes": {},
+			"foreignKeys": {},
 			"uniqueConstraints": {},
 			"checkConstraints": {}
 		}
@@ -2214,8 +2317,5 @@
 		"schemas": {},
 		"tables": {},
 		"columns": {}
-	},
-	"internal": {
-		"indexes": {}
 	}
 }
