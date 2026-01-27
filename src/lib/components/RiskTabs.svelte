@@ -1,12 +1,11 @@
 <script lang="ts">
+	import { TestTubeDiagonal, Bug, TriangleAlert } from 'lucide-svelte';
 	import { page } from '$app/stores';
-	import { TestTube2, AlertTriangle, Bug, Construction } from 'lucide-svelte';
 
 	const tabs = [
-		{ href: '/app/admin/amiante', label: 'Amiante', icon: TestTube2, color: 'text-red-600' },
-		{ href: '/app/admin/plomb', label: 'Plomb', icon: AlertTriangle, color: 'text-orange-600' },
+		{ href: '/app/admin/amiante', label: 'Amiante', icon: TestTubeDiagonal, color: 'text-red-600' },
+		{ href: '/app/admin/plomb', label: 'Plomb', icon: TriangleAlert, color: 'text-orange-600' },
 		{ href: '/app/admin/termites', label: 'Termites', icon: Bug, color: 'text-amber-700' },
-		{ href: '/app/admin/structure', label: 'Structure', icon: Construction, color: 'text-blue-600' }
 	];
 
 	const currentPath = $derived($page.url.pathname);

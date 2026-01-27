@@ -10,7 +10,6 @@ import {
 	tagsAmiante,
 	tagsPlomb,
 	tagsTermite,
-	tagsStructure,
 	pemd,
 	groupe,
 	categorieV2,
@@ -59,7 +58,6 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 	const amianteTags = await db.select().from(tagsAmiante).where(eq(tagsAmiante.sidId, id));
 	const plombTags = await db.select().from(tagsPlomb).where(eq(tagsPlomb.sidId, id));
 	const termiteTags = await db.select().from(tagsTermite).where(eq(tagsTermite.sidId, id));
-	const structureTags = await db.select().from(tagsStructure).where(eq(tagsStructure.sidId, id));
 	const pemdTags = await db.select().from(pemd).where(eq(pemd.sidId, id));
 
 	// Build facets for PEMD (groupe -> categorie -> objet) to drive UI filters/autocomplete
@@ -101,7 +99,6 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		amianteTags: amianteTags,
 		plombTags: plombTags,
 		termiteTags: termiteTags,
-		structureTags: structureTags,
 		pemdTags: pemdTags,
 		pemdFacets: pemdFacets,
 		groups: allGroups,

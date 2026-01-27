@@ -5,7 +5,6 @@
 	import tagAmianteImg from '$lib/assets/img/tagamiante.png';
 	import tagPlombImg from '$lib/assets/img/tagplomb.png';
 	import tagTermiteImg from '$lib/assets/img/tagtermite.png';
-	import tagStructureImg from '$lib/assets/img/tagstructure.png';
 	import tagPemdImg from '$lib/assets/img/pemd360.png';
 	import { Mail, Plus, Pencil, X, Save, Trash2 } from 'lucide-svelte';
 	import { enhance } from '$app/forms';
@@ -20,7 +19,6 @@
 	let showAmiante = $state(false);
 	let showPlomb = $state(false);
 	let showTermite = $state(false);
-	let showStructure = $state(false);
 	let showPemd = $state(false);
 
 	// modal states and selected presence filters (defaults: both checked)
@@ -113,7 +111,6 @@
 	let amianteSids: string[] = [];
 	let plombSids: string[] = [];
 	let termiteSids: string[] = [];
-	let structureSids: string[] = [];
 	let pemdSids = $state([] as string[]);
 
 	async function toggleMail() {
@@ -297,54 +294,6 @@
 				}
 			}
 			termiteSids = [];
-		}
-	}
-
-	async function toggleStructure() {
-		if (!mpSdk) return;
-		if (showStructure) {
-			// remove any previously added structure tags
-			for (const sid of structureSids) {
-				try {
-					await mpSdk.Tag.remove(sid);
-				} catch (e) {
-					console.error('Failed to remove previous structure sid', sid, e);
-				}
-			}
-			structureSids = [];
-			if (data.structureTags && data.structureTags.length > 0) {
-				console.log(`Adding ${data.structureTags.length} structure tags`);
-				for (const tag of data.structureTags) {
-					try {
-						const anchorPosition = JSON.parse(tag.anchorPosition);
-						const stemVector = JSON.parse(tag.stemVector);
-						let description = tag.description;
-						if (tag.shapeSurface) {
-							description += `\nSurface: ${tag.shapeSurface} m²`;
-						}
-						const tagDescriptor = {
-							label: 'Structure',
-							description: description,
-							anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
-							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
-							color: { r: 0.5, g: 0.5, b: 0.5 }
-						};
-						const [sid] = await mpSdk.Tag.add(tagDescriptor);
-						structureSids.push(sid);
-					} catch (tagError) {
-						console.error(`Failed to add structure tag ${tag.id}:`, tagError);
-					}
-				}
-			}
-		} else {
-			for (const sid of structureSids) {
-				try {
-					await mpSdk.Tag.remove(sid);
-				} catch (e) {
-					console.error(e);
-				}
-			}
-			structureSids = [];
 		}
 	}
 
@@ -1487,23 +1436,6 @@
 				src={tagTermiteImg}
 				alt="termite"
 				class={`h-10 w-10 transition-transform ${showTermite ? 'scale-110' : ''}`}
-			/>
-		</button>
-
-		<button
-			type="button"
-			title="Afficher les tags structure"
-			aria-pressed={showStructure}
-			onclick={() => {
-				showStructure = !showStructure;
-				toggleStructure();
-			}}
-			class={`w-full h-20 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showStructure ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
-		>
-			<img
-				src={tagStructureImg}
-				alt="structure"
-				class={`h-10 w-10 transition-transform ${showStructure ? 'scale-110' : ''}`}
 			/>
 		</button>
 
