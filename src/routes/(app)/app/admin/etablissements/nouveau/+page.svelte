@@ -99,7 +99,9 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="raisonSocial" class="text-sm font-medium text-gray-700">Raison Sociale *</label>
+					<label for="raisonSocial" class="text-sm font-medium text-gray-700"
+						>Raison Sociale *</label
+					>
 					<input
 						type="text"
 						id="raisonSocial"

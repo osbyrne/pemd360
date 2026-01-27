@@ -8,28 +8,25 @@
 	let isModalOpen = $state(false);
 	let isDeleteModalOpen = $state(false);
 	let isEditMode = $state(false);
-	
+
 	let currentObjet = $state<any>(null);
 
 	// Pagination & Search
-    let query = $state('');
-    let perPage = 25;
-    let page = $state(1);
+	let query = $state('');
+	let perPage = 25;
+	let page = $state(1);
 
-    // Derived
-    const filteredList = $derived(
-        (data.objets || []).filter((item: any) => {
-            if (!query) return true;
-            const q = query.toLowerCase();
-            return (
-                item.objet?.toLowerCase().includes(q) ||
-                item.categorieName?.toLowerCase().includes(q)
-            );
-        })
-    );
+	// Derived
+	const filteredList = $derived(
+		(data.objets || []).filter((item: any) => {
+			if (!query) return true;
+			const q = query.toLowerCase();
+			return item.objet?.toLowerCase().includes(q) || item.categorieName?.toLowerCase().includes(q);
+		})
+	);
 
-    const totalPages = $derived(Math.ceil(filteredList.length / perPage));
-    const displayedList = $derived(filteredList.slice((page - 1) * perPage, page * perPage));
+	const totalPages = $derived(Math.ceil(filteredList.length / perPage));
+	const displayedList = $derived(filteredList.slice((page - 1) * perPage, page * perPage));
 
 	// Form defaults
 	let initialForm = {
@@ -37,7 +34,7 @@
 		objet: '',
 		categorieId: ''
 	};
-	
+
 	let form = $state({ ...initialForm });
 
 	function openCreateModal() {
@@ -48,7 +45,7 @@
 
 	function openEditModal(objet: any) {
 		isEditMode = true;
-		form = { 
+		form = {
 			id: objet.id,
 			objet: objet.objet,
 			categorieId: objet.categorieId
@@ -86,7 +83,9 @@
 	<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
 		<div>
 			<h1 class="text-2xl font-bold text-gray-900">Gestion des Objets</h1>
-			<p class="text-sm text-gray-500 mt-1">Gérez la liste des objets et leurs catégories associées.</p>
+			<p class="text-sm text-gray-500 mt-1">
+				Gérez la liste des objets et leurs catégories associées.
+			</p>
 		</div>
 		<button
 			onclick={openCreateModal}
@@ -98,27 +97,33 @@
 	</div>
 
 	<!-- Search Bar -->
-    <div class="mb-6">
-        <div class="relative">
-            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                </svg>
-            </div>
-            <input
-                type="text"
-                bind:value={query}
-                placeholder="Rechercher par objet ou catégorie..."
-                class="block w-full rounded-xl border border-gray-300 bg-white py-3 pl-11 pr-4 text-sm placeholder-gray-400 shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-            />
-        </div>
-    </div>
+	<div class="mb-6">
+		<div class="relative">
+			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+				<svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+					<path
+						fill-rule="evenodd"
+						d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+						clip-rule="evenodd"
+					/>
+				</svg>
+			</div>
+			<input
+				type="text"
+				bind:value={query}
+				placeholder="Rechercher par objet ou catégorie..."
+				class="block w-full rounded-xl border border-gray-300 bg-white py-3 pl-11 pr-4 text-sm placeholder-gray-400 shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+			/>
+		</div>
+	</div>
 
 	<!-- Table -->
 	<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
 		<div class="overflow-x-auto">
 			<table class="w-full text-left text-sm text-gray-600">
-				<thead class="bg-gray-50 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200">
+				<thead
+					class="bg-gray-50 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200"
+				>
 					<tr>
 						<th class="px-6 py-4 w-20">ID</th>
 						<th class="px-6 py-4">Objet</th>
@@ -133,7 +138,9 @@
 							<td class="px-6 py-4 font-medium text-gray-900">{objet.objet}</td>
 							<td class="px-6 py-4 text-gray-600">
 								{#if objet.categorieName}
-									<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+									<span
+										class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
+									>
 										{objet.categorieName}
 									</span>
 								{:else}
@@ -163,10 +170,10 @@
 						<tr>
 							<td colspan="4" class="px-6 py-12 text-center text-gray-400">
 								{#if query}
-                                    Aucun résultat pour "{query}".
-                                {:else}
-                                    Aucun objet enregistré.
-                                {/if}
+									Aucun résultat pour "{query}".
+								{:else}
+									Aucun objet enregistré.
+								{/if}
 							</td>
 						</tr>
 					{/each}
@@ -175,38 +182,48 @@
 		</div>
 
 		<!-- Pagination -->
-        {#if filteredList.length > 0}
-            <div class="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3">
-                <p class="text-sm text-gray-600">
-                    Affichage de <span class="font-semibold">{Math.min(filteredList.length, (page - 1) * perPage + 1)}</span>
-                    à <span class="font-semibold">{Math.min(filteredList.length, page * perPage)}</span>
-                    sur <span class="font-semibold">{filteredList.length}</span> résultats
-                </p>
-                <div class="flex gap-2">
-                    <button
-                        onclick={() => (page = Math.max(1, page - 1))}
-                        disabled={page === 1}
-                        class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                        Précédent
-                    </button>
-                    <button
-                        onclick={() => (page = Math.min(totalPages, page + 1))}
-                        disabled={page === totalPages}
-                        class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                        Suivant
-                    </button>
-                </div>
-            </div>
-        {/if}
+		{#if filteredList.length > 0}
+			<div class="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3">
+				<p class="text-sm text-gray-600">
+					Affichage de <span class="font-semibold"
+						>{Math.min(filteredList.length, (page - 1) * perPage + 1)}</span
+					>
+					à <span class="font-semibold">{Math.min(filteredList.length, page * perPage)}</span>
+					sur <span class="font-semibold">{filteredList.length}</span> résultats
+				</p>
+				<div class="flex gap-2">
+					<button
+						onclick={() => (page = Math.max(1, page - 1))}
+						disabled={page === 1}
+						class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+					>
+						Précédent
+					</button>
+					<button
+						onclick={() => (page = Math.min(totalPages, page + 1))}
+						disabled={page === totalPages}
+						class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+					>
+						Suivant
+					</button>
+				</div>
+			</div>
+		{/if}
 	</div>
 </div>
 
 <!-- Create/Edit Modal -->
 {#if isModalOpen}
-	<div class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity" transition:fade onclick={closeModal}></div>
+	<div
+		class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+		role="dialog"
+		aria-modal="true"
+	>
+		<div
+			class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"
+			transition:fade
+			onclick={closeModal}
+		></div>
 		<div
 			class="relative w-full max-w-lg bg-white rounded-xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]"
 			transition:scale={{ start: 0.95 }}
@@ -214,7 +231,7 @@
 			<!-- Modal Header -->
 			<div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50">
 				<h2 class="text-lg font-semibold text-gray-900">
-					{isEditMode ? 'Modifier l\'objet' : 'Nouvel objet'}
+					{isEditMode ? "Modifier l'objet" : 'Nouvel objet'}
 				</h2>
 				<button onclick={closeModal} class="text-gray-400 hover:text-gray-500 transition-colors">
 					<X class="w-5 h-5" />
@@ -293,20 +310,31 @@
 
 <!-- Delete Confirmation Modal -->
 {#if isDeleteModalOpen}
-	<div class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity" transition:fade onclick={closeModal}></div>
+	<div
+		class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+		role="dialog"
+		aria-modal="true"
+	>
+		<div
+			class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"
+			transition:fade
+			onclick={closeModal}
+		></div>
 		<div
 			class="relative w-full max-w-md bg-white rounded-xl shadow-xl overflow-hidden p-6"
 			transition:scale={{ start: 0.95 }}
 		>
 			<div class="text-center">
-				<div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 mb-4">
+				<div
+					class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 mb-4"
+				>
 					<Trash2 class="h-6 w-6 text-red-600" />
 				</div>
 				<h3 class="text-lg font-semibold text-gray-900 mb-2">Supprimer l'objet ?</h3>
 				<p class="text-sm text-gray-500 mb-6">
-					Êtes-vous sûr de vouloir supprimer l'objet <span class="font-medium text-gray-900">{currentObjet?.objet}</span> ?
-					Cette action est irréversible.
+					Êtes-vous sûr de vouloir supprimer l'objet <span class="font-medium text-gray-900"
+						>{currentObjet?.objet}</span
+					> ? Cette action est irréversible.
 				</p>
 				<div class="flex justify-center gap-3">
 					<button

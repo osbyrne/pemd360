@@ -33,9 +33,15 @@
 	// PEMD Edit Mode
 	let pemdEditMode = $state(false);
 	let showPemdCreateModal = $state(false);
-	let pendingTagPosition: { anchorPosition: { x: number; y: number; z: number }; normal: { x: number; y: number; z: number } } | null = $state(null);
+	let pendingTagPosition: {
+		anchorPosition: { x: number; y: number; z: number };
+		normal: { x: number; y: number; z: number };
+	} | null = $state(null);
 	let intersectionSubscription: { cancel: () => void } | null = null;
-	let lastIntersection: { position: { x: number; y: number; z: number }; normal: { x: number; y: number; z: number } } | null = $state(null);
+	let lastIntersection: {
+		position: { x: number; y: number; z: number };
+		normal: { x: number; y: number; z: number };
+	} | null = $state(null);
 	let isSavingTag = $state(false);
 
 	// Form fields for new PEMD tag
@@ -53,8 +59,12 @@
 	// Filtered categories and objects for the creation form
 	let createFormGroupId: string | number = $state('');
 	let createFormCategoryId: string | number = $state('');
-	let createFormCategoriesFiltered = $state([] as { id: number | null; name: string | null; groupeId: number | null }[]);
-	let createFormObjectsFiltered = $state([] as { id: number | null; name: string | null; categorieId: number | null }[]);
+	let createFormCategoriesFiltered = $state(
+		[] as { id: number | null; name: string | null; groupeId: number | null }[]
+	);
+	let createFormObjectsFiltered = $state(
+		[] as { id: number | null; name: string | null; categorieId: number | null }[]
+	);
 
 	let amiantePresenceSelected: number[] = [0, 1, 2];
 	let plombPresenceSelected: number[] = [0, 1, 2];
@@ -523,7 +533,7 @@
 
 	// PEMD Edit Mode Functions
 	let overlayElement: HTMLDivElement | undefined = $state();
-	
+
 	function togglePemdEditMode() {
 		pemdEditMode = !pemdEditMode;
 		if (pemdEditMode) {
@@ -535,7 +545,7 @@
 
 	function startListeningForClicks() {
 		if (!mpSdk) return;
-		
+
 		// Subscribe to pointer intersection to track where the user is pointing
 		intersectionSubscription = mpSdk.Pointer.intersection.subscribe((intersectionData: any) => {
 			if (intersectionData && intersectionData.position && intersectionData.normal) {
@@ -558,24 +568,24 @@
 	// Handle click on the overlay - this captures clicks on the model
 	function handleOverlayClick(event: MouseEvent) {
 		if (!pemdEditMode || !lastIntersection) return;
-		
+
 		// Prevent the click from doing anything else
 		event.preventDefault();
 		event.stopPropagation();
-		
+
 		// Use the last known intersection position
 		openPemdCreateModal(lastIntersection.position, lastIntersection.normal);
 	}
-	
+
 	// Handle mouse move on overlay - briefly disable pointer-events to let iframe update intersection
 	let pointerEventsTimeout: ReturnType<typeof setTimeout> | null = null;
-	
+
 	function handleOverlayMouseMove(event: MouseEvent) {
 		if (!overlayElement || !pemdEditMode) return;
-		
+
 		// Temporarily disable pointer-events on overlay to let iframe receive the event
 		overlayElement.style.pointerEvents = 'none';
-		
+
 		// Re-enable after a short delay
 		if (pointerEventsTimeout) {
 			clearTimeout(pointerEventsTimeout);
@@ -587,19 +597,22 @@
 		}, 50);
 	}
 
-	function openPemdCreateModal(position: { x: number; y: number; z: number }, normal: { x: number; y: number; z: number }) {
+	function openPemdCreateModal(
+		position: { x: number; y: number; z: number },
+		normal: { x: number; y: number; z: number }
+	) {
 		// Calculate stemVector from normal (pointing outward from surface)
 		const stemVector = {
 			x: normal.x * 0.15,
 			y: normal.y * 0.15,
 			z: normal.z * 0.15
 		};
-		
+
 		pendingTagPosition = {
 			anchorPosition: position,
 			normal: stemVector
 		};
-		
+
 		// Reset form fields
 		newPemdObjetId = '';
 		newPemdNatureId = '';
@@ -616,7 +629,7 @@
 		// Start with empty lists - user must select group first, then category, then object
 		createFormCategoriesFiltered = [];
 		createFormObjectsFiltered = [];
-		
+
 		showPemdCreateModal = true;
 	}
 
@@ -634,7 +647,9 @@
 			const group = (data.groups || []).find((g: any) => g.id === groupId);
 			if (group) {
 				// Filter categories by selected group
-				createFormCategoriesFiltered = (data.categoriesV2 || []).filter((c: any) => c.groupeId === group.id);
+				createFormCategoriesFiltered = (data.categoriesV2 || []).filter(
+					(c: any) => c.groupeId === group.id
+				);
 			} else {
 				createFormCategoriesFiltered = [];
 			}
@@ -661,7 +676,9 @@
 			const cat = (data.categoriesV2 || []).find((c: any) => c.id === catId);
 			if (cat) {
 				// Filter objects by selected category
-				createFormObjectsFiltered = (data.allPemdObjects || []).filter((o: any) => o.categorieId === cat.id);
+				createFormObjectsFiltered = (data.allPemdObjects || []).filter(
+					(o: any) => o.categorieId === cat.id
+				);
 			} else {
 				createFormObjectsFiltered = [];
 			}
@@ -675,16 +692,16 @@
 
 	async function addNewPemdTagToModel(tagData: any) {
 		if (!mpSdk) return;
-		
+
 		try {
 			const anchorPosition = JSON.parse(tagData.anchorPosition);
 			const stemVector = JSON.parse(tagData.stemVector);
-			
+
 			let description = tagData.description || '';
 			if (tagData.quantite) description += `\nQuantité: ${tagData.quantite}`;
 			if (tagData.etage) description += `\nÉtage: ${tagData.etage}`;
 			if (tagData.etat) description += `\nÉtat: ${tagData.etat}`;
-			
+
 			const tagDescriptor = {
 				label: 'PEMD',
 				description: description,
@@ -692,7 +709,7 @@
 				stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
 				color: { r: 0.6, g: 0.2, b: 0.8 }
 			};
-			
+
 			const [sid] = await mpSdk.Tag.add(tagDescriptor);
 			pemdSids.push(sid);
 			showPemd = true;
@@ -1025,7 +1042,9 @@
 					}
 				}}
 			></div>
-			<div class="relative z-10 w-[500px] max-h-[90vh] overflow-y-auto rounded-lg bg-white p-6 shadow-lg">
+			<div
+				class="relative z-10 w-[500px] max-h-[90vh] overflow-y-auto rounded-lg bg-white p-6 shadow-lg"
+			>
 				<div class="flex items-center justify-between mb-4">
 					<h3 class="text-lg font-semibold flex items-center gap-2">
 						<Plus size={20} />
@@ -1056,11 +1075,21 @@
 					}}
 				>
 					<!-- Hidden fields for position -->
-					<input type="hidden" name="anchorPosition" value={JSON.stringify(pendingTagPosition.anchorPosition)} />
-					<input type="hidden" name="stemVector" value={JSON.stringify(pendingTagPosition.normal)} />
+					<input
+						type="hidden"
+						name="anchorPosition"
+						value={JSON.stringify(pendingTagPosition.anchorPosition)}
+					/>
+					<input
+						type="hidden"
+						name="stemVector"
+						value={JSON.stringify(pendingTagPosition.normal)}
+					/>
 
 					<!-- Legend for required fields -->
-					<p class="text-xs text-gray-500 mb-4">Les champs marqués d'un <span class="text-red-500 font-medium">*</span> sont obligatoires</p>
+					<p class="text-xs text-gray-500 mb-4">
+						Les champs marqués d'un <span class="text-red-500 font-medium">*</span> sont obligatoires
+					</p>
 
 					<div class="space-y-4">
 						<!-- Section: Identification du matériau -->
@@ -1069,11 +1098,14 @@
 								<span class="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
 								Identification du matériau <span class="text-red-500">*</span>
 							</h4>
-							
+
 							<!-- Étape 1: Groupe -->
 							<div class="mb-3">
 								<label for="pemd-groupe" class="block text-sm font-medium text-gray-700 mb-1">
-									<span class="inline-flex items-center justify-center w-5 h-5 bg-purple-100 text-purple-700 rounded-full text-xs font-bold mr-1">1</span>
+									<span
+										class="inline-flex items-center justify-center w-5 h-5 bg-purple-100 text-purple-700 rounded-full text-xs font-bold mr-1"
+										>1</span
+									>
 									Groupe
 								</label>
 								<select
@@ -1095,7 +1127,11 @@
 							<!-- Étape 2: Catégorie -->
 							<div class="mb-3">
 								<label for="pemd-categorie" class="block text-sm font-medium text-gray-700 mb-1">
-									<span class="inline-flex items-center justify-center w-5 h-5 {createFormGroupId ? 'bg-purple-100 text-purple-700' : 'bg-gray-200 text-gray-400'} rounded-full text-xs font-bold mr-1">2</span>
+									<span
+										class="inline-flex items-center justify-center w-5 h-5 {createFormGroupId
+											? 'bg-purple-100 text-purple-700'
+											: 'bg-gray-200 text-gray-400'} rounded-full text-xs font-bold mr-1">2</span
+									>
 									Catégorie
 								</label>
 								<select
@@ -1103,7 +1139,10 @@
 									bind:value={createFormCategoryId}
 									onchange={handleCreateFormCategoryChange}
 									disabled={!createFormGroupId || createFormCategoriesFiltered.length === 0}
-									class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white disabled:bg-gray-100 disabled:cursor-not-allowed {createFormGroupId && !createFormCategoryId ? 'border-purple-300' : 'border-gray-300'}"
+									class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white disabled:bg-gray-100 disabled:cursor-not-allowed {createFormGroupId &&
+									!createFormCategoryId
+										? 'border-purple-300'
+										: 'border-gray-300'}"
 								>
 									<option value="">-- Sélectionner une catégorie --</option>
 									{#each createFormCategoriesFiltered as c}
@@ -1113,16 +1152,27 @@
 								{#if !createFormGroupId}
 									<p class="text-xs text-gray-400 mt-1">Sélectionnez d'abord un groupe</p>
 								{:else if createFormCategoriesFiltered.length === 0}
-									<p class="text-xs text-amber-600 mt-1">Aucune catégorie disponible pour ce groupe</p>
+									<p class="text-xs text-amber-600 mt-1">
+										Aucune catégorie disponible pour ce groupe
+									</p>
 								{:else if !createFormCategoryId}
-									<p class="text-xs text-purple-600 mt-1">Sélectionnez une catégorie ({createFormCategoriesFiltered.length} disponible{createFormCategoriesFiltered.length > 1 ? 's' : ''})</p>
+									<p class="text-xs text-purple-600 mt-1">
+										Sélectionnez une catégorie ({createFormCategoriesFiltered.length} disponible{createFormCategoriesFiltered.length >
+										1
+											? 's'
+											: ''})
+									</p>
 								{/if}
 							</div>
 
 							<!-- Étape 3: Objet (OBLIGATOIRE) -->
 							<div>
 								<label for="pemd-objet" class="block text-sm font-medium text-gray-700 mb-1">
-									<span class="inline-flex items-center justify-center w-5 h-5 {createFormCategoryId ? 'bg-purple-100 text-purple-700' : 'bg-gray-200 text-gray-400'} rounded-full text-xs font-bold mr-1">3</span>
+									<span
+										class="inline-flex items-center justify-center w-5 h-5 {createFormCategoryId
+											? 'bg-purple-100 text-purple-700'
+											: 'bg-gray-200 text-gray-400'} rounded-full text-xs font-bold mr-1">3</span
+									>
 									Objet <span class="text-red-500">*</span>
 								</label>
 								<select
@@ -1131,7 +1181,10 @@
 									name="objetId"
 									required
 									disabled={!createFormCategoryId || createFormObjectsFiltered.length === 0}
-									class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white disabled:bg-gray-100 disabled:cursor-not-allowed {createFormCategoryId && !newPemdObjetId ? 'border-red-300' : 'border-gray-300'}"
+									class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white disabled:bg-gray-100 disabled:cursor-not-allowed {createFormCategoryId &&
+									!newPemdObjetId
+										? 'border-red-300'
+										: 'border-gray-300'}"
 								>
 									<option value="">-- Sélectionner un objet --</option>
 									{#each createFormObjectsFiltered as o}
@@ -1141,9 +1194,16 @@
 								{#if !createFormCategoryId}
 									<p class="text-xs text-gray-400 mt-1">Sélectionnez d'abord une catégorie</p>
 								{:else if createFormObjectsFiltered.length === 0}
-									<p class="text-xs text-amber-600 mt-1">Aucun objet disponible pour cette catégorie</p>
+									<p class="text-xs text-amber-600 mt-1">
+										Aucun objet disponible pour cette catégorie
+									</p>
 								{:else if !newPemdObjetId}
-									<p class="text-xs text-red-500 mt-1">Sélectionnez un objet ({createFormObjectsFiltered.length} disponible{createFormObjectsFiltered.length > 1 ? 's' : ''})</p>
+									<p class="text-xs text-red-500 mt-1">
+										Sélectionnez un objet ({createFormObjectsFiltered.length} disponible{createFormObjectsFiltered.length >
+										1
+											? 's'
+											: ''})
+									</p>
 								{:else}
 									<p class="text-xs text-green-600 mt-1">Objet sélectionné</p>
 								{/if}
@@ -1154,12 +1214,15 @@
 						<div class="border-b border-gray-200 pb-4">
 							<h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
 								<span class="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
-								Informations complémentaires <span class="text-gray-400 text-xs font-normal">(optionnel)</span>
+								Informations complémentaires
+								<span class="text-gray-400 text-xs font-normal">(optionnel)</span>
 							</h4>
 
 							<!-- Description -->
 							<div class="mb-3">
-								<label for="pemd-description" class="block text-sm font-medium text-gray-600 mb-1">Description</label>
+								<label for="pemd-description" class="block text-sm font-medium text-gray-600 mb-1"
+									>Description</label
+								>
 								<textarea
 									id="pemd-description"
 									bind:value={newPemdDescription}
@@ -1173,7 +1236,9 @@
 							<!-- Row: Quantité, Étage, État -->
 							<div class="grid grid-cols-3 gap-3">
 								<div>
-									<label for="pemd-quantite" class="block text-sm font-medium text-gray-600 mb-1">Quantité</label>
+									<label for="pemd-quantite" class="block text-sm font-medium text-gray-600 mb-1"
+										>Quantité</label
+									>
 									<input
 										id="pemd-quantite"
 										type="number"
@@ -1186,7 +1251,9 @@
 									/>
 								</div>
 								<div>
-									<label for="pemd-etage" class="block text-sm font-medium text-gray-600 mb-1">Étage</label>
+									<label for="pemd-etage" class="block text-sm font-medium text-gray-600 mb-1"
+										>Étage</label
+									>
 									<input
 										id="pemd-etage"
 										type="text"
@@ -1197,7 +1264,9 @@
 									/>
 								</div>
 								<div>
-									<label for="pemd-etat" class="block text-sm font-medium text-gray-600 mb-1">État</label>
+									<label for="pemd-etat" class="block text-sm font-medium text-gray-600 mb-1"
+										>État</label
+									>
 									<select
 										id="pemd-etat"
 										bind:value={newPemdEtat}
@@ -1222,7 +1291,9 @@
 
 							<div class="grid grid-cols-3 gap-3">
 								<div>
-									<label for="pemd-longueur" class="block text-sm font-medium text-gray-600 mb-1">Longueur (m)</label>
+									<label for="pemd-longueur" class="block text-sm font-medium text-gray-600 mb-1"
+										>Longueur (m)</label
+									>
 									<input
 										id="pemd-longueur"
 										type="number"
@@ -1235,7 +1306,9 @@
 									/>
 								</div>
 								<div>
-									<label for="pemd-largeur" class="block text-sm font-medium text-gray-600 mb-1">Largeur (m)</label>
+									<label for="pemd-largeur" class="block text-sm font-medium text-gray-600 mb-1"
+										>Largeur (m)</label
+									>
 									<input
 										id="pemd-largeur"
 										type="number"
@@ -1248,7 +1321,9 @@
 									/>
 								</div>
 								<div>
-									<label for="pemd-epaisseur" class="block text-sm font-medium text-gray-600 mb-1">Épaisseur (m)</label>
+									<label for="pemd-epaisseur" class="block text-sm font-medium text-gray-600 mb-1"
+										>Épaisseur (m)</label
+									>
 									<input
 										id="pemd-epaisseur"
 										type="number"
@@ -1266,7 +1341,9 @@
 						<!-- Section: Potentiel Réemploi (optionnel) -->
 						<div>
 							<label for="pemd-potentiel" class="block text-sm font-medium text-gray-600 mb-1">
-								Potentiel de réemploi <span class="text-gray-400 text-xs font-normal">(optionnel)</span>
+								Potentiel de réemploi <span class="text-gray-400 text-xs font-normal"
+									>(optionnel)</span
+								>
 							</label>
 							<select
 								id="pemd-potentiel"
@@ -1283,15 +1360,31 @@
 						</div>
 
 						<!-- Position info (readonly) -->
-						<div class="bg-purple-50 rounded-lg p-3 text-sm text-purple-700 border border-purple-200">
+						<div
+							class="bg-purple-50 rounded-lg p-3 text-sm text-purple-700 border border-purple-200"
+						>
 							<p class="font-medium mb-1 flex items-center gap-2">
 								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+									/>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+									/>
 								</svg>
 								Position sur le modèle 3D
 							</p>
-							<p class="text-xs font-mono">X: {pendingTagPosition.anchorPosition.x.toFixed(3)} | Y: {pendingTagPosition.anchorPosition.y.toFixed(3)} | Z: {pendingTagPosition.anchorPosition.z.toFixed(3)}</p>
+							<p class="text-xs font-mono">
+								X: {pendingTagPosition.anchorPosition.x.toFixed(3)} | Y: {pendingTagPosition.anchorPosition.y.toFixed(
+									3
+								)} | Z: {pendingTagPosition.anchorPosition.z.toFixed(3)}
+							</p>
 						</div>
 					</div>
 
@@ -1447,11 +1540,15 @@
 
 	<!-- Edit mode indicator -->
 	{#if pemdEditMode}
-		<div class="mb-4 flex items-center justify-between bg-purple-50 border border-purple-200 rounded-lg px-4 py-3">
+		<div
+			class="mb-4 flex items-center justify-between bg-purple-50 border border-purple-200 rounded-lg px-4 py-3"
+		>
 			<div class="flex items-center gap-3">
 				<div class="w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
 				<span class="text-purple-700 font-medium">Mode édition PEMD actif</span>
-				<span class="text-purple-600 text-sm">- Cliquez directement sur le modèle pour ajouter un tag</span>
+				<span class="text-purple-600 text-sm"
+					>- Cliquez directement sur le modèle pour ajouter un tag</span
+				>
 			</div>
 			<button
 				type="button"
@@ -1475,7 +1572,7 @@
 			allow="fullscreen; vr"
 		>
 		</iframe>
-		
+
 		<!-- Overlay for capturing clicks in edit mode -->
 		{#if pemdEditMode}
 			<div
@@ -1497,17 +1594,23 @@
 			>
 				<!-- Visual indicator showing where the tag will be placed -->
 				{#if lastIntersection}
-					<div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-4 py-2 shadow-lg border border-purple-200">
+					<div
+						class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-4 py-2 shadow-lg border border-purple-200"
+					>
 						<div class="flex items-center gap-2 text-purple-700">
 							<Plus size={16} />
 							<span class="text-sm font-medium">Cliquez pour placer le tag</span>
 						</div>
 						<div class="text-xs text-gray-500 mt-1">
-							Position: X={lastIntersection.position.x.toFixed(2)}, Y={lastIntersection.position.y.toFixed(2)}, Z={lastIntersection.position.z.toFixed(2)}
+							Position: X={lastIntersection.position.x.toFixed(2)}, Y={lastIntersection.position.y.toFixed(
+								2
+							)}, Z={lastIntersection.position.z.toFixed(2)}
 						</div>
 					</div>
 				{:else}
-					<div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-4 py-2 shadow-lg border border-gray-200">
+					<div
+						class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-4 py-2 shadow-lg border border-gray-200"
+					>
 						<div class="flex items-center gap-2 text-gray-500">
 							<span class="text-sm">Déplacez le curseur sur le modèle...</span>
 						</div>

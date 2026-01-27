@@ -5,46 +5,46 @@
 	import { page as pageStore } from '$app/stores';
 	import { Trash2, QrCode, Download } from 'lucide-svelte';
 
-    let { data } = $props();
-    // Pagination & Search
-    let query = $state('');
-    let perPage = 25;
-    let page = $state(1);
+	let { data } = $props();
+	// Pagination & Search
+	let query = $state('');
+	let perPage = 25;
+	let page = $state(1);
 
 	let isDeleteModalOpen = $state(false);
 	let isQrModalOpen = $state(false);
 	let currentItem = $state<any>(null);
 	let qrItem = $state<any>(null);
 
-    // Derived
-    const filteredList = $derived(
-        (data?.list || []).filter((item: any) => {
-            if (!query) return true;
-            const q = query.toLowerCase();
-            return (
-                item.objet?.toLowerCase().includes(q) ||
-                item.description?.toLowerCase().includes(q) ||
-                item.etat?.toLowerCase().includes(q) ||
-                item.etage?.toLowerCase().includes(q) ||
-                item.potentielReemploi?.toLowerCase().includes(q)
-            );
-        })
-    );
+	// Derived
+	const filteredList = $derived(
+		(data?.list || []).filter((item: any) => {
+			if (!query) return true;
+			const q = query.toLowerCase();
+			return (
+				item.objet?.toLowerCase().includes(q) ||
+				item.description?.toLowerCase().includes(q) ||
+				item.etat?.toLowerCase().includes(q) ||
+				item.etage?.toLowerCase().includes(q) ||
+				item.potentielReemploi?.toLowerCase().includes(q)
+			);
+		})
+	);
 
-    const totalPages = $derived(Math.ceil(filteredList.length / perPage));
-    const displayedList = $derived(filteredList.slice((page - 1) * perPage, page * perPage));
+	const totalPages = $derived(Math.ceil(filteredList.length / perPage));
+	const displayedList = $derived(filteredList.slice((page - 1) * perPage, page * perPage));
 
-    function handleProjectChange(event: Event) {
-        const select = event.target as HTMLSelectElement;
-        const value = select.value;
-        const url = new URL($pageStore.url);
-        if (value) {
-            url.searchParams.set('projectId', value);
-        } else {
-            url.searchParams.delete('projectId');
-        }
-        goto(url);
-    }
+	function handleProjectChange(event: Event) {
+		const select = event.target as HTMLSelectElement;
+		const value = select.value;
+		const url = new URL($pageStore.url);
+		if (value) {
+			url.searchParams.set('projectId', value);
+		} else {
+			url.searchParams.delete('projectId');
+		}
+		goto(url);
+	}
 
 	function openDeleteModal(item: any) {
 		currentItem = item;
@@ -72,142 +72,156 @@
 		};
 	}
 
-    // Calcul du coefficient de réemploi (pourcentage)
-    function getCoefficientReemploi(item: any): string {
-        if (item.reemploi) {
-            return '100%';
-        } else if (item.potentielReemploi) {
-            // Vous pouvez ajuster la logique selon vos besoins
-            return item.potentielReemploi;
-        }
-        return '0%';
-    }
+	// Calcul du coefficient de réemploi (pourcentage)
+	function getCoefficientReemploi(item: any): string {
+		if (item.reemploi) {
+			return '100%';
+		} else if (item.potentielReemploi) {
+			// Vous pouvez ajuster la logique selon vos besoins
+			return item.potentielReemploi;
+		}
+		return '0%';
+	}
 </script>
 
 <svelte:head>
-    <title>Tableaux Synthèse PEMD</title>
+	<title>Tableaux Synthèse PEMD</title>
 </svelte:head>
 
 <div class="p-6 max-w-7xl mx-auto">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900">Tableaux Synthèse PEMD</h1>
-            <p class="text-sm text-gray-500 mt-1">Vue de synthèse des éléments PEMD par projet.</p>
-        </div>
-        <a
-            href="tableau-synthese/export{$pageStore.url.search}"
-            class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
-        >
-            <Download class="w-4 h-4" />
-            Exporter en Excel
-        </a>
-    </div>
+	<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+		<div>
+			<h1 class="text-2xl font-bold text-gray-900">Tableaux Synthèse PEMD</h1>
+			<p class="text-sm text-gray-500 mt-1">Vue de synthèse des éléments PEMD par projet.</p>
+		</div>
+		<a
+			href="tableau-synthese/export{$pageStore.url.search}"
+			class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+		>
+			<Download class="w-4 h-4" />
+			Exporter en Excel
+		</a>
+	</div>
 
-    <!-- Filters -->
-    <div class="mb-6 flex flex-col sm:flex-row gap-4">
-        <!-- Project Selector -->
-        <div class="w-full sm:w-64">
-             <select
-                class="block w-full rounded-xl border border-gray-300 bg-white py-3 px-4 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                value={data.selectedProjectId || ''}
-                onchange={handleProjectChange}
-            >
-                <option value="">Tous les projets</option>
-                {#each data.projects as project}
-                    <option value={project.id}>{project.libelle}</option>
-                {/each}
-            </select>
-        </div>
+	<!-- Filters -->
+	<div class="mb-6 flex flex-col sm:flex-row gap-4">
+		<!-- Project Selector -->
+		<div class="w-full sm:w-64">
+			<select
+				class="block w-full rounded-xl border border-gray-300 bg-white py-3 px-4 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+				value={data.selectedProjectId || ''}
+				onchange={handleProjectChange}
+			>
+				<option value="">Tous les projets</option>
+				{#each data.projects as project}
+					<option value={project.id}>{project.libelle}</option>
+				{/each}
+			</select>
+		</div>
 
-        <!-- Search Bar -->
-        <div class="relative flex-1">
-            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-                </svg>
-            </div>
-            <input
-                type="text"
-                bind:value={query}
-                placeholder="Rechercher..."
-                class="block w-full rounded-xl border border-gray-300 bg-white py-3 pl-11 pr-4 text-sm placeholder-gray-400 shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-            />
-        </div>
-    </div>
+		<!-- Search Bar -->
+		<div class="relative flex-1">
+			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+				<svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+					<path
+						fill-rule="evenodd"
+						d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+						clip-rule="evenodd"
+					/>
+				</svg>
+			</div>
+			<input
+				type="text"
+				bind:value={query}
+				placeholder="Rechercher..."
+				class="block w-full rounded-xl border border-gray-300 bg-white py-3 pl-11 pr-4 text-sm placeholder-gray-400 shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+			/>
+		</div>
+	</div>
 
-    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-gray-600">
-                <thead class="bg-gray-50 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200">
-                    <tr>
-                        <th class="px-6 py-4">PEMD</th>
-                        <th class="px-6 py-4">Description</th>
-                        <th class="px-6 py-4">État</th>
-                        <th class="px-6 py-4">Étage</th>
-                        <th class="px-6 py-4">Potentiel réemploi</th>
-                        <th class="px-6 py-4">Coefficient réemploi</th>
-                        <th class="px-6 py-4">Miniature</th>
-                        <th class="px-6 py-4 text-center">QR code</th>
-                        <th class="px-6 py-4 text-center w-32">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    {#if displayedList.length === 0}
+	<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+		<div class="overflow-x-auto">
+			<table class="w-full text-left text-sm text-gray-600">
+				<thead
+					class="bg-gray-50 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200"
+				>
+					<tr>
+						<th class="px-6 py-4">PEMD</th>
+						<th class="px-6 py-4">Description</th>
+						<th class="px-6 py-4">État</th>
+						<th class="px-6 py-4">Étage</th>
+						<th class="px-6 py-4">Potentiel réemploi</th>
+						<th class="px-6 py-4">Coefficient réemploi</th>
+						<th class="px-6 py-4">Miniature</th>
+						<th class="px-6 py-4 text-center">QR code</th>
+						<th class="px-6 py-4 text-center w-32">Actions</th>
+					</tr>
+				</thead>
+				<tbody class="divide-y divide-gray-100">
+					{#if displayedList.length === 0}
 						<tr>
 							<td colspan="9" class="px-6 py-12 text-center text-gray-400">
-                                {#if query}
-								    Aucun résultat pour "{query}".
-                                {:else}
-								    Aucun élément PEMD enregistré.
-                                {/if}
+								{#if query}
+									Aucun résultat pour "{query}".
+								{:else}
+									Aucun élément PEMD enregistré.
+								{/if}
 							</td>
 						</tr>
 					{:else}
-                        {#each displayedList as item}
-                            <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-4 font-medium text-gray-900">{item.objet || '-'}</td>
-                                <td class="px-6 py-4">{item.description || '-'}</td>
-                                <td class="px-6 py-4">
-                                    {#if item.etat}
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                            {item.etat}
-                                        </span>
-                                    {:else}
-                                        <span class="text-gray-400">-</span>
-                                    {/if}
-                                </td>
-                                <td class="px-6 py-4">{item.etage || '-'}</td>
-                                <td class="px-6 py-4">
-                                    {#if item.potentielReemploi}
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            {item.potentielReemploi}
-                                        </span>
-                                    {:else}
-                                        <span class="text-gray-400">-</span>
-                                    {/if}
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="font-medium {item.reemploi ? 'text-green-600' : 'text-gray-500'}">
-                                        {getCoefficientReemploi(item)}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    {#if item.image}
-                                        <img src={item.image} alt="Miniature" class="h-16 w-16 object-cover rounded shadow-sm bg-white" />
-                                    {:else}
-                                        <span class="text-xs text-gray-400">N/A</span>
-                                    {/if}
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <button
-                                        onclick={() => openQrModal(item)}
-                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-                                        title="Afficher QR Code"
-                                    >
-                                        <QrCode class="w-4 h-4" />
-                                        <span class="hidden sm:inline">Voir</span>
-                                    </button>
-                                </td>
+						{#each displayedList as item}
+							<tr class="hover:bg-gray-50 transition-colors">
+								<td class="px-6 py-4 font-medium text-gray-900">{item.objet || '-'}</td>
+								<td class="px-6 py-4">{item.description || '-'}</td>
+								<td class="px-6 py-4">
+									{#if item.etat}
+										<span
+											class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+										>
+											{item.etat}
+										</span>
+									{:else}
+										<span class="text-gray-400">-</span>
+									{/if}
+								</td>
+								<td class="px-6 py-4">{item.etage || '-'}</td>
+								<td class="px-6 py-4">
+									{#if item.potentielReemploi}
+										<span
+											class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+										>
+											{item.potentielReemploi}
+										</span>
+									{:else}
+										<span class="text-gray-400">-</span>
+									{/if}
+								</td>
+								<td class="px-6 py-4">
+									<span class="font-medium {item.reemploi ? 'text-green-600' : 'text-gray-500'}">
+										{getCoefficientReemploi(item)}
+									</span>
+								</td>
+								<td class="px-6 py-4">
+									{#if item.image}
+										<img
+											src={item.image}
+											alt="Miniature"
+											class="h-16 w-16 object-cover rounded shadow-sm bg-white"
+										/>
+									{:else}
+										<span class="text-xs text-gray-400">N/A</span>
+									{/if}
+								</td>
+								<td class="px-6 py-4 text-center">
+									<button
+										onclick={() => openQrModal(item)}
+										class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+										title="Afficher QR Code"
+									>
+										<QrCode class="w-4 h-4" />
+										<span class="hidden sm:inline">Voir</span>
+									</button>
+								</td>
 								<td class="px-6 py-4">
 									<div class="flex items-center justify-center gap-2">
 										<button
@@ -219,46 +233,59 @@
 										</button>
 									</div>
 								</td>
-                            </tr>
-                        {/each}
-                    {/if}
-                </tbody>
-            </table>
-        </div>
+							</tr>
+						{/each}
+					{/if}
+				</tbody>
+			</table>
+		</div>
 
-        <!-- Pagination -->
-        {#if filteredList.length > 0}
-            <div class="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3">
-                <p class="text-sm text-gray-600">
-                    Affichage de <span class="font-semibold">{Math.min(filteredList.length, (page - 1) * perPage + 1)}</span>
-                    à <span class="font-semibold">{Math.min(filteredList.length, page * perPage)}</span>
-                    sur <span class="font-semibold">{filteredList.length}</span> résultats
-                </p>
-                <div class="flex gap-2">
-                    <button
-                        onclick={() => (page = Math.max(1, page - 1))}
-                        disabled={page === 1}
-                        class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                        Précédent
-                    </button>
-                    <button
-                        onclick={() => (page = Math.min(totalPages, page + 1))}
-                        disabled={page === totalPages}
-                        class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                        Suivant
-                    </button>
-                </div>
-            </div>
-        {/if}
-    </div>
+		<!-- Pagination -->
+		{#if filteredList.length > 0}
+			<div class="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3">
+				<p class="text-sm text-gray-600">
+					Affichage de <span class="font-semibold"
+						>{Math.min(filteredList.length, (page - 1) * perPage + 1)}</span
+					>
+					à <span class="font-semibold">{Math.min(filteredList.length, page * perPage)}</span>
+					sur <span class="font-semibold">{filteredList.length}</span> résultats
+				</p>
+				<div class="flex gap-2">
+					<button
+						onclick={() => (page = Math.max(1, page - 1))}
+						disabled={page === 1}
+						class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+					>
+						Précédent
+					</button>
+					<button
+						onclick={() => (page = Math.min(totalPages, page + 1))}
+						disabled={page === totalPages}
+						class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+					>
+						Suivant
+					</button>
+				</div>
+			</div>
+		{/if}
+	</div>
 </div>
 
 <!-- Delete Modal -->
 {#if isDeleteModalOpen}
-	<div class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity" transition:fade onclick={closeModal} onkeydown={(e) => e.key === 'Escape' && closeModal()} role="button" tabindex="-1"></div>
+	<div
+		class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+		role="dialog"
+		aria-modal="true"
+	>
+		<div
+			class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"
+			transition:fade
+			onclick={closeModal}
+			onkeydown={(e) => e.key === 'Escape' && closeModal()}
+			role="button"
+			tabindex="-1"
+		></div>
 		<div
 			class="relative w-full max-w-md bg-white rounded-xl shadow-xl overflow-hidden"
 			transition:scale={{ start: 0.95 }}
@@ -293,8 +320,19 @@
 
 <!-- QR Code Modal -->
 {#if isQrModalOpen}
-	<div class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity" transition:fade onclick={closeModal} onkeydown={(e) => e.key === 'Escape' && closeModal()} role="button" tabindex="-1"></div>
+	<div
+		class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
+		role="dialog"
+		aria-modal="true"
+	>
+		<div
+			class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"
+			transition:fade
+			onclick={closeModal}
+			onkeydown={(e) => e.key === 'Escape' && closeModal()}
+			role="button"
+			tabindex="-1"
+		></div>
 		<div
 			class="relative w-full max-w-md bg-white rounded-xl shadow-xl overflow-hidden p-6"
 			transition:scale={{ start: 0.95 }}
@@ -307,7 +345,12 @@
 					aria-label="Fermer"
 				>
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M6 18L18 6M6 6l12 12"
+						/>
 					</svg>
 				</button>
 			</div>
@@ -315,7 +358,7 @@
 				<div class="bg-white p-4 rounded-lg border-2 border-gray-200">
 					<!-- Placeholder pour le QR Code - à remplacer par une vraie bibliothèque QR -->
 					<div class="w-48 h-48 bg-gray-100 flex items-center justify-center">
-						<span class="text-gray-400 text-sm text-center">QR Code<br/>{qrItem?.id}</span>
+						<span class="text-gray-400 text-sm text-center">QR Code<br />{qrItem?.id}</span>
 					</div>
 				</div>
 				<p class="text-sm text-gray-600 mt-4 text-center font-medium">{qrItem?.objet}</p>

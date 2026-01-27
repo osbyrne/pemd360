@@ -35,6 +35,7 @@ npm run drizzle-kit migrate
 7. **Role-based Access**: Admin users with Better Auth
 
 # Matterport SDK Usage
+
 - Tags are stored with `anchorPosition` and `stemVector` for 3D positioning
 - Images can be captured directly from the Matterport viewer
 - The SDK is loaded via CDN (see package.json trusted dependencies)

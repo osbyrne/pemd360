@@ -37,7 +37,11 @@
 		<div>
 			<h1 class="text-3xl font-bold text-gray-900">{projet.libelle}</h1>
 			<p class="text-sm text-gray-500 mt-1">Référence: {projet.reference}</p>
-			<p class="text-xs font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded mt-2 inline-block">ID Matterport: {projet.id}</p>
+			<p
+				class="text-xs font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded mt-2 inline-block"
+			>
+				ID Matterport: {projet.id}
+			</p>
 		</div>
 		<div class="flex gap-3">
 			<a
@@ -101,7 +105,9 @@
 				<dt class="text-sm font-medium text-gray-500">Société</dt>
 				<dd class="mt-1">
 					{#if projet.societeNom}
-						<span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
+						<span
+							class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700"
+						>
 							{projet.societeNom}
 						</span>
 					{:else}

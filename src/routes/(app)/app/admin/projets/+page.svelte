@@ -78,7 +78,15 @@
 	// CSV Export
 	function downloadCSV() {
 		if (!projets.length) return;
-		const cols = ['id', 'reference', 'libelle', 'ville', 'etablissement', 'societe', 'date_demarrage'];
+		const cols = [
+			'id',
+			'reference',
+			'libelle',
+			'ville',
+			'etablissement',
+			'societe',
+			'date_demarrage'
+		];
 		const lines = [cols.join(',')];
 
 		for (const p of filteredProjets) {
@@ -118,17 +126,25 @@
 				<h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
 					Gestion des projets
 				</h1>
-				<p class="mt-2 text-sm text-slate-600">
-					Gérez tous les projets de la plateforme.
-				</p>
+				<p class="mt-2 text-sm text-slate-600">Gérez tous les projets de la plateforme.</p>
 			</div>
 			<div class="mt-4 flex flex-wrap gap-3 sm:mt-0">
 				<a
 					href="/app/admin/projets/nouveau"
 					class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
 				>
-					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M5 12h14"/><path d="M12 5v14"/>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="18"
+						height="18"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path d="M5 12h14" /><path d="M12 5v14" />
 					</svg>
 					Nouveau projet
 				</a>
@@ -136,8 +152,20 @@
 					onclick={downloadCSV}
 					class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
 				>
-					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline
+							points="7 10 12 15 17 10"
+						/><line x1="12" x2="12" y1="15" y2="3" />
 					</svg>
 					Export CSV
 				</button>
@@ -150,7 +178,11 @@
 		<div class="relative">
 			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
 				<svg class="h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
-					<path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+					<path
+						fill-rule="evenodd"
+						d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+						clip-rule="evenodd"
+					/>
 				</svg>
 			</div>
 			<input
@@ -166,32 +198,71 @@
 	<div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
 		{#if displayedProjets.length === 0}
 			<div class="flex flex-col items-center justify-center py-16 px-4">
-				<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-300 mb-4">
-					<path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="48"
+					height="48"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="text-slate-300 mb-4"
+				>
+					<path d="M3 3v18h18" /><path d="m19 9-5 5-4-4-3 3" />
 				</svg>
 				<p class="text-slate-500 font-medium">Aucun projet trouvé</p>
-				<p class="text-sm text-slate-400 mt-1">Créez un nouveau projet ou modifiez vos critères de recherche</p>
+				<p class="text-sm text-slate-400 mt-1">
+					Créez un nouveau projet ou modifiez vos critères de recherche
+				</p>
 			</div>
 		{:else}
 			<div class="overflow-x-auto">
 				<table class="w-full">
 					<thead class="bg-slate-50 border-b border-slate-200">
 						<tr>
-							<th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">ID Matterport</th>
-							<th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Référence</th>
-							<th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Libellé</th>
-							<th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Ville</th>
-							<th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Établissement</th>
-							<th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Société</th>
-							<th class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Démarrage</th>
-							<th class="px-6 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">Actions</th>
+							<th
+								class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
+								>ID Matterport</th
+							>
+							<th
+								class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
+								>Référence</th
+							>
+							<th
+								class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
+								>Libellé</th
+							>
+							<th
+								class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
+								>Ville</th
+							>
+							<th
+								class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
+								>Établissement</th
+							>
+							<th
+								class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
+								>Société</th
+							>
+							<th
+								class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
+								>Démarrage</th
+							>
+							<th
+								class="px-6 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider"
+								>Actions</th
+							>
 						</tr>
 					</thead>
 					<tbody class="divide-y divide-slate-100">
 						{#each displayedProjets as proj (proj.id)}
 							<tr class="hover:bg-slate-50 transition-colors">
 								<td class="px-6 py-4">
-									<span class="text-xs font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded">{proj.id}</span>
+									<span class="text-xs font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded"
+										>{proj.id}</span
+									>
 								</td>
 								<td class="px-6 py-4">
 									<span class="text-sm font-medium text-slate-900">{proj.reference}</span>
@@ -206,7 +277,9 @@
 									<span class="text-sm text-slate-600">{proj.etablissementNom || '-'}</span>
 								</td>
 								<td class="px-6 py-4">
-									<span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
+									<span
+										class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700"
+									>
 										{proj.societeNom || '-'}
 									</span>
 								</td>
@@ -221,12 +294,26 @@
 												class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
 												title="Actions"
 											>
-												<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-													<circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/>
+												<svg
+													xmlns="http://www.w3.org/2000/svg"
+													width="18"
+													height="18"
+													viewBox="0 0 24 24"
+													fill="none"
+													stroke="currentColor"
+													stroke-width="2"
+													stroke-linecap="round"
+													stroke-linejoin="round"
+												>
+													<circle cx="12" cy="12" r="1" /><circle cx="12" cy="5" r="1" /><circle
+														cx="12"
+														cy="19"
+														r="1"
+													/>
 												</svg>
 											</button>
 											{#if openDropdownId === proj.id}
-												<div 
+												<div
 													class="absolute right-0 mt-2 w-48 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-10"
 													transition:scale={{ duration: 100 }}
 												>
@@ -236,8 +323,22 @@
 															class="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
 															onclick={closeDropdown}
 														>
-															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-																<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>
+															<svg
+																xmlns="http://www.w3.org/2000/svg"
+																width="16"
+																height="16"
+																viewBox="0 0 24 24"
+																fill="none"
+																stroke="currentColor"
+																stroke-width="2"
+																stroke-linecap="round"
+																stroke-linejoin="round"
+															>
+																<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle
+																	cx="12"
+																	cy="12"
+																	r="3"
+																/>
 															</svg>
 															Voir
 														</a>
@@ -246,17 +347,49 @@
 															class="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
 															onclick={closeDropdown}
 														>
-															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-																<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/>
+															<svg
+																xmlns="http://www.w3.org/2000/svg"
+																width="16"
+																height="16"
+																viewBox="0 0 24 24"
+																fill="none"
+																stroke="currentColor"
+																stroke-width="2"
+																stroke-linecap="round"
+																stroke-linejoin="round"
+															>
+																<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path
+																	d="m15 5 4 4"
+																/>
 															</svg>
 															Modifier
 														</a>
 														<button
-															onclick={() => { openDeleteModal(proj); closeDropdown(); }}
+															onclick={() => {
+																openDeleteModal(proj);
+																closeDropdown();
+															}}
 															class="flex w-full items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
 														>
-															<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-																<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>
+															<svg
+																xmlns="http://www.w3.org/2000/svg"
+																width="16"
+																height="16"
+																viewBox="0 0 24 24"
+																fill="none"
+																stroke="currentColor"
+																stroke-width="2"
+																stroke-linecap="round"
+																stroke-linejoin="round"
+															>
+																<path d="M3 6h18" /><path
+																	d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"
+																/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line
+																	x1="10"
+																	x2="10"
+																	y1="11"
+																	y2="17"
+																/><line x1="14" x2="14" y1="11" y2="17" />
 															</svg>
 															Supprimer
 														</button>
@@ -275,9 +408,13 @@
 
 		<!-- Pagination -->
 		{#if filteredProjets.length > 0}
-			<div class="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-4 py-3">
+			<div
+				class="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-4 py-3"
+			>
 				<p class="text-sm text-slate-600">
-					Affichage de <span class="font-semibold">{Math.min(filteredProjets.length, (page - 1) * perPage + 1)}</span>
+					Affichage de <span class="font-semibold"
+						>{Math.min(filteredProjets.length, (page - 1) * perPage + 1)}</span
+					>
 					à <span class="font-semibold">{Math.min(filteredProjets.length, page * perPage)}</span>
 					sur <span class="font-semibold">{filteredProjets.length}</span> résultats
 				</p>
@@ -305,7 +442,10 @@
 <!-- MODAL : Supprimer -->
 {#if isDeleteModalOpen && selectedProjet}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
+		<div
+			class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+			transition:fade
+		></div>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
@@ -331,8 +471,26 @@
 						<div class="px-6 py-5">
 							<div class="flex items-center gap-3 mb-6">
 								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600">
-										<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="20"
+										height="20"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										class="text-red-600"
+									>
+										<path d="M3 6h18" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path
+											d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+										/><line x1="10" x2="10" y1="11" y2="17" /><line
+											x1="14"
+											x2="14"
+											y1="11"
+											y2="17"
+										/>
 									</svg>
 								</div>
 								<div>
@@ -342,7 +500,8 @@
 							</div>
 							<div class="rounded-lg bg-red-50 border border-red-200 p-4">
 								<p class="text-sm text-red-800">
-									<strong>Attention :</strong> Cette action est irréversible. Toutes les données associées à ce projet seront définitivement supprimées.
+									<strong>Attention :</strong> Cette action est irréversible. Toutes les données associées
+									à ce projet seront définitivement supprimées.
 								</p>
 							</div>
 						</div>
@@ -370,18 +529,44 @@
 
 <!-- TOAST NOTIFICATION -->
 {#if toast}
-	<div
-		class="fixed bottom-4 right-4 z-50"
-		transition:scale={{ duration: 200 }}
-	>
-		<div class="flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg {toast.type === 'success' ? 'bg-emerald-600' : 'bg-red-600'} text-white">
+	<div class="fixed bottom-4 right-4 z-50" transition:scale={{ duration: 200 }}>
+		<div
+			class="flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg {toast.type === 'success'
+				? 'bg-emerald-600'
+				: 'bg-red-600'} text-white"
+		>
 			{#if toast.type === 'success'}
-				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-					<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="20"
+					height="20"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
 				</svg>
 			{:else}
-				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-					<circle cx="12" cy="12" r="10"/><line x1="15" x2="9" y1="9" y2="15"/><line x1="9" x2="15" y1="9" y2="15"/>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="20"
+					height="20"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<circle cx="12" cy="12" r="10" /><line x1="15" x2="9" y1="9" y2="15" /><line
+						x1="9"
+						x2="15"
+						y1="9"
+						y2="15"
+					/>
 				</svg>
 			{/if}
 			<span class="text-sm font-medium">{toast.message}</span>

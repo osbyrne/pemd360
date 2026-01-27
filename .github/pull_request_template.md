@@ -19,8 +19,8 @@ Unless trivial, each Pull Request marked as Ready for Review should have a linke
 
 ### Topics
 
-Pull Request Comments are dedicated to discussions about its specific implementation;  
-For the conception and general implementation, please use the respective linked related Issues;  
+Pull Request Comments are dedicated to discussions about its specific implementation;
+For the conception and general implementation, please use the respective linked related Issues;
 For anything else, please use Discussions.
 
 ### References
@@ -35,9 +35,8 @@ Also see
 
 ## Specific Implementation
 
-
-
 <!-- Unless trivial, each Pull Request marked as Ready for Review should have a linked related issue -->
+
 ## Linked Related Issues
 
 - CLOSES: #

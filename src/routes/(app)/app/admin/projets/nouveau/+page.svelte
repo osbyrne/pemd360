@@ -55,8 +55,19 @@
 		<div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
 			<div class="flex items-center gap-3 mb-6">
 				<div class="p-2 bg-emerald-50 rounded-lg">
-					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600">
-						<path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="text-emerald-600"
+					>
+						<path d="M3 3v18h18" /><path d="m19 9-5 5-4-4-3 3" />
 					</svg>
 				</div>
 				<h2 class="text-xl font-semibold text-gray-900">Informations du projet</h2>
@@ -74,7 +85,9 @@
 						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm font-mono"
 						placeholder="ex: SxQL3iGy1rE (ID de la visite Matterport)"
 					/>
-					<p class="text-xs text-gray-500 mt-1">L'identifiant unique de la visite Matterport (visible dans l'URL de la visite)</p>
+					<p class="text-xs text-gray-500 mt-1">
+						L'identifiant unique de la visite Matterport (visible dans l'URL de la visite)
+					</p>
 				</div>
 
 				<div class="space-y-1.5">
@@ -111,7 +124,9 @@
 						required
 						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
 					>
-						<option value="" disabled selected={!data_form.idEtabId}>Sélectionnez un établissement</option>
+						<option value="" disabled selected={!data_form.idEtabId}
+							>Sélectionnez un établissement</option
+						>
 						{#each etablissements as etab}
 							<option value={etab.id} selected={etab.id.toString() === data_form.idEtabId}>
 								{etab.nom} ({etab.societeNom || 'Sans société'})
@@ -121,7 +136,9 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="typeOperation" class="text-sm font-medium text-gray-700">Type d'opération</label>
+					<label for="typeOperation" class="text-sm font-medium text-gray-700"
+						>Type d'opération</label
+					>
 					<input
 						type="text"
 						id="typeOperation"
@@ -133,7 +150,9 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="maitreDOuvrage" class="text-sm font-medium text-gray-700">Maître d'ouvrage</label>
+					<label for="maitreDOuvrage" class="text-sm font-medium text-gray-700"
+						>Maître d'ouvrage</label
+					>
 					<input
 						type="text"
 						id="maitreDOuvrage"
@@ -144,7 +163,9 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="dateDemarrage" class="text-sm font-medium text-gray-700">Date de démarrage *</label>
+					<label for="dateDemarrage" class="text-sm font-medium text-gray-700"
+						>Date de démarrage *</label
+					>
 					<input
 						type="date"
 						id="dateDemarrage"
@@ -172,8 +193,23 @@
 		<div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
 			<div class="flex items-center gap-3 mb-6">
 				<div class="p-2 bg-emerald-50 rounded-lg">
-					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600">
-						<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="text-emerald-600"
+					>
+						<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle
+							cx="12"
+							cy="10"
+							r="3"
+						/>
 					</svg>
 				</div>
 				<h2 class="text-xl font-semibold text-gray-900">Localisation</h2>
@@ -233,7 +269,8 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="section" class="text-sm font-medium text-gray-700">Section cadastrale *</label>
+					<label for="section" class="text-sm font-medium text-gray-700">Section cadastrale *</label
+					>
 					<input
 						type="text"
 						id="section"

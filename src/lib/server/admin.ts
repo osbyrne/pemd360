@@ -219,16 +219,24 @@ export async function removeUser(
 /**
  * Vérifie si un utilisateur a une permission spécifique
  */
-export async function userHasPermission(
-	data: {
-		userId?: string;
-		role?: 'admin' | 'user';
-		permissions: {
-			readonly user?: ('set-role' | 'set-password' | 'create' | 'list' | 'ban' | 'impersonate' | 'delete' | 'get' | 'update')[];
-			readonly session?: ('list' | 'delete' | 'revoke')[];
-		};
-	}
-) {
+export async function userHasPermission(data: {
+	userId?: string;
+	role?: 'admin' | 'user';
+	permissions: {
+		readonly user?: (
+			| 'set-role'
+			| 'set-password'
+			| 'create'
+			| 'list'
+			| 'ban'
+			| 'impersonate'
+			| 'delete'
+			| 'get'
+			| 'update'
+		)[];
+		readonly session?: ('list' | 'delete' | 'revoke')[];
+	};
+}) {
 	return await auth.api.userHasPermission({
 		body: data
 	});

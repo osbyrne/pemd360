@@ -73,11 +73,24 @@
 	);
 
 	const totalPages = $derived(Math.ceil(filteredCompanies.length / perPage));
-	const displayedCompanies = $derived(filteredCompanies.slice((page - 1) * perPage, page * perPage));
+	const displayedCompanies = $derived(
+		filteredCompanies.slice((page - 1) * perPage, page * perPage)
+	);
 
 	// Actions
 	function openCreateModal() {
-		createForm = { nom: '', raisonSocial: '', rue: '', cp: '', ville: '', tel: '', fax: '', email: '', siren: '', type: 0 };
+		createForm = {
+			nom: '',
+			raisonSocial: '',
+			rue: '',
+			cp: '',
+			ville: '',
+			tel: '',
+			fax: '',
+			email: '',
+			siren: '',
+			type: 0
+		};
 		isCreateModalOpen = true;
 	}
 
@@ -171,7 +184,17 @@
 					onclick={openCreateModal}
 					class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
 				>
-					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="18"
+						height="18"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
 						<path d="M5 12h14" /><path d="M12 5v14" />
 					</svg>
 					Nouvelle société
@@ -180,8 +203,20 @@
 					onclick={downloadCSV}
 					class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
 				>
-					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" />
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="16"
+						height="16"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline
+							points="7 10 12 15 17 10"
+						/><line x1="12" x2="12" y1="15" y2="3" />
 					</svg>
 					Exporter CSV
 				</button>
@@ -194,7 +229,11 @@
 		<div class="relative">
 			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
 				<svg class="h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
-					<path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+					<path
+						fill-rule="evenodd"
+						d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+						clip-rule="evenodd"
+					/>
 				</svg>
 			</div>
 			<input
@@ -223,8 +262,23 @@
 			</div>
 		{:else if displayedCompanies.length === 0}
 			<div class="flex flex-col items-center justify-center px-4 py-16">
-				<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-4 text-slate-300">
-					<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" /><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" /><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2" /><path d="M10 6h4" /><path d="M10 10h4" /><path d="M10 14h4" /><path d="M10 18h4" />
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="48"
+					height="48"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="mb-4 text-slate-300"
+				>
+					<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" /><path
+						d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"
+					/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2" /><path d="M10 6h4" /><path
+						d="M10 10h4"
+					/><path d="M10 14h4" /><path d="M10 18h4" />
 				</svg>
 				<p class="font-medium text-slate-500">Aucune société trouvée</p>
 				<p class="mt-1 text-sm text-slate-400">Essayez de modifier vos critères de recherche</p>
@@ -235,7 +289,9 @@
 					<div class="flex items-center gap-4 p-4 transition-colors hover:bg-slate-50">
 						<!-- Avatar -->
 						<div class="shrink-0">
-							<div class="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-emerald-400 to-emerald-600 text-lg font-bold text-white shadow">
+							<div
+								class="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-emerald-400 to-emerald-600 text-lg font-bold text-white shadow"
+							>
 								{company.nom?.[0]?.toUpperCase() || '?'}
 							</div>
 						</div>
@@ -265,8 +321,20 @@
 								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600"
 								title="Modifier"
 							>
-								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-									<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" />
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="18"
+									height="18"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path
+										d="m15 5 4 4"
+									/>
 								</svg>
 							</button>
 
@@ -275,8 +343,20 @@
 								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
 								title="Supprimer"
 							>
-								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-									<path d="M3 6h18" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" />
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="18"
+									height="18"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<path d="M3 6h18" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path
+										d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+									/><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" />
 								</svg>
 							</button>
 						</div>
@@ -287,9 +367,13 @@
 
 		<!-- Pagination -->
 		{#if !loading && filteredCompanies.length > 0}
-			<div class="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-4 py-3">
+			<div
+				class="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-4 py-3"
+			>
 				<p class="text-sm text-slate-600">
-					Affichage de <span class="font-semibold">{Math.min(filteredCompanies.length, (page - 1) * perPage + 1)}</span>
+					Affichage de <span class="font-semibold"
+						>{Math.min(filteredCompanies.length, (page - 1) * perPage + 1)}</span
+					>
 					à <span class="font-semibold">{Math.min(filteredCompanies.length, page * perPage)}</span>
 					sur <span class="font-semibold">{filteredCompanies.length}</span> résultats
 				</p>
@@ -299,7 +383,17 @@
 						disabled={page === 1}
 						class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
 					>
-						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
 							<path d="m15 18-6-6 6-6" />
 						</svg>
 						Précédent
@@ -310,7 +404,17 @@
 						class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
 					>
 						Suivant
-						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
 							<path d="m9 18 6-6-6-6" />
 						</svg>
 					</button>
@@ -323,15 +427,18 @@
 <!-- MODAL : Créer -->
 {#if isCreateModalOpen}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
+		<div
+			class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+			transition:fade
+		></div>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
 					class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
 					transition:scale
 				>
-					<form 
-						method="POST" 
+					<form
+						method="POST"
 						action="?/create"
 						use:enhance={() => {
 							loading = true;
@@ -350,7 +457,18 @@
 						<div class="px-6 py-5">
 							<div class="mb-6 flex items-center gap-3">
 								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
-									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="20"
+										height="20"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										class="text-emerald-600"
+									>
 										<path d="M5 12h14" /><path d="M12 5v14" />
 									</svg>
 								</div>
@@ -374,7 +492,9 @@
 										/>
 									</div>
 									<div class="space-y-1.5">
-										<label for="create-tel" class="text-sm font-medium text-slate-700">Téléphone</label>
+										<label for="create-tel" class="text-sm font-medium text-slate-700"
+											>Téléphone</label
+										>
 										<input
 											type="tel"
 											id="create-tel"
@@ -386,7 +506,9 @@
 								</div>
 
 								<div class="space-y-1.5">
-									<label for="create-raison" class="text-sm font-medium text-slate-700">Raison sociale</label>
+									<label for="create-raison" class="text-sm font-medium text-slate-700"
+										>Raison sociale</label
+									>
 									<input
 										type="text"
 										id="create-raison"
@@ -410,7 +532,9 @@
 
 								<div class="grid grid-cols-2 gap-4">
 									<div class="space-y-1.5">
-										<label for="create-cp" class="text-sm font-medium text-slate-700">Code postal</label>
+										<label for="create-cp" class="text-sm font-medium text-slate-700"
+											>Code postal</label
+										>
 										<input
 											type="text"
 											id="create-cp"
@@ -420,7 +544,9 @@
 										/>
 									</div>
 									<div class="space-y-1.5">
-										<label for="create-ville" class="text-sm font-medium text-slate-700">Ville</label>
+										<label for="create-ville" class="text-sm font-medium text-slate-700"
+											>Ville</label
+										>
 										<input
 											type="text"
 											id="create-ville"
@@ -433,7 +559,9 @@
 
 								<div class="grid grid-cols-2 gap-4">
 									<div class="space-y-1.5">
-										<label for="create-email" class="text-sm font-medium text-slate-700">Email</label>
+										<label for="create-email" class="text-sm font-medium text-slate-700"
+											>Email</label
+										>
 										<input
 											type="email"
 											id="create-email"
@@ -456,7 +584,9 @@
 
 								<div class="grid grid-cols-2 gap-4">
 									<div class="space-y-1.5">
-										<label for="create-siren" class="text-sm font-medium text-slate-700">SIREN</label>
+										<label for="create-siren" class="text-sm font-medium text-slate-700"
+											>SIREN</label
+										>
 										<input
 											type="text"
 											id="create-siren"
@@ -504,15 +634,18 @@
 <!-- MODAL : Éditer -->
 {#if isEditModalOpen && selectedCompany}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
+		<div
+			class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+			transition:fade
+		></div>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
 					class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
 					transition:scale
 				>
-					<form 
-						method="POST" 
+					<form
+						method="POST"
 						action="?/update"
 						use:enhance={() => {
 							loading = true;
@@ -532,8 +665,21 @@
 						<div class="px-6 py-5">
 							<div class="mb-6 flex items-center gap-3">
 								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600">
-										<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" />
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="20"
+										height="20"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										class="text-blue-600"
+									>
+										<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path
+											d="m15 5 4 4"
+										/>
 									</svg>
 								</div>
 								<div>
@@ -555,7 +701,9 @@
 										/>
 									</div>
 									<div class="space-y-1.5">
-										<label for="edit-tel" class="text-sm font-medium text-slate-700">Téléphone</label>
+										<label for="edit-tel" class="text-sm font-medium text-slate-700"
+											>Téléphone</label
+										>
 										<input
 											type="tel"
 											id="edit-tel"
@@ -567,7 +715,9 @@
 								</div>
 
 								<div class="space-y-1.5">
-									<label for="edit-raison" class="text-sm font-medium text-slate-700">Raison sociale</label>
+									<label for="edit-raison" class="text-sm font-medium text-slate-700"
+										>Raison sociale</label
+									>
 									<input
 										type="text"
 										id="edit-raison"
@@ -590,7 +740,9 @@
 
 								<div class="grid grid-cols-2 gap-4">
 									<div class="space-y-1.5">
-										<label for="edit-cp" class="text-sm font-medium text-slate-700">Code postal</label>
+										<label for="edit-cp" class="text-sm font-medium text-slate-700"
+											>Code postal</label
+										>
 										<input
 											type="text"
 											id="edit-cp"
@@ -684,15 +836,18 @@
 <!-- MODAL : Supprimer -->
 {#if isDeleteModalOpen && selectedCompany}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" transition:fade></div>
+		<div
+			class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+			transition:fade
+		></div>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
 					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
 					transition:scale
 				>
-					<form 
-						method="POST" 
+					<form
+						method="POST"
 						action="?/delete"
 						use:enhance={() => {
 							loading = true;
@@ -712,8 +867,26 @@
 						<div class="px-6 py-5">
 							<div class="mb-6 flex items-center gap-3">
 								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-									<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600">
-										<path d="M3 6h18" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" />
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										width="20"
+										height="20"
+										viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										class="text-red-600"
+									>
+										<path d="M3 6h18" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path
+											d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+										/><line x1="10" x2="10" y1="11" y2="17" /><line
+											x1="14"
+											x2="14"
+											y1="11"
+											y2="17"
+										/>
 									</svg>
 								</div>
 								<div>
@@ -754,18 +927,46 @@
 <!-- TOAST NOTIFICATION -->
 {#if toast}
 	<div class="fixed bottom-4 right-4 z-50" transition:scale={{ duration: 200 }}>
-		<div class="flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg {toast.type === 'success' ? 'bg-emerald-600' : 'bg-red-600'} text-white">
+		<div
+			class="flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg {toast.type === 'success'
+				? 'bg-emerald-600'
+				: 'bg-red-600'} text-white"
+		>
 			{#if toast.type === 'success'}
-				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="20"
+					height="20"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
 					<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
 				</svg>
 			{:else}
-				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-					<circle cx="12" cy="12" r="10" /><line x1="15" x2="9" y1="9" y2="15" /><line x1="9" x2="15" y1="9" y2="15" />
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="20"
+					height="20"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<circle cx="12" cy="12" r="10" /><line x1="15" x2="9" y1="9" y2="15" /><line
+						x1="9"
+						x2="15"
+						y1="9"
+						y2="15"
+					/>
 				</svg>
 			{/if}
 			<span class="text-sm font-medium">{toast.message}</span>
 		</div>
 	</div>
 {/if}
-

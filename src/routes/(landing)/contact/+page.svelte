@@ -51,7 +51,10 @@
 
 <svelte:head>
 	<title>Contact - PEMD 360</title>
-	<meta name="description" content="Contactez Dépollution Conseil pour vos projets de diagnostic PEMD. Nous sommes à votre écoute." />
+	<meta
+		name="description"
+		content="Contactez Dépollution Conseil pour vos projets de diagnostic PEMD. Nous sommes à votre écoute."
+	/>
 </svelte:head>
 
 <!-- Hero Banner -->
@@ -67,7 +70,9 @@
 				<li>
 					<a href="/" class="flex items-center gap-2 transition-colors hover:text-emerald-400">
 						<svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-							<path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+							<path
+								d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
+							/>
 						</svg>
 						Accueil
 					</a>
@@ -85,16 +90,17 @@
 		<div class="grid gap-12 lg:grid-cols-1">
 			<!-- Contact Info -->
 			<div>
-				<span class="mb-2 inline-block text-sm font-semibold uppercase tracking-wider text-emerald-600">
+				<span
+					class="mb-2 inline-block text-sm font-semibold uppercase tracking-wider text-emerald-600"
+				>
 					Contactez-nous
 				</span>
 				<h2 class="mb-6 text-3xl font-bold text-gray-900 lg:text-4xl">
 					Nous sommes à votre écoute
 				</h2>
 				<p class="mb-8 text-gray-600">
-					Vous avez un projet de démolition ou de rénovation significative ? 
-					N'hésitez pas à nous contacter pour obtenir un devis ou des informations 
-					sur nos services de diagnostic PEMD.
+					Vous avez un projet de démolition ou de rénovation significative ? N'hésitez pas à nous
+					contacter pour obtenir un devis ou des informations sur nos services de diagnostic PEMD.
 				</p>
 
 				<!-- Contact Details -->
@@ -106,19 +112,29 @@
 							rel={info.icon === 'location' ? 'noopener noreferrer' : undefined}
 							class="flex items-start gap-4 rounded-lg p-4 transition-colors hover:bg-gray-50"
 						>
-							<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+							<div
+								class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600"
+							>
 								{#if info.icon === 'envelope'}
 									<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-										<path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+										<path
+											d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"
+										/>
 										<path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
 									</svg>
 								{:else if info.icon === 'phone'}
 									<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-										<path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+										<path
+											d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"
+										/>
 									</svg>
 								{:else}
 									<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-										<path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+										<path
+											fill-rule="evenodd"
+											d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+											clip-rule="evenodd"
+										/>
 									</svg>
 								{/if}
 							</div>
@@ -144,8 +160,6 @@
 					></iframe>
 				</div>
 			</div>
-
-
 		</div>
 	</div>
 </section>
@@ -153,11 +167,11 @@
 <!-- CTA Section -->
 <section class="bg-emerald-600 py-12">
 	<div class="container mx-auto px-4">
-		<div class="flex flex-col items-center justify-between gap-6 text-center lg:flex-row lg:text-left">
+		<div
+			class="flex flex-col items-center justify-between gap-6 text-center lg:flex-row lg:text-left"
+		>
 			<div class="text-white">
-				<h2 class="mb-2 text-2xl font-bold md:text-3xl">
-					Besoin d'un diagnostic PEMD ?
-				</h2>
+				<h2 class="mb-2 text-2xl font-bold md:text-3xl">Besoin d'un diagnostic PEMD ?</h2>
 				<p class="text-emerald-100">
 					Notre équipe est disponible pour répondre à toutes vos questions.
 				</p>
