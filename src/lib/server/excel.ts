@@ -203,7 +203,6 @@ export async function generateTableauSyntheseExcel(data: any[]) {
 	];
 
 	// Style the header
-	worksheet.getRow(1).font = { bold: true };
 	worksheet.getRow(1).fill = {
 		type: 'pattern',
 		pattern: 'solid',
@@ -254,7 +253,6 @@ export async function generateTableauSyntheseReemploiExcel(data: any[]) {
 	];
 
 	// Style the header
-	worksheet.getRow(1).font = { bold: true };
 	worksheet.getRow(1).fill = {
 		type: 'pattern',
 		pattern: 'solid',

@@ -1,6 +1,6 @@
 import { db } from './client';
 import { projet, userProjet } from './schema';
-import { eq, inArray, and, type SQL } from 'drizzle-orm';
+import { eq, inArray, type SQL } from 'drizzle-orm';
 import type { SQLiteColumn } from 'drizzle-orm/sqlite-core';
 
 type User = {

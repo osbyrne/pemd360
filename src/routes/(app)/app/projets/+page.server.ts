@@ -11,10 +11,16 @@ export const load: PageServerLoad = async ({ locals }) => {
 		return { projets: [] };
 	}
 
-	const projetIds = await getAllowedProjectIds(currentUser);
+	// Admins get all projects, non-admins get only their allowed projects
+	const isAdmin = currentUser.role === 'admin';
 
-	if (projetIds.length === 0) {
-		return { projets: [] };
+	// Only fetch allowed project IDs for non-admins (optimization)
+	let projetIds: string[] = [];
+	if (!isAdmin) {
+		projetIds = await getAllowedProjectIds(currentUser);
+		if (projetIds.length === 0) {
+			return { projets: [] };
+		}
 	}
 
 	let query = db
@@ -41,8 +47,8 @@ export const load: PageServerLoad = async ({ locals }) => {
 		.leftJoin(societe, eq(etablissement.idSocieteId, societe.id))
 		.orderBy(desc(projet.dateDemarrage));
 
-	// For non-admins, filter to only their projects (getAllowedProjectIds handles the admin case)
-	if (currentUser.role !== 'admin') {
+	// For non-admins, filter to only their allowed projects
+	if (!isAdmin) {
 		query = query.where(inArray(projet.id, projetIds));
 	}
 
