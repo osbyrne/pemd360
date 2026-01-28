@@ -74,6 +74,8 @@ export type CrudActionsOptions<T extends SQLiteTable> = {
 	nameColumn: SQLiteColumn;
 	entityName: string;
 	idType?: 'number' | 'string';
+	/** Form field name for the name field (default: 'name') */
+	formFieldName?: string;
 };
 
 /**
@@ -85,19 +87,20 @@ export type CrudActionsOptions<T extends SQLiteTable> = {
  *
  * @example
  * export const actions = createCrudActions({
- *   table: categories,
- *   idColumn: categories.id,
- *   nameColumn: categories.nom,
- *   entityName: 'catégorie'
+ *   table: groupe,
+ *   idColumn: groupe.id,
+ *   nameColumn: groupe.groupe,
+ *   entityName: 'groupe',
+ *   formFieldName: 'groupe'  // matches form input name
  * });
  */
 export function createCrudActions<T extends SQLiteTable>(options: CrudActionsOptions<T>) {
-	const { table, idColumn, nameColumn, entityName, idType = 'number' } = options;
+	const { table, idColumn, nameColumn, entityName, idType = 'number', formFieldName = 'name' } = options;
 
 	return {
 		create: async ({ request }: { request: Request }) => {
 			const formData = await request.formData();
-			const name = getFormValue(formData, 'name', 'string');
+			const name = getFormValue(formData, formFieldName, 'string');
 
 			if (!name) {
 				return fail(400, { message: 'Le nom est requis' });
@@ -116,7 +119,7 @@ export function createCrudActions<T extends SQLiteTable>(options: CrudActionsOpt
 			const formData = await request.formData();
 			const rawId = formData.get('id');
 			const id = idType === 'number' ? Number(rawId) : (rawId as string);
-			const name = getFormValue(formData, 'name', 'string');
+			const name = getFormValue(formData, formFieldName, 'string');
 
 			if (!id || (idType === 'number' && isNaN(id as number))) {
 				return fail(400, { message: 'ID requis' });
