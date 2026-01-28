@@ -21,17 +21,17 @@ export function createDeleteAction<T extends SQLiteTable>(
 		const rawId = formData.get('id');
 		const id = idType === 'number' ? Number(rawId) : (rawId as string);
 
-		if (!id || (idType === 'number' && isNaN(id as number))) {
+		// Validate ID is present and valid
+		if (!id || id === '' || (idType === 'number' && isNaN(id as number))) {
 			return fail(400, { message: 'ID requis' });
 		}
 
 		try {
-			// @ts-ignore - Drizzle types are complex
 			await db.delete(table).where(eq(idColumn, id));
 			return { success: true };
-		} catch (e: any) {
+		} catch (e: unknown) {
 			console.error(`Error deleting ${entityName}:`, e);
-			return fail(500, { message: 'Erreur lors de la suppression' });
+			return fail(500, { message: `Erreur lors de la suppression` });
 		}
 	};
 }

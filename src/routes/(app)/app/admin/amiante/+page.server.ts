@@ -38,6 +38,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		if (allowedids.length > 0) {
 			conditions.push(inArray(tagsAmiante.sidId, allowedids));
 		} else {
+			// User has no projects, so they see nothing
 			return {
 				list: [],
 				projects: [],

@@ -1,15 +1,16 @@
 /**
- * Shared Tailwind CSS class strings for consistent button styling across the app.
- * Use these to DRY up repeated button styles.
+ * Shared Tailwind CSS class strings for consistent styling across the app.
+ * Use these to DRY up repeated CSS class strings.
  *
  * Usage:
  * ```svelte
  * <script>
- *   import { buttonStyles } from '$lib/styles/buttons';
+ *   import { buttonStyles, cardStyles, tableStyles } from '$lib/styles';
  * </script>
  *
  * <button class={buttonStyles.primary}>Save</button>
  * <button class={buttonStyles.secondary}>Cancel</button>
+ * <div class={cardStyles.card}>...</div>
  * ```
  */
 
