@@ -1,34 +1,22 @@
 import { db } from '$lib/server/db/client';
 import { pemd, projet, objets, categorieV2, groupe, natureV2 } from '$lib/server/db/schema';
-import { getAllowedProjectIds } from '$lib/server/db/queries';
-import { eq, and, inArray } from 'drizzle-orm';
+import { validateExportAuth, buildProjectConditions } from '$lib/server/db/queries';
+import { eq, and } from 'drizzle-orm';
 import { generateDechetsExcel } from '$lib/server/excel';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ url, locals }) => {
-	const user = locals.user;
+	const authResult = await validateExportAuth(locals.user, url.searchParams.get('projectId'));
 
-	if (!user) {
-		return new Response('Unauthorized', { status: 401 });
+	if (!authResult.authorized) {
+		return authResult.error;
 	}
 
-	const projectId = url.searchParams.get('projectId');
-	const allowedProjectIds = await getAllowedProjectIds(user);
-
-	if (allowedProjectIds.length === 0) {
-		return new Response('No access to any project', { status: 403 });
-	}
-
-	const conditions = [];
-
-	if (projectId) {
-		if (!allowedProjectIds.includes(projectId)) {
-			return new Response('Unauthorized for this project', { status: 403 });
-		}
-		conditions.push(eq(pemd.sidId, projectId));
-	} else {
-		conditions.push(inArray(pemd.sidId, allowedProjectIds));
-	}
+	const conditions = buildProjectConditions(
+		pemd.sidId,
+		authResult.allowedProjectIds,
+		authResult.projectId
+	);
 
 	let query = db
 		.select({
@@ -38,7 +26,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 			nature: natureV2.nature,
 			codeDechet: natureV2.codeDechet,
 			masse: pemd.masse,
-			volume: pemd.volume, // Adding volume since it's in excel function
+			volume: pemd.volume,
 			reutilisation: natureV2.reutilisation,
 			recyclable: natureV2.recyclable,
 			valorisationMatiere: natureV2.valorisationMatiere,

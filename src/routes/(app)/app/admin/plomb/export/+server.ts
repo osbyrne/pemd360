@@ -1,41 +1,29 @@
 import { db } from '$lib/server/db/client';
 import { tagsPlomb, projet } from '$lib/server/db/schema';
-import { getAllowedProjectIds } from '$lib/server/db/queries';
-import { eq, and, inArray } from 'drizzle-orm';
+import { validateExportAuth, buildProjectConditions } from '$lib/server/db/queries';
+import { eq, and } from 'drizzle-orm';
 import { generateRiskExcel } from '$lib/server/excel';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ url, locals }) => {
-	const user = locals.user;
+	const authResult = await validateExportAuth(locals.user, url.searchParams.get('projectId'));
 
-	if (!user) {
-		return new Response('Unauthorized', { status: 401 });
+	if (!authResult.authorized) {
+		return authResult.error;
 	}
 
-	const projectId = url.searchParams.get('projectId');
-	const allowedProjectIds = await getAllowedProjectIds(user);
-
-	if (allowedProjectIds.length === 0) {
-		return new Response('No access to any project', { status: 403 });
-	}
-
-	const conditions = [];
-
-	if (projectId) {
-		if (!allowedProjectIds.includes(projectId)) {
-			return new Response('Unauthorized for this project', { status: 403 });
-		}
-		conditions.push(eq(tagsPlomb.sidId, projectId));
-	} else {
-		conditions.push(inArray(tagsPlomb.sidId, allowedProjectIds));
-	}
+	const conditions = buildProjectConditions(
+		tagsPlomb.sidId,
+		authResult.allowedProjectIds,
+		authResult.projectId
+	);
 
 	let query = db
 		.select({
 			id: tagsPlomb.id,
 			label: tagsPlomb.label,
 			description: tagsPlomb.description,
-			etage: tagsPlomb.etage, // Previously added
+			etage: tagsPlomb.etage,
 			projetId: tagsPlomb.sidId,
 			projetNom: projet.libelle
 		})
