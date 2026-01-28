@@ -10,3 +10,4 @@ export { default as Pagination } from './Pagination.svelte';
 export { default as ProjectFilter } from './ProjectFilter.svelte';
 export { default as AlertError } from './AlertError.svelte';
 export { default as PasswordInput } from './PasswordInput.svelte';
+export { default as Breadcrumb } from './Breadcrumb.svelte';
