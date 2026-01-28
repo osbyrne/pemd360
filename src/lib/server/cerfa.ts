@@ -5,7 +5,10 @@ import {
 	cerfaDiagnostiqueur,
 	cerfaMtrOuvrage,
 	cerfaOperation,
-	projet
+	projet,
+	pemd,
+	categorieV2,
+	groupe
 } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 
@@ -57,6 +60,30 @@ export async function generateCerfaPdf(
 		.select()
 		.from(cerfaOperation)
 		.where(eq(cerfaOperation.projetId, projetId));
+	
+	const pemdList = await db
+		.select({
+			// Select all pemd fields
+			id: pemd.id,
+			description: pemd.description,
+			quantite: pemd.quantite,
+			masse: pemd.masse,
+			volume: pemd.volume,
+			surface: pemd.surface,
+			etat: pemd.etat,
+			amiante: pemd.amiante,
+			plombifere: pemd.plombifere,
+			termite: pemd.termite,
+			reemploi: pemd.reemploi,
+			potentielReemploi: pemd.potentielReemploi,
+			// Joined fields
+			categorie: categorieV2.categoriev2,
+			famille: groupe.groupe
+		})
+		.from(pemd)
+		.leftJoin(categorieV2, eq(pemd.natureId, categorieV2.id))
+		.leftJoin(groupe, eq(categorieV2.groupeId, groupe.id))
+		.where(eq(pemd.sidId, projetId));
 
 	if (!projectData) {
 		throw new Error('Project not found');
@@ -513,6 +540,162 @@ export async function generateCerfaPdf(
 	// Flatten the form to make fields non-editable (optional, but recommended for final documents)
 	if (form && hasFormFields) {
 		form.flatten();
+	}
+
+	// =============================================================================
+	// TABLEAUX GÉNÉRÉS (Style CERFA 16287)
+	// =============================================================================
+
+	if (pemdList.length > 0) {
+		// --- Helper Functions for Custom Tables ---
+		const drawTableHeader = (p: PDFPage, y: number, headers: { text: string, width: number }[]) => {
+			let currentX = 50; 
+			const rowHeight = 20;
+			
+			// Draw gray background for header
+			p.drawRectangle({
+				x: 50, y: y - rowHeight + 5,
+				width: 500, height: rowHeight,
+				color: rgb(0.9, 0.9, 0.9)
+			});
+
+			// Draw header text
+			headers.forEach(h => {
+				p.drawText(h.text, {
+					x: currentX + 5,
+					y: y,
+					size: 8,
+					font: helveticaBoldFont
+				});
+				currentX += h.width;
+			});
+
+			return y - rowHeight;
+		};
+
+		const drawTableRow = (p: PDFPage, y: number, headers: { width: number }[], data: string[]) => {
+				let currentX = 50;
+				const rowHeight = 15;
+				data.forEach((text, i) => {
+					const w = headers[i].width;
+					// Draw cell text
+					drawText(p, text, currentX + 5, y, { size: 8, maxWidth: w - 10 });
+					currentX += w;
+				});
+				
+				// Draw horizontal line below
+				p.drawLine({
+					start: { x: 50, y: y - 5 },
+					end: { x: 550, y: y - 5 },
+					thickness: 0.5,
+					color: rgb(0.8, 0.8, 0.8)
+				});
+				
+				return y - rowHeight;
+		};
+
+		const checkPageSpace = (p: PDFPage, y: number, needed: number = 50): { page: PDFPage, y: number } => {
+			if (y < needed) {
+				const newPage = pdfDoc.addPage([595.28, 841.89]);
+				return { page: newPage, y: 800 };
+			}
+			return { page: p, y };
+		};
+
+		// --- Tableau 1: Réemploi ---
+		const reuseItems = pemdList.filter(
+			(i) => i.reemploi === 1 || (i.potentielReemploi && i.potentielReemploi !== '0')
+		);
+		
+		let currentPage = pdfDoc.addPage([595.28, 841.89]);
+		let yPos = 800;
+
+		if (reuseItems.length > 0) {
+			currentPage.drawText("Tableau 1 : Récapitulatif des matériaux destinés au réemploi", {
+				x: 50, y: yPos, size: 12, font: helveticaBoldFont
+			});
+			yPos -= 30;
+
+			const reuseHeaders = [
+				{ text: "Catégorie", width: 100 },
+				{ text: "Description", width: 150 },
+				{ text: "Quantité", width: 70 },
+				{ text: "État", width: 80 },
+				{ text: "Destination", width: 100 }
+			];
+
+			yPos = drawTableHeader(currentPage, yPos, reuseHeaders);
+
+			reuseItems.forEach(item => {
+				const res = checkPageSpace(currentPage, yPos);
+				currentPage = res.page;
+				yPos = res.y;
+				if (yPos === 800) yPos = drawTableHeader(currentPage, yPos, reuseHeaders); // Redraw header on new page
+
+				let q = '';
+				if (item.quantite) q = String(item.quantite);
+				else if (item.masse) q = `${item.masse} t`;
+
+				drawTableRow(currentPage, yPos, reuseHeaders, [
+					item.categorie || '',
+					item.description || '',
+					q,
+					item.etat || '',
+					'Réemploi' // Destination
+				]);
+
+				yPos -= 15;
+			});
+
+			yPos -= 30; // Spacing after table
+		}
+
+		// --- Tableau 2: Déchets ---
+		const wasteItems = pemdList.filter(
+			(i) => !i.reemploi && (!i.potentielReemploi || i.potentielReemploi === '0')
+		);
+		
+		if (wasteItems.length > 0) {
+			const res = checkPageSpace(currentPage, yPos, 100); // Check enough space for title + header
+			currentPage = res.page;
+			yPos = res.y;
+
+				currentPage.drawText("Tableau 2 : Récapitulatif des déchets", {
+				x: 50, y: yPos, size: 12, font: helveticaBoldFont
+			});
+			yPos -= 30;
+
+			const wasteHeaders = [
+				{ text: "Catégorie", width: 150 },
+				{ text: "Codification", width: 100 },
+				{ text: "Quantité", width: 100 },
+				{ text: "Filière", width: 150 }
+			];
+
+			yPos = drawTableHeader(currentPage, yPos, wasteHeaders);
+
+			wasteItems.forEach(item => {
+				const res = checkPageSpace(currentPage, yPos);
+				currentPage = res.page;
+				yPos = res.y;
+				if (yPos === 800) yPos = drawTableHeader(currentPage, yPos, wasteHeaders);
+
+				let q = item.masse ? `${item.masse} t` : (item.quantite ? String(item.quantite) : '');
+				
+				// Determine Filière based on type (simplistic)
+				let filiere = 'Recyclage'; 
+				// Could infer from flags if available, default to 'Traitement' or 'Valorisation'
+
+				drawTableRow(currentPage, yPos, wasteHeaders, [
+						item.categorie || '',
+						'', // Codification often empty in DB
+						q,
+						filiere
+				]);
+
+				yPos -= 15;
+			});
+		}
 	}
 
 	return await pdfDoc.save();
