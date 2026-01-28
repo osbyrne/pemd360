@@ -216,16 +216,6 @@
 				Informations administratives du projet : Maîtrise d'ouvrage, Opération, Diagnostiqueur
 			</p>
 		</div>
-		{#if projetId}
-			<a
-				href="/api/projects/{projetId}/cerfa"
-				download
-				class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm"
-			>
-				<Download class="h-4 w-4" />
-				<span>Télécharger CERFA PDF</span>
-			</a>
-		{/if}
 	</div>
 
 	{#if projectData}

@@ -223,7 +223,7 @@ export async function generateCerfaPdf(
 		// Nombre de bâtiments et surfaces - Démolition (Label aligned left)
 		const X_VAL_STD = 255;
 		if (operation.nbBatDemolition) {
-			drawText(p1, String(operation.nbBatDemolition), X_VAL_STD, 382);
+			drawText(p1, String(operation.nbBatDemolition), 295, 382);
 		}
 		if (operation.surfaceADemolir) {
 			drawText(p1, String(operation.surfaceADemolir), X_VAL_STD, 370);
