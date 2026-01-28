@@ -16,3 +16,53 @@ input:not([type='checkbox']):not([type='radio']):not([type='submit']):not([type=
 textarea::placeholder {
 	color: #9ca3af !important; /* text-gray-400 */
 }
+
+/* ===== Shared Diagnostic Badges ===== */
+.badge-diagnostic-amiante {
+	@apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800;
+}
+
+.badge-diagnostic-plomb {
+	@apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800;
+}
+
+.badge-diagnostic-termites {
+	@apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800;
+}
+
+.badge-diagnostic-ss3 {
+	@apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800;
+}
+
+.badge-diagnostic-ss4 {
+	@apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800;
+}
+
+.badge-diagnostic-pemd {
+	@apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800;
+}
+
+/* ===== Matterport Viewer Layout ===== */
+.matterport-viewer-container {
+	@apply flex h-screen overflow-hidden;
+}
+
+.sidebar-container {
+	@apply w-80 bg-white border-l border-gray-200 overflow-y-auto flex-shrink-0;
+}
+
+.sidebar-container.collapsed {
+	@apply w-0 border-l-0;
+}
+
+.toggle-sidebar-btn {
+	@apply absolute top-4 right-4 z-10 p-2 bg-white rounded-lg shadow-lg hover:bg-gray-50;
+}
+
+.element-list-item {
+	@apply p-3 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors;
+}
+
+.element-list-item.selected {
+	@apply bg-blue-50 border-l-4 border-l-blue-500;
+}
