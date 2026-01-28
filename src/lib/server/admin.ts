@@ -9,10 +9,10 @@ import { redirect } from '@sveltejs/kit';
 /**
  * Requires admin role, redirects to /app/unauthorized if not admin.
  * Use in +page.server.ts load functions.
- * 
+ *
  * @param parent - The parent function from load context
  * @throws {Redirect} Redirects to /app/unauthorized if not admin
- * 
+ *
  * @example
  * export const load = async ({ parent }) => {
  *   await requireAdmin(parent);

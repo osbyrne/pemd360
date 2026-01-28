@@ -95,7 +95,14 @@ export type CrudActionsOptions<T extends SQLiteTable> = {
  * });
  */
 export function createCrudActions<T extends SQLiteTable>(options: CrudActionsOptions<T>) {
-	const { table, idColumn, nameColumn, entityName, idType = 'number', formFieldName = 'name' } = options;
+	const {
+		table,
+		idColumn,
+		nameColumn,
+		entityName,
+		idType = 'number',
+		formFieldName = 'name'
+	} = options;
 
 	return {
 		create: async ({ request }: { request: Request }) => {
