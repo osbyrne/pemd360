@@ -8,3 +8,5 @@ export { default as DeleteConfirmModal } from './DeleteConfirmModal.svelte';
 export { default as SearchInput } from './SearchInput.svelte';
 export { default as Pagination } from './Pagination.svelte';
 export { default as ProjectFilter } from './ProjectFilter.svelte';
+export { default as AlertError } from './AlertError.svelte';
+export { default as PasswordInput } from './PasswordInput.svelte';

@@ -66,6 +66,69 @@ export function getFormValue(
 }
 
 /**
+ * Field type definitions for extractFormFields
+ */
+export type FieldType = 'string' | 'number' | 'boolean' | 'date';
+
+export type FieldDefinition = {
+	name: string;
+	type: FieldType;
+	defaultValue?: string | number | boolean | Date | null;
+};
+
+/**
+ * Extracts multiple form fields at once based on a schema definition.
+ * Reduces boilerplate when extracting many form fields.
+ *
+ * @param formData - The FormData object
+ * @param fields - Array of field definitions
+ * @returns Object with extracted values keyed by field name
+ *
+ * @example
+ * const data = extractFormFields(formData, [
+ *   { name: 'nom', type: 'string', defaultValue: '' },
+ *   { name: 'age', type: 'number' },
+ *   { name: 'active', type: 'boolean', defaultValue: false }
+ * ]);
+ * // Returns: { nom: 'John', age: 25, active: true }
+ */
+export function extractFormFields(
+	formData: FormData,
+	fields: FieldDefinition[]
+): Record<string, string | number | boolean | Date | null> {
+	const result: Record<string, string | number | boolean | Date | null> = {};
+
+	for (const field of fields) {
+		const value = formData.get(field.name);
+
+		if (value === null || value === '') {
+			result[field.name] = field.defaultValue ?? null;
+			continue;
+		}
+
+		switch (field.type) {
+			case 'string':
+				result[field.name] = value as string;
+				break;
+			case 'number':
+				const num = Number(value);
+				result[field.name] = isNaN(num) ? (field.defaultValue ?? null) : num;
+				break;
+			case 'boolean':
+				result[field.name] = value === 'true' || value === '1' || value === 'on';
+				break;
+			case 'date':
+				result[field.name] = value ? new Date(value as string) : (field.defaultValue ?? null);
+				break;
+			default:
+				result[field.name] = field.defaultValue ?? null;
+		}
+	}
+
+	return result;
+}
+
+/**
  * Options for createCrudActions factory
  */
 export type CrudActionsOptions<T extends SQLiteTable> = {
