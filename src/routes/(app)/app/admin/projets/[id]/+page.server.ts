@@ -1,15 +1,12 @@
-import { redirect, error } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db/client';
 import { projet, etablissement, societe } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
+import { requireAdmin } from '$lib/server/admin';
 
 export const load: PageServerLoad = async ({ params, parent }) => {
-	const { isAdmin } = await parent();
-
-	if (!isAdmin) {
-		throw redirect(303, '/app/unauthorized');
-	}
+	await requireAdmin(parent);
 
 	const { id } = params;
 
