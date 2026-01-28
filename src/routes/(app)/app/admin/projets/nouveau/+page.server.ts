@@ -4,6 +4,7 @@ import { db } from '$lib/server/db/client';
 import { projet, etablissement, societe } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import crypto from 'crypto';
+import { requireAdmin } from '$lib/server/admin';
 
 // Génère un ID unique de type nanoid
 function generateId(size = 21): string {
@@ -17,11 +18,7 @@ function generateId(size = 21): string {
 }
 
 export const load: PageServerLoad = async ({ parent }) => {
-	const { isAdmin } = await parent();
-
-	if (!isAdmin) {
-		throw redirect(303, '/app/unauthorized');
-	}
+	await requireAdmin(parent);
 
 	// Récupérer les établissements avec leurs sociétés
 	const etablissements = await db

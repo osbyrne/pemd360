@@ -1,17 +1,14 @@
-import { error, redirect, fail } from '@sveltejs/kit';
+import { redirect, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { db } from '$lib/server/db/client';
 import {
 	etablissement as etablissementTable,
 	societe as societeTable
 } from '$lib/server/db/schema';
+import { requireAdmin } from '$lib/server/admin';
 
 export const load: PageServerLoad = async ({ parent }) => {
-	const { isAdmin } = await parent();
-
-	if (!isAdmin) {
-		throw redirect(303, '/app/unauthorized');
-	}
+	await requireAdmin(parent);
 
 	const societes = await db.select().from(societeTable);
 

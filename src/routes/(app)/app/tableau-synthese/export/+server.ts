@@ -1,49 +1,22 @@
 import { db } from '$lib/server/db/client';
-import { pemd, projet, userProjet, objets } from '$lib/server/db/schema';
-import { eq, and, inArray } from 'drizzle-orm';
-import ExcelJS from 'exceljs';
+import { pemd, projet, objets } from '$lib/server/db/schema';
+import { validateExportAuth, buildProjectConditions } from '$lib/server/db/queries';
+import { generateTableauSyntheseExcel } from '$lib/server/excel';
+import { eq, and } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ url, locals }) => {
-	const user = locals.user;
+	const authResult = await validateExportAuth(locals.user, url.searchParams.get('projectId'));
 
-	if (!user) {
-		return new Response('Unauthorized', { status: 401 });
+	if (!authResult.authorized) {
+		return authResult.error;
 	}
 
-	const projectId = url.searchParams.get('projectId');
-
-	// Check permissions / Get allowed projects
-	let allowedProjectIds: string[] = [];
-
-	if (user.role === 'admin') {
-		const allProjects = await db.select({ id: projet.id }).from(projet);
-		allowedProjectIds = allProjects.map((p) => p.id);
-	} else {
-		const userProjects = await db
-			.select({ id: projet.id })
-			.from(projet)
-			.innerJoin(userProjet, eq(projet.id, userProjet.projetId))
-			.where(eq(userProjet.userId, user.id));
-		allowedProjectIds = userProjects.map((p) => p.id);
-	}
-
-	if (allowedProjectIds.length === 0) {
-		return new Response('No access to any project', { status: 403 });
-	}
-
-	const conditions = [];
-
-	// Filter by project if specified and allowed
-	if (projectId) {
-		if (!allowedProjectIds.includes(projectId)) {
-			return new Response('Unauthorized for this project', { status: 403 });
-		}
-		conditions.push(eq(pemd.sidId, projectId));
-	} else {
-		// Filter to only allowed projects
-		conditions.push(inArray(pemd.sidId, allowedProjectIds));
-	}
+	const conditions = buildProjectConditions(
+		pemd.sidId,
+		authResult.allowedProjectIds,
+		authResult.projectId
+	);
 
 	let query = db
 		.select({
@@ -67,63 +40,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 	}
 
 	const list = await query;
-
-	// Generate Excel
-	const workbook = new ExcelJS.Workbook();
-	const worksheet = workbook.addWorksheet('Tableaux Synthèse PEMD');
-
-	worksheet.columns = [
-		{ header: 'PEMD', key: 'objet', width: 30 },
-		{ header: 'Description', key: 'description', width: 40 },
-		{ header: 'État', key: 'etat', width: 15 },
-		{ header: 'Étage', key: 'etage', width: 15 },
-		{ header: 'Potentiel réemploi', key: 'potentielReemploi', width: 20 },
-		{ header: 'Coefficient réemploi', key: 'coefficientReemploi', width: 20 },
-		{ header: 'Projet', key: 'projet', width: 25 }
-	];
-
-	// Style the header
-	worksheet.getRow(1).font = { bold: true };
-	worksheet.getRow(1).fill = {
-		type: 'pattern',
-		pattern: 'solid',
-		fgColor: { argb: 'FF10B981' }
-	};
-	worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
-
-	// Auto-filter
-	worksheet.autoFilter = {
-		from: {
-			row: 1,
-			column: 1
-		},
-		to: {
-			row: 1,
-			column: 7
-		}
-	};
-
-	list.forEach((item) => {
-		// Calcul du coefficient de réemploi
-		let coefficientReemploi = '0%';
-		if (item.reemploi) {
-			coefficientReemploi = '100%';
-		} else if (item.potentielReemploi) {
-			coefficientReemploi = item.potentielReemploi;
-		}
-
-		worksheet.addRow({
-			objet: item.objet || '-',
-			description: item.description || '',
-			etat: item.etat || '-',
-			etage: item.etage || '-',
-			potentielReemploi: item.potentielReemploi || '-',
-			coefficientReemploi: coefficientReemploi,
-			projet: item.projetNom || 'Projet inconnu'
-		});
-	});
-
-	const buffer = await workbook.xlsx.writeBuffer();
+	const buffer = await generateTableauSyntheseExcel(list);
 
 	return new Response(buffer, {
 		headers: {

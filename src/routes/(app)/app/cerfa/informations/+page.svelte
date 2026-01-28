@@ -1,6 +1,15 @@
 <script lang="ts">
 	import CerfaTabs from '$lib/components/CerfaTabs.svelte';
-	import { Building2, UserCircle, MapPin, CalendarDays, Edit2, X, Download, FileText } from 'lucide-svelte';
+	import {
+		Building2,
+		UserCircle,
+		MapPin,
+		CalendarDays,
+		Edit2,
+		X,
+		Download,
+		FileText
+	} from 'lucide-svelte';
 	import { fade, fly } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import type { PageData } from './$types';

@@ -1,9 +1,32 @@
 import { auth } from '$lib/auth';
+import { redirect } from '@sveltejs/kit';
 
 /**
  * Admin utility functions pour simplifier l'usage du plugin admin de Better Auth
  * Ces fonctions encapsulent les appels à l'API admin et gèrent automatiquement les headers
  */
+
+/**
+ * Requires admin role, redirects to /app/unauthorized if not admin.
+ * Use in +page.server.ts load functions.
+ *
+ * @param parent - The parent function from load context
+ * @throws {Redirect} Redirects to /app/unauthorized if not admin
+ *
+ * @example
+ * export const load = async ({ parent }) => {
+ *   await requireAdmin(parent);
+ *   // ... rest of load function
+ * };
+ */
+export async function requireAdmin(
+	parent: () => Promise<{ isAdmin: boolean; [key: string]: unknown }>
+): Promise<void> {
+	const { isAdmin } = await parent();
+	if (!isAdmin) {
+		throw redirect(303, '/app/unauthorized');
+	}
+}
 
 type RequestEvent = {
 	request: Request;
