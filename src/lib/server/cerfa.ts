@@ -60,7 +60,7 @@ export async function generateCerfaPdf(
 		.select()
 		.from(cerfaOperation)
 		.where(eq(cerfaOperation.projetId, projetId));
-	
+
 	const pemdList = await db
 		.select({
 			// Select all pemd fields
@@ -164,7 +164,7 @@ export async function generateCerfaPdf(
 		if (!checked) return;
 		page.drawText('X', {
 			x: x + 3.5, // Slightly to the right
-			y: y + 1,   // Slightly lower (PDF coords Y goes up, so smaller Y is lower)
+			y: y + 1, // Slightly lower (PDF coords Y goes up, so smaller Y is lower)
 			size: 10,
 			font: helveticaBoldFont,
 			color: rgb(0, 0, 0)
@@ -497,8 +497,8 @@ export async function generateCerfaPdf(
 				if (Array.isArray(docs)) {
 					const X_BOX = 78;
 					let otherDocs: string[] = [];
-					
-					docs.forEach(doc => {
+
+					docs.forEach((doc) => {
 						const d = doc.toLowerCase();
 						if (d.includes('dossier des ouvrages') || d.includes('doe')) {
 							drawCheck(p3, X_BOX, 423);
@@ -548,19 +548,21 @@ export async function generateCerfaPdf(
 
 	if (pemdList.length > 0) {
 		// --- Helper Functions for Custom Tables ---
-		const drawTableHeader = (p: PDFPage, y: number, headers: { text: string, width: number }[]) => {
-			let currentX = 50; 
+		const drawTableHeader = (p: PDFPage, y: number, headers: { text: string; width: number }[]) => {
+			let currentX = 50;
 			const rowHeight = 20;
-			
+
 			// Draw gray background for header
 			p.drawRectangle({
-				x: 50, y: y - rowHeight + 5,
-				width: 500, height: rowHeight,
+				x: 50,
+				y: y - rowHeight + 5,
+				width: 500,
+				height: rowHeight,
 				color: rgb(0.9, 0.9, 0.9)
 			});
 
 			// Draw header text
-			headers.forEach(h => {
+			headers.forEach((h) => {
 				p.drawText(h.text, {
 					x: currentX + 5,
 					y: y,
@@ -574,27 +576,31 @@ export async function generateCerfaPdf(
 		};
 
 		const drawTableRow = (p: PDFPage, y: number, headers: { width: number }[], data: string[]) => {
-				let currentX = 50;
-				const rowHeight = 15;
-				data.forEach((text, i) => {
-					const w = headers[i].width;
-					// Draw cell text
-					drawText(p, text, currentX + 5, y, { size: 8, maxWidth: w - 10 });
-					currentX += w;
-				});
-				
-				// Draw horizontal line below
-				p.drawLine({
-					start: { x: 50, y: y - 5 },
-					end: { x: 550, y: y - 5 },
-					thickness: 0.5,
-					color: rgb(0.8, 0.8, 0.8)
-				});
-				
-				return y - rowHeight;
+			let currentX = 50;
+			const rowHeight = 15;
+			data.forEach((text, i) => {
+				const w = headers[i].width;
+				// Draw cell text
+				drawText(p, text, currentX + 5, y, { size: 8, maxWidth: w - 10 });
+				currentX += w;
+			});
+
+			// Draw horizontal line below
+			p.drawLine({
+				start: { x: 50, y: y - 5 },
+				end: { x: 550, y: y - 5 },
+				thickness: 0.5,
+				color: rgb(0.8, 0.8, 0.8)
+			});
+
+			return y - rowHeight;
 		};
 
-		const checkPageSpace = (p: PDFPage, y: number, needed: number = 50): { page: PDFPage, y: number } => {
+		const checkPageSpace = (
+			p: PDFPage,
+			y: number,
+			needed: number = 50
+		): { page: PDFPage; y: number } => {
 			if (y < needed) {
 				const newPage = pdfDoc.addPage([595.28, 841.89]);
 				return { page: newPage, y: 800 };
@@ -606,27 +612,30 @@ export async function generateCerfaPdf(
 		const reuseItems = pemdList.filter(
 			(i) => i.reemploi === 1 || (i.potentielReemploi && i.potentielReemploi !== '0')
 		);
-		
+
 		let currentPage = pdfDoc.addPage([595.28, 841.89]);
 		let yPos = 800;
 
 		if (reuseItems.length > 0) {
-			currentPage.drawText("Tableau 1 : Récapitulatif des matériaux destinés au réemploi", {
-				x: 50, y: yPos, size: 12, font: helveticaBoldFont
+			currentPage.drawText('Tableau 1 : Récapitulatif des matériaux destinés au réemploi', {
+				x: 50,
+				y: yPos,
+				size: 12,
+				font: helveticaBoldFont
 			});
 			yPos -= 30;
 
 			const reuseHeaders = [
-				{ text: "Catégorie", width: 100 },
-				{ text: "Description", width: 150 },
-				{ text: "Quantité", width: 70 },
-				{ text: "État", width: 80 },
-				{ text: "Destination", width: 100 }
+				{ text: 'Catégorie', width: 100 },
+				{ text: 'Description', width: 150 },
+				{ text: 'Quantité', width: 70 },
+				{ text: 'État', width: 80 },
+				{ text: 'Destination', width: 100 }
 			];
 
 			yPos = drawTableHeader(currentPage, yPos, reuseHeaders);
 
-			reuseItems.forEach(item => {
+			reuseItems.forEach((item) => {
 				const res = checkPageSpace(currentPage, yPos);
 				currentPage = res.page;
 				yPos = res.y;
@@ -654,43 +663,46 @@ export async function generateCerfaPdf(
 		const wasteItems = pemdList.filter(
 			(i) => !i.reemploi && (!i.potentielReemploi || i.potentielReemploi === '0')
 		);
-		
+
 		if (wasteItems.length > 0) {
 			const res = checkPageSpace(currentPage, yPos, 100); // Check enough space for title + header
 			currentPage = res.page;
 			yPos = res.y;
 
-				currentPage.drawText("Tableau 2 : Récapitulatif des déchets", {
-				x: 50, y: yPos, size: 12, font: helveticaBoldFont
+			currentPage.drawText('Tableau 2 : Récapitulatif des déchets', {
+				x: 50,
+				y: yPos,
+				size: 12,
+				font: helveticaBoldFont
 			});
 			yPos -= 30;
 
 			const wasteHeaders = [
-				{ text: "Catégorie", width: 150 },
-				{ text: "Codification", width: 100 },
-				{ text: "Quantité", width: 100 },
-				{ text: "Filière", width: 150 }
+				{ text: 'Catégorie', width: 150 },
+				{ text: 'Codification', width: 100 },
+				{ text: 'Quantité', width: 100 },
+				{ text: 'Filière', width: 150 }
 			];
 
 			yPos = drawTableHeader(currentPage, yPos, wasteHeaders);
 
-			wasteItems.forEach(item => {
+			wasteItems.forEach((item) => {
 				const res = checkPageSpace(currentPage, yPos);
 				currentPage = res.page;
 				yPos = res.y;
 				if (yPos === 800) yPos = drawTableHeader(currentPage, yPos, wasteHeaders);
 
-				let q = item.masse ? `${item.masse} t` : (item.quantite ? String(item.quantite) : '');
-				
+				let q = item.masse ? `${item.masse} t` : item.quantite ? String(item.quantite) : '';
+
 				// Determine Filière based on type (simplistic)
-				let filiere = 'Recyclage'; 
+				let filiere = 'Recyclage';
 				// Could infer from flags if available, default to 'Traitement' or 'Valorisation'
 
 				drawTableRow(currentPage, yPos, wasteHeaders, [
-						item.categorie || '',
-						'', // Codification often empty in DB
-						q,
-						filiere
+					item.categorie || '',
+					'', // Codification often empty in DB
+					q,
+					filiere
 				]);
 
 				yPos -= 15;

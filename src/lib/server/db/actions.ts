@@ -2,6 +2,17 @@ import { db } from './client';
 import { eq } from 'drizzle-orm';
 import { fail } from '@sveltejs/kit';
 import type { SQLiteTable, SQLiteColumn } from 'drizzle-orm/sqlite-core';
+import { auth } from '$lib/auth';
+
+/**
+ * Permission configuration for actions requiring authorization.
+ */
+export type PermissionConfig = {
+	/** The resource to check permission for (e.g., 'tags', 'projet') */
+	resource: string;
+	/** The action to check permission for (e.g., 'delete', 'create') */
+	action: string;
+};
 
 /**
  * Creates a generic delete action for a table.
@@ -9,14 +20,37 @@ import type { SQLiteTable, SQLiteColumn } from 'drizzle-orm/sqlite-core';
  * @param idColumn - The ID column of the table
  * @param entityName - Name of the entity for error messages (e.g., 'category', 'nature')
  * @param idType - Type of ID field: 'number' or 'string' (default: 'number')
+ * @param permission - Optional permission check configuration
  */
 export function createDeleteAction<T extends SQLiteTable>(
 	table: T,
 	idColumn: SQLiteColumn,
 	entityName: string,
-	idType: 'number' | 'string' = 'number'
+	idType: 'number' | 'string' = 'number',
+	permission?: PermissionConfig
 ) {
-	return async ({ request }: { request: Request }) => {
+	return async ({ request, locals }: { request: Request; locals: App.Locals }) => {
+		const user = locals.user;
+
+		// Check authentication
+		if (!user) {
+			return fail(401, { message: 'Non autorisé' });
+		}
+
+		// Check permission if specified
+		if (permission) {
+			const hasPermission = await auth.api.userHasPermission({
+				body: {
+					userId: user.id,
+					permissions: { [permission.resource]: [permission.action] }
+				}
+			});
+
+			if (!hasPermission.success) {
+				return fail(403, { message: 'Permission refusée' });
+			}
+		}
+
 		const formData = await request.formData();
 		const rawId = formData.get('id');
 		const id = idType === 'number' ? Number(rawId) : (rawId as string);

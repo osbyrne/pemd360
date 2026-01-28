@@ -70,5 +70,8 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 };
 
 export const actions: Actions = {
-	delete: createDeleteAction(pemd, pemd.id, 'pemd réemploi', 'string')
+	delete: createDeleteAction(pemd, pemd.id, 'pemd réemploi', 'string', {
+		resource: 'tags',
+		action: 'delete'
+	})
 };

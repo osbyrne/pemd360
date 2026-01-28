@@ -64,5 +64,8 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 };
 
 export const actions: Actions = {
-	delete: createDeleteAction(tagsTermite, tagsTermite.id, 'tag termite', 'string')
+	delete: createDeleteAction(tagsTermite, tagsTermite.id, 'tag termite', 'string', {
+		resource: 'tags',
+		action: 'delete'
+	})
 };
