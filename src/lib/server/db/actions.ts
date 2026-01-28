@@ -111,7 +111,7 @@ export function createCrudActions<T extends SQLiteTable>(options: CrudActionsOpt
 				return { success: true };
 			} catch (e: unknown) {
 				console.error(`Error creating ${entityName}:`, e);
-				return fail(500, { message: `Erreur lors de la création` });
+				return fail(500, { message: `Erreur lors de la création de ${entityName}` });
 			}
 		},
 
@@ -121,7 +121,7 @@ export function createCrudActions<T extends SQLiteTable>(options: CrudActionsOpt
 			const id = idType === 'number' ? Number(rawId) : (rawId as string);
 			const name = getFormValue(formData, formFieldName, 'string');
 
-			if (!id || (idType === 'number' && isNaN(id as number))) {
+			if (!id || id === '' || (idType === 'number' && isNaN(id as number))) {
 				return fail(400, { message: 'ID requis' });
 			}
 
@@ -137,7 +137,7 @@ export function createCrudActions<T extends SQLiteTable>(options: CrudActionsOpt
 				return { success: true };
 			} catch (e: unknown) {
 				console.error(`Error updating ${entityName}:`, e);
-				return fail(500, { message: `Erreur lors de la mise à jour` });
+				return fail(500, { message: `Erreur lors de la mise à jour de ${entityName}` });
 			}
 		},
 
