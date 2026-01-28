@@ -1,19 +1,85 @@
 import ExcelJS from 'exceljs';
 
-export async function generateRiskExcel(data: any[], type: string) {
+// ============================================================================
+// Shared Excel Utilities
+// ============================================================================
+
+type ColumnDef = { header: string; key: string; width: number };
+type HeaderStyle = 'simple' | 'colored';
+
+interface ExcelOptions {
+	sheetName: string;
+	columns: ColumnDef[];
+	headerStyle?: HeaderStyle;
+	autoFilter?: boolean;
+}
+
+/**
+ * Creates a worksheet with standard configuration
+ */
+function createWorksheet(options: ExcelOptions): {
+	workbook: ExcelJS.Workbook;
+	worksheet: ExcelJS.Worksheet;
+} {
 	const workbook = new ExcelJS.Workbook();
-	const worksheet = workbook.addWorksheet('Inventaire');
+	const worksheet = workbook.addWorksheet(options.sheetName);
+	worksheet.columns = options.columns;
 
-	worksheet.columns = [
-		{ header: 'Nom du prélèvement', key: 'label', width: 30 },
-		{ header: 'Description', key: 'description', width: 40 },
-		{ header: 'Localisation', key: 'etage', width: 20 },
-		{ header: 'Type', key: 'type', width: 15 },
-		{ header: 'Projet', key: 'projet', width: 25 }
-	];
+	// Style header
+	if (options.headerStyle === 'colored') {
+		worksheet.getRow(1).fill = {
+			type: 'pattern',
+			pattern: 'solid',
+			fgColor: { argb: 'FF10B981' }
+		};
+		worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+	} else {
+		worksheet.getRow(1).font = { bold: true };
+	}
 
-	// Style the header
-	worksheet.getRow(1).font = { bold: true };
+	// Auto-filter
+	if (options.autoFilter !== false) {
+		worksheet.autoFilter = {
+			from: { row: 1, column: 1 },
+			to: { row: 1, column: options.columns.length }
+		};
+	}
+
+	return { workbook, worksheet };
+}
+
+/**
+ * Finalizes workbook and returns buffer
+ */
+async function finalizeWorkbook(workbook: ExcelJS.Workbook): Promise<ExcelJS.Buffer> {
+	return workbook.xlsx.writeBuffer();
+}
+
+/**
+ * Calculates coefficient reemploi display value
+ */
+function calculateCoefficientReemploi(item: any): string {
+	if (item.reemploi) return '100%';
+	if (item.potentielReemploi) return item.potentielReemploi;
+	return '0%';
+}
+
+// ============================================================================
+// Excel Generation Functions
+// ============================================================================
+
+export async function generateRiskExcel(data: any[], type: string) {
+	const { workbook, worksheet } = createWorksheet({
+		sheetName: 'Inventaire',
+		columns: [
+			{ header: 'Nom du prélèvement', key: 'label', width: 30 },
+			{ header: 'Description', key: 'description', width: 40 },
+			{ header: 'Localisation', key: 'etage', width: 20 },
+			{ header: 'Type', key: 'type', width: 15 },
+			{ header: 'Projet', key: 'projet', width: 25 }
+		],
+		autoFilter: false
+	});
 
 	data.forEach((item) => {
 		worksheet.addRow({
@@ -25,45 +91,29 @@ export async function generateRiskExcel(data: any[], type: string) {
 		});
 	});
 
-	const buffer = await workbook.xlsx.writeBuffer();
-	return buffer;
+	return finalizeWorkbook(workbook);
 }
 
 export async function generateDechetsExcel(data: any[]) {
-	const workbook = new ExcelJS.Workbook();
-	const worksheet = workbook.addWorksheet('Caractérisation Déchets');
-
-	worksheet.columns = [
-		{ header: 'Catégorie', key: 'categorie', width: 25 },
-		{ header: 'Objet', key: 'objet', width: 25 },
-		{ header: 'Nature', key: 'nature', width: 25 },
-		{ header: 'Code Déchet', key: 'codeDechet', width: 15 },
-		{ header: 'Masse (Kg)', key: 'masse', width: 15 },
-		{ header: 'Volume (m³)', key: 'volume', width: 15 },
-		{ header: 'Eco Organisme', key: 'ecoOrganisme', width: 12 },
-		{ header: 'Réutilisation', key: 'reutilisation', width: 12 },
-		{ header: 'Recyclable', key: 'recyclable', width: 12 },
-		{ header: 'Valo. Matière', key: 'valorisationMatiere', width: 12 },
-		{ header: 'Valo. Énergétique', key: 'valorisationEnergetique', width: 15 },
-		{ header: 'Incin. sans valo', key: 'incinerationSansValo', width: 15 },
-		{ header: 'Enfouissement', key: 'nonValorisation', width: 15 },
-		{ header: 'Conditions / Notes', key: 'description', width: 30 }
-	];
-
-	// Style the header
-	worksheet.getRow(1).font = { bold: true };
-
-	// Auto-filter
-	worksheet.autoFilter = {
-		from: {
-			row: 1,
-			column: 1
-		},
-		to: {
-			row: 1,
-			column: 14
-		}
-	};
+	const { workbook, worksheet } = createWorksheet({
+		sheetName: 'Caractérisation Déchets',
+		columns: [
+			{ header: 'Catégorie', key: 'categorie', width: 25 },
+			{ header: 'Objet', key: 'objet', width: 25 },
+			{ header: 'Nature', key: 'nature', width: 25 },
+			{ header: 'Code Déchet', key: 'codeDechet', width: 15 },
+			{ header: 'Masse (Kg)', key: 'masse', width: 15 },
+			{ header: 'Volume (m³)', key: 'volume', width: 15 },
+			{ header: 'Eco Organisme', key: 'ecoOrganisme', width: 12 },
+			{ header: 'Réutilisation', key: 'reutilisation', width: 12 },
+			{ header: 'Recyclable', key: 'recyclable', width: 12 },
+			{ header: 'Valo. Matière', key: 'valorisationMatiere', width: 12 },
+			{ header: 'Valo. Énergétique', key: 'valorisationEnergetique', width: 15 },
+			{ header: 'Incin. sans valo', key: 'incinerationSansValo', width: 15 },
+			{ header: 'Enfouissement', key: 'nonValorisation', width: 15 },
+			{ header: 'Conditions / Notes', key: 'description', width: 30 }
+		]
+	});
 
 	data.forEach((item) => {
 		worksheet.addRow({
@@ -84,42 +134,26 @@ export async function generateDechetsExcel(data: any[]) {
 		});
 	});
 
-	const buffer = await workbook.xlsx.writeBuffer();
-	return buffer;
+	return finalizeWorkbook(workbook);
 }
 
 export async function generatePemExcel(data: any[]) {
-	const workbook = new ExcelJS.Workbook();
-	const worksheet = workbook.addWorksheet('Inventaire PEMD');
-
-	worksheet.columns = [
-		{ header: 'Groupe', key: 'groupe', width: 20 },
-		{ header: 'Catégorie', key: 'categorie', width: 25 },
-		{ header: 'Objet', key: 'objet', width: 25 },
-		{ header: 'Nature', key: 'nature', width: 25 },
-		{ header: 'État', key: 'etat', width: 15 },
-		{ header: 'Quantité', key: 'quantite', width: 15 },
-		{ header: 'Masse (Kg)', key: 'masse', width: 15 },
-		{ header: 'Âge', key: 'estimationAge', width: 15 },
-		{ header: 'Description', key: 'description', width: 40 },
-		{ header: 'Localisation', key: 'etage', width: 20 },
-		{ header: 'Projet', key: 'projet', width: 25 }
-	];
-
-	// Style the header
-	worksheet.getRow(1).font = { bold: true };
-
-	// Auto-filter
-	worksheet.autoFilter = {
-		from: {
-			row: 1,
-			column: 1
-		},
-		to: {
-			row: 1,
-			column: 11
-		}
-	};
+	const { workbook, worksheet } = createWorksheet({
+		sheetName: 'Inventaire PEMD',
+		columns: [
+			{ header: 'Groupe', key: 'groupe', width: 20 },
+			{ header: 'Catégorie', key: 'categorie', width: 25 },
+			{ header: 'Objet', key: 'objet', width: 25 },
+			{ header: 'Nature', key: 'nature', width: 25 },
+			{ header: 'État', key: 'etat', width: 15 },
+			{ header: 'Quantité', key: 'quantite', width: 15 },
+			{ header: 'Masse (Kg)', key: 'masse', width: 15 },
+			{ header: 'Âge', key: 'estimationAge', width: 15 },
+			{ header: 'Description', key: 'description', width: 40 },
+			{ header: 'Localisation', key: 'etage', width: 20 },
+			{ header: 'Projet', key: 'projet', width: 25 }
+		]
+	});
 
 	data.forEach((item) => {
 		worksheet.addRow({
@@ -137,39 +171,23 @@ export async function generatePemExcel(data: any[]) {
 		});
 	});
 
-	const buffer = await workbook.xlsx.writeBuffer();
-	return buffer;
+	return finalizeWorkbook(workbook);
 }
 
 export async function generateReemploiExcel(data: any[]) {
-	const workbook = new ExcelJS.Workbook();
-	const worksheet = workbook.addWorksheet('Inventaire Réemploi');
-
-	worksheet.columns = [
-		{ header: 'PEMD', key: 'objet', width: 25 },
-		{ header: 'Description', key: 'description', width: 40 },
-		{ header: 'État', key: 'etat', width: 15 },
-		{ header: 'Étage', key: 'etage', width: 20 },
-		{ header: 'Potentiel réemploi', key: 'potentielReemploi', width: 20 },
-		{ header: 'Coefficient réemploi', key: 'reemploi', width: 20 },
-		{ header: 'Masse (T)', key: 'masse', width: 15 },
-		{ header: 'Projet', key: 'projet', width: 25 }
-	];
-
-	// Style the header
-	worksheet.getRow(1).font = { bold: true };
-
-	// Auto-filter
-	worksheet.autoFilter = {
-		from: {
-			row: 1,
-			column: 1
-		},
-		to: {
-			row: 1,
-			column: 8
-		}
-	};
+	const { workbook, worksheet } = createWorksheet({
+		sheetName: 'Inventaire Réemploi',
+		columns: [
+			{ header: 'PEMD', key: 'objet', width: 25 },
+			{ header: 'Description', key: 'description', width: 40 },
+			{ header: 'État', key: 'etat', width: 15 },
+			{ header: 'Étage', key: 'etage', width: 20 },
+			{ header: 'Potentiel réemploi', key: 'potentielReemploi', width: 20 },
+			{ header: 'Coefficient réemploi', key: 'reemploi', width: 20 },
+			{ header: 'Masse (T)', key: 'masse', width: 15 },
+			{ header: 'Projet', key: 'projet', width: 25 }
+		]
+	});
 
 	data.forEach((item) => {
 		worksheet.addRow({
@@ -178,112 +196,69 @@ export async function generateReemploiExcel(data: any[]) {
 			etat: item.etat || '-',
 			etage: item.etage || '-',
 			potentielReemploi: item.potentielReemploi ? 'Oui' : 'Non',
-			reemploi: item.reemploi || '-', // Assuming coefficient is stored in 'reemploi' column or we need to check schema. Page uses 'reemploi'
+			reemploi: item.reemploi || '-',
 			masse: item.masse ? (item.masse / 1000).toFixed(3) : 0,
 			projet: item.projetNom || 'Projet inconnu'
 		});
 	});
 
-	const buffer = await workbook.xlsx.writeBuffer();
-	return buffer;
+	return finalizeWorkbook(workbook);
 }
 
 export async function generateTableauSyntheseExcel(data: any[]) {
-	const workbook = new ExcelJS.Workbook();
-	const worksheet = workbook.addWorksheet('Tableaux Synthèse PEMD');
-
-	worksheet.columns = [
-		{ header: 'PEMD', key: 'objet', width: 30 },
-		{ header: 'Description', key: 'description', width: 40 },
-		{ header: 'État', key: 'etat', width: 15 },
-		{ header: 'Étage', key: 'etage', width: 15 },
-		{ header: 'Potentiel réemploi', key: 'potentielReemploi', width: 20 },
-		{ header: 'Coefficient réemploi', key: 'coefficientReemploi', width: 20 },
-		{ header: 'Projet', key: 'projet', width: 25 }
-	];
-
-	// Style the header
-	worksheet.getRow(1).fill = {
-		type: 'pattern',
-		pattern: 'solid',
-		fgColor: { argb: 'FF10B981' }
-	};
-	worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
-
-	// Auto-filter
-	worksheet.autoFilter = {
-		from: { row: 1, column: 1 },
-		to: { row: 1, column: 7 }
-	};
+	const { workbook, worksheet } = createWorksheet({
+		sheetName: 'Tableaux Synthèse PEMD',
+		columns: [
+			{ header: 'PEMD', key: 'objet', width: 30 },
+			{ header: 'Description', key: 'description', width: 40 },
+			{ header: 'État', key: 'etat', width: 15 },
+			{ header: 'Étage', key: 'etage', width: 15 },
+			{ header: 'Potentiel réemploi', key: 'potentielReemploi', width: 20 },
+			{ header: 'Coefficient réemploi', key: 'coefficientReemploi', width: 20 },
+			{ header: 'Projet', key: 'projet', width: 25 }
+		],
+		headerStyle: 'colored'
+	});
 
 	data.forEach((item) => {
-		let coefficientReemploi = '0%';
-		if (item.reemploi) {
-			coefficientReemploi = '100%';
-		} else if (item.potentielReemploi) {
-			coefficientReemploi = item.potentielReemploi;
-		}
-
 		worksheet.addRow({
 			objet: item.objet || '-',
 			description: item.description || '',
 			etat: item.etat || '-',
 			etage: item.etage || '-',
 			potentielReemploi: item.potentielReemploi || '-',
-			coefficientReemploi: coefficientReemploi,
+			coefficientReemploi: calculateCoefficientReemploi(item),
 			projet: item.projetNom || 'Projet inconnu'
 		});
 	});
 
-	const buffer = await workbook.xlsx.writeBuffer();
-	return buffer;
+	return finalizeWorkbook(workbook);
 }
 
 export async function generateTableauSyntheseReemploiExcel(data: any[]) {
-	const workbook = new ExcelJS.Workbook();
-	const worksheet = workbook.addWorksheet('Tableau Synthèse Réemploi');
-
-	worksheet.columns = [
-		{ header: 'Description', key: 'description', width: 40 },
-		{ header: 'État', key: 'etat', width: 15 },
-		{ header: 'Étage', key: 'etage', width: 15 },
-		{ header: 'Potentiel réemploi', key: 'potentielReemploi', width: 20 },
-		{ header: 'Coefficient réemploi', key: 'coefficientReemploi', width: 20 },
-		{ header: 'Projet', key: 'projet', width: 25 }
-	];
-
-	// Style the header
-	worksheet.getRow(1).fill = {
-		type: 'pattern',
-		pattern: 'solid',
-		fgColor: { argb: 'FF10B981' }
-	};
-	worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
-
-	// Auto-filter
-	worksheet.autoFilter = {
-		from: { row: 1, column: 1 },
-		to: { row: 1, column: 6 }
-	};
+	const { workbook, worksheet } = createWorksheet({
+		sheetName: 'Tableau Synthèse Réemploi',
+		columns: [
+			{ header: 'Description', key: 'description', width: 40 },
+			{ header: 'État', key: 'etat', width: 15 },
+			{ header: 'Étage', key: 'etage', width: 15 },
+			{ header: 'Potentiel réemploi', key: 'potentielReemploi', width: 20 },
+			{ header: 'Coefficient réemploi', key: 'coefficientReemploi', width: 20 },
+			{ header: 'Projet', key: 'projet', width: 25 }
+		],
+		headerStyle: 'colored'
+	});
 
 	data.forEach((item) => {
-		let coefficientReemploi = '0%';
-		if (item.reemploi) {
-			coefficientReemploi = '100%';
-		} else if (item.potentielReemploi) {
-			coefficientReemploi = item.potentielReemploi;
-		}
-
 		worksheet.addRow({
 			description: item.description || item.objet || '-',
 			etat: item.etat || '-',
 			etage: item.etage || '-',
 			potentielReemploi: item.potentielReemploi || '-',
-			coefficientReemploi: coefficientReemploi,
+			coefficientReemploi: calculateCoefficientReemploi(item),
 			projet: item.projetNom || 'Projet inconnu'
 		});
 	});
 
-	const buffer = await workbook.xlsx.writeBuffer();
-	return buffer;
+	return finalizeWorkbook(workbook);
 }
