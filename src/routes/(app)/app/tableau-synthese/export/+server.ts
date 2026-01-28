@@ -1,5 +1,6 @@
 import { db } from '$lib/server/db/client';
-import { pemd, projet, userProjet, objets } from '$lib/server/db/schema';
+import { pemd, projet, objets } from '$lib/server/db/schema';
+import { getAllowedProjectIds } from '$lib/server/db/queries';
 import { eq, and, inArray } from 'drizzle-orm';
 import ExcelJS from 'exceljs';
 import type { RequestHandler } from './$types';
@@ -12,21 +13,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 	}
 
 	const projectId = url.searchParams.get('projectId');
-
-	// Check permissions / Get allowed projects
-	let allowedProjectIds: string[] = [];
-
-	if (user.role === 'admin') {
-		const allProjects = await db.select({ id: projet.id }).from(projet);
-		allowedProjectIds = allProjects.map((p) => p.id);
-	} else {
-		const userProjects = await db
-			.select({ id: projet.id })
-			.from(projet)
-			.innerJoin(userProjet, eq(projet.id, userProjet.projetId))
-			.where(eq(userProjet.userId, user.id));
-		allowedProjectIds = userProjects.map((p) => p.id);
-	}
+	const allowedProjectIds = await getAllowedProjectIds(user);
 
 	if (allowedProjectIds.length === 0) {
 		return new Response('No access to any project', { status: 403 });
@@ -34,14 +21,12 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 
 	const conditions = [];
 
-	// Filter by project if specified and allowed
 	if (projectId) {
 		if (!allowedProjectIds.includes(projectId)) {
 			return new Response('Unauthorized for this project', { status: 403 });
 		}
 		conditions.push(eq(pemd.sidId, projectId));
 	} else {
-		// Filter to only allowed projects
 		conditions.push(inArray(pemd.sidId, allowedProjectIds));
 	}
 

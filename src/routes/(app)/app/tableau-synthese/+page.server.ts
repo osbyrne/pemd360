@@ -1,7 +1,8 @@
 import { redirect, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { db } from '$lib/server/db/client';
-import { pemd, projet, userProjet, objets } from '$lib/server/db/schema';
+import { pemd, projet, objets } from '$lib/server/db/schema';
+import { getUserProjects } from '$lib/server/db/queries';
 import { eq, and, inArray } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ url, locals }) => {
@@ -12,25 +13,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	}
 
 	const projectId = url.searchParams.get('projectId');
-	let projects;
-
-	if (user.role === 'admin') {
-		projects = await db
-			.select({
-				id: projet.id,
-				libelle: projet.libelle
-			})
-			.from(projet);
-	} else {
-		projects = await db
-			.select({
-				id: projet.id,
-				libelle: projet.libelle
-			})
-			.from(projet)
-			.innerJoin(userProjet, eq(projet.id, userProjet.projetId))
-			.where(eq(userProjet.userId, user.id));
-	}
+	const projects = await getUserProjects(user);
 
 	let query = db
 		.select({
