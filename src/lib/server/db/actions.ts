@@ -64,3 +64,80 @@ export function getFormValue(
 			return null;
 	}
 }
+
+/**
+ * Options for createCrudActions factory
+ */
+export type CrudActionsOptions<T extends SQLiteTable> = {
+	table: T;
+	idColumn: SQLiteColumn;
+	nameColumn: SQLiteColumn;
+	entityName: string;
+	idType?: 'number' | 'string';
+};
+
+/**
+ * Creates standard CRUD actions (create, update, delete) for simple entity tables.
+ * Useful for tables with just id + name fields like categories, nature, objets, macro_categories.
+ *
+ * @param options - Configuration options
+ * @returns Object with create, update, and delete action handlers
+ *
+ * @example
+ * export const actions = createCrudActions({
+ *   table: categories,
+ *   idColumn: categories.id,
+ *   nameColumn: categories.nom,
+ *   entityName: 'catégorie'
+ * });
+ */
+export function createCrudActions<T extends SQLiteTable>(options: CrudActionsOptions<T>) {
+	const { table, idColumn, nameColumn, entityName, idType = 'number' } = options;
+
+	return {
+		create: async ({ request }: { request: Request }) => {
+			const formData = await request.formData();
+			const name = getFormValue(formData, 'name', 'string');
+
+			if (!name) {
+				return fail(400, { message: 'Le nom est requis' });
+			}
+
+			try {
+				await db.insert(table).values({ [nameColumn.name]: name } as Record<string, unknown>);
+				return { success: true };
+			} catch (e: unknown) {
+				console.error(`Error creating ${entityName}:`, e);
+				return fail(500, { message: `Erreur lors de la création` });
+			}
+		},
+
+		update: async ({ request }: { request: Request }) => {
+			const formData = await request.formData();
+			const rawId = formData.get('id');
+			const id = idType === 'number' ? Number(rawId) : (rawId as string);
+			const name = getFormValue(formData, 'name', 'string');
+
+			if (!id || (idType === 'number' && isNaN(id as number))) {
+				return fail(400, { message: 'ID requis' });
+			}
+
+			if (!name) {
+				return fail(400, { message: 'Le nom est requis' });
+			}
+
+			try {
+				await db
+					.update(table)
+					.set({ [nameColumn.name]: name } as Record<string, unknown>)
+					.where(eq(idColumn, id));
+				return { success: true };
+			} catch (e: unknown) {
+				console.error(`Error updating ${entityName}:`, e);
+				return fail(500, { message: `Erreur lors de la mise à jour` });
+			}
+		},
+
+		delete: createDeleteAction(table, idColumn, entityName, idType)
+	};
+}

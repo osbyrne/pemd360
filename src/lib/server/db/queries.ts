@@ -124,3 +124,60 @@ export function buildProjectConditions(
 
 	return conditions;
 }
+
+/**
+ * Result type for loadFilteredInventory
+ */
+export type FilteredInventoryResult<T> = {
+	list: T[];
+	projects: Array<{ id: string; libelle: string | null }>;
+	selectedProjectId: string | null;
+};
+
+/**
+ * Common load pattern for risk/inventory pages.
+ * Gets projects accessible by user and filters inventory list accordingly.
+ * 
+ * @param user - The user from locals
+ * @param url - The URL object to get projectId from searchParams
+ * @param sidIdColumn - The sidId column from the table (foreign key to projet)
+ * @param queryFn - Function that returns the query results with project conditions
+ * @returns Object with list, projects, and selectedProjectId
+ * 
+ * @example
+ * const result = await loadFilteredInventory(
+ *   user, 
+ *   url, 
+ *   tagsAmiante.sidId,
+ *   async (conditions) => {
+ *     return db.select().from(tagsAmiante).where(and(...conditions));
+ *   }
+ * );
+ */
+export async function loadFilteredInventory<T>(
+	user: User,
+	url: URL,
+	sidIdColumn: SQLiteColumn,
+	queryFn: (conditions: SQL[]) => Promise<T[]>
+): Promise<FilteredInventoryResult<T>> {
+	const projectId = url.searchParams.get('projectId');
+	const projects = await getUserProjects(user);
+
+	const conditions: SQL[] = [];
+
+	if (user.role !== 'admin') {
+		const allowedIds = projects.map((p) => p.id);
+		if (allowedIds.length === 0) {
+			return { list: [], projects: [], selectedProjectId: projectId };
+		}
+		conditions.push(inArray(sidIdColumn, allowedIds));
+	}
+
+	if (projectId) {
+		conditions.push(eq(sidIdColumn, projectId));
+	}
+
+	const list = await queryFn(conditions);
+
+	return { list, projects, selectedProjectId: projectId };
+}
