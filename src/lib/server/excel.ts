@@ -187,3 +187,105 @@ export async function generateReemploiExcel(data: any[]) {
 	const buffer = await workbook.xlsx.writeBuffer();
 	return buffer;
 }
+
+export async function generateTableauSyntheseExcel(data: any[]) {
+	const workbook = new ExcelJS.Workbook();
+	const worksheet = workbook.addWorksheet('Tableaux Synthèse PEMD');
+
+	worksheet.columns = [
+		{ header: 'PEMD', key: 'objet', width: 30 },
+		{ header: 'Description', key: 'description', width: 40 },
+		{ header: 'État', key: 'etat', width: 15 },
+		{ header: 'Étage', key: 'etage', width: 15 },
+		{ header: 'Potentiel réemploi', key: 'potentielReemploi', width: 20 },
+		{ header: 'Coefficient réemploi', key: 'coefficientReemploi', width: 20 },
+		{ header: 'Projet', key: 'projet', width: 25 }
+	];
+
+	// Style the header
+	worksheet.getRow(1).font = { bold: true };
+	worksheet.getRow(1).fill = {
+		type: 'pattern',
+		pattern: 'solid',
+		fgColor: { argb: 'FF10B981' }
+	};
+	worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+
+	// Auto-filter
+	worksheet.autoFilter = {
+		from: { row: 1, column: 1 },
+		to: { row: 1, column: 7 }
+	};
+
+	data.forEach((item) => {
+		let coefficientReemploi = '0%';
+		if (item.reemploi) {
+			coefficientReemploi = '100%';
+		} else if (item.potentielReemploi) {
+			coefficientReemploi = item.potentielReemploi;
+		}
+
+		worksheet.addRow({
+			objet: item.objet || '-',
+			description: item.description || '',
+			etat: item.etat || '-',
+			etage: item.etage || '-',
+			potentielReemploi: item.potentielReemploi || '-',
+			coefficientReemploi: coefficientReemploi,
+			projet: item.projetNom || 'Projet inconnu'
+		});
+	});
+
+	const buffer = await workbook.xlsx.writeBuffer();
+	return buffer;
+}
+
+export async function generateTableauSyntheseReemploiExcel(data: any[]) {
+	const workbook = new ExcelJS.Workbook();
+	const worksheet = workbook.addWorksheet('Tableau Synthèse Réemploi');
+
+	worksheet.columns = [
+		{ header: 'Description', key: 'description', width: 40 },
+		{ header: 'État', key: 'etat', width: 15 },
+		{ header: 'Étage', key: 'etage', width: 15 },
+		{ header: 'Potentiel réemploi', key: 'potentielReemploi', width: 20 },
+		{ header: 'Coefficient réemploi', key: 'coefficientReemploi', width: 20 },
+		{ header: 'Projet', key: 'projet', width: 25 }
+	];
+
+	// Style the header
+	worksheet.getRow(1).font = { bold: true };
+	worksheet.getRow(1).fill = {
+		type: 'pattern',
+		pattern: 'solid',
+		fgColor: { argb: 'FF10B981' }
+	};
+	worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+
+	// Auto-filter
+	worksheet.autoFilter = {
+		from: { row: 1, column: 1 },
+		to: { row: 1, column: 6 }
+	};
+
+	data.forEach((item) => {
+		let coefficientReemploi = '0%';
+		if (item.reemploi) {
+			coefficientReemploi = '100%';
+		} else if (item.potentielReemploi) {
+			coefficientReemploi = item.potentielReemploi;
+		}
+
+		worksheet.addRow({
+			description: item.description || item.objet || '-',
+			etat: item.etat || '-',
+			etage: item.etage || '-',
+			potentielReemploi: item.potentielReemploi || '-',
+			coefficientReemploi: coefficientReemploi,
+			projet: item.projetNom || 'Projet inconnu'
+		});
+	});
+
+	const buffer = await workbook.xlsx.writeBuffer();
+	return buffer;
+}

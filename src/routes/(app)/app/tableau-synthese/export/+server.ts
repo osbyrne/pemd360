@@ -1,8 +1,8 @@
 import { db } from '$lib/server/db/client';
 import { pemd, projet, objets } from '$lib/server/db/schema';
 import { getAllowedProjectIds } from '$lib/server/db/queries';
+import { generateTableauSyntheseExcel } from '$lib/server/excel';
 import { eq, and, inArray } from 'drizzle-orm';
-import ExcelJS from 'exceljs';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ url, locals }) => {
@@ -52,63 +52,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 	}
 
 	const list = await query;
-
-	// Generate Excel
-	const workbook = new ExcelJS.Workbook();
-	const worksheet = workbook.addWorksheet('Tableaux Synthèse PEMD');
-
-	worksheet.columns = [
-		{ header: 'PEMD', key: 'objet', width: 30 },
-		{ header: 'Description', key: 'description', width: 40 },
-		{ header: 'État', key: 'etat', width: 15 },
-		{ header: 'Étage', key: 'etage', width: 15 },
-		{ header: 'Potentiel réemploi', key: 'potentielReemploi', width: 20 },
-		{ header: 'Coefficient réemploi', key: 'coefficientReemploi', width: 20 },
-		{ header: 'Projet', key: 'projet', width: 25 }
-	];
-
-	// Style the header
-	worksheet.getRow(1).font = { bold: true };
-	worksheet.getRow(1).fill = {
-		type: 'pattern',
-		pattern: 'solid',
-		fgColor: { argb: 'FF10B981' }
-	};
-	worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
-
-	// Auto-filter
-	worksheet.autoFilter = {
-		from: {
-			row: 1,
-			column: 1
-		},
-		to: {
-			row: 1,
-			column: 7
-		}
-	};
-
-	list.forEach((item) => {
-		// Calcul du coefficient de réemploi
-		let coefficientReemploi = '0%';
-		if (item.reemploi) {
-			coefficientReemploi = '100%';
-		} else if (item.potentielReemploi) {
-			coefficientReemploi = item.potentielReemploi;
-		}
-
-		worksheet.addRow({
-			objet: item.objet || '-',
-			description: item.description || '',
-			etat: item.etat || '-',
-			etage: item.etage || '-',
-			potentielReemploi: item.potentielReemploi || '-',
-			coefficientReemploi: coefficientReemploi,
-			projet: item.projetNom || 'Projet inconnu'
-		});
-	});
-
-	const buffer = await workbook.xlsx.writeBuffer();
+	const buffer = await generateTableauSyntheseExcel(list);
 
 	return new Response(buffer, {
 		headers: {
