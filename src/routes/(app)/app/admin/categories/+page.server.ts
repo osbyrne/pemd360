@@ -1,5 +1,6 @@
 import { db } from '$lib/server/db/client';
 import { categorieV2, groupe } from '$lib/server/db/schema';
+import { createDeleteAction } from '$lib/server/db/actions';
 import { eq } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
 import { fail } from '@sveltejs/kit';
@@ -73,20 +74,5 @@ export const actions: Actions = {
 		}
 	},
 
-	delete: async ({ request }) => {
-		const formData = await request.formData();
-		const id = Number(formData.get('id'));
-
-		if (!id) {
-			return fail(400, { message: 'ID requis' });
-		}
-
-		try {
-			await db.delete(categorieV2).where(eq(categorieV2.id, id));
-			return { success: true };
-		} catch (e: any) {
-			console.error('Error deleting category:', e);
-			return fail(500, { message: 'Erreur lors de la suppression' });
-		}
-	}
+	delete: createDeleteAction(categorieV2, categorieV2.id, 'category')
 };

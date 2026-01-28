@@ -1,8 +1,9 @@
-import { redirect, fail } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { db } from '$lib/server/db/client';
 import { pemd, projet, objets, categorieV2, groupe, natureV2 } from '$lib/server/db/schema';
 import { getUserProjects } from '$lib/server/db/queries';
+import { createDeleteAction } from '$lib/server/db/actions';
 import { eq, and, inArray } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ url, locals }) => {
@@ -78,20 +79,5 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 };
 
 export const actions: Actions = {
-	delete: async ({ request }) => {
-		const formData = await request.formData();
-		const id = formData.get('id') as string;
-
-		if (!id) {
-			return fail(400, { message: 'ID requis' });
-		}
-
-		try {
-			await db.delete(pemd).where(eq(pemd.id, id));
-			return { success: true };
-		} catch (e: any) {
-			console.error('Error deleting pemd:', e);
-			return fail(500, { message: 'Erreur lors de la suppression' });
-		}
-	}
+	delete: createDeleteAction(pemd, pemd.id, 'pemd', 'string')
 };
