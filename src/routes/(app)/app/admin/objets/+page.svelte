@@ -2,6 +2,9 @@
 	import { enhance } from '$app/forms';
 	import { fade, scale } from 'svelte/transition';
 	import { Pencil, Trash2, Plus, X, Save } from 'lucide-svelte';
+	import SearchInput from '$lib/components/SearchInput.svelte';
+	import Pagination from '$lib/components/Pagination.svelte';
+	import DeleteConfirmModal from '$lib/components/DeleteConfirmModal.svelte';
 
 	let { data } = $props();
 
@@ -60,6 +63,10 @@
 
 	function closeModal() {
 		isModalOpen = false;
+		currentObjet = null;
+	}
+
+	function closeDeleteModal() {
 		isDeleteModalOpen = false;
 		currentObjet = null;
 	}
@@ -98,23 +105,7 @@
 
 	<!-- Search Bar -->
 	<div class="mb-6">
-		<div class="relative">
-			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-				<svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-					<path
-						fill-rule="evenodd"
-						d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-						clip-rule="evenodd"
-					/>
-				</svg>
-			</div>
-			<input
-				type="text"
-				bind:value={query}
-				placeholder="Rechercher par objet ou catégorie..."
-				class="block w-full rounded-xl border border-gray-300 bg-white py-3 pl-11 pr-4 text-sm placeholder-gray-400 shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-			/>
-		</div>
+		<SearchInput bind:value={query} placeholder="Rechercher par objet ou catégorie..." />
 	</div>
 
 	<!-- Table -->
@@ -181,34 +172,13 @@
 			</table>
 		</div>
 
-		<!-- Pagination -->
-		{#if filteredList.length > 0}
-			<div class="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3">
-				<p class="text-sm text-gray-600">
-					Affichage de <span class="font-semibold"
-						>{Math.min(filteredList.length, (page - 1) * perPage + 1)}</span
-					>
-					à <span class="font-semibold">{Math.min(filteredList.length, page * perPage)}</span>
-					sur <span class="font-semibold">{filteredList.length}</span> résultats
-				</p>
-				<div class="flex gap-2">
-					<button
-						onclick={() => (page = Math.max(1, page - 1))}
-						disabled={page === 1}
-						class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-					>
-						Précédent
-					</button>
-					<button
-						onclick={() => (page = Math.min(totalPages, page + 1))}
-						disabled={page === totalPages}
-						class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-					>
-						Suivant
-					</button>
-				</div>
-			</div>
-		{/if}
+		<Pagination
+			{page}
+			{totalPages}
+			totalItems={filteredList.length}
+			{perPage}
+			onPageChange={(p) => (page = p)}
+		/>
 	</div>
 </div>
 
@@ -308,53 +278,9 @@
 	</div>
 {/if}
 
-<!-- Delete Confirmation Modal -->
-{#if isDeleteModalOpen}
-	<div
-		class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
-		role="dialog"
-		aria-modal="true"
-	>
-		<div
-			class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"
-			transition:fade
-			onclick={closeModal}
-		></div>
-		<div
-			class="relative w-full max-w-md bg-white rounded-xl shadow-xl overflow-hidden p-6"
-			transition:scale={{ start: 0.95 }}
-		>
-			<div class="text-center">
-				<div
-					class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 mb-4"
-				>
-					<Trash2 class="h-6 w-6 text-red-600" />
-				</div>
-				<h3 class="text-lg font-semibold text-gray-900 mb-2">Supprimer l'objet ?</h3>
-				<p class="text-sm text-gray-500 mb-6">
-					Êtes-vous sûr de vouloir supprimer l'objet <span class="font-medium text-gray-900"
-						>{currentObjet?.objet}</span
-					> ? Cette action est irréversible.
-				</p>
-				<div class="flex justify-center gap-3">
-					<button
-						type="button"
-						onclick={closeModal}
-						class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-800 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors"
-					>
-						Annuler
-					</button>
-					<form action="?/delete" method="POST" use:enhance={handleFormResult}>
-						<input type="hidden" name="id" value={currentObjet?.id} />
-						<button
-							type="submit"
-							class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm"
-						>
-							Confirmer la suppression
-						</button>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-{/if}
+<DeleteConfirmModal
+	isOpen={isDeleteModalOpen}
+	itemLabel={currentObjet?.objet || ''}
+	itemId={currentObjet?.id}
+	onClose={closeDeleteModal}
+/>
