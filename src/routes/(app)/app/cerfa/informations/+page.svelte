@@ -1,6 +1,6 @@
 <script lang="ts">
 	import CerfaTabs from '$lib/components/CerfaTabs.svelte';
-	import { Building2, UserCircle, MapPin, CalendarDays, Edit2, X } from 'lucide-svelte';
+	import { Building2, UserCircle, MapPin, CalendarDays, Edit2, X, Download, FileText } from 'lucide-svelte';
 	import { fade, fly } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import type { PageData } from './$types';
@@ -209,11 +209,23 @@
 	<CerfaTabs />
 
 	<!-- Header Section -->
-	<div class="mb-8">
-		<h1 class="text-3xl font-bold text-gray-900">Partie Informations</h1>
-		<p class="text-gray-600 mt-2">
-			Informations administratives du projet : Maîtrise d'ouvrage, Opération, Diagnostiqueur
-		</p>
+	<div class="mb-8 flex justify-between items-start">
+		<div>
+			<h1 class="text-3xl font-bold text-gray-900">Partie Informations</h1>
+			<p class="text-gray-600 mt-2">
+				Informations administratives du projet : Maîtrise d'ouvrage, Opération, Diagnostiqueur
+			</p>
+		</div>
+		{#if projetId}
+			<a
+				href="/api/projects/{projetId}/cerfa"
+				download
+				class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm"
+			>
+				<Download class="h-4 w-4" />
+				<span>Télécharger CERFA PDF</span>
+			</a>
+		{/if}
 	</div>
 
 	{#if projectData}
