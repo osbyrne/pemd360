@@ -1,39 +1,12 @@
 <script lang="ts">
 	import { TestTubeDiagonal, Bug, TriangleAlert } from 'lucide-svelte';
-	import { page } from '$app/stores';
+	import Tabs from './Tabs.svelte';
 
 	const tabs = [
 		{ href: '/app/admin/amiante', label: 'Amiante', icon: TestTubeDiagonal, color: 'text-red-600' },
 		{ href: '/app/admin/plomb', label: 'Plomb', icon: TriangleAlert, color: 'text-orange-600' },
 		{ href: '/app/admin/termites', label: 'Termites', icon: Bug, color: 'text-amber-700' }
 	];
-
-	const currentPath = $derived($page.url.pathname);
-	const queryParams = $derived($page.url.search);
 </script>
 
-<div class="border-b border-gray-200 mb-6 -mx-6 px-6 bg-white sticky top-0 z-10">
-	<nav class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
-		{#each tabs as tab}
-			{@const isActive = currentPath.includes(tab.href)}
-			<a
-				href="{tab.href}{queryParams}"
-				class="
-                    group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap
-                    {isActive
-					? 'border-emerald-500 text-emerald-600'
-					: 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
-                "
-				aria-current={isActive ? 'page' : undefined}
-			>
-				<tab.icon
-					class="
-                        -ml-0.5 mr-2 h-4 w-4 
-                        {isActive ? 'text-emerald-500' : 'text-gray-400 group-hover:text-gray-500'}
-                    "
-				/>
-				{tab.label}
-			</a>
-		{/each}
-	</nav>
-</div>
+<Tabs {tabs} />
