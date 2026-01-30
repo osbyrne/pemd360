@@ -97,20 +97,12 @@
 							</td>
 						</tr>
 					{:else}
-						{#each displayedList as item}
+						{#each displayedList as item (item.id || item.label)}
 							<tr class="hover:bg-gray-50 transition-colors">
-								<td class="px-6 py-4 font-medium text-gray-900">
-									{item.label}
-								</td>
-								<td class="px-6 py-4">
-									{item.description || '-'}
-								</td>
-								<td class="px-6 py-4">
-									{item.etage || '-'}
-								</td>
-								<td class="px-6 py-4">
-									{item.type || '-'}
-								</td>
+								<td class="px-6 py-4 font-medium text-gray-900"> {item.label} </td>
+								<td class="px-6 py-4"> {item.description || '-'} </td>
+								<td class="px-6 py-4"> {item.etage || '-'} </td>
+								<td class="px-6 py-4"> {item.type || '-'} </td>
 								<td class="px-6 py-4">
 									{#if item.customImage}
 										<img
