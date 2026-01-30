@@ -115,7 +115,7 @@
 					icon: ClipboardList
 				},
 				{
-					href: '/app/inventaire/pemd',
+					href: '/app/admin/pemd-tableau',
 					label: 'Inventaire PEMD',
 					icon: ClipboardListAlt
 				}
