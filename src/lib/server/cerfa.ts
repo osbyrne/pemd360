@@ -132,7 +132,7 @@ export async function generateCerfaPdf(
 		if (text === null || text === undefined || text === '') return;
 		const size = options?.size ?? 9;
 		const font = options?.bold ? helveticaBoldFont : helveticaFont;
-		
+
 		let textStr = String(text)
 			.replace(/\t/g, '    ')
 			.replace(/[\u2000-\u200B\u202F\u205F\u3000]/g, ' ');
