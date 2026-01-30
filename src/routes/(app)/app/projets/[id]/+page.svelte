@@ -1454,7 +1454,7 @@
 				<img
 					src={tagPemdImg}
 					alt="pemd"
-					class={`h-8 w-8 object-contain transition-transform ${showPemd ? 'scale-110' : ''}`}
+					class={`h-24 w-24 object-contain transition-transform ${showPemd ? 'scale-140' : ''}`}
 				/>
 			</button>
 			<button
