@@ -129,7 +129,6 @@
 		loading = true;
 		error = null;
 		try {
-			// @ts-ignore
 			const res = await authClient.admin.listUsers({
 				query: {
 					limit: 100,

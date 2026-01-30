@@ -47,7 +47,6 @@ export async function createUser(
 ) {
 	return await auth.api.createUser({
 		body: data,
-		// @ts-ignore - role type mismatch
 		headers: event.request.headers
 	});
 }
@@ -88,7 +87,6 @@ export async function setUserRole(
 ) {
 	return await auth.api.setRole({
 		body: data,
-		// @ts-ignore - role type mismatch
 		headers: event.request.headers
 	});
 }

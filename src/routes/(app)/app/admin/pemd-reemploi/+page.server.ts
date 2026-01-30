@@ -56,7 +56,6 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	}
 
 	if (conditions.length > 0) {
-		// @ts-ignore
 		query.where(and(...conditions));
 	}
 
