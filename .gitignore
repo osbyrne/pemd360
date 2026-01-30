@@ -1,9 +1,9 @@
+# Dependencies
 node_modules
 
 # Output
 .output
 .vercel
-.netlify
 .wrangler
 /.svelte-kit
 /build
@@ -25,10 +25,3 @@ vite.config.ts.timestamp-*
 # Working with a local database
 *.sqlite
 *.db
-
-# lockfiles
-bun.lock
-deno.lock
-pnpm-lock.yaml
-yarn.lock
-# we keep package-lock.json as it is the canonical lockfile for npm
