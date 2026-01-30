@@ -110,7 +110,7 @@
 			icon: Files,
 			subItems: [
 				{
-					href: '/app/inventaire/risques',
+					href: '/app/admin/amiante',
 					label: 'Inventaire risques',
 					icon: ClipboardList
 				},
