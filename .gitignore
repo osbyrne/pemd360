@@ -25,3 +25,7 @@ vite.config.ts.timestamp-*
 # Working with a local database
 *.sqlite
 *.db
+
+#devbox
+devbox.lock
+/.devbox
