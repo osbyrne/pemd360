@@ -32,7 +32,6 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		.leftJoin(projet, eq(tagsAmiante.sidId, projet.id));
 
 	if (conditions.length > 0) {
-		// @ts-ignore
 		query.where(and(...conditions));
 	}
 
