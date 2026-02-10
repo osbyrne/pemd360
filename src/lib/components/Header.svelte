@@ -1,6 +1,6 @@
 <script lang="ts">
-	import logoDC from '$lib/assets/img/depollution_conseil.png';
-	import logoPEMD from '$lib/assets/img/pemd360.png';
+	import logoDC from '$lib/assets/depollution_conseil.png';
+	import logoPEMD from '$lib/assets/pemd360.png';
 
 	let { user = null } = $props<{ user: any }>();
 	let mobileMenuOpen = $state(false);

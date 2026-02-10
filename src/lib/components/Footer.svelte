@@ -1,5 +1,5 @@
 <script lang="ts">
-	import logoPEMD from '$lib/assets/img/pemd360.png';
+	import logoPEMD from '$lib/assets/pemd360.png';
 </script>
 
 <footer class="bg-gray-900 text-white">

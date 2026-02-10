@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import logoPEMD from '$lib/assets/img/pemd360.png';
+	import logoPEMD from '$lib/assets/pemd360.png';
 	import { AlertError } from '$lib/components';
 
 	let { form }: { form?: { error?: string; success?: boolean } } = $props();

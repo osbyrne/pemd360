@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { fade } from 'svelte/transition';
-	import logoPEMD from '$lib/assets/img/pemd360.png';
+	import logoPEMD from '$lib/assets/pemd360.png';
 	import {
 		Menu,
 		ClipboardList,

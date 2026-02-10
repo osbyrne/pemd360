@@ -1,5 +1,5 @@
 <script lang="ts">
-	import logoDC from '$lib/assets/img/depollution_conseil.png';
+	import logoDC from '$lib/assets/depollution_conseil.png';
 
 	const services = [
 		'Numérisation de bâtiments',

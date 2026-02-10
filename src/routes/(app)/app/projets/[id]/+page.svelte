@@ -2,11 +2,11 @@
 	import { onMount } from 'svelte';
 	import type { PageData, ActionData } from './$types';
 	import type { MpSdk } from '@matterport/sdk';
-	import tagAmianteImg from '$lib/assets/img/tagamiante.png';
-	import tagPlombImg from '$lib/assets/img/tagplomb.png';
-	import tagTermiteImg from '$lib/assets/img/tagtermite.png';
-	import tagPemdImg from '$lib/assets/img/pemd360.png';
-	import { Mail, Plus, Pencil, X, Save, Trash2 } from 'lucide-svelte';
+	import tagAmianteImg from '$lib/assets/tagamiante.png';
+	import tagPlombImg from '$lib/assets/tagplomb.png';
+	import tagTermiteImg from '$lib/assets/tagtermite.png';
+	import tagPemdImg from '$lib/assets/pemd360.png';
+	import { Mail, Plus, Pencil, X, Save } from 'lucide-svelte';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 

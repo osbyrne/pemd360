@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import logoPEMD from '$lib/assets/img/pemd360.png';
-	import slideNumerisation from '$lib/assets/img/dépollution_8036_Copie.jpg';
-	import slideSuivi from '$lib/assets/img/suivi.jpg';
-	import slideDiagnostic from '$lib/assets/img/model_accueil.jpg';
+	import logoPEMD from '$lib/assets/pemd360.png';
+	import slideNumerisation from '$lib/assets/dépollution_8036_Copie.jpg';
+	import slideSuivi from '$lib/assets/suivi.jpg';
+	import slideDiagnostic from '$lib/assets/model_accueil.jpg';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 

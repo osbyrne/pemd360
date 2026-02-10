@@ -1,7 +1,5 @@
 <script lang="ts">
 	import './layout.css';
-	import logoPEMD from '$lib/assets/img/pemd360.png';
-	import logoDC from '$lib/assets/img/depollution_conseil.png';
 	import { authClient } from '$lib/auth-client';
 	import { pwaInfo } from 'virtual:pwa-info';
 	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';

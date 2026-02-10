@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { authClient } from '$lib/auth-client';
 	import { goto } from '$app/navigation';
-	import logoPEMD from '$lib/assets/img/pemd360.png';
 	import { AlertError } from '$lib/components';
 
 	let email = $state('');
