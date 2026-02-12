@@ -145,7 +145,12 @@
 			} else {
 				if (res.error) error = res.error.message || 'Une erreur est survenue';
 			}
-		} catch (e: any) {
+		} catch (e: unknown) {
+			if (e instanceof Error) {
+				console.log(e.message);
+			} else {
+				console.log(String(e));
+			}
 			error = e.message || 'Échec du chargement des utilisateurs';
 			console.error(e);
 		} finally {
@@ -533,7 +538,7 @@
 	<div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
 		{#if loading}
 			<div class="divide-y divide-slate-100">
-				{#each Array(5) as _}
+				{#each [...Array(5).keys()] as i (i)}
 					<div class="flex items-center gap-4 p-4">
 						<div class="h-12 w-12 rounded-full bg-slate-100 animate-pulse"></div>
 						<div class="flex-1 space-y-2">
@@ -644,14 +649,12 @@
 						<div class="hidden lg:flex lg:flex-col lg:items-end w-32 mr-4">
 							<p class="text-xs text-slate-400">Projets</p>
 							{#if user.role === 'admin'}
-								<p
-									class="text-sm font-medium text-slate-600 whitespace-nowrap truncate max-w-[120px]"
-								>
+								<p class="text-sm font-medium text-slate-600 whitespace-nowrap truncate max-w-30">
 									-
 								</p>
 							{:else}
 								<p
-									class="text-sm font-medium text-slate-600 whitespace-nowrap truncate max-w-[120px]"
+									class="text-sm font-medium text-slate-600 whitespace-nowrap truncate max-w-30"
 									title={getProjetsNames(getUserProjets(user.id))}
 								>
 									{getProjetsCount(user.id)} projet{getProjetsCount(user.id) > 1 ? 's' : ''}
