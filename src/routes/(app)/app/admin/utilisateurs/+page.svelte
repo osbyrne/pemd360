@@ -4,11 +4,25 @@
 	import { fade, scale } from 'svelte/transition';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
+	import {
+		Pencil,
+		Users,
+		Folder,
+		Bug,
+		KeyRound,
+		X,
+		UserPlus,
+		UserPen,
+		RefreshCcw,
+		Search,
+		Ban,
+		ArrowLeft,
+		ArrowRight,
+		SquareCheckBig
+	} from 'lucide-svelte';
 
-	// Props from server
 	export let data;
 
-	// Types
 	type User = {
 		id: string;
 		email: string;
@@ -147,12 +161,10 @@
 			}
 		} catch (e: unknown) {
 			if (e instanceof Error) {
-				console.log(e.message);
+				console.log(e.message || 'Échec du chargement des utilisateurs');
 			} else {
 				console.log(String(e));
 			}
-			error = e.message || 'Échec du chargement des utilisateurs';
-			console.error(e);
 		} finally {
 			loading = false;
 		}
@@ -220,7 +232,7 @@
 		try {
 			const res = await authClient.admin.setRole({
 				userId: selectedUser.id,
-				role: editForm.role as 'user' | 'admin' | 'collaborator'
+				role: editForm.role as 'visiteur' | 'administrateur' | 'administrateur'
 			});
 			if (res.error) {
 				showToast('Échec de la mise à jour : ' + res.error.message, 'error');
@@ -233,8 +245,9 @@
 			);
 			closeEditModal();
 			showToast('Utilisateur mis à jour avec succès');
-		} catch (e: any) {
-			showToast('Échec de la mise à jour', 'error');
+		} catch (e: unknown) {
+			const message = e instanceof Error ? e.message : 'Échec de la mise à jour';
+			showToast(message, 'error');
 		}
 	}
 
@@ -255,7 +268,7 @@
 				email: createForm.email,
 				password: createForm.password,
 				name: createForm.name,
-				role: createForm.role as 'user' | 'admin' | 'collaborator'
+				role: createForm.role as 'visiteur' | 'administrateur' | 'collaborateur'
 			});
 
 			if (res.data) {
@@ -282,8 +295,13 @@
 			} else if (res.error) {
 				showToast('Échec de la création : ' + res.error.message, 'error');
 			}
-		} catch (e) {
-			showToast("Échec de la création de l'utilisateur", 'error');
+		} catch (e: unknown) {
+			if (e instanceof Error) {
+				console.log(e.message || 'Échec du chargement des utilisateurs');
+				showToast("Échec de la création de l'utilisateur", 'error');
+			} else {
+				console.log(String(e));
+			}
 		}
 	}
 
@@ -325,11 +343,20 @@
 				showToast('Compte clôturé avec succès');
 			}
 			closeBanModal();
-		} catch (e) {
-			showToast(
-				wasBanned ? 'Échec de la réactivation du compte' : 'Échec de la clôture du compte',
-				'error'
-			);
+		} catch (e: unknown) {
+			if (e instanceof Error) {
+				console.log(e.message || 'Échec du chargement des utilisateurs');
+				showToast(
+					wasBanned ? 'Échec de la réactivation du compte' : 'Échec de la clôture du compte',
+					'error'
+				);
+			} else {
+				console.log(String(e));
+				showToast(
+					wasBanned ? 'Échec de la réactivation du compte' : 'Échec de la clôture du compte',
+					'error'
+				);
+			}
 		}
 	}
 
@@ -357,12 +384,12 @@
 			users = users.filter((u) => u.id !== selectedUser!.id);
 			closeDeleteModal();
 			showToast('Utilisateur supprimé avec succès');
-		} catch (e) {
-			showToast('Échec de la suppression', 'error');
+		} catch (e: unknown) {
+			const message = e instanceof Error ? e.message : 'Échec de la suppression';
+			showToast(message, 'error');
 		}
 	}
 
-	// SET PASSWORD
 	function openPasswordModal(user: User) {
 		selectedUser = user;
 		passwordForm.newPassword = '';
@@ -387,41 +414,17 @@
 			}
 			closePasswordModal();
 			showToast('Mot de passe mis à jour avec succès');
-		} catch (e) {
-			showToast('Échec de la mise à jour du mot de passe', 'error');
+		} catch (e: unknown) {
+			if (e instanceof Error) {
+				console.log(e.message || 'Échec du chargement des utilisateurs');
+				showToast('Échec de la mise à jour du mot de passe', 'error');
+			} else {
+				console.log(String(e));
+				showToast('Échec de la mise à jour du mot de passe', 'error');
+			}
 		}
 	}
 
-	// CSV Export
-	function downloadCSV() {
-		if (!users.length) return;
-		const cols = ['id', 'nom', 'email', 'role', 'cloture', 'date_creation'];
-		const lines = [cols.join(',')];
-
-		for (const u of filteredUsers) {
-			const row = [
-				u.id,
-				`"${(u.name || '').replace(/"/g, '""')}"`,
-				`"${(u.email || '').replace(/"/g, '""')}"`,
-				u.role || 'user',
-				u.banned ? 'oui' : 'non',
-				u.createdAt
-			];
-			lines.push(row.join(','));
-		}
-
-		const csv = lines.join('\n');
-		const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = 'utilisateurs_export.csv';
-		document.body.appendChild(a);
-		a.click();
-		document.body.removeChild(a);
-	}
-
-	// Format date
 	function formatDate(date: Date): string {
 		return new Date(date).toLocaleDateString('fr-FR', {
 			day: '2-digit',
@@ -452,42 +455,14 @@
 					on:click={openCreateModal}
 					class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
 				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="18"
-						height="18"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle
-							cx="9"
-							cy="7"
-							r="4"
-						/><line x1="19" x2="19" y1="8" y2="14" /><line x1="22" x2="16" y1="11" y2="11" />
-					</svg>
+					<UserPen size={24} />
 					Nouvel utilisateur
 				</button>
 				<button
 					on:click={loadUsers}
 					class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
 				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="16"
-						height="16"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" />
-					</svg>
+					<RefreshCcw size={20} />
 					Actualiser
 				</button>
 			</div>
@@ -498,13 +473,7 @@
 	<div class="mb-6">
 		<div class="relative">
 			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-				<svg class="h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
-					<path
-						fill-rule="evenodd"
-						d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-						clip-rule="evenodd"
-					/>
-				</svg>
+				<Search />
 			</div>
 			<input
 				type="text"
@@ -519,13 +488,7 @@
 	{#if error}
 		<div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4">
 			<div class="flex items-start gap-3">
-				<svg class="h-5 w-5 shrink-0 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-					<path
-						fill-rule="evenodd"
-						d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-						clip-rule="evenodd"
-					/>
-				</svg>
+				<Bug size={24} />
 				<div>
 					<h3 class="text-sm font-semibold text-red-800">Erreur de chargement</h3>
 					<p class="mt-1 text-sm text-red-700">{error}</p>
@@ -551,22 +514,7 @@
 			</div>
 		{:else if displayedUsers.length === 0}
 			<div class="flex flex-col items-center justify-center py-16 px-4">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="48"
-					height="48"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1.5"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					class="text-slate-300 mb-4"
-				>
-					<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path
-						d="M22 21v-2a4 4 0 0 0-3-3.87"
-					/><path d="M16 3.13a4 4 0 0 1 0 7.75" />
-				</svg>
+				<Users />
 				<p class="text-slate-500 font-medium">Aucun utilisateur trouvé</p>
 				<p class="text-sm text-slate-400 mt-1">Essayez de modifier vos critères de recherche</p>
 			</div>
@@ -599,7 +547,7 @@
 									<span
 										class="inline-flex items-center rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700"
 									>
-										Admin
+										Administrateur
 									</span>
 								{:else if user.role === 'collaborator'}
 									<span
@@ -669,21 +617,7 @@
 								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-indigo-600"
 								title="Gérer les projets"
 							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="18"
-									height="18"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<path
-										d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
-									/>
-								</svg>
+								<Folder size={18} />
 							</button>
 
 							<button
@@ -691,21 +625,7 @@
 								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-emerald-600"
 								title="Modifier les informations"
 							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="18"
-									height="18"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path
-										d="m15 5 4 4"
-									/>
-								</svg>
+								<Pencil size={18} />
 							</button>
 
 							<button
@@ -713,24 +633,7 @@
 								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600"
 								title="Changer le mot de passe"
 							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="18"
-									height="18"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z" /><circle
-										cx="16.5"
-										cy="7.5"
-										r=".5"
-										fill="currentColor"
-									/>
-								</svg>
+								<KeyRound size={18} />
 							</button>
 
 							<button
@@ -740,19 +643,7 @@
 									: 'text-slate-400 hover:bg-amber-50 hover:text-amber-600'}"
 								title={user.banned ? 'Réactiver le compte' : 'Clôturer le compte'}
 							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="18"
-									height="18"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<circle cx="12" cy="12" r="10" /><path d="m4.9 4.9 14.2 14.2" />
-								</svg>
+								<Ban />
 							</button>
 
 							<button
@@ -760,21 +651,7 @@
 								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
 								title="Supprimer"
 							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="18"
-									height="18"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-								>
-									<path d="M3 6h18" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path
-										d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-									/><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" />
-								</svg>
+								<X size={18} />
 							</button>
 						</div>
 					</div>
@@ -800,19 +677,7 @@
 						disabled={page === 1}
 						class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
 					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="16"
-							height="16"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						>
-							<path d="m15 18-6-6 6-6" />
-						</svg>
+						<ArrowLeft />
 						Précédent
 					</button>
 					<button
@@ -821,19 +686,7 @@
 						class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
 					>
 						Suivant
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="16"
-							height="16"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						>
-							<path d="m9 18 6-6-6-6" />
-						</svg>
+						<ArrowRight />
 					</button>
 				</div>
 			</div>
@@ -860,24 +713,7 @@
 					<div class="px-6 py-5">
 						<div class="flex items-center gap-3 mb-6">
 							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="20"
-									height="20"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									class="text-emerald-600"
-								>
-									<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle
-										cx="9"
-										cy="7"
-										r="4"
-									/><line x1="19" x2="19" y1="8" y2="14" /><line x1="22" x2="16" y1="11" y2="11" />
-								</svg>
+								<UserPlus />
 							</div>
 							<h3 class="text-lg font-semibold text-slate-900">Créer un utilisateur</h3>
 						</div>
@@ -940,13 +776,7 @@
 								<!-- Search bar for projects -->
 								<div class="relative mb-2">
 									<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-										<svg class="h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
-											<path
-												fill-rule="evenodd"
-												d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-												clip-rule="evenodd"
-											/>
-										</svg>
+										<Search />
 									</div>
 									<input
 										type="text"
@@ -962,8 +792,7 @@
 										<p class="text-sm text-slate-500 py-2 px-2">Aucun projet disponible</p>
 									{:else if filteredCreateProjets.length === 0}
 										<p class="text-sm text-slate-500 py-2 px-2">Aucun projet trouvé</p>
-									{:else}
-										{#each filteredCreateProjets as p}
+									{:else}{#each filteredCreateProjets as p (p.id)}
 											<label
 												class="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-slate-50 cursor-pointer"
 											>
@@ -1038,22 +867,7 @@
 					<div class="px-6 py-5">
 						<div class="flex items-center gap-3 mb-6">
 							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="20"
-									height="20"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									class="text-blue-600"
-								>
-									<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path
-										d="m15 5 4 4"
-									/>
-								</svg>
+								<Pencil />
 							</div>
 							<div>
 								<h3 class="text-lg font-semibold text-slate-900">Modifier l'utilisateur</h3>
@@ -1140,25 +954,7 @@
 					<div class="px-6 py-5">
 						<div class="flex items-center gap-3 mb-6">
 							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="20"
-									height="20"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									class="text-amber-600"
-								>
-									<path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z" /><circle
-										cx="16.5"
-										cy="7.5"
-										r=".5"
-										fill="currentColor"
-									/>
-								</svg>
+								<Pencil />
 							</div>
 							<div>
 								<h3 class="text-lg font-semibold text-slate-900">Changer le mot de passe</h3>
@@ -1227,20 +1023,7 @@
 									? 'bg-green-100'
 									: 'bg-amber-100'}"
 							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="20"
-									height="20"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									class={selectedUser.banned ? 'text-green-600' : 'text-amber-600'}
-								>
-									<circle cx="12" cy="12" r="10" /><path d="m4.9 4.9 14.2 14.2" />
-								</svg>
+								<X />
 							</div>
 							<div>
 								<h3 class="text-lg font-semibold text-slate-900">
@@ -1312,22 +1095,7 @@
 					<div class="px-6 py-5">
 						<div class="flex items-center gap-3 mb-6">
 							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="20"
-									height="20"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									class="text-red-600"
-								>
-									<path d="M3 6h18" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path
-										d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-									/><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" />
-								</svg>
+								<X />
 							</div>
 							<div>
 								<h3 class="text-lg font-semibold text-slate-900">Supprimer l'utilisateur</h3>
@@ -1417,22 +1185,7 @@
 						<div class="px-6 py-5">
 							<div class="flex items-center gap-3 mb-6">
 								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100">
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="20"
-										height="20"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										class="text-indigo-600"
-									>
-										<path
-											d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
-										/>
-									</svg>
+									<Folder />
 								</div>
 								<div>
 									<h3 class="text-lg font-semibold text-slate-900">Gérer les projets</h3>
@@ -1444,13 +1197,7 @@
 								<!-- Search bar for projects -->
 								<div class="relative mb-2">
 									<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-										<svg class="h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
-											<path
-												fill-rule="evenodd"
-												d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-												clip-rule="evenodd"
-											/>
-										</svg>
+										<Search />
 									</div>
 									<input
 										type="text"
@@ -1532,38 +1279,9 @@
 				: 'bg-red-600'} text-white"
 		>
 			{#if toast.type === 'success'}
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="20"
-					height="20"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
-				</svg>
+				<SquareCheckBig />
 			{:else}
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="20"
-					height="20"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<circle cx="12" cy="12" r="10" /><line x1="15" x2="9" y1="9" y2="15" /><line
-						x1="9"
-						x2="15"
-						y1="9"
-						y2="15"
-					/>
-				</svg>
+				<Ban />
 			{/if}
 			<span class="text-sm font-medium">{toast.message}</span>
 		</div>
