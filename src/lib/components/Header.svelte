@@ -1,6 +1,7 @@
 <script lang="ts">
 	import logoDC from '$lib/assets/depollution_conseil.png';
 	import logoPEMD from '$lib/assets/pemd360.png';
+	import { Menu, X } from 'lucide-svelte';
 
 	let { user = null } = $props<{ user: any }>();
 	let mobileMenuOpen = $state(false);
@@ -54,23 +55,11 @@
 				onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
 				aria-label="Toggle menu"
 			>
-				<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					{#if mobileMenuOpen}
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M6 18L18 6M6 6l12 12"
-						/>
-					{:else}
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M4 6h16M4 12h16M4 18h16"
-						/>
-					{/if}
-				</svg>
+				{#if mobileMenuOpen}
+					<X class="h-6 w-6" />
+				{:else}
+					<Menu class="h-6 w-6" />
+				{/if}
 			</button>
 		</div>
 

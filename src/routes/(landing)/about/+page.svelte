@@ -1,5 +1,6 @@
 <script lang="ts">
 	import logoDC from '$lib/assets/depollution_conseil.png';
+	import { Home, CheckCircle } from 'lucide-svelte';
 
 	const services = [
 		'Numérisation de bâtiments',
@@ -31,11 +32,7 @@
 			<ol class="flex items-center gap-2 text-sm">
 				<li>
 					<a href="/" class="flex items-center gap-2 transition-colors hover:text-emerald-400">
-						<svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-							<path
-								d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
-							/>
-						</svg>
+						<Home class="h-4 w-4" />
 						Accueil
 					</a>
 				</li>
@@ -82,17 +79,7 @@
 				<div class="my-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
 					{#each services as service}
 						<div class="flex items-center gap-2 text-sm text-gray-600">
-							<svg
-								class="h-5 w-5 shrink-0 text-emerald-500"
-								fill="currentColor"
-								viewBox="0 0 20 20"
-							>
-								<path
-									fill-rule="evenodd"
-									d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-									clip-rule="evenodd"
-								/>
-							</svg>
+							<CheckCircle class="h-5 w-5 shrink-0 text-emerald-500" />
 							<span>{service}</span>
 						</div>
 					{/each}
