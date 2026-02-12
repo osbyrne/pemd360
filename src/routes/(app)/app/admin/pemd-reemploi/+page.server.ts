@@ -16,7 +16,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	const projectId = url.searchParams.get('projectId');
 	const projects = await getUserProjects(user);
 
-	let query = db
+	const query = db
 		.select({
 			id: pemd.id,
 			objet: objets.objet,
