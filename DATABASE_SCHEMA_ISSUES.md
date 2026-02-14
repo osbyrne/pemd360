@@ -7,30 +7,6 @@ This document outlines identified issues in the database schema (`src/lib/server
 
 ---
 
-## Critical Issues
-
-### 1. `pemd` Table Missing Primary Key
-**Location:** `src/lib/server/db/schema.ts:444-473`
-
-**Issue:** The `pemd` table has no primary key defined. The `id` field is declared as `text()` without `.primaryKey()` modifier.
-
-**Impact:**
-- No guaranteed unique identifier for rows
-- Cannot efficiently query or update specific records
-- Foreign key references impossible
-- Database integrity compromised
-
-**Current Code:**
-```typescript
-export const pemd = sqliteTable('pemd', {
-	id: text(),  // ❌ No primary key constraint
-	natureId: integer('nature_id'),
-	// ...
-});
-```
-
----
-
 ### 2. Missing Foreign Key Constraints in `pemd` Table
 **Location:** `src/lib/server/db/schema.ts:444-473`
 

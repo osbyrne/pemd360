@@ -71,7 +71,7 @@ export const user = sqliteTable(
 			.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
 			.notNull(),
 		role: text(),
-		banned: integer().default(false),
+		banned: integer().default(0),
 		banReason: text('ban_reason'),
 		banExpires: integer('ban_expires')
 	},
@@ -117,7 +117,7 @@ export const cerfaMtrOuvrage = sqliteTable(
 		nomPerMorale: text('nom_per_morale', { length: 255 }),
 		siretSiren: text('siret_siren', { length: 255 }),
 		adresse: text({ length: 255 }),
-		cp: real(),
+		cp: text({ length: 5 }),
 		commune: text({ length: 255 })
 	},
 	(table) => [index('cerfa_mtr_ouvrage_projet_id_idx').on(table.projetId)]
@@ -333,7 +333,7 @@ export const cerfaDiagnostiqueur = sqliteTable(
 		nomPerMorale: text('nom_per_morale', { length: 255 }),
 		siretSiren: text('siret_siren', { length: 255 }),
 		adresse: text({ length: 255 }),
-		cp: text({ length: 255 }),
+		cp: text({ length: 5 }),
 		commune: text({ length: 255 }),
 		engagementAssurance: integer('engagement_assurance'),
 		nomAssurance: text('nom_assurance', { length: 255 }),
@@ -351,7 +351,7 @@ export const cerfaOperation = sqliteTable(
 		id: integer().primaryKey({ autoIncrement: true }).notNull(),
 		projetId: text('projet_id', { length: 50 }).references(() => projet.id),
 		adresse: text({ length: 500 }),
-		cp: text({ length: 255 }),
+		cp: text({ length: 5 }),
 		commune: text({ length: 255 }),
 		dateDeDebut: integer('date_de_debut'),
 		dateDeFin: integer('date_de_fin'),
@@ -407,7 +407,7 @@ export const projet = sqliteTable(
 		reference: text({ length: 255 }).notNull(),
 		codeInsee: text('code_insee', { length: 5 }).notNull(),
 		rue: text({ length: 255 }).notNull(),
-		cp: integer().notNull(),
+		cp: text({ length: 5 }).notNull(),
 		ville: text({ length: 255 }).notNull(),
 		dateDemarrage: integer('date_demarrage').notNull(),
 		section: text({ length: 10 }).notNull(),
@@ -441,33 +441,43 @@ export const userProjet = sqliteTable(
 	]
 );
 
-export const pemd = sqliteTable('pemd', {
-	id: text(),
-	natureId: integer('nature_id'),
-	objetId: integer('objet_id'),
-	sidId: text('sid_id', { length: 50 }),
-	description: text(),
-	quantite: real(),
-	potentielReemploi: text('potentiel_reemploi'),
-	longueur: real(),
-	largeur: real(),
-	epaisseur: real(),
-	volume: real(),
-	reemploi: integer(),
-	etage: text(),
-	constitution: text({ length: 100 }),
-	masse: real(),
-	etat: text({ length: 100 }),
-	anchorPosition: text('anchor_position'),
-	stemVector: text('stem_vector'),
-	color: text(),
-	image: text(),
-	surface: real(),
-	dimension: text(),
-	amiante: integer(),
-	plombifere: integer(),
-	termite: integer(),
-	typologieAppart: text('typologie_appart'),
-	estimationAge: text('estimation_age'),
-	typeAssemblage: text('type_assemblage')
-});
+export const pemd = sqliteTable(
+	'pemd',
+	{
+		id: text().primaryKey().notNull(),
+		natureId: integer('nature_id').references(() => natureV2.id),
+		objetId: integer('objet_id').references(() => objets.id),
+		sidId: text('sid_id', { length: 50 })
+			.notNull()
+			.references(() => projet.id),
+		description: text(),
+		quantite: real(),
+		potentielReemploi: text('potentiel_reemploi'),
+		longueur: real(),
+		largeur: real(),
+		epaisseur: real(),
+		volume: real(),
+		reemploi: integer(),
+		etage: text(),
+		constitution: text({ length: 100 }),
+		masse: real(),
+		etat: text({ length: 100 }),
+		anchorPosition: text('anchor_position'),
+		stemVector: text('stem_vector'),
+		color: text(),
+		image: text(),
+		surface: real(),
+		dimension: text(),
+		amiante: integer(),
+		plombifere: integer(),
+		termite: integer(),
+		typologieAppart: text('typologie_appart'),
+		estimationAge: text('estimation_age'),
+		typeAssemblage: text('type_assemblage')
+	},
+	(table) => [
+		index('pemd_nature_id_idx').on(table.natureId),
+		index('pemd_objet_id_idx').on(table.objetId),
+		index('pemd_sid_id_idx').on(table.sidId)
+	]
+);
