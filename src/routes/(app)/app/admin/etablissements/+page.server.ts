@@ -1,7 +1,7 @@
 import { fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { db } from '$lib/server/db/client';
-import { etablissement, projet, userLegacy } from '$lib/server/db/schema';
+import { etablissement, projet } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { requireAdmin } from '$lib/server/admin';
 
@@ -44,15 +44,6 @@ export const actions: Actions = {
 			if (projetsLies.length > 0) {
 				return fail(400, {
 					message: `Impossible de supprimer : ${projetsLies.length} projet(s) sont encore liés à cet établissement. Veuillez d'abord les réassigner ou les supprimer.`
-				});
-			}
-
-			// Vérifier les utilisateurs legacy liés
-			const usersLies = await db.select().from(userLegacy).where(eq(userLegacy.idEtabId, id));
-
-			if (usersLies.length > 0) {
-				return fail(400, {
-					message: `Impossible de supprimer : ${usersLies.length} utilisateur(s) legacy sont encore liés à cet établissement.`
 				});
 			}
 

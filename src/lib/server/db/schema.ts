@@ -192,25 +192,6 @@ export const objets = sqliteTable(
 	(table) => [index('objets_categorie_id_idx').on(table.categorieId)]
 );
 
-export const projetUser = sqliteTable(
-	'projet_user',
-	{
-		projetId: text('projet_id', { length: 50 })
-			.notNull()
-			.references(() => projet.id, { onDelete: 'cascade' }),
-		userId: integer('user_id')
-			.notNull()
-			.references(() => userLegacy.id, { onDelete: 'cascade' })
-	},
-	(table) => [
-		index('projet_user_user_id_idx').on(table.userId),
-		primaryKey({
-			columns: [table.projetId, table.userId],
-			name: 'projet_user_projet_id_user_id_pk'
-		})
-	]
-);
-
 export const societe = sqliteTable('societe', {
 	id: integer().primaryKey({ autoIncrement: true }).notNull(),
 	nom: text({ length: 255 }).notNull(),
@@ -287,26 +268,6 @@ export const tagsTermite = sqliteTable(
 	(table) => [index('tags_termite_sid_id_idx').on(table.sidId)]
 );
 
-export const userLegacy = sqliteTable(
-	'user_legacy',
-	{
-		id: integer().primaryKey({ autoIncrement: true }).notNull(),
-		idEtabId: integer('id_etab_id')
-			.notNull()
-			.references(() => etablissement.id),
-		email: text({ length: 180 }).notNull(),
-		roles: text().notNull(),
-		password: text({ length: 255 }).notNull(),
-		nom: text({ length: 255 }).notNull(),
-		prenom: text({ length: 255 }),
-		rue: text({ length: 255 }),
-		cp: text({ length: 255 }),
-		ville: text({ length: 255 }),
-		tel: text({ length: 255 })
-	},
-	(table) => [index('user_legacy_id_etab_id_idx').on(table.idEtabId)]
-);
-
 export const cerfaDiagnostic = sqliteTable(
 	'cerfa_diagnostic',
 	{
@@ -380,19 +341,13 @@ export const tagMail = sqliteTable(
 		projetIdId: text('projet_id_id', { length: 50 })
 			.notNull()
 			.references(() => projet.id),
-		userIdId: integer('user_id_id')
-			.notNull()
-			.references(() => userLegacy.id),
 		date: integer().notNull(),
 		content: text().notNull(),
 		stemVector: text('stem_vector', { length: 1000 }).notNull(),
 		anchorPosition: text('anchor_position', { length: 1000 }).notNull(),
 		destinataires: text({ length: 300 }).notNull()
 	},
-	(table) => [
-		index('tag_mail_user_id_id_idx').on(table.userIdId),
-		index('tag_mail_projet_id_id_idx').on(table.projetIdId)
-	]
+	(table) => [index('tag_mail_projet_id_id_idx').on(table.projetIdId)]
 );
 
 export const projet = sqliteTable(

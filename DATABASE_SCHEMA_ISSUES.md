@@ -7,44 +7,6 @@ This document outlines identified issues in the database schema (`src/lib/server
 
 ---
 
-### 2. Missing Foreign Key Constraints in `pemd` Table
-**Location:** `src/lib/server/db/schema.ts:444-473`
-
-**Issue:** The `pemd` table has several fields that appear to be foreign keys but lack `.references()` constraints:
-- `natureId` (line 446) - should reference `natureV2.id`
-- `objetId` (line 447) - should reference `objets.id`
-- `sidId` (line 448) - should reference `projet.id`
-
-**Impact:**
-- No referential integrity enforcement
-- Orphaned records possible
-- Data inconsistencies can occur
-- Cannot cascade deletions properly
-
----
-
-### 3. Inconsistent User System Architecture
-**Location:** Multiple tables
-
-**Issue:** Two separate user systems exist simultaneously:
-- Modern auth system: `user` table (line 59-78) with text-based IDs
-- Legacy system: `user_legacy` table (line 290-308) with integer IDs
-
-This creates confusion with junction tables:
-- `projet_user` (line 195-212) references `user_legacy.id` (integer)
-- `user_projet` (line 425-442) references `user.id` (text)
-
-Both tables link `projet` with users but use different user tables.
-
-**Impact:**
-- Duplicate functionality
-- Migration path unclear
-- Queries must account for both user systems
-- Risk of data inconsistency
-- Application logic must handle both systems
-
----
-
 ### 4. Missing Indexes on Foreign Keys
 **Location:** `src/lib/server/db/schema.ts:444-473`
 
