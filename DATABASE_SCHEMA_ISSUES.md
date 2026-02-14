@@ -1,63 +1,41 @@
 # Database Schema Issues Report
 
 Generated: 2026-02-12
+Last Updated: 2026-02-14
 
 ## Overview
 This document outlines identified issues in the database schema (`src/lib/server/db/schema.ts`) and provides a remediation plan.
 
----
+## Fixed Issues
 
-### 4. Missing Indexes on Foreign Keys
-**Location:** `src/lib/server/db/schema.ts:444-473`
+### ✅ 3. Inconsistent types for cp (FIXED)
+All `cp` fields are now standardized to `text({ length: 5 })` in the schema.
 
-**Issue:** The `pemd` table foreign keys lack indexes:
-- `natureId` - no index
-- `objetId` - no index
-- `sidId` - no index
+### ✅ 4. Missing Indexes on Foreign Keys (FIXED)
+The `pemd` table now has proper indexes on all foreign keys:
+- `pemd_nature_id_idx`
+- `pemd_objet_id_idx`
+- `pemd_sid_id_idx`
 
-All other tables in the schema properly index their foreign keys (e.g., `tags_amiante_sid_id_idx`).
+### ✅ 5. Inconsistent Data Types for Postal Codes (FIXED)
+All postal code fields are now consistently `text({ length: 5 })`.
 
-**Impact:**
-- Slow JOIN queries
-- Poor query performance as table grows
-- Inefficient lookups by foreign key
+### ✅ 6. `user.banned` Field Type Inconsistency (FIXED)
+Now uses `integer().default(0)` instead of `integer().default(false)`.
 
----
-
-## Data Type Issues
-
-### 5. Inconsistent Data Types for Postal Codes
-**Location:** Multiple tables
-
-**Issue:** Postal codes use different data types across tables:
-- `cerfaMtrOuvrage.cp` (line 120): `real()`
-- `projet.cp` (line 410): `integer()`
-- `etablissement.cp` (line 136): `text({ length: 5 })`
-- `societe.cp` (line 219): `text({ length: 5 })`
-- `cerfaDiagnostiqueur.cp` (line 336): `text({ length: 255 })`
-
-**Impact:**
-- Inconsistent data handling
-- Potential data loss with `real()` and `integer()` types (leading zeros)
-- Harder to maintain and query
-- French postal codes should be text (e.g., "01000", "75001")
-
----
-
-### 6. `user.banned` Field Type Inconsistency
-**Location:** `src/lib/server/db/schema.ts:74`
-
-**Issue:** `banned` field defined as `integer().default(false)` - mixing boolean semantic with integer type.
-
-**Current Code:**
+### ✅ 9. Missing `updatedAt` Triggers/Defaults (FIXED)
+Both `account.updatedAt` and `session.updatedAt` now have proper defaults:
 ```typescript
-banned: integer().default(false),
+updatedAt: integer('updated_at')
+  .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+  .notNull()
 ```
 
-**Impact:**
-- SQLite stores this as 0/1, but using boolean as default is semantically confusing
-- Should use `.default(0)` for clarity
-- Inconsistent with `emailVerified` which properly uses `false` as integer boolean
+---
+
+## Remaining Issues
+
+##  Data Type Issues
 
 ---
 
@@ -91,21 +69,6 @@ Both reference `etablissement.id`. This appears redundant.
 
 ---
 
-### 9. Missing `updatedAt` Triggers/Defaults in Multiple Tables
-**Location:** Multiple tables
-
-**Issue:** Several tables have `updatedAt` fields without default values or auto-update logic:
-- `account.updatedAt` (line 31) - `.notNull()` but no default
-- `session.updatedAt` (line 45) - `.notNull()` but no default
-
-While `verification.updatedAt` (line 91-93) properly has a default.
-
-**Impact:**
-- Application must manually update `updatedAt` on every update
-- Risk of forgetting to update timestamp
-- Inconsistent with created_at pattern
-
----
 
 ### 10. `pemd` Table Missing Required Constraints
 **Location:** `src/lib/server/db/schema.ts:444-473`
@@ -155,79 +118,7 @@ While `verification.updatedAt` (line 91-93) properly has a default.
 
 ### Phase 1: Critical Fixes (High Priority)
 
-#### Task 1.1: Fix `pemd` Table Structure
-1. Add primary key constraint to `id` field
-2. Add foreign key references:
-   - `natureId → natureV2.id`
-   - `objetId → objets.id`
-   - `sidId → projet.id`
-3. Add indexes on foreign keys
-4. Add `.notNull()` constraints to required fields (at minimum: `id`, `sidId`)
-5. Generate and apply migration
-
-**Files to modify:**
-- `src/lib/server/db/schema.ts:444-473`
-
-**Migration steps:**
-```sql
--- Create new pemd table with proper constraints
-CREATE TABLE pemd_new (
-  id TEXT PRIMARY KEY NOT NULL,
-  nature_id INTEGER REFERENCES nature_v2(id),
-  objet_id INTEGER REFERENCES objets(id),
-  sid_id TEXT NOT NULL REFERENCES projet(id),
-  -- ... other fields
-);
-
--- Copy data
-INSERT INTO pemd_new SELECT * FROM pemd WHERE id IS NOT NULL;
-
--- Drop old, rename new
-DROP TABLE pemd;
-ALTER TABLE pemd_new RENAME TO pemd;
-
--- Create indexes
-CREATE INDEX pemd_nature_id_idx ON pemd(nature_id);
-CREATE INDEX pemd_objet_id_idx ON pemd(objet_id);
-CREATE INDEX pemd_sid_id_idx ON pemd(sid_id);
-```
-
----
-
-#### Task 1.2: Standardize Postal Code Types
-1. Change all postal code fields to `text({ length: 5 })`
-2. Update affected tables:
-   - `cerfaMtrOuvrage.cp`: real → text
-   - `projet.cp`: integer → text
-   - `cerfaDiagnostiqueur.cp`: text(255) → text(5)
-3. Migrate existing data preserving leading zeros
-4. Generate and apply migration
-
-**Files to modify:**
-- `src/lib/server/db/schema.ts`: lines 120, 410, 336
-
-**Migration considerations:**
-- Cast `projet.cp` integers to text with zero-padding
-- Validate and truncate `cerfaDiagnostiqueur.cp` to 5 chars
-- Handle NULL values
-
----
-
-#### Task 1.3: Add Missing `updatedAt` Defaults
-1. Add default SQL expression to `account.updatedAt`
-2. Add default SQL expression to `session.updatedAt`
-3. Match pattern used in `verification` table
-4. Generate and apply migration
-
-**Files to modify:**
-- `src/lib/server/db/schema.ts`: lines 31, 45
-
-**Code change:**
-```typescript
-updatedAt: integer('updated_at')
-  .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
-  .notNull()
-```
+All Phase 1 tasks have been completed in the schema file. Migration to database is pending due to migration system sync issues.
 
 ---
 

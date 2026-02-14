@@ -28,7 +28,9 @@ export const account = sqliteTable(
 		createdAt: integer('created_at')
 			.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
 			.notNull(),
-		updatedAt: integer('updated_at').notNull()
+		updatedAt: integer('updated_at')
+			.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+			.notNull()
 	},
 	(table) => [index('account_userId_idx').on(table.userId)]
 );
@@ -42,7 +44,9 @@ export const session = sqliteTable(
 		createdAt: integer('created_at')
 			.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
 			.notNull(),
-		updatedAt: integer('updated_at').notNull(),
+		updatedAt: integer('updated_at')
+			.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+			.notNull(),
 		ipAddress: text('ip_address'),
 		userAgent: text('user_agent'),
 		userId: text('user_id')

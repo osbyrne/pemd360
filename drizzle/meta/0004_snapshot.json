@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "be13aa07-2e97-41d4-b415-97999bf7c251",
+  "id": "3e11f943-d437-4706-bd62-080462664305",
   "prevId": "7a3930fb-ea72-4d49-9c0e-3cac34f72b4d",
   "tables": {
     "account": {
@@ -97,7 +97,8 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "(cast(unixepoch('subsecond') * 1000 as integer))"
         }
       },
       "indexes": {
@@ -1506,7 +1507,8 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "(cast(unixepoch('subsecond') * 1000 as integer))"
         },
         "ip_address": {
           "name": "ip_address",
