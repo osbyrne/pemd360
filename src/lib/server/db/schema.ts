@@ -66,7 +66,7 @@ export const user = sqliteTable(
 		id: text().primaryKey().notNull(),
 		name: text().notNull(),
 		email: text().notNull(),
-		emailVerified: integer('email_verified').default(false).notNull(),
+		emailVerified: integer('email_verified').default(0).notNull(),
 		image: text(),
 		createdAt: integer('created_at')
 			.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
