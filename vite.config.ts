@@ -1,3 +1,4 @@
+import devtoolsJson from 'vite-plugin-devtools-json';
 import tailwindcss from '@tailwindcss/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { SvelteKitPWA } from '@vite-pwa/sveltekit';
@@ -22,17 +23,10 @@ export default defineConfig({
 				dir: 'ltr',
 				lang: 'fr',
 				categories: ['utilities', 'business'],
-				icons: [
-					{
-						src: 'favicon.png',
-						sizes: '429x429',
-						type: 'image/png'
-					}
-				]
+				icons: [{ src: 'favicon.png', sizes: '429x429', type: 'image/png' }]
 			},
-			devOptions: {
-				enabled: true
-			}
-		})
+			devOptions: { enabled: true }
+		}),
+		devtoolsJson()
 	]
 });
