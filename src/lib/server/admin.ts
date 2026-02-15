@@ -46,7 +46,7 @@ export async function createUser(
 	}
 ) {
 	return await auth.api.createUser({
-		body: data,
+		body: data as any,
 		headers: event.request.headers
 	});
 }
