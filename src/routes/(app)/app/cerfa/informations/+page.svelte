@@ -1036,8 +1036,11 @@
 								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-2">Prénom</label>
+								<label for="moa-prenom" class="block text-sm font-medium text-gray-700 mb-2"
+									>Prénom</label
+								>
 								<input
+									id="moa-prenom"
 									type="text"
 									bind:value={moaForm.prenom}
 									placeholder="Prénom"
