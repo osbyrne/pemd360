@@ -745,9 +745,9 @@
 
 					<!-- Typologies -->
 					<div>
-						<label class="block text-sm font-medium text-gray-700 mb-2"
-							>Typologies principales des bâtiments</label
-						>
+						<div class="block text-sm font-medium text-gray-700 mb-2">
+							Typologies principales des bâtiments
+						</div>
 						<div class="grid grid-cols-2 gap-3">
 							{#each ['Maison individuelle', 'Logement collectif', 'Commerces', 'Bureaux', 'Bâtiment industriel', 'Établissement de santé', "Établissement d'enseignement", 'Café, hôtel, restaurants', 'Bâtiment à usage sportif ou de loisirs', 'ICPE', 'Autre'] as typologie}
 								<label for={`typologie-${typologie.replace(/\s+/g, '-').toLowerCase()}`} class="flex items-center gap-2">
