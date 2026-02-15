@@ -1293,8 +1293,11 @@
 						</div>
 
 						<div>
-							<label class="block text-sm font-medium text-gray-700 mb-2">Numéro de police</label>
+							<label for="diag-numero-police" class="block text-sm font-medium text-gray-700 mb-2"
+								>Numéro de police</label
+							>
 							<input
+								id="diag-numero-police"
 								type="text"
 								bind:value={diagnostiqueurForm.numeroPolice}
 								placeholder="Numéro de police"
