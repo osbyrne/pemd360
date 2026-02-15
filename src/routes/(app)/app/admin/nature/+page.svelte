@@ -319,7 +319,7 @@
 										id={item.key}
 										checked={Boolean(form[item.key])}
 										onchange={(e) => {
-											form[item.key] = e.currentTarget.checked ? 1 : 0;
+											(form as any)[item.key] = e.currentTarget.checked ? 1 : 0;
 										}}
 										class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500"
 									/>
