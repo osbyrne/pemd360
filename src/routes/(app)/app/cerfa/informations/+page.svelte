@@ -1026,8 +1026,9 @@
 						<div class="bg-blue-50 rounded-lg p-4 space-y-4">
 							<h4 class="font-semibold text-blue-900">Si personne physique</h4>
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-2">Nom</label>
+								<label for="moa-nom" class="block text-sm font-medium text-gray-700 mb-2">Nom</label>
 								<input
+									id="moa-nom"
 									type="text"
 									bind:value={moaForm.nom}
 									placeholder="Nom"
