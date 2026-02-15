@@ -1263,8 +1263,9 @@
 					<!-- Assurance souscrite -->
 					<div class="border-t border-gray-200 pt-6 space-y-4">
 						<h4 class="font-semibold text-gray-900">Assurance souscrite par le diagnostiqueur</h4>
-						<label class="flex items-start gap-3 cursor-pointer">
+						<label for="diag-engagement-assurance" class="flex items-start gap-3 cursor-pointer">
 							<input
+								id="diag-engagement-assurance"
 								type="checkbox"
 								bind:checked={diagnostiqueurForm.engagementAssurance}
 								class="mt-1 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
