@@ -1230,8 +1230,13 @@
 						<div class="bg-purple-50 rounded-lg p-4 space-y-4">
 							<h4 class="font-semibold text-purple-900">Si personne morale</h4>
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-2">Raison sociale</label>
+								<label
+									for="diag-raison-sociale"
+									class="block text-sm font-medium text-gray-700 mb-2"
+									>Raison sociale</label
+								>
 								<input
+									id="diag-raison-sociale"
 									type="text"
 									bind:value={diagnostiqueurForm.raisonSociale}
 									placeholder="Raison sociale"
