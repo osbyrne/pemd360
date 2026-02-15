@@ -710,10 +710,13 @@
 						<h4 class="font-semibold text-blue-900">Rénovation significative</h4>
 						<div class="grid grid-cols-2 gap-4">
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-2"
+								<label
+									for="renovation-nb-bat"
+									class="block text-sm font-medium text-gray-700 mb-2"
 									>Nombre de bâtiments concernés</label
 								>
 								<input
+									id="renovation-nb-bat"
 									type="number"
 									bind:value={operationForm.nbBatRenovation}
 									placeholder="NB BATs"
