@@ -687,10 +687,13 @@
 								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-2"
+								<label
+									for="demolition-surface"
+									class="block text-sm font-medium text-gray-700 mb-2"
 									>Surface totale de plancher (m²)</label
 								>
 								<input
+									id="demolition-surface"
 									type="number"
 									bind:value={operationForm.surfaceDemolir}
 									placeholder="m²"
