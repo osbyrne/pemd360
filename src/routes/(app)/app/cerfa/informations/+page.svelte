@@ -725,10 +725,13 @@
 								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-2"
+								<label
+									for="renovation-surface"
+									class="block text-sm font-medium text-gray-700 mb-2"
 									>Surface totale de plancher (m²)</label
 								>
 								<input
+									id="renovation-surface"
 									type="number"
 									bind:value={operationForm.surfaceRenover}
 									placeholder="m²"
