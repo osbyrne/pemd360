@@ -30,15 +30,8 @@ export const actions: Actions = {
 		}
 
 		try {
-			// D'abord, dissocier les projets liés à cet établissement
-			await db
-				.update(projet)
-				.set({ idEtablissementId: null })
-				.where(eq(projet.idEtablissementId, id));
-
-			// Mettre à jour idEtabId des projets (si nécessaire, on peut aussi les supprimer)
-			// Note: idEtabId est NOT NULL, donc on doit supprimer les projets ou les réassigner
 			// Vérifions d'abord s'il y a des projets avec idEtabId = id
+			// Note: idEtabId est NOT NULL, donc on doit supprimer les projets ou les réassigner
 			const projetsLies = await db.select().from(projet).where(eq(projet.idEtabId, id));
 
 			if (projetsLies.length > 0) {

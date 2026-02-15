@@ -358,7 +358,6 @@ export const projet = sqliteTable(
 	'projet',
 	{
 		id: text({ length: 50 }).primaryKey().notNull(),
-		idEtablissementId: integer('id_etablissement_id').references(() => etablissement.id),
 		idEtabId: integer('id_etab_id')
 			.notNull()
 			.references(() => etablissement.id),
@@ -375,10 +374,7 @@ export const projet = sqliteTable(
 		maitreDOuvrage: text('maitre_d_ouvrage', { length: 255 }),
 		dateDeFin: integer('date_de_fin')
 	},
-	(table) => [
-		index('projet_id_etab_id_idx').on(table.idEtabId),
-		index('projet_id_etablissement_id_idx').on(table.idEtablissementId)
-	]
+	(table) => [index('projet_id_etab_id_idx').on(table.idEtabId)]
 );
 
 export const userProjet = sqliteTable(

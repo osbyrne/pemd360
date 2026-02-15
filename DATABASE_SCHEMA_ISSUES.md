@@ -36,6 +36,13 @@ Renamed `documentConsultés` to `documentsConsultes` to remove special character
 - Updated schema definition
 - Updated all code references in cerfa.ts and page.server.ts
 
+### ✅ 7. `projet.idEtablissementId` vs `projet.idEtabId` Redundancy (FIXED)
+Removed redundant `idEtablissementId` column from projet table.
+- Kept `idEtabId` as the single establishment reference (required field)
+- Removed duplicate field definition and index from schema
+- Updated all code references in projet creation/modification
+- Removed unnecessary update logic in etablissements page
+
 ---
 
 ## Remaining Issues
@@ -43,8 +50,6 @@ Renamed `documentConsultés` to `documentsConsultes` to remove special character
 ##  Data Type Issues
 
 ---
-
-### 7. `projet.idEtablissementId` vs `projet.idEtabId` Redundancy
 **Location:** `src/lib/server/db/schema.ts:402-405`
 
 **Issue:** The `projet` table has two establishment ID columns:
@@ -157,18 +162,6 @@ All Phase 1 tasks have been completed in the schema file. Migration to database 
 ---
 
 ### Phase 3: Cleanup and Optimization (Low Priority)
-
-#### Task 3.2: Resolve `projet` Establishment ID Redundancy
-1. Determine purpose of `idEtablissementId` vs `idEtabId`
-2. Remove redundant field
-3. Update application code
-4. Generate and apply migration
-
-**Research needed:**
-- Are they used for different purposes?
-- Historical reason for duplication?
-
----
 
 #### Task 3.3: Standardize Foreign Key Naming
 1. Choose convention (recommend: `table_id` pattern)

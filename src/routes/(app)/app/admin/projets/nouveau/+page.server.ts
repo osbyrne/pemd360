@@ -47,7 +47,6 @@ export const actions: Actions = {
 			libelle: (formData.get('libelle') as string) || '',
 			reference: (formData.get('reference') as string) || '',
 			idEtabId: parseInt(formData.get('idEtabId') as string) || 0,
-			idEtablissementId: parseInt(formData.get('idEtabId') as string) || null,
 			codeInsee: (formData.get('codeInsee') as string) || '',
 			rue: (formData.get('rue') as string) || '',
 			cp: parseInt(formData.get('cp') as string) || 0,
