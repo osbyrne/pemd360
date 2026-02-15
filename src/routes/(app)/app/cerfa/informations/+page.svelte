@@ -750,8 +750,9 @@
 						>
 						<div class="grid grid-cols-2 gap-3">
 							{#each ['Maison individuelle', 'Logement collectif', 'Commerces', 'Bureaux', 'Bâtiment industriel', 'Établissement de santé', "Établissement d'enseignement", 'Café, hôtel, restaurants', 'Bâtiment à usage sportif ou de loisirs', 'ICPE', 'Autre'] as typologie}
-								<label class="flex items-center gap-2">
+								<label for={`typologie-${typologie.replace(/\s+/g, '-').toLowerCase()}`} class="flex items-center gap-2">
 									<input
+										id={`typologie-${typologie.replace(/\s+/g, '-').toLowerCase()}`}
 										type="checkbox"
 										value={typologie}
 										checked={operationForm.typologies.includes(typologie)}
