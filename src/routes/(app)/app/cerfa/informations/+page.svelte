@@ -672,10 +672,13 @@
 						<h4 class="font-semibold text-red-900">Démolition</h4>
 						<div class="grid grid-cols-2 gap-4">
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-2"
+								<label
+									for="demolition-nb-bat"
+									class="block text-sm font-medium text-gray-700 mb-2"
 									>Nombre de bâtiments concernés</label
 								>
 								<input
+									id="demolition-nb-bat"
 									type="number"
 									bind:value={operationForm.nbBatDemolition}
 									placeholder="NB BATs"
