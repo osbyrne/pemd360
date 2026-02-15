@@ -999,8 +999,9 @@
 
 					<!-- Type de personne selector -->
 					<div class="flex gap-4 p-4 bg-gray-50 rounded-lg">
-						<label class="flex items-center gap-2 cursor-pointer">
+						<label for="moa-personne-physique" class="flex items-center gap-2 cursor-pointer">
 							<input
+								id="moa-personne-physique"
 								type="radio"
 								bind:group={moaForm.typePersonne}
 								value="physique"
@@ -1008,8 +1009,9 @@
 							/>
 							<span class="font-medium text-gray-700">Personne physique</span>
 						</label>
-						<label class="flex items-center gap-2 cursor-pointer">
+						<label for="moa-personne-morale" class="flex items-center gap-2 cursor-pointer">
 							<input
+								id="moa-personne-morale"
 								type="radio"
 								bind:group={moaForm.typePersonne}
 								value="morale"
