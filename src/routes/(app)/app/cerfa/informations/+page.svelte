@@ -980,8 +980,11 @@
 						</div>
 						<div class="grid grid-cols-2 gap-4">
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-2">Code postal</label>
+								<label for="moa-cp" class="block text-sm font-medium text-gray-700 mb-2"
+									>Code postal</label
+								>
 								<input
+									id="moa-cp"
 									type="text"
 									bind:value={moaForm.cp}
 									placeholder="Code postal"
