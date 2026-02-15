@@ -992,8 +992,11 @@
 								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-2">Commune</label>
+								<label for="moa-commune" class="block text-sm font-medium text-gray-700 mb-2"
+									>Commune</label
+								>
 								<input
+									id="moa-commune"
 									type="text"
 									bind:value={moaForm.commune}
 									placeholder="Commune"
