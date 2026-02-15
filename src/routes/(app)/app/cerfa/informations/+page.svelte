@@ -1213,8 +1213,11 @@
 								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-2">Prénom</label>
+								<label for="diag-prenom" class="block text-sm font-medium text-gray-700 mb-2"
+									>Prénom</label
+								>
 								<input
+									id="diag-prenom"
 									type="text"
 									bind:value={diagnostiqueurForm.prenom}
 									placeholder="Prénom"
