@@ -1395,10 +1395,13 @@
 				<form class="space-y-6">
 					<!-- Date de la dernière visite -->
 					<div>
-						<label class="block text-sm font-medium text-gray-700 mb-2"
+						<label
+							for="diagnostic-derniere-visite"
+							class="block text-sm font-medium text-gray-700 mb-2"
 							>Date de la dernière visite de l'opération</label
 						>
 						<input
+							id="diagnostic-derniere-visite"
 							type="date"
 							bind:value={diagnosticForm.derniereVisite}
 							placeholder="jj/mm/aaaa"
