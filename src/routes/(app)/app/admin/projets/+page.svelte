@@ -70,7 +70,7 @@
 		selectedProjet = null;
 	}
 
-	function formatDate(date: Date | null): string {
+	function formatDate(date: Date | number | null): string {
 		if (!date) return '-';
 		return new Date(date).toLocaleDateString('fr-FR');
 	}
