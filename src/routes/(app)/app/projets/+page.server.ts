@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		}
 	}
 
-	let query = db
+	const baseQuery = db
 		.select({
 			id: projet.id,
 			libelle: projet.libelle,
@@ -44,13 +44,12 @@ export const load: PageServerLoad = async ({ locals }) => {
 		})
 		.from(projet)
 		.leftJoin(etablissement, eq(projet.etablissementId, etablissement.id))
-		.leftJoin(societe, eq(etablissement.societeId, societe.id))
-		.orderBy(desc(projet.dateDemarrage));
+		.leftJoin(societe, eq(etablissement.societeId, societe.id));
 
 	// For non-admins, filter to only their allowed projects
-	if (!isAdmin) {
-		query = query.where(inArray(projet.id, projetIds));
-	}
+	const query = !isAdmin
+		? baseQuery.where(inArray(projet.id, projetIds)).orderBy(desc(projet.dateDemarrage))
+		: baseQuery.orderBy(desc(projet.dateDemarrage));
 
 	const projetsWithEtab = await query;
 
