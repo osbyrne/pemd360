@@ -148,7 +148,7 @@ export function createCrudActions<T extends SQLiteTable>(options: CrudActionsOpt
 			}
 
 			try {
-				await db.insert(table).values({ [nameColumn.name]: name } as Record<string, unknown>);
+				await db.insert(table).values({ [nameColumn.name]: name } as any);
 				return { success: true };
 			} catch (e: unknown) {
 				console.error(`Error creating ${entityName}:`, e);
