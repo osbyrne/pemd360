@@ -194,7 +194,10 @@
 		<div
 			class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"
 			transition:fade
+			role="button"
+			tabindex="-1"
 			onclick={closeModal}
+			onkeydown={(e) => e.key === 'Escape' && closeModal()}
 		></div>
 		<div
 			class="relative w-full max-w-lg bg-white rounded-xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]"
