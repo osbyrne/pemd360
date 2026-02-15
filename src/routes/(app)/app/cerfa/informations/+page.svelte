@@ -1306,15 +1306,19 @@
 						</div>
 
 						<div>
-							<label class="block text-sm font-medium text-gray-700 mb-2">Date de validité</label>
+							<label for="diag-date-debut-assurance" class="block text-sm font-medium text-gray-700 mb-2"
+								>Date de validité</label
+							>
 							<div class="grid grid-cols-2 gap-4">
 								<input
+									id="diag-date-debut-assurance"
 									type="date"
 									bind:value={diagnostiqueurForm.dateDebutAssurance}
 									placeholder="jj/mm/aaaa"
 									class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
 								/>
 								<input
+									id="diag-date-fin-assurance"
 									type="date"
 									bind:value={diagnostiqueurForm.dateFinAssurance}
 									placeholder="jj/mm/aaaa"
