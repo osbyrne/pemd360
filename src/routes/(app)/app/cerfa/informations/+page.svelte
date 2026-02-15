@@ -1528,7 +1528,7 @@
 
 					<!-- Documents consultés -->
 					<div>
-						<label class="block text-sm font-medium text-gray-700 mb-2">Documents consultés</label>
+						<div class="block text-sm font-medium text-gray-700 mb-2">Documents consultés</div>
 						<div class="space-y-2">
 							{#each ['Dossier des Ouvrages Exécutés (DOE) des bâtiments existants', 'Plans', 'Diagnostic amiante', 'Diagnostic plomb', 'Diagnostic termites', 'Autre'] as doc}
 								<label for={`doc-${doc.replace(/\s+/g, '-').toLowerCase()}`} class="flex items-center gap-2">
