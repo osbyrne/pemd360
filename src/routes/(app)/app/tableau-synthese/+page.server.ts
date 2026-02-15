@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 	const projectId = url.searchParams.get('projectId');
 	const projects = await getUserProjects(user);
 
-	let query = db
+	const baseQuery = db
 		.select({
 			id: pemd.id,
 			objet: objets.objet,
@@ -51,9 +51,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		conditions.push(eq(pemd.sidId, projectId));
 	}
 
-	if (conditions.length > 0) {
-		query = query.where(and(...conditions));
-	}
+	const query = conditions.length > 0 ? baseQuery.where(and(...conditions)) : baseQuery;
 
 	const list = await query;
 
