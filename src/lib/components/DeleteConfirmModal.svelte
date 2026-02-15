@@ -33,7 +33,10 @@
 		<div
 			class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"
 			transition:fade
+			role="button"
+			tabindex="-1"
 			onclick={onClose}
+			onkeydown={(e) => e.key === 'Escape' && onClose()}
 		></div>
 		<div
 			class="relative w-full max-w-md bg-white rounded-xl shadow-xl overflow-hidden p-6"
