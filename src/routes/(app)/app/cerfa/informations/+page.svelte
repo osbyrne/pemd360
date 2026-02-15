@@ -967,8 +967,11 @@
 					<!-- Adresse -->
 					<div class="grid grid-cols-1 gap-4">
 						<div>
-							<label class="block text-sm font-medium text-gray-700 mb-2">Adresse</label>
+							<label for="moa-adresse" class="block text-sm font-medium text-gray-700 mb-2"
+								>Adresse</label
+							>
 							<input
+								id="moa-adresse"
 								type="text"
 								bind:value={moaForm.adresse}
 								placeholder="adresse"
