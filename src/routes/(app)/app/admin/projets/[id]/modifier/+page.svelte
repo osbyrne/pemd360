@@ -123,7 +123,9 @@
 				</div>
 
 				<div class="space-y-1.5 md:col-span-2">
-					<label for="etablissementId" class="text-sm font-medium text-gray-700">Établissement *</label>
+					<label for="etablissementId" class="text-sm font-medium text-gray-700"
+						>Établissement *</label
+					>
 					<select
 						id="etablissementId"
 						name="etablissementId"
