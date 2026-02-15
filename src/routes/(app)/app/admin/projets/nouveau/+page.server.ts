@@ -52,13 +52,13 @@ export const actions: Actions = {
 			cp: (formData.get('cp') as string) || '',
 			ville: (formData.get('ville') as string) || '',
 			dateDemarrage: formData.get('dateDemarrage')
-				? new Date(formData.get('dateDemarrage') as string)
-				: new Date(),
+				? new Date(formData.get('dateDemarrage') as string).getTime()
+				: new Date().getTime(),
 			section: (formData.get('section') as string) || '',
 			parcelle: (formData.get('parcelle') as string) || '',
 			typeOperation: (formData.get('typeOperation') as string) || null,
 			maitreDOuvrage: (formData.get('maitreDOuvrage') as string) || null,
-			dateDeFin: formData.get('dateDeFin') ? new Date(formData.get('dateDeFin') as string) : null
+			dateDeFin: formData.get('dateDeFin') ? new Date(formData.get('dateDeFin') as string).getTime() : null
 		};
 
 		// Validation des champs obligatoires
