@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/db/client';
-import { projet, etablissement, user, societe } from '$lib/server/db/schema';
+import { projet, etablissement, user, societe, userProjet } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
@@ -42,23 +42,16 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		throw error(404, 'Projet non trouvé');
 	}
 
-	// Vérifier que l'utilisateur a accès à ce projet (admin ou même société)
+	// Vérifier que l'utilisateur a accès à ce projet (admin ou lié via userProjet)
 	if (currentUser.role !== 'admin') {
-		const userWithSociete = await db.select().from(user).where(eq(user.id, currentUser.id));
-		const societeId = userWithSociete[0]?.societeId;
+		const userProjetAccess = await db
+			.select()
+			.from(userProjet)
+			.where(eq(userProjet.userId, currentUser.id))
+			.where(eq(userProjet.projetId, id));
 
-		if (societeId) {
-			// Récupérer les établissements de la société
-			const etablissements = await db
-				.select({ id: etablissement.id })
-				.from(etablissement)
-				.where(eq(etablissement.societeId, societeId));
-
-			const etablissementIds = etablissements.map((e) => e.id);
-
-			if (!etablissementIds.includes(project.etablissementId)) {
-				throw error(403, 'Accès non autorisé à ce projet');
-			}
+		if (userProjetAccess.length === 0) {
+			throw error(403, 'Accès non autorisé à ce projet');
 		}
 	}
 
