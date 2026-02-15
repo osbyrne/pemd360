@@ -1494,8 +1494,9 @@
 							ou de rénovation ?</label
 						>
 						<div class="flex gap-4">
-							<label class="flex items-center gap-2 cursor-pointer">
+							<label for="diagnostic-precaution-oui" class="flex items-center gap-2 cursor-pointer">
 								<input
+									id="diagnostic-precaution-oui"
 									type="radio"
 									bind:group={diagnosticForm.precaution}
 									value={true}
@@ -1503,8 +1504,9 @@
 								/>
 								<span class="text-gray-700">Oui</span>
 							</label>
-							<label class="flex items-center gap-2 cursor-pointer">
+							<label for="diagnostic-precaution-non" class="flex items-center gap-2 cursor-pointer">
 								<input
+									id="diagnostic-precaution-non"
 									type="radio"
 									bind:group={diagnosticForm.precaution}
 									value={false}
