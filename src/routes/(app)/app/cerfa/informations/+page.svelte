@@ -1244,10 +1244,13 @@
 								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-2"
+								<label
+									for="diag-siret-siren"
+									class="block text-sm font-medium text-gray-700 mb-2"
 									>Numéro de Siret ou Siren</label
 								>
 								<input
+									id="diag-siret-siren"
 									type="text"
 									bind:value={diagnostiqueurForm.siretSiren}
 									placeholder="Siret ou Siren"
