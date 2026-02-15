@@ -86,7 +86,7 @@ export async function setUserRole(
 	}
 ) {
 	return await auth.api.setRole({
-		body: data,
+		body: data as any,
 		headers: event.request.headers
 	});
 }
