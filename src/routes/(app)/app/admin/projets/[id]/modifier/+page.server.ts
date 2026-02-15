@@ -45,7 +45,7 @@ export const actions: Actions = {
 			etablissementId: parseInt(formData.get('etablissementId') as string) || 0,
 			codeInsee: (formData.get('codeInsee') as string) || '',
 			rue: (formData.get('rue') as string) || '',
-			cp: parseInt(formData.get('cp') as string) || 0,
+			cp: (formData.get('cp') as string) || '',
 			ville: (formData.get('ville') as string) || '',
 			dateDemarrage: formData.get('dateDemarrage')
 				? new Date(formData.get('dateDemarrage') as string)
