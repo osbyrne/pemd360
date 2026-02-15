@@ -131,7 +131,7 @@ export const etablissement = sqliteTable(
 	'etablissement',
 	{
 		id: integer().primaryKey({ autoIncrement: true }).notNull(),
-		idSocieteId: integer('id_societe_id')
+		societeId: integer('societe_id')
 			.notNull()
 			.references(() => societe.id),
 		nom: text({ length: 255 }).notNull(),
@@ -144,7 +144,7 @@ export const etablissement = sqliteTable(
 		email: text({ length: 255 }).notNull(),
 		siret: text({ length: 255 }).notNull()
 	},
-	(table) => [index('etablissement_id_societe_id_idx').on(table.idSocieteId)]
+	(table) => [index('etablissement_societe_id_idx').on(table.societeId)]
 );
 
 export const extrapolation = sqliteTable(
@@ -342,7 +342,7 @@ export const tagMail = sqliteTable(
 	'tag_mail',
 	{
 		id: text({ length: 255 }).primaryKey().notNull(),
-		projetIdId: text('projet_id_id', { length: 50 })
+		projetId: text('projet_id', { length: 50 })
 			.notNull()
 			.references(() => projet.id),
 		date: integer().notNull(),
@@ -351,14 +351,14 @@ export const tagMail = sqliteTable(
 		anchorPosition: text('anchor_position', { length: 1000 }).notNull(),
 		destinataires: text({ length: 300 }).notNull()
 	},
-	(table) => [index('tag_mail_projet_id_id_idx').on(table.projetIdId)]
+	(table) => [index('tag_mail_projet_id_idx').on(table.projetId)]
 );
 
 export const projet = sqliteTable(
 	'projet',
 	{
 		id: text({ length: 50 }).primaryKey().notNull(),
-		idEtabId: integer('id_etab_id')
+		etablissementId: integer('etablissement_id')
 			.notNull()
 			.references(() => etablissement.id),
 		libelle: text({ length: 255 }).notNull(),
@@ -374,7 +374,7 @@ export const projet = sqliteTable(
 		maitreDOuvrage: text('maitre_d_ouvrage', { length: 255 }),
 		dateDeFin: integer('date_de_fin')
 	},
-	(table) => [index('projet_id_etab_id_idx').on(table.idEtabId)]
+	(table) => [index('projet_etablissement_id_idx').on(table.etablissementId)]
 );
 
 export const userProjet = sqliteTable(

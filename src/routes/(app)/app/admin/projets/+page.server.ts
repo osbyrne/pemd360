@@ -21,13 +21,13 @@ export const load: PageServerLoad = async ({ parent }) => {
 			dateDeFin: projet.dateDeFin,
 			typeOperation: projet.typeOperation,
 			maitreDOuvrage: projet.maitreDOuvrage,
-			etablissementId: projet.idEtabId,
+			etablissementId: projet.etablissementId,
 			etablissementNom: etablissement.nom,
 			societeNom: societe.nom
 		})
 		.from(projet)
-		.leftJoin(etablissement, eq(projet.idEtabId, etablissement.id))
-		.leftJoin(societe, eq(etablissement.idSocieteId, societe.id));
+		.leftJoin(etablissement, eq(projet.etablissementId, etablissement.id))
+		.leftJoin(societe, eq(etablissement.societeId, societe.id));
 
 	return {
 		projets

@@ -19,7 +19,7 @@
 
 	let data_form = form?.data || {
 		nom: '',
-		idSocieteId: '',
+		societeId: '',
 		raisonSocial: '',
 		rue: '',
 		cp: '',
@@ -80,18 +80,18 @@
 				</div>
 
 				<div class="space-y-1.5 md:col-span-2">
-					<label for="idSocieteId" class="text-sm font-medium text-gray-700">Société</label>
+					<label for="societeId" class="text-sm font-medium text-gray-700">Société</label>
 					<select
-						id="idSocieteId"
-						name="idSocieteId"
+						id="societeId"
+						name="societeId"
 						required
 						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
 					>
-						<option value="" disabled selected={!data_form.idSocieteId}
+						<option value="" disabled selected={!data_form.societeId}
 							>Sélectionnez une société</option
 						>
 						{#each societes as societe}
-							<option value={societe.id} selected={societe.id === data_form.idSocieteId}
+							<option value={societe.id} selected={societe.id === data_form.societeId}
 								>{societe.nom}</option
 							>
 						{/each}

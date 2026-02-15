@@ -38,13 +38,13 @@ export const load: PageServerLoad = async ({ locals }) => {
 			parcelle: projet.parcelle,
 			typeOperation: projet.typeOperation,
 			maitreDOuvrage: projet.maitreDOuvrage,
-			idEtabId: projet.idEtabId,
+			etablissementId: projet.etablissementId,
 			etablissementNom: etablissement.nom,
 			societeNom: societe.nom
 		})
 		.from(projet)
-		.leftJoin(etablissement, eq(projet.idEtabId, etablissement.id))
-		.leftJoin(societe, eq(etablissement.idSocieteId, societe.id))
+		.leftJoin(etablissement, eq(projet.etablissementId, etablissement.id))
+		.leftJoin(societe, eq(etablissement.societeId, societe.id))
 		.orderBy(desc(projet.dateDemarrage));
 
 	// For non-admins, filter to only their allowed projects

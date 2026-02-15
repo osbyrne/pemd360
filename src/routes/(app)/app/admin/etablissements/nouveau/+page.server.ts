@@ -23,7 +23,7 @@ export const actions: Actions = {
 
 		const data = {
 			nom: (formData.get('nom') as string) || '',
-			idSocieteId: parseInt(formData.get('idSocieteId') as string) || 0,
+			societeId: parseInt(formData.get('societeId') as string) || 0,
 			raisonSocial: (formData.get('raisonSocial') as string) || '',
 			rue: (formData.get('rue') as string) || '',
 			cp: (formData.get('cp') as string) || '',
@@ -37,7 +37,7 @@ export const actions: Actions = {
 		// Validation de tous les champs obligatoires
 		if (
 			!data.nom ||
-			!data.idSocieteId ||
+			!data.societeId ||
 			!data.siret ||
 			!data.raisonSocial ||
 			!data.rue ||

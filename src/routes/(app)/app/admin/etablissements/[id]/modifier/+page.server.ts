@@ -43,7 +43,7 @@ export const actions: Actions = {
 
 		const data = {
 			nom: formData.get('nom') as string,
-			idSocieteId: parseInt(formData.get('idSocieteId') as string),
+			societeId: parseInt(formData.get('societeId') as string),
 			raisonSocial: formData.get('raisonSocial') as string,
 			rue: formData.get('rue') as string,
 			cp: formData.get('cp') as string,
@@ -54,7 +54,7 @@ export const actions: Actions = {
 			siret: formData.get('siret') as string
 		};
 
-		if (!data.nom || !data.idSocieteId || !data.siret) {
+		if (!data.nom || !data.societeId || !data.siret) {
 			return fail(400, {
 				data,
 				message: 'Veuillez remplir les champs obligatoires',

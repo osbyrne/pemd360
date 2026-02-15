@@ -25,15 +25,15 @@ export const load: PageServerLoad = async ({ params, parent }) => {
 			parcelle: projet.parcelle,
 			typeOperation: projet.typeOperation,
 			maitreDOuvrage: projet.maitreDOuvrage,
-			etablissementId: projet.idEtabId,
+			etablissementId: projet.etablissementId,
 			etablissementNom: etablissement.nom,
 			etablissementVille: etablissement.ville,
 			societeId: societe.id,
 			societeNom: societe.nom
 		})
 		.from(projet)
-		.leftJoin(etablissement, eq(projet.idEtabId, etablissement.id))
-		.leftJoin(societe, eq(etablissement.idSocieteId, societe.id))
+		.leftJoin(etablissement, eq(projet.etablissementId, etablissement.id))
+		.leftJoin(societe, eq(etablissement.societeId, societe.id))
 		.where(eq(projet.id, id));
 
 	if (result.length === 0) {

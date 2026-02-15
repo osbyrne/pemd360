@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ params, parent }) => {
 	const results = await db
 		.select()
 		.from(etablissementTable)
-		.leftJoin(societeTable, eq(etablissementTable.idSocieteId, societeTable.id))
+		.leftJoin(societeTable, eq(etablissementTable.societeId, societeTable.id))
 		.where(eq(etablissementTable.id, id))
 		.limit(1);
 

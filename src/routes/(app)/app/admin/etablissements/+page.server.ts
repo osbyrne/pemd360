@@ -30,9 +30,9 @@ export const actions: Actions = {
 		}
 
 		try {
-			// Vérifions d'abord s'il y a des projets avec idEtabId = id
-			// Note: idEtabId est NOT NULL, donc on doit supprimer les projets ou les réassigner
-			const projetsLies = await db.select().from(projet).where(eq(projet.idEtabId, id));
+			// Vérifions d'abord s'il y a des projets avec etablissementId = id
+			// Note: etablissementId est NOT NULL, donc on doit supprimer les projets ou les réassigner
+			const projetsLies = await db.select().from(projet).where(eq(projet.etablissementId, id));
 
 			if (projetsLies.length > 0) {
 				return fail(400, {

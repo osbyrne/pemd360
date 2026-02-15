@@ -44,18 +44,18 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 			const etablissements = await db
 				.select({ id: etablissement.id })
 				.from(etablissement)
-				.where(eq(etablissement.idSocieteId, societeId));
+				.where(eq(etablissement.societeId, societeId));
 
 			const etablissementIds = etablissements.map((e) => e.id);
 
-			if (!etablissementIds.includes(project.idEtabId)) {
+			if (!etablissementIds.includes(project.etablissementId)) {
 				throw error(403, 'Accès non autorisé à ce projet');
 			}
 		}
 	}
 
 	// Load tags for this project
-	const tags = await db.select().from(tagMail).where(eq(tagMail.projetIdId, id));
+	const tags = await db.select().from(tagMail).where(eq(tagMail.projetId, id));
 	const amianteTags = await db.select().from(tagsAmiante).where(eq(tagsAmiante.sidId, id));
 	const plombTags = await db.select().from(tagsPlomb).where(eq(tagsPlomb.sidId, id));
 	const termiteTags = await db.select().from(tagsTermite).where(eq(tagsTermite.sidId, id));

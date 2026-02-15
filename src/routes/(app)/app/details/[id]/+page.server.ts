@@ -27,13 +27,13 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 			parcelle: projet.parcelle,
 			typeOperation: projet.typeOperation,
 			maitreDOuvrage: projet.maitreDOuvrage,
-			idEtabId: projet.idEtabId,
+			etablissementId: projet.etablissementId,
 			etablissementNom: etablissement.nom,
 			societeNom: societe.nom
 		})
 		.from(projet)
-		.leftJoin(etablissement, eq(projet.idEtabId, etablissement.id))
-		.leftJoin(societe, eq(etablissement.idSocieteId, societe.id))
+		.leftJoin(etablissement, eq(projet.etablissementId, etablissement.id))
+		.leftJoin(societe, eq(etablissement.societeId, societe.id))
 		.where(eq(projet.id, id));
 
 	const project = result[0];
@@ -52,11 +52,11 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 			const etablissements = await db
 				.select({ id: etablissement.id })
 				.from(etablissement)
-				.where(eq(etablissement.idSocieteId, societeId));
+				.where(eq(etablissement.societeId, societeId));
 
 			const etablissementIds = etablissements.map((e) => e.id);
 
-			if (!etablissementIds.includes(project.idEtabId)) {
+			if (!etablissementIds.includes(project.etablissementId)) {
 				throw error(403, 'Accès non autorisé à ce projet');
 			}
 		}

@@ -12,7 +12,7 @@
 		id: '',
 		libelle: '',
 		reference: '',
-		idEtabId: '',
+		etablissementId: '',
 		codeInsee: '',
 		rue: '',
 		cp: '',
@@ -117,18 +117,18 @@
 				</div>
 
 				<div class="space-y-1.5 md:col-span-2">
-					<label for="idEtabId" class="text-sm font-medium text-gray-700">Établissement *</label>
+					<label for="etablissementId" class="text-sm font-medium text-gray-700">Établissement *</label>
 					<select
-						id="idEtabId"
-						name="idEtabId"
+						id="etablissementId"
+						name="etablissementId"
 						required
 						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
 					>
-						<option value="" disabled selected={!data_form.idEtabId}
+						<option value="" disabled selected={!data_form.etablissementId}
 							>Sélectionnez un établissement</option
 						>
 						{#each etablissements as etab}
-							<option value={etab.id} selected={etab.id.toString() === data_form.idEtabId}>
+							<option value={etab.id} selected={etab.id.toString() === data_form.etablissementId}>
 								{etab.nom} ({etab.societeNom || 'Sans société'})
 							</option>
 						{/each}

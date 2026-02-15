@@ -49,11 +49,16 @@ Added notNull() constraints to fields that are always required for PEMD (Matterp
 - `stemVector` - Required for Matterport 3D positioning
 - `id` and `sidId` were already required
 
+### ✅ 11. Inconsistent Foreign Key Naming (FIXED)
+Standardized all foreign key column names to use consistent snake_case pattern:
+- `idSocieteId` → `societeId` (column: `societe_id`)
+- `idEtabId` → `etablissementId` (column: `etablissement_id`)
+- `projetIdId` → `projetId` (column: `projet_id`)
+- Updated all code references throughout the codebase
+
 ---
 
 ## Remaining Issues
-
-##  Data Type Issues
 
 ---
 **Location:** `src/lib/server/db/schema.ts:402-405`
@@ -86,21 +91,6 @@ Both reference `etablissement.id`. This appears redundant.
 ---
 
 ## Naming Convention Issues
-
-### 11. Inconsistent Foreign Key Naming
-**Location:** Multiple tables
-
-**Issue:** Foreign key columns have inconsistent naming patterns:
-- Sometimes: `*_id` (e.g., `groupe_id`, `sid_id`)
-- Sometimes: `id*Id` (e.g., `idEtabId`, `idSocieteId`)
-- Sometimes: `*IdId` (e.g., `projetIdId`, `userIdId` in tag_mail)
-
-**Impact:**
-- Harder to understand schema
-- Inconsistent query patterns
-- Code maintainability reduced
-
----
 
 ### 12. Table Naming Case Inconsistency
 **Location:** Multiple tables

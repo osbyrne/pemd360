@@ -22,11 +22,11 @@ export const load: PageServerLoad = async ({ params, parent }) => {
 		.select({
 			id: etablissement.id,
 			nom: etablissement.nom,
-			societeId: etablissement.idSocieteId,
+			societeId: etablissement.societeId,
 			societeNom: societe.nom
 		})
 		.from(etablissement)
-		.leftJoin(societe, eq(etablissement.idSocieteId, societe.id));
+		.leftJoin(societe, eq(etablissement.societeId, societe.id));
 
 	return {
 		projet: result[0],
@@ -42,7 +42,7 @@ export const actions: Actions = {
 		const data = {
 			libelle: (formData.get('libelle') as string) || '',
 			reference: (formData.get('reference') as string) || '',
-			idEtabId: parseInt(formData.get('idEtabId') as string) || 0,
+			etablissementId: parseInt(formData.get('etablissementId') as string) || 0,
 			codeInsee: (formData.get('codeInsee') as string) || '',
 			rue: (formData.get('rue') as string) || '',
 			cp: parseInt(formData.get('cp') as string) || 0,
@@ -61,7 +61,7 @@ export const actions: Actions = {
 		if (
 			!data.libelle ||
 			!data.reference ||
-			!data.idEtabId ||
+			!data.etablissementId ||
 			!data.rue ||
 			!data.ville ||
 			!data.section ||
