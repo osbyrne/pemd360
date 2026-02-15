@@ -485,15 +485,15 @@ export async function generateCerfaPdf(
 		// Diagnostic plomb: y=387
 		// Diagnostic termites: y=375
 		// Autres: y=363
-		if (diagnostic.documentConsultés) {
+		if (diagnostic.documentsConsultes) {
 			try {
 				let docs: string[] = [];
 				try {
-					docs = JSON.parse(diagnostic.documentConsultés);
+					docs = JSON.parse(diagnostic.documentsConsultes);
 				} catch {
 					// Handle case where it's a single string, maybe comma separated? or just treat as custom text
-					if (typeof diagnostic.documentConsultés === 'string') {
-						docs = [diagnostic.documentConsultés];
+					if (typeof diagnostic.documentsConsultes === 'string') {
+						docs = [diagnostic.documentsConsultes];
 					}
 				}
 
@@ -535,7 +535,7 @@ export async function generateCerfaPdf(
 					}
 				}
 			} catch (e) {
-				console.error('Error processing documentConsultés', e);
+				console.error('Error processing documentsConsultes', e);
 			}
 		}
 	}

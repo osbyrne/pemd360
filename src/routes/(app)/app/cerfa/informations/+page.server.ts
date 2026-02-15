@@ -52,7 +52,7 @@ export const load: PageServerLoad = async () => {
 			diagnosticRaisonsNePasVisite: cerfaDiagnostic.raisonsNePasVisite,
 			diagnosticDesordres: cerfaDiagnostic.desordres,
 			diagnosticPrecaution: cerfaDiagnostic.precaution,
-			diagnosticDocumentConsultes: cerfaDiagnostic.documentConsultés
+			diagnosticDocumentConsultes: cerfaDiagnostic.documentsConsultes
 		})
 		.from(projet)
 		.leftJoin(cerfaMtrOuvrage, eq(projet.id, cerfaMtrOuvrage.projetId))

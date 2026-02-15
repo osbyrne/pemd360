@@ -282,7 +282,7 @@ export const cerfaDiagnostic = sqliteTable(
 		raisonsNePasVisite: text('raisons_ne_pas_visite'),
 		desordres: integer(),
 		precaution: integer(),
-		documentConsultés: text('document_consultés'),
+		documentsConsultes: text('documents_consultes'),
 		batVisite: text('bat_visite')
 	},
 	(table) => [index('cerfa_diagnostic_projet_id_idx').on(table.projetId)]

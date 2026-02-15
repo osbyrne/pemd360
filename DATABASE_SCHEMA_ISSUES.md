@@ -31,6 +31,11 @@ updatedAt: integer('updated_at')
   .notNull()
 ```
 
+### ✅ 8. Typo in Column Name (FIXED)
+Renamed `documentConsultés` to `documentsConsultes` to remove special characters.
+- Updated schema definition
+- Updated all code references in cerfa.ts and page.server.ts
+
 ---
 
 ## Remaining Issues
@@ -152,16 +157,6 @@ All Phase 1 tasks have been completed in the schema file. Migration to database 
 ---
 
 ### Phase 3: Cleanup and Optimization (Low Priority)
-
-#### Task 3.1: Fix Column Name Typo
-1. Rename `documentConsultés` to `document_consultes` or `documents_consulted`
-2. Update application code references
-3. Generate and apply migration
-
-**Files to modify:**
-- `src/lib/server/db/schema.ts:320`
-
----
 
 #### Task 3.2: Resolve `projet` Establishment ID Redundancy
 1. Determine purpose of `idEtablissementId` vs `idEtabId`
