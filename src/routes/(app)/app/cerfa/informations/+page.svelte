@@ -1411,10 +1411,13 @@
 
 					<!-- Bâtiments visitées -->
 					<div>
-						<label class="block text-sm font-medium text-gray-700 mb-2"
+						<label
+							for="diagnostic-bat-visite"
+							class="block text-sm font-medium text-gray-700 mb-2"
 							>Les bâtiments ou parties de bâtiments visitées par le diagnostiqueur</label
 						>
 						<textarea
+							id="diagnostic-bat-visite"
 							bind:value={diagnosticForm.batVisite}
 							placeholder="parties de bâtiments visitées"
 							rows="3"
