@@ -13,7 +13,7 @@ export const GET: RequestHandler = async ({ params, fetch, url }) => {
 
 		const pdfBytes = await generateCerfaPdf(params.id, templateBuffer);
 
-		return new Response(pdfBytes, {
+		return new Response(pdfBytes as BodyInit, {
 			headers: {
 				'Content-Type': 'application/pdf',
 				'Content-Disposition': `attachment; filename="cerfa_${params.id}.pdf"`
