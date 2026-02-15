@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/server/db/client';
 import { projet, etablissement, user, societe, userProjet } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
 	const { id } = params;
@@ -47,8 +47,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		const userProjetAccess = await db
 			.select()
 			.from(userProjet)
-			.where(eq(userProjet.userId, currentUser.id))
-			.where(eq(userProjet.projetId, id));
+			.where(and(eq(userProjet.userId, currentUser.id), eq(userProjet.projetId, id)));
 
 		if (userProjetAccess.length === 0) {
 			throw error(403, 'Accès non autorisé à ce projet');
