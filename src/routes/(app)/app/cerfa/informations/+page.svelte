@@ -1135,8 +1135,11 @@
 					<!-- Adresse -->
 					<div class="grid grid-cols-1 gap-4">
 						<div>
-							<label class="block text-sm font-medium text-gray-700 mb-2">Adresse</label>
+							<label for="diag-adresse" class="block text-sm font-medium text-gray-700 mb-2"
+								>Adresse</label
+							>
 							<input
+								id="diag-adresse"
 								type="text"
 								bind:value={diagnostiqueurForm.adresse}
 								placeholder="adresse"
