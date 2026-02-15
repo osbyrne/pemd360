@@ -1468,10 +1468,10 @@
 
 					<!-- Vices ou désordres -->
 					<div>
-						<label class="block text-sm font-medium text-gray-700 mb-2"
-							>Le diagnostic a-t-il identifié des vices ou des désordres apparents dans des
-							composants des bâtiments ?</label
-						>
+						<div class="block text-sm font-medium text-gray-700 mb-2">
+							Le diagnostic a-t-il identifié des vices ou des désordres apparents dans des
+							composants des bâtiments ?
+						</div>
 						<div class="flex gap-4">
 							<label for="diagnostic-desordres-oui" class="flex items-center gap-2 cursor-pointer">
 								<input
