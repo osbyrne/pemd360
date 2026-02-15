@@ -1427,10 +1427,13 @@
 
 					<!-- Bâtiments non visitées -->
 					<div>
-						<label class="block text-sm font-medium text-gray-700 mb-2"
+						<label
+							for="diagnostic-bat-non-visite"
+							class="block text-sm font-medium text-gray-700 mb-2"
 							>Les bâtiments ou parties de bâtiments non visitées par le diagnostiqueur</label
 						>
 						<textarea
+							id="diagnostic-bat-non-visite"
 							bind:value={diagnosticForm.batNonVisite}
 							placeholder="parties de bâtiments non visitées"
 							rows="3"
