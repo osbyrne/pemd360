@@ -1065,10 +1065,13 @@
 								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-2"
+								<label
+									for="moa-siret-siren"
+									class="block text-sm font-medium text-gray-700 mb-2"
 									>Numéro de Siret ou Siren</label
 								>
 								<input
+									id="moa-siret-siren"
 									type="text"
 									bind:value={moaForm.siretSiren}
 									placeholder="Siret ou Siren"
