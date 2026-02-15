@@ -268,7 +268,7 @@
 				email: createForm.email,
 				password: createForm.password,
 				name: createForm.name,
-				role: createForm.role as 'visiteur' | 'administrateur' | 'collaborateur'
+				role: createForm.role as any
 			});
 
 			if (res.data) {
