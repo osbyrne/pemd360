@@ -1498,10 +1498,10 @@
 
 					<!-- Précautions -->
 					<div>
-						<label class="block text-sm font-medium text-gray-700 mb-2"
-							>Le rapport de diagnostic fournit-il des indications sur les précautions de démolition
-							ou de rénovation ?</label
-						>
+						<div class="block text-sm font-medium text-gray-700 mb-2">
+							Le rapport de diagnostic fournit-il des indications sur les précautions de démolition
+							ou de rénovation ?
+						</div>
 						<div class="flex gap-4">
 							<label for="diagnostic-precaution-oui" class="flex items-center gap-2 cursor-pointer">
 								<input
