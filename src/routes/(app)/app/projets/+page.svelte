@@ -31,7 +31,7 @@
 		mounted = true;
 	});
 
-	function formatDate(date: Date): string {
+	function formatDate(date: Date | number): string {
 		return new Date(date).toLocaleDateString('fr-FR', {
 			day: 'numeric',
 			month: 'short',
