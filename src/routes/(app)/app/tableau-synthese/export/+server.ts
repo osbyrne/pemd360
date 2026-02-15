@@ -18,7 +18,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		authResult.projectId
 	);
 
-	let query = db
+	const baseQuery = db
 		.select({
 			id: pemd.id,
 			objet: objets.objet,
@@ -34,9 +34,7 @@ export const GET: RequestHandler = async ({ url, locals }) => {
 		.leftJoin(objets, eq(pemd.objetId, objets.id))
 		.leftJoin(projet, eq(pemd.sidId, projet.id));
 
-	if (conditions.length > 0) {
-		query = query.where(and(...conditions));
-	}
+	const query = conditions.length > 0 ? baseQuery.where(and(...conditions)) : baseQuery;
 
 	const list = await query;
 	const buffer = await generateTableauSyntheseExcel(list);
