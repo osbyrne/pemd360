@@ -43,6 +43,12 @@ Removed redundant `idEtablissementId` column from projet table.
 - Updated all code references in projet creation/modification
 - Removed unnecessary update logic in etablissements page
 
+### ✅ 10. `pemd` Table Missing Required Constraints (FIXED)
+Added notNull() constraints to fields that are always required for PEMD (Matterport) tags:
+- `anchorPosition` - Required for Matterport 3D positioning
+- `stemVector` - Required for Matterport 3D positioning
+- `id` and `sidId` were already required
+
 ---
 
 ## Remaining Issues
@@ -76,20 +82,6 @@ Both reference `etablissement.id`. This appears redundant.
 **Impact:**
 - Non-ASCII characters in column names can cause issues
 - Inconsistent with naming conventions (snake_case expected)
-
----
-
-
-### 10. `pemd` Table Missing Required Constraints
-**Location:** `src/lib/server/db/schema.ts:444-473`
-
-**Issue:** All fields in `pemd` are optional (no `.notNull()` constraints), making it unclear what data is actually required.
-
-**Impact:**
-- Cannot enforce data integrity
-- Unclear business rules
-- Possible incomplete records
-- Difficult to query reliably
 
 ---
 
