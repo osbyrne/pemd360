@@ -585,8 +585,11 @@
 					<!-- Adresse -->
 					<div class="grid grid-cols-1 gap-4">
 						<div>
-							<label class="block text-sm font-medium text-gray-700 mb-2">Adresse</label>
+							<label for="operation-adresse" class="block text-sm font-medium text-gray-700 mb-2"
+								>Adresse</label
+							>
 							<input
+								id="operation-adresse"
 								type="text"
 								bind:value={operationForm.adresse}
 								placeholder="Adresse"
