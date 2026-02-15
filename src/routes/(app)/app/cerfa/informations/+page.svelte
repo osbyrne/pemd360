@@ -610,8 +610,11 @@
 								/>
 							</div>
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-2">Commune</label>
+								<label for="operation-commune" class="block text-sm font-medium text-gray-700 mb-2"
+									>Commune</label
+								>
 								<input
+									id="operation-commune"
 									type="text"
 									bind:value={operationForm.commune}
 									placeholder="Commune"
