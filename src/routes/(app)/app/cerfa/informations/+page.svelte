@@ -1278,10 +1278,13 @@
 						</label>
 
 						<div>
-							<label class="block text-sm font-medium text-gray-700 mb-2"
+							<label
+								for="diag-nom-assurance"
+								class="block text-sm font-medium text-gray-700 mb-2"
 								>Nom de la compagnie d'assurance</label
 							>
 							<input
+								id="diag-nom-assurance"
 								type="text"
 								bind:value={diagnostiqueurForm.nomAssurance}
 								placeholder="Nom de la compagnie d'assurance"
