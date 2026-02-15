@@ -1203,8 +1203,9 @@
 						<div class="bg-purple-50 rounded-lg p-4 space-y-4">
 							<h4 class="font-semibold text-purple-900">Si personne physique</h4>
 							<div>
-								<label class="block text-sm font-medium text-gray-700 mb-2">Nom</label>
+								<label for="diag-nom" class="block text-sm font-medium text-gray-700 mb-2">Nom</label>
 								<input
+									id="diag-nom"
 									type="text"
 									bind:value={diagnostiqueurForm.nom}
 									placeholder="Nom"
