@@ -798,10 +798,10 @@
 
 					<!-- Opérations soumises -->
 					<div>
-						<label class="block text-sm font-medium text-gray-700 mb-2">
+						<div class="block text-sm font-medium text-gray-700 mb-2">
 							Cochez, s'il y en a eu, le(s) type(s) d'opération(s) auxquel(s) le bâtiment a été
 							soumis depuis la date mentionnée ci-dessus :
-						</label>
+						</div>
 						<div class="space-y-2">
 							<label class="flex items-center gap-2">
 								<input
