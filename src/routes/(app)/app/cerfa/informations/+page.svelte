@@ -1176,8 +1176,9 @@
 
 					<!-- Type de personne selector -->
 					<div class="flex gap-4 p-4 bg-gray-50 rounded-lg">
-						<label class="flex items-center gap-2 cursor-pointer">
+						<label for="diag-personne-physique" class="flex items-center gap-2 cursor-pointer">
 							<input
+								id="diag-personne-physique"
 								type="radio"
 								bind:group={diagnostiqueurForm.typePersonne}
 								value="physique"
@@ -1185,8 +1186,9 @@
 							/>
 							<span class="font-medium text-gray-700">Personne physique</span>
 						</label>
-						<label class="flex items-center gap-2 cursor-pointer">
+						<label for="diag-personne-morale" class="flex items-center gap-2 cursor-pointer">
 							<input
+								id="diag-personne-morale"
 								type="radio"
 								bind:group={diagnostiqueurForm.typePersonne}
 								value="morale"
