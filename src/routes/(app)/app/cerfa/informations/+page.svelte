@@ -1443,10 +1443,13 @@
 
 					<!-- Raisons -->
 					<div>
-						<label class="block text-sm font-medium text-gray-700 mb-2"
+						<label
+							for="diagnostic-raisons"
+							class="block text-sm font-medium text-gray-700 mb-2"
 							>Raisons pour n'avoir pas visité ces parties</label
 						>
 						<textarea
+							id="diagnostic-raisons"
 							bind:value={diagnosticForm.raisonsNePasVisite}
 							placeholder="Raisons"
 							rows="3"
