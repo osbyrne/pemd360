@@ -77,7 +77,9 @@
 
 			<!-- Content -->
 			<div class="container relative z-10 mx-auto flex h-full items-center px-4">
-				<div class="px-12 max-w-2xl text-white">
+				<div
+					class="max-w-2xl rounded-2xl border border-white/30 bg-black/25 px-6 py-6 text-white shadow-xl backdrop-blur-md md:px-12"
+				>
 					<h1 class="mb-4 text-4xl font-bold md:text-5xl lg:text-6xl">{slide.title}</h1>
 					<p class="mb-8 text-lg leading-relaxed md:text-xl">{slide.description}</p>
 					<div class="flex flex-wrap gap-4">
