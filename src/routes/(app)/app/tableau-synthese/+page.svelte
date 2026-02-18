@@ -3,7 +3,7 @@
 	import { fade, scale } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { page as pageStore } from '$app/stores';
-	import { Trash2, QrCode, Download } from 'lucide-svelte';
+	import { Trash2, QrCode, Download, Search, X } from 'lucide-svelte';
 
 	let { data } = $props();
 	// Pagination & Search
@@ -122,13 +122,7 @@
 		<!-- Search Bar -->
 		<div class="relative flex-1">
 			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-				<svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-					<path
-						fill-rule="evenodd"
-						d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-						clip-rule="evenodd"
-					/>
-				</svg>
+				<Search class="h-5 w-5 text-gray-400" />
 			</div>
 			<input
 				type="text"
@@ -344,14 +338,7 @@
 					class="text-gray-400 hover:text-gray-600 transition-colors"
 					aria-label="Fermer"
 				>
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M6 18L18 6M6 6l12 12"
-						/>
-					</svg>
+					<X class="w-6 h-6" />
 				</button>
 			</div>
 			<div class="flex flex-col items-center">

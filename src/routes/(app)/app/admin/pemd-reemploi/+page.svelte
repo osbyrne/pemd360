@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fade, scale } from 'svelte/transition';
 	import { page as pageStore } from '$app/stores';
-	import { Trash2, Download } from 'lucide-svelte';
+	import { Trash2, Download, X } from 'lucide-svelte';
 	import PemdTabs from '$lib/components/PemdTabs.svelte';
 	import DeleteConfirmModal from '$lib/components/DeleteConfirmModal.svelte';
 	import SearchInput from '$lib/components/SearchInput.svelte';
@@ -235,14 +235,7 @@
 					class="text-gray-400 hover:text-gray-600 transition-colors"
 					aria-label="Fermer"
 				>
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M6 18L18 6M6 6l12 12"
-						/>
-					</svg>
+					<X class="w-6 h-6" />
 				</button>
 			</div>
 			<div class="flex flex-col items-center">
@@ -283,14 +276,7 @@
 					class="text-gray-400 hover:text-gray-600 transition-colors"
 					aria-label="Fermer"
 				>
-					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M6 18L18 6M6 6l12 12"
-						/>
-					</svg>
+					<X class="w-6 h-6" />
 				</button>
 			</div>
 

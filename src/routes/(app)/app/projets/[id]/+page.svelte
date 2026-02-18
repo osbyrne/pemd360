@@ -6,7 +6,7 @@
 	import tagPlombImg from '$lib/assets/tagplomb.png';
 	import tagTermiteImg from '$lib/assets/tagtermite.png';
 	import tagPemdImg from '$lib/assets/pemd360.png';
-	import { Mail, Plus, Pencil, X, Save } from 'lucide-svelte';
+	import { Mail, Plus, Pencil, X, Save, MapPin } from 'lucide-svelte';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 
@@ -1312,23 +1312,10 @@
 						<div
 							class="bg-purple-50 rounded-lg p-3 text-sm text-purple-700 border border-purple-200"
 						>
-							<p class="font-medium mb-1 flex items-center gap-2">
-								<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-									/>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-									/>
-								</svg>
-								Position sur le modèle 3D
-							</p>
+								<p class="font-medium mb-1 flex items-center gap-2">
+									<MapPin class="w-4 h-4" />
+									Position sur le modèle 3D
+								</p>
 							<p class="text-xs font-mono">
 								X: {pendingTagPosition.anchorPosition.x.toFixed(3)} | Y: {pendingTagPosition.anchorPosition.y.toFixed(
 									3

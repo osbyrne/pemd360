@@ -3,6 +3,20 @@
 	import { fade, scale } from 'svelte/transition';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
+	import {
+		Plus,
+		Download,
+		Search,
+		Building2,
+		Eye,
+		Pencil,
+		Trash2,
+		ChevronLeft,
+		ChevronRight,
+		LoaderCircle,
+		CircleCheck,
+		CircleX
+	} from 'lucide-svelte';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -114,59 +128,27 @@
 				<a
 					href="/app/admin/etablissements/nouveau"
 					class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="18"
-						height="18"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
 					>
-						<path d="M5 12h14" /><path d="M12 5v14" />
-					</svg>
-					Nouvel établissement
-				</a>
+						<Plus size={18} />
+						Nouvel établissement
+					</a>
 				<button
 					onclick={downloadCSV}
 					class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="16"
-						height="16"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
 					>
-						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline
-							points="7 10 12 15 17 10"
-						/><line x1="12" x2="12" y1="15" y2="3" />
-					</svg>
-					Exporter CSV
-				</button>
+						<Download size={16} />
+						Exporter CSV
+					</button>
 			</div>
 		</div>
 	</div>
 
 	<!-- Search Bar -->
 	<div class="mb-6">
-		<div class="relative">
-			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-				<svg class="h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
-					<path
-						fill-rule="evenodd"
-						d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-						clip-rule="evenodd"
-					/>
-				</svg>
-			</div>
+			<div class="relative">
+				<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+					<Search class="h-5 w-5 text-slate-400" />
+				</div>
 			<input
 				type="text"
 				bind:value={query}
@@ -191,27 +173,10 @@
 					</div>
 				{/each}
 			</div>
-		{:else if displayedEtabs.length === 0}
-			<div class="flex flex-col items-center justify-center px-4 py-16">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="48"
-					height="48"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1.5"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					class="mb-4 text-slate-300"
-				>
-					<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" /><path
-						d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"
-					/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2" /><path d="M10 6h4" /><path
-						d="M10 10h4"
-					/><path d="M10 14h4" /><path d="M10 18h4" />
-				</svg>
-				<p class="font-medium text-slate-500">Aucun établissement trouvé</p>
+			{:else if displayedEtabs.length === 0}
+				<div class="flex flex-col items-center justify-center px-4 py-16">
+					<Building2 size={48} strokeWidth={1.5} class="mb-4 text-slate-300" />
+					<p class="font-medium text-slate-500">Aucun établissement trouvé</p>
 				<p class="mt-1 text-sm text-slate-400">Essayez de modifier vos critères de recherche</p>
 			</div>
 		{:else}
@@ -249,73 +214,29 @@
 
 						<!-- Actions -->
 						<div class="flex items-center gap-1 border-l border-slate-200 pl-2">
-							<a
-								href="/app/admin/etablissements/{etab.id}"
-								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-emerald-600"
-								title="Voir les détails"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="18"
-									height="18"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
+								<a
+									href="/app/admin/etablissements/{etab.id}"
+									class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-emerald-600"
+									title="Voir les détails"
 								>
-									<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle
-										cx="12"
-										cy="12"
-										r="3"
-									/>
-								</svg>
-							</a>
+									<Eye size={18} />
+								</a>
 
-							<a
-								href="/app/admin/etablissements/{etab.id}/modifier"
-								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600"
-								title="Modifier"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="18"
-									height="18"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
+								<a
+									href="/app/admin/etablissements/{etab.id}/modifier"
+									class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600"
+									title="Modifier"
 								>
-									<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path
-										d="m15 5 4 4"
-									/>
-								</svg>
-							</a>
+									<Pencil size={18} />
+								</a>
 
-							<button
-								onclick={() => openDeleteModal(etab)}
-								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
-								title="Supprimer"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="18"
-									height="18"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
+								<button
+									onclick={() => openDeleteModal(etab)}
+									class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+									title="Supprimer"
 								>
-									<path d="M3 6h18" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path
-										d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-									/><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" />
-								</svg>
-							</button>
+									<Trash2 size={18} />
+								</button>
 						</div>
 					</div>
 				{/each}
@@ -335,46 +256,22 @@
 					sur <span class="font-semibold">{filteredEtabs.length}</span> résultats
 				</p>
 				<div class="flex gap-2">
-					<button
-						onclick={() => (page = Math.max(1, page - 1))}
-						disabled={page === 1}
-						class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="16"
-							height="16"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
+						<button
+							onclick={() => (page = Math.max(1, page - 1))}
+							disabled={page === 1}
+							class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
 						>
-							<path d="m15 18-6-6 6-6" />
-						</svg>
-						Précédent
-					</button>
-					<button
-						onclick={() => (page = Math.min(totalPages, page + 1))}
-						disabled={page === totalPages}
-						class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-					>
-						Suivant
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="16"
-							height="16"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
+							<ChevronLeft size={16} />
+							Précédent
+						</button>
+						<button
+							onclick={() => (page = Math.min(totalPages, page + 1))}
+							disabled={page === totalPages}
+							class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
 						>
-							<path d="m9 18 6-6-6-6" />
-						</svg>
-					</button>
+							Suivant
+							<ChevronRight size={16} />
+						</button>
 				</div>
 			</div>
 		{/if}
@@ -395,25 +292,10 @@
 					transition:scale
 				>
 					<div class="px-6 py-5">
-						<div class="mb-6 flex items-center gap-3">
-							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="20"
-									height="20"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									class="text-red-600"
-								>
-									<path d="M3 6h18" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path
-										d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-									/><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" />
-								</svg>
-							</div>
+							<div class="mb-6 flex items-center gap-3">
+								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+									<Trash2 size={20} class="text-red-600" />
+								</div>
 							<div>
 								<h3 class="text-lg font-semibold text-slate-900">Supprimer l'établissement</h3>
 								<p class="text-sm text-slate-500">{selectedEtab.nom}</p>
@@ -456,32 +338,17 @@
 							}}
 						>
 							<input type="hidden" name="id" value={selectedEtab.id} />
-							<button
-								type="submit"
-								class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700 disabled:opacity-50"
-								disabled={deleteLoading}
-							>
-								{#if deleteLoading}
-									<span class="flex items-center gap-2">
-										<svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24">
-											<circle
-												class="opacity-25"
-												cx="12"
-												cy="12"
-												r="10"
-												stroke="currentColor"
-												stroke-width="4"
-												fill="none"
-											></circle>
-											<path
-												class="opacity-75"
-												fill="currentColor"
-												d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-											></path>
-										</svg>
-										Suppression...
-									</span>
-								{:else}
+								<button
+									type="submit"
+									class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700 disabled:opacity-50"
+									disabled={deleteLoading}
+								>
+									{#if deleteLoading}
+										<span class="flex items-center gap-2">
+											<LoaderCircle class="h-4 w-4 animate-spin" />
+											Suppression...
+										</span>
+									{:else}
 									Supprimer définitivement
 								{/if}
 							</button>
@@ -500,41 +367,12 @@
 			class="flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg {toast.type === 'success'
 				? 'bg-emerald-600'
 				: 'bg-red-600'} text-white"
-		>
-			{#if toast.type === 'success'}
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="20"
-					height="20"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
-				</svg>
-			{:else}
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="20"
-					height="20"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<circle cx="12" cy="12" r="10" /><line x1="15" x2="9" y1="9" y2="15" /><line
-						x1="9"
-						x2="15"
-						y1="9"
-						y2="15"
-					/>
-				</svg>
-			{/if}
+			>
+				{#if toast.type === 'success'}
+					<CircleCheck size={20} />
+				{:else}
+					<CircleX size={20} />
+				{/if}
 			<span class="text-sm font-medium">{toast.message}</span>
 		</div>
 	</div>

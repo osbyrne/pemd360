@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ArrowLeft, Plus } from 'lucide-svelte';
+	import { ArrowLeft, Plus, ChartNoAxesCombined, MapPin } from 'lucide-svelte';
 	import type { PageData, ActionData } from './$types';
 	import { enhance } from '$app/forms';
 
@@ -54,22 +54,9 @@
 		<!-- Section Identité -->
 		<div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
 			<div class="flex items-center gap-3 mb-6">
-				<div class="p-2 bg-emerald-50 rounded-lg">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="24"
-						height="24"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						class="text-emerald-600"
-					>
-						<path d="M3 3v18h18" /><path d="m19 9-5 5-4-4-3 3" />
-					</svg>
-				</div>
+					<div class="p-2 bg-emerald-50 rounded-lg">
+						<ChartNoAxesCombined class="text-emerald-600" />
+					</div>
 				<h2 class="text-xl font-semibold text-gray-900">Informations du projet</h2>
 			</div>
 
@@ -194,26 +181,9 @@
 		<!-- Section Localisation -->
 		<div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
 			<div class="flex items-center gap-3 mb-6">
-				<div class="p-2 bg-emerald-50 rounded-lg">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="24"
-						height="24"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						class="text-emerald-600"
-					>
-						<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle
-							cx="12"
-							cy="10"
-							r="3"
-						/>
-					</svg>
-				</div>
+					<div class="p-2 bg-emerald-50 rounded-lg">
+						<MapPin class="text-emerald-600" />
+					</div>
 				<h2 class="text-xl font-semibold text-gray-900">Localisation</h2>
 			</div>
 

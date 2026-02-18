@@ -3,6 +3,18 @@
 	import { fade, scale } from 'svelte/transition';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
+	import {
+		Plus,
+		Download,
+		Search,
+		Building2,
+		Pencil,
+		Trash2,
+		ChevronLeft,
+		ChevronRight,
+		CircleCheck,
+		CircleX
+	} from 'lucide-svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -180,62 +192,30 @@
 				</p>
 			</div>
 			<div class="mt-4 flex flex-wrap gap-3 sm:mt-0">
-				<button
-					onclick={openCreateModal}
-					class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="18"
-						height="18"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
+					<button
+						onclick={openCreateModal}
+						class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
 					>
-						<path d="M5 12h14" /><path d="M12 5v14" />
-					</svg>
-					Nouvelle société
-				</button>
-				<button
-					onclick={downloadCSV}
-					class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="16"
-						height="16"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
+						<Plus size={18} />
+						Nouvelle société
+					</button>
+					<button
+						onclick={downloadCSV}
+						class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
 					>
-						<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline
-							points="7 10 12 15 17 10"
-						/><line x1="12" x2="12" y1="15" y2="3" />
-					</svg>
-					Exporter CSV
-				</button>
+						<Download size={16} />
+						Exporter CSV
+					</button>
 			</div>
 		</div>
 	</div>
 
 	<!-- Search Bar -->
 	<div class="mb-6">
-		<div class="relative">
-			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-				<svg class="h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
-					<path
-						fill-rule="evenodd"
-						d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-						clip-rule="evenodd"
-					/>
-				</svg>
-			</div>
+			<div class="relative">
+				<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+					<Search class="h-5 w-5 text-slate-400" />
+				</div>
 			<input
 				type="text"
 				bind:value={query}
@@ -260,26 +240,9 @@
 					</div>
 				{/each}
 			</div>
-		{:else if displayedCompanies.length === 0}
-			<div class="flex flex-col items-center justify-center px-4 py-16">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="48"
-					height="48"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1.5"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					class="mb-4 text-slate-300"
-				>
-					<path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" /><path
-						d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"
-					/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2" /><path d="M10 6h4" /><path
-						d="M10 10h4"
-					/><path d="M10 14h4" /><path d="M10 18h4" />
-				</svg>
+			{:else if displayedCompanies.length === 0}
+				<div class="flex flex-col items-center justify-center px-4 py-16">
+					<Building2 size={48} strokeWidth={1.5} class="mb-4 text-slate-300" />
 				<p class="font-medium text-slate-500">Aucune société trouvée</p>
 				<p class="mt-1 text-sm text-slate-400">Essayez de modifier vos critères de recherche</p>
 			</div>
@@ -316,49 +279,21 @@
 
 						<!-- Actions -->
 						<div class="flex shrink-0 items-center gap-1 border-l border-slate-200 pl-2">
-							<button
-								onclick={() => openEditModal(company)}
-								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600"
-								title="Modifier"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="18"
-									height="18"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
+								<button
+									onclick={() => openEditModal(company)}
+									class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600"
+									title="Modifier"
 								>
-									<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path
-										d="m15 5 4 4"
-									/>
-								</svg>
-							</button>
+									<Pencil size={18} />
+								</button>
 
-							<button
-								onclick={() => openDeleteModal(company)}
-								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
-								title="Supprimer"
-							>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="18"
-									height="18"
-									viewBox="0 0 24 24"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="2"
-									stroke-linecap="round"
-									stroke-linejoin="round"
+								<button
+									onclick={() => openDeleteModal(company)}
+									class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+									title="Supprimer"
 								>
-									<path d="M3 6h18" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path
-										d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-									/><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" />
-								</svg>
-							</button>
+									<Trash2 size={18} />
+								</button>
 						</div>
 					</div>
 				{/each}
@@ -378,46 +313,22 @@
 					sur <span class="font-semibold">{filteredCompanies.length}</span> résultats
 				</p>
 				<div class="flex gap-2">
-					<button
-						onclick={() => (page = Math.max(1, page - 1))}
-						disabled={page === 1}
-						class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="16"
-							height="16"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
+						<button
+							onclick={() => (page = Math.max(1, page - 1))}
+							disabled={page === 1}
+							class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
 						>
-							<path d="m15 18-6-6 6-6" />
-						</svg>
-						Précédent
-					</button>
-					<button
-						onclick={() => (page = Math.min(totalPages, page + 1))}
-						disabled={page === totalPages}
-						class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-					>
-						Suivant
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="16"
-							height="16"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
+							<ChevronLeft size={16} />
+							Précédent
+						</button>
+						<button
+							onclick={() => (page = Math.min(totalPages, page + 1))}
+							disabled={page === totalPages}
+							class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
 						>
-							<path d="m9 18 6-6-6-6" />
-						</svg>
-					</button>
+							Suivant
+							<ChevronRight size={16} />
+						</button>
 				</div>
 			</div>
 		{/if}
@@ -455,23 +366,10 @@
 						}}
 					>
 						<div class="px-6 py-5">
-							<div class="mb-6 flex items-center gap-3">
-								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="20"
-										height="20"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										class="text-emerald-600"
-									>
-										<path d="M5 12h14" /><path d="M12 5v14" />
-									</svg>
-								</div>
+								<div class="mb-6 flex items-center gap-3">
+									<div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
+										<Plus size={20} class="text-emerald-600" />
+									</div>
 								<div>
 									<h3 class="text-lg font-semibold text-slate-900">Nouvelle société</h3>
 									<p class="text-sm text-slate-500">Remplissez les informations ci-dessous</p>
@@ -663,25 +561,10 @@
 					>
 						<input type="hidden" name="id" value={selectedCompany.id} />
 						<div class="px-6 py-5">
-							<div class="mb-6 flex items-center gap-3">
-								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="20"
-										height="20"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										class="text-blue-600"
-									>
-										<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path
-											d="m15 5 4 4"
-										/>
-									</svg>
-								</div>
+								<div class="mb-6 flex items-center gap-3">
+									<div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+										<Pencil size={20} class="text-blue-600" />
+									</div>
 								<div>
 									<h3 class="text-lg font-semibold text-slate-900">Modifier la société</h3>
 									<p class="text-sm text-slate-500">{selectedCompany.nom}</p>
@@ -865,30 +748,10 @@
 					>
 						<input type="hidden" name="id" value={selectedCompany.id} />
 						<div class="px-6 py-5">
-							<div class="mb-6 flex items-center gap-3">
-								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="20"
-										height="20"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										class="text-red-600"
-									>
-										<path d="M3 6h18" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path
-											d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-										/><line x1="10" x2="10" y1="11" y2="17" /><line
-											x1="14"
-											x2="14"
-											y1="11"
-											y2="17"
-										/>
-									</svg>
-								</div>
+								<div class="mb-6 flex items-center gap-3">
+									<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+										<Trash2 size={20} class="text-red-600" />
+									</div>
 								<div>
 									<h3 class="text-lg font-semibold text-slate-900">Supprimer la société</h3>
 									<p class="text-sm text-slate-500">{selectedCompany.nom}</p>
@@ -931,41 +794,12 @@
 			class="flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg {toast.type === 'success'
 				? 'bg-emerald-600'
 				: 'bg-red-600'} text-white"
-		>
-			{#if toast.type === 'success'}
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="20"
-					height="20"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
-				</svg>
-			{:else}
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="20"
-					height="20"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				>
-					<circle cx="12" cy="12" r="10" /><line x1="15" x2="9" y1="9" y2="15" /><line
-						x1="9"
-						x2="15"
-						y1="9"
-						y2="15"
-					/>
-				</svg>
-			{/if}
+			>
+				{#if toast.type === 'success'}
+					<CircleCheck size={20} />
+				{:else}
+					<CircleX size={20} />
+				{/if}
 			<span class="text-sm font-medium">{toast.message}</span>
 		</div>
 	</div>
