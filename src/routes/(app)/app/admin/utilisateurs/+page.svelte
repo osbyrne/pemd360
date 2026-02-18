@@ -598,7 +598,7 @@
 							<p class="text-xs text-slate-400">Projets</p>
 							{#if user.role === 'admin'}
 								<p class="text-sm font-medium text-slate-600 whitespace-nowrap truncate max-w-30">
-									-
+									tous
 								</p>
 							{:else}
 								<p
