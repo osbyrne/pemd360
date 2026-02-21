@@ -1,6 +1,6 @@
 import { db } from '$lib/server/db/client';
 import { objets, categorieV2, groupe } from '$lib/server/db/schema';
-import { eq, isNotNull, not } from 'drizzle-orm';
+import { eq, isNotNull } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
