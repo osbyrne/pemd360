@@ -54,7 +54,9 @@ export const actions: Actions = {
 			parcelle: (formData.get('parcelle') as string) || '',
 			typeOperation: (formData.get('typeOperation') as string) || null,
 			maitreDOuvrage: (formData.get('maitreDOuvrage') as string) || null,
-			dateDeFin: formData.get('dateDeFin') ? new Date(formData.get('dateDeFin') as string).getTime() : null
+			dateDeFin: formData.get('dateDeFin')
+				? new Date(formData.get('dateDeFin') as string).getTime()
+				: null
 		};
 
 		// Validation des champs obligatoires

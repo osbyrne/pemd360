@@ -140,31 +140,31 @@
 				</h1>
 				<p class="mt-2 text-sm text-slate-600">Gérez tous les projets de la plateforme.</p>
 			</div>
-				<div class="mt-4 flex flex-wrap gap-3 sm:mt-0">
+			<div class="mt-4 flex flex-wrap gap-3 sm:mt-0">
 				<a
 					href="/app/admin/projets/nouveau"
 					class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-					>
-						<Plus size={18} />
-						Nouveau projet
-					</a>
+				>
+					<Plus size={18} />
+					Nouveau projet
+				</a>
 				<button
 					onclick={downloadCSV}
 					class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
-					>
-						<Download size={16} />
-						Export CSV
-					</button>
+				>
+					<Download size={16} />
+					Export CSV
+				</button>
 			</div>
 		</div>
 	</div>
 
 	<!-- Search Bar -->
 	<div class="mb-6">
-			<div class="relative">
-				<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-					<Search class="h-5 w-5 text-slate-400" />
-				</div>
+		<div class="relative">
+			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+				<Search class="h-5 w-5 text-slate-400" />
+			</div>
 			<input
 				type="text"
 				bind:value={query}
@@ -176,9 +176,9 @@
 
 	<!-- Table -->
 	<div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-			{#if displayedProjets.length === 0}
-				<div class="flex flex-col items-center justify-center py-16 px-4">
-					<ChartNoAxesCombined size={48} strokeWidth={1.5} class="text-slate-300 mb-4" />
+		{#if displayedProjets.length === 0}
+			<div class="flex flex-col items-center justify-center py-16 px-4">
+				<ChartNoAxesCombined size={48} strokeWidth={1.5} class="text-slate-300 mb-4" />
 				<p class="text-slate-500 font-medium">Aucun projet trouvé</p>
 				<p class="text-sm text-slate-400 mt-1">
 					Créez un nouveau projet ou modifiez vos critères de recherche
@@ -256,45 +256,45 @@
 								<td class="px-6 py-4">
 									<div class="flex items-center justify-end">
 										<div class="relative">
-												<button
-													onclick={() => toggleDropdown(proj.id)}
-													class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
-													title="Actions"
-												>
-													<MoreHorizontal size={18} />
-												</button>
+											<button
+												onclick={() => toggleDropdown(proj.id)}
+												class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+												title="Actions"
+											>
+												<MoreHorizontal size={18} />
+											</button>
 											{#if openDropdownId === proj.id}
 												<div
 													class="absolute right-0 mt-2 w-48 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-10"
 													transition:scale={{ duration: 100 }}
 												>
 													<div class="py-1">
-															<a
-																href="/app/admin/projets/{proj.id}"
-																class="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
-																onclick={closeDropdown}
-															>
-																<Eye size={16} />
-																Voir
-															</a>
-															<a
-																href="/app/admin/projets/{proj.id}/modifier"
-																class="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
-																onclick={closeDropdown}
-															>
-																<Pencil size={16} />
-																Modifier
-															</a>
-															<button
-																onclick={() => {
-																	openDeleteModal(proj);
-																	closeDropdown();
-																}}
-																class="flex w-full items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-															>
-																<Trash2 size={16} />
-																Supprimer
-															</button>
+														<a
+															href="/app/admin/projets/{proj.id}"
+															class="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+															onclick={closeDropdown}
+														>
+															<Eye size={16} />
+															Voir
+														</a>
+														<a
+															href="/app/admin/projets/{proj.id}/modifier"
+															class="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+															onclick={closeDropdown}
+														>
+															<Pencil size={16} />
+															Modifier
+														</a>
+														<button
+															onclick={() => {
+																openDeleteModal(proj);
+																closeDropdown();
+															}}
+															class="flex w-full items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+														>
+															<Trash2 size={16} />
+															Supprimer
+														</button>
 													</div>
 												</div>
 											{/if}
@@ -371,10 +371,10 @@
 					>
 						<input type="hidden" name="projetId" value={selectedProjet.id} />
 						<div class="px-6 py-5">
-								<div class="flex items-center gap-3 mb-6">
-									<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-										<Trash2 size={20} class="text-red-600" />
-									</div>
+							<div class="flex items-center gap-3 mb-6">
+								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+									<Trash2 size={20} class="text-red-600" />
+								</div>
 								<div>
 									<h3 class="text-lg font-semibold text-slate-900">Supprimer le projet</h3>
 									<p class="text-sm text-slate-500">{selectedProjet.libelle}</p>
@@ -416,12 +416,12 @@
 			class="flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg {toast.type === 'success'
 				? 'bg-emerald-600'
 				: 'bg-red-600'} text-white"
-			>
-				{#if toast.type === 'success'}
-					<CircleCheck size={20} />
-				{:else}
-					<CircleX size={20} />
-				{/if}
+		>
+			{#if toast.type === 'success'}
+				<CircleCheck size={20} />
+			{:else}
+				<CircleX size={20} />
+			{/if}
 			<span class="text-sm font-medium">{toast.message}</span>
 		</div>
 	</div>

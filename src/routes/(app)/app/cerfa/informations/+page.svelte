@@ -672,9 +672,7 @@
 						<h4 class="font-semibold text-red-900">Démolition</h4>
 						<div class="grid grid-cols-2 gap-4">
 							<div>
-								<label
-									for="demolition-nb-bat"
-									class="block text-sm font-medium text-gray-700 mb-2"
+								<label for="demolition-nb-bat" class="block text-sm font-medium text-gray-700 mb-2"
 									>Nombre de bâtiments concernés</label
 								>
 								<input
@@ -687,9 +685,7 @@
 								/>
 							</div>
 							<div>
-								<label
-									for="demolition-surface"
-									class="block text-sm font-medium text-gray-700 mb-2"
+								<label for="demolition-surface" class="block text-sm font-medium text-gray-700 mb-2"
 									>Surface totale de plancher (m²)</label
 								>
 								<input
@@ -710,9 +706,7 @@
 						<h4 class="font-semibold text-blue-900">Rénovation significative</h4>
 						<div class="grid grid-cols-2 gap-4">
 							<div>
-								<label
-									for="renovation-nb-bat"
-									class="block text-sm font-medium text-gray-700 mb-2"
+								<label for="renovation-nb-bat" class="block text-sm font-medium text-gray-700 mb-2"
 									>Nombre de bâtiments concernés</label
 								>
 								<input
@@ -725,9 +719,7 @@
 								/>
 							</div>
 							<div>
-								<label
-									for="renovation-surface"
-									class="block text-sm font-medium text-gray-700 mb-2"
+								<label for="renovation-surface" class="block text-sm font-medium text-gray-700 mb-2"
 									>Surface totale de plancher (m²)</label
 								>
 								<input
@@ -750,7 +742,10 @@
 						</div>
 						<div class="grid grid-cols-2 gap-3">
 							{#each ['Maison individuelle', 'Logement collectif', 'Commerces', 'Bureaux', 'Bâtiment industriel', 'Établissement de santé', "Établissement d'enseignement", 'Café, hôtel, restaurants', 'Bâtiment à usage sportif ou de loisirs', 'ICPE', 'Autre'] as typologie}
-								<label for={`typologie-${typologie.replace(/\s+/g, '-').toLowerCase()}`} class="flex items-center gap-2">
+								<label
+									for={`typologie-${typologie.replace(/\s+/g, '-').toLowerCase()}`}
+									class="flex items-center gap-2"
+								>
 									<input
 										id={`typologie-${typologie.replace(/\s+/g, '-').toLowerCase()}`}
 										type="checkbox"
@@ -783,9 +778,7 @@
 
 					<!-- Date permis -->
 					<div>
-						<label
-							for="operation-date-permis"
-							class="block text-sm font-medium text-gray-700 mb-2"
+						<label for="operation-date-permis" class="block text-sm font-medium text-gray-700 mb-2"
 							>Date d'obtention du permis de construction du bâtiment le plus ancien</label
 						>
 						<input
@@ -1035,7 +1028,8 @@
 						<div class="bg-blue-50 rounded-lg p-4 space-y-4">
 							<h4 class="font-semibold text-blue-900">Si personne physique</h4>
 							<div>
-								<label for="moa-nom" class="block text-sm font-medium text-gray-700 mb-2">Nom</label>
+								<label for="moa-nom" class="block text-sm font-medium text-gray-700 mb-2">Nom</label
+								>
 								<input
 									id="moa-nom"
 									type="text"
@@ -1074,9 +1068,7 @@
 								/>
 							</div>
 							<div>
-								<label
-									for="moa-siret-siren"
-									class="block text-sm font-medium text-gray-700 mb-2"
+								<label for="moa-siret-siren" class="block text-sm font-medium text-gray-700 mb-2"
 									>Numéro de Siret ou Siren</label
 								>
 								<input
@@ -1212,7 +1204,9 @@
 						<div class="bg-purple-50 rounded-lg p-4 space-y-4">
 							<h4 class="font-semibold text-purple-900">Si personne physique</h4>
 							<div>
-								<label for="diag-nom" class="block text-sm font-medium text-gray-700 mb-2">Nom</label>
+								<label for="diag-nom" class="block text-sm font-medium text-gray-700 mb-2"
+									>Nom</label
+								>
 								<input
 									id="diag-nom"
 									type="text"
@@ -1241,8 +1235,7 @@
 							<div>
 								<label
 									for="diag-raison-sociale"
-									class="block text-sm font-medium text-gray-700 mb-2"
-									>Raison sociale</label
+									class="block text-sm font-medium text-gray-700 mb-2">Raison sociale</label
 								>
 								<input
 									id="diag-raison-sociale"
@@ -1253,9 +1246,7 @@
 								/>
 							</div>
 							<div>
-								<label
-									for="diag-siret-siren"
-									class="block text-sm font-medium text-gray-700 mb-2"
+								<label for="diag-siret-siren" class="block text-sm font-medium text-gray-700 mb-2"
 									>Numéro de Siret ou Siren</label
 								>
 								<input
@@ -1287,9 +1278,7 @@
 						</label>
 
 						<div>
-							<label
-								for="diag-nom-assurance"
-								class="block text-sm font-medium text-gray-700 mb-2"
+							<label for="diag-nom-assurance" class="block text-sm font-medium text-gray-700 mb-2"
 								>Nom de la compagnie d'assurance</label
 							>
 							<input
@@ -1315,8 +1304,9 @@
 						</div>
 
 						<div>
-							<label for="diag-date-debut-assurance" class="block text-sm font-medium text-gray-700 mb-2"
-								>Date de validité</label
+							<label
+								for="diag-date-debut-assurance"
+								class="block text-sm font-medium text-gray-700 mb-2">Date de validité</label
 							>
 							<div class="grid grid-cols-2 gap-4">
 								<input
@@ -1420,9 +1410,7 @@
 
 					<!-- Bâtiments visitées -->
 					<div>
-						<label
-							for="diagnostic-bat-visite"
-							class="block text-sm font-medium text-gray-700 mb-2"
+						<label for="diagnostic-bat-visite" class="block text-sm font-medium text-gray-700 mb-2"
 							>Les bâtiments ou parties de bâtiments visitées par le diagnostiqueur</label
 						>
 						<textarea
@@ -1452,9 +1440,7 @@
 
 					<!-- Raisons -->
 					<div>
-						<label
-							for="diagnostic-raisons"
-							class="block text-sm font-medium text-gray-700 mb-2"
+						<label for="diagnostic-raisons" class="block text-sm font-medium text-gray-700 mb-2"
 							>Raisons pour n'avoir pas visité ces parties</label
 						>
 						<textarea
@@ -1531,7 +1517,10 @@
 						<div class="block text-sm font-medium text-gray-700 mb-2">Documents consultés</div>
 						<div class="space-y-2">
 							{#each ['Dossier des Ouvrages Exécutés (DOE) des bâtiments existants', 'Plans', 'Diagnostic amiante', 'Diagnostic plomb', 'Diagnostic termites', 'Autre'] as doc}
-								<label for={`doc-${doc.replace(/\s+/g, '-').toLowerCase()}`} class="flex items-center gap-2">
+								<label
+									for={`doc-${doc.replace(/\s+/g, '-').toLowerCase()}`}
+									class="flex items-center gap-2"
+								>
 									<input
 										id={`doc-${doc.replace(/\s+/g, '-').toLowerCase()}`}
 										type="checkbox"

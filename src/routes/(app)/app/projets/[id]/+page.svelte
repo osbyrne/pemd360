@@ -1312,10 +1312,10 @@
 						<div
 							class="bg-purple-50 rounded-lg p-3 text-sm text-purple-700 border border-purple-200"
 						>
-								<p class="font-medium mb-1 flex items-center gap-2">
-									<MapPin class="w-4 h-4" />
-									Position sur le modèle 3D
-								</p>
+							<p class="font-medium mb-1 flex items-center gap-2">
+								<MapPin class="w-4 h-4" />
+								Position sur le modèle 3D
+							</p>
 							<p class="text-xs font-mono">
 								X: {pendingTagPosition.anchorPosition.x.toFixed(3)} | Y: {pendingTagPosition.anchorPosition.y.toFixed(
 									3

@@ -128,27 +128,27 @@
 				<a
 					href="/app/admin/etablissements/nouveau"
 					class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-					>
-						<Plus size={18} />
-						Nouvel établissement
-					</a>
+				>
+					<Plus size={18} />
+					Nouvel établissement
+				</a>
 				<button
 					onclick={downloadCSV}
 					class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-					>
-						<Download size={16} />
-						Exporter CSV
-					</button>
+				>
+					<Download size={16} />
+					Exporter CSV
+				</button>
 			</div>
 		</div>
 	</div>
 
 	<!-- Search Bar -->
 	<div class="mb-6">
-			<div class="relative">
-				<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-					<Search class="h-5 w-5 text-slate-400" />
-				</div>
+		<div class="relative">
+			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+				<Search class="h-5 w-5 text-slate-400" />
+			</div>
 			<input
 				type="text"
 				bind:value={query}
@@ -173,10 +173,10 @@
 					</div>
 				{/each}
 			</div>
-			{:else if displayedEtabs.length === 0}
-				<div class="flex flex-col items-center justify-center px-4 py-16">
-					<Building2 size={48} strokeWidth={1.5} class="mb-4 text-slate-300" />
-					<p class="font-medium text-slate-500">Aucun établissement trouvé</p>
+		{:else if displayedEtabs.length === 0}
+			<div class="flex flex-col items-center justify-center px-4 py-16">
+				<Building2 size={48} strokeWidth={1.5} class="mb-4 text-slate-300" />
+				<p class="font-medium text-slate-500">Aucun établissement trouvé</p>
 				<p class="mt-1 text-sm text-slate-400">Essayez de modifier vos critères de recherche</p>
 			</div>
 		{:else}
@@ -214,29 +214,29 @@
 
 						<!-- Actions -->
 						<div class="flex items-center gap-1 border-l border-slate-200 pl-2">
-								<a
-									href="/app/admin/etablissements/{etab.id}"
-									class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-emerald-600"
-									title="Voir les détails"
-								>
-									<Eye size={18} />
-								</a>
+							<a
+								href="/app/admin/etablissements/{etab.id}"
+								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-emerald-600"
+								title="Voir les détails"
+							>
+								<Eye size={18} />
+							</a>
 
-								<a
-									href="/app/admin/etablissements/{etab.id}/modifier"
-									class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600"
-									title="Modifier"
-								>
-									<Pencil size={18} />
-								</a>
+							<a
+								href="/app/admin/etablissements/{etab.id}/modifier"
+								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600"
+								title="Modifier"
+							>
+								<Pencil size={18} />
+							</a>
 
-								<button
-									onclick={() => openDeleteModal(etab)}
-									class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
-									title="Supprimer"
-								>
-									<Trash2 size={18} />
-								</button>
+							<button
+								onclick={() => openDeleteModal(etab)}
+								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+								title="Supprimer"
+							>
+								<Trash2 size={18} />
+							</button>
 						</div>
 					</div>
 				{/each}
@@ -256,22 +256,22 @@
 					sur <span class="font-semibold">{filteredEtabs.length}</span> résultats
 				</p>
 				<div class="flex gap-2">
-						<button
-							onclick={() => (page = Math.max(1, page - 1))}
-							disabled={page === 1}
-							class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-						>
-							<ChevronLeft size={16} />
-							Précédent
-						</button>
-						<button
-							onclick={() => (page = Math.min(totalPages, page + 1))}
-							disabled={page === totalPages}
-							class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-						>
-							Suivant
-							<ChevronRight size={16} />
-						</button>
+					<button
+						onclick={() => (page = Math.max(1, page - 1))}
+						disabled={page === 1}
+						class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+					>
+						<ChevronLeft size={16} />
+						Précédent
+					</button>
+					<button
+						onclick={() => (page = Math.min(totalPages, page + 1))}
+						disabled={page === totalPages}
+						class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+					>
+						Suivant
+						<ChevronRight size={16} />
+					</button>
 				</div>
 			</div>
 		{/if}
@@ -292,10 +292,10 @@
 					transition:scale
 				>
 					<div class="px-6 py-5">
-							<div class="mb-6 flex items-center gap-3">
-								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-									<Trash2 size={20} class="text-red-600" />
-								</div>
+						<div class="mb-6 flex items-center gap-3">
+							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+								<Trash2 size={20} class="text-red-600" />
+							</div>
 							<div>
 								<h3 class="text-lg font-semibold text-slate-900">Supprimer l'établissement</h3>
 								<p class="text-sm text-slate-500">{selectedEtab.nom}</p>
@@ -338,17 +338,17 @@
 							}}
 						>
 							<input type="hidden" name="id" value={selectedEtab.id} />
-								<button
-									type="submit"
-									class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700 disabled:opacity-50"
-									disabled={deleteLoading}
-								>
-									{#if deleteLoading}
-										<span class="flex items-center gap-2">
-											<LoaderCircle class="h-4 w-4 animate-spin" />
-											Suppression...
-										</span>
-									{:else}
+							<button
+								type="submit"
+								class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700 disabled:opacity-50"
+								disabled={deleteLoading}
+							>
+								{#if deleteLoading}
+									<span class="flex items-center gap-2">
+										<LoaderCircle class="h-4 w-4 animate-spin" />
+										Suppression...
+									</span>
+								{:else}
 									Supprimer définitivement
 								{/if}
 							</button>
@@ -367,12 +367,12 @@
 			class="flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg {toast.type === 'success'
 				? 'bg-emerald-600'
 				: 'bg-red-600'} text-white"
-			>
-				{#if toast.type === 'success'}
-					<CircleCheck size={20} />
-				{:else}
-					<CircleX size={20} />
-				{/if}
+		>
+			{#if toast.type === 'success'}
+				<CircleCheck size={20} />
+			{:else}
+				<CircleX size={20} />
+			{/if}
 			<span class="text-sm font-medium">{toast.message}</span>
 		</div>
 	</div>
