@@ -992,7 +992,7 @@
 				}}
 			></div>
 			<div
-				class="relative z-10 w-[500px] max-h-[90vh] overflow-y-auto rounded-lg bg-white p-6 shadow-lg"
+				class="relative z-10 w-125 max-h-[90vh] overflow-y-auto rounded-lg bg-white p-6 shadow-lg"
 			>
 				<div class="flex items-center justify-between mb-4">
 					<h3 class="text-lg font-semibold flex items-center gap-2">

@@ -1,15 +1,6 @@
 <script lang="ts">
 	import CerfaTabs from '$lib/components/CerfaTabs.svelte';
-	import {
-		Building2,
-		UserCircle,
-		MapPin,
-		CalendarDays,
-		Edit2,
-		X,
-		Download,
-		FileText
-	} from 'lucide-svelte';
+	import { Building2, UserCircle, MapPin, CalendarDays, Edit2, X } from 'lucide-svelte';
 	import { fade, fly } from 'svelte/transition';
 	import { page } from '$app/stores';
 	import type { PageData } from './$types';
@@ -252,7 +243,7 @@
 					class="bg-white rounded-xl border-2 border-blue-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
 				>
 					<div
-						class="bg-gradient-to-r from-blue-50 to-blue-100 border-b border-blue-200 px-6 py-4 flex justify-between items-center"
+						class="bg-linear-to-r from-blue-50 to-blue-100 border-b border-blue-200 px-6 py-4 flex justify-between items-center"
 					>
 						<div class="flex items-center gap-3">
 							<div class="bg-blue-500 p-2 rounded-lg">
@@ -272,7 +263,7 @@
 						{#if projectData.moaNom || projectData.moaNomPhy}
 							<div class="space-y-3">
 								<div class="flex items-start gap-3">
-									<UserCircle class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+									<UserCircle class="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
 									<div class="flex-1">
 										<p class="text-xs font-medium text-blue-600 uppercase tracking-wide mb-1">
 											Identité
@@ -285,7 +276,7 @@
 								</div>
 								{#if projectData.moaAdresse}
 									<div class="flex items-start gap-3">
-										<MapPin class="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+										<MapPin class="w-5 h-5 text-blue-600 mt-0.5 shrink-0" />
 										<div class="flex-1">
 											<p class="text-xs font-medium text-blue-600 uppercase tracking-wide mb-1">
 												Adresse
@@ -316,7 +307,7 @@
 					class="bg-white rounded-xl border-2 border-purple-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
 				>
 					<div
-						class="bg-gradient-to-r from-purple-50 to-purple-100 border-b border-purple-200 px-6 py-4 flex justify-between items-center"
+						class="bg-linear-to-r from-purple-50 to-purple-100 border-b border-purple-200 px-6 py-4 flex justify-between items-center"
 					>
 						<div class="flex items-center gap-3">
 							<div class="bg-purple-500 p-2 rounded-lg">
@@ -336,7 +327,7 @@
 						{#if projectData.diagnostiqueurNom || projectData.diagnostiqueurNomPhy}
 							<div class="space-y-3">
 								<div class="flex items-start gap-3">
-									<UserCircle class="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" />
+									<UserCircle class="w-5 h-5 text-purple-600 mt-0.5 shrink-0" />
 									<div class="flex-1">
 										<p class="text-xs font-medium text-purple-600 uppercase tracking-wide mb-1">
 											Identité
@@ -349,7 +340,7 @@
 								</div>
 								{#if projectData.diagnostiqueurAdresse}
 									<div class="flex items-start gap-3">
-										<MapPin class="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" />
+										<MapPin class="w-5 h-5 text-purple-600 mt-0.5 shrink-0" />
 										<div class="flex-1">
 											<p class="text-xs font-medium text-purple-600 uppercase tracking-wide mb-1">
 												Adresse
@@ -383,7 +374,7 @@
 					class="bg-white rounded-xl border-2 border-teal-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
 				>
 					<div
-						class="bg-gradient-to-r from-teal-50 to-teal-100 border-b border-teal-200 px-6 py-4 flex justify-between items-center"
+						class="bg-linear-to-r from-teal-50 to-teal-100 border-b border-teal-200 px-6 py-4 flex justify-between items-center"
 					>
 						<div class="flex items-center gap-3">
 							<div class="bg-teal-500 p-2 rounded-lg">
@@ -403,7 +394,7 @@
 						{#if projectData.diagnosticDerniereVisite}
 							<div class="space-y-3">
 								<div class="flex items-start gap-3">
-									<CalendarDays class="w-5 h-5 text-teal-600 mt-0.5 flex-shrink-0" />
+									<CalendarDays class="w-5 h-5 text-teal-600 mt-0.5 shrink-0" />
 									<div class="flex-1">
 										<p class="text-xs font-medium text-teal-600 uppercase tracking-wide mb-1">
 											Dernière visite
@@ -452,7 +443,7 @@
 					class="bg-white rounded-xl border-2 border-amber-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
 				>
 					<div
-						class="bg-gradient-to-r from-amber-50 to-amber-100 border-b border-amber-200 px-6 py-4 flex justify-between items-center"
+						class="bg-linear-to-r from-amber-50 to-amber-100 border-b border-amber-200 px-6 py-4 flex justify-between items-center"
 					>
 						<div class="flex items-center gap-3">
 							<div class="bg-amber-500 p-2 rounded-lg">
@@ -473,7 +464,7 @@
 							<div class="space-y-4">
 								{#if projectData.operationAdresse}
 									<div class="flex items-start gap-3">
-										<MapPin class="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+										<MapPin class="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
 										<div class="flex-1">
 											<p class="text-xs font-medium text-amber-600 uppercase tracking-wide mb-1">
 												Localisation
@@ -488,7 +479,7 @@
 								{/if}
 								{#if projectData.operationType}
 									<div class="flex items-start gap-3">
-										<Building2 class="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+										<Building2 class="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
 										<div class="flex-1">
 											<p class="text-xs font-medium text-amber-600 uppercase tracking-wide mb-1">
 												Type d'opération
@@ -499,7 +490,7 @@
 								{/if}
 								{#if projectData.datePermis}
 									<div class="flex items-start gap-3">
-										<CalendarDays class="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+										<CalendarDays class="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
 										<div class="flex-1">
 											<p class="text-xs font-medium text-amber-600 uppercase tracking-wide mb-1">
 												Permis de construire
