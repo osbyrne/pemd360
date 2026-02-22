@@ -161,8 +161,8 @@
 			}
 			amianteSids = [];
 			if (data.amianteTags && data.amianteTags.length > 0) {
-				const filtered = data.amianteTags.filter((t: any) =>
-					amiantePresenceSelected.includes(Number(t.presenceAmiante))
+				const filtered = data.amianteTags.filter((tag: any) =>
+					amiantePresenceSelected.includes(Number(tag.presenceAmiante))
 				);
 				console.log(`Adding ${filtered.length} amiante tags`);
 				for (const tag of filtered) {
@@ -677,17 +677,18 @@
 				// Suppress noisy analytics/network errors coming from the Matterport SDK (often caused by ad-blockers)
 				handleUnhandledRejection = (ev: PromiseRejectionEvent) => {
 					try {
-						const r: any = ev.reason;
+						const reason: PromiseRejectionEvent.reason = ev.reason;
 						const msg =
-							typeof r === 'string'
-								? r
-								: r && (r.message || (r.error && r.error.message) || r.url || '');
+							typeof reason === 'string'
+								? reason
+								: reason &&
+									(reason.message || (reason.error && reason.error.message) || reason.url || '');
 						if (msg && String(msg).includes('events.matterport.com')) {
 							ev.preventDefault();
-							console.debug('Ignored blocked Matterport analytics request:', r);
+							console.debug('Ignored blocked Matterport analytics request:', reason);
 						}
 					} catch (ignored) {
-						// ignore handler errors
+						console.debug('Unhandled rejection handler failed:', ignored);
 					}
 				};
 				window.addEventListener('unhandledrejection', handleUnhandledRejection);
@@ -812,8 +813,8 @@
 							class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 						>
 							<option value="">Tous groupes</option>
-							{#each allPemdGroups as g}
-								<option value={g.name}>{g.name}</option>
+							{#each allPemdGroups as group (group.id)}
+								<option value={group.name}>{group.name}</option>
 							{/each}
 						</select>
 					</label>
@@ -825,8 +826,8 @@
 							class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 						>
 							<option value="">Toutes catégories</option>
-							{#each pemdCategoriesFiltered as c}
-								<option value={c.name}>{c.name}</option>
+							{#each pemdCategoriesFiltered as category (category.id)}
+								<option value={category.name}>{category.name}</option>
 							{/each}
 						</select>
 					</label>
@@ -837,8 +838,8 @@
 							class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 						>
 							<option value="">Tous objets</option>
-							{#each pemdObjectsFiltered as o}
-								<option value={o.name}>{o.name}</option>
+							{#each pemdObjectsFiltered as object (object.id)}
+								<option value={object.name}>{object.name}</option>
 							{/each}
 						</select>
 					</label>
@@ -1064,8 +1065,8 @@
 									class="w-full border border-purple-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white"
 								>
 									<option value="">-- Sélectionner un groupe --</option>
-									{#each data.groups || [] as g}
-										<option value={g.id}>{g.name}</option>
+									{#each data.groups || [] as group (group.id)}
+										<option value={group.id}>{group.name}</option>
 									{/each}
 								</select>
 								{#if !createFormGroupId}
@@ -1094,8 +1095,8 @@
 										: 'border-gray-300'}"
 								>
 									<option value="">-- Sélectionner une catégorie --</option>
-									{#each createFormCategoriesFiltered as c}
-										<option value={c.id}>{c.name}</option>
+									{#each createFormCategoriesFiltered as categorie (categorie.id)}
+										<option value={categorie.id}>{categorie.name}</option>
 									{/each}
 								</select>
 								{#if !createFormGroupId}
@@ -1136,8 +1137,8 @@
 										: 'border-gray-300'}"
 								>
 									<option value="">-- Sélectionner un objet --</option>
-									{#each createFormObjectsFiltered as o}
-										<option value={o.id}>{o.name}</option>
+									{#each createFormObjectsFiltered as object (object.id)}
+										<option value={object.id}>{object.name}</option>
 									{/each}
 								</select>
 								{#if !createFormCategoryId}

@@ -33,12 +33,34 @@
 	type NavLink = {
 		href?: string;
 		label: string;
-		icon: any;
+		icon:
+			| typeof Menu
+			| typeof ClipboardList
+			| typeof ClipboardListAlt
+			| typeof Grid3x3
+			| typeof LogOut
+			| typeof ChevronDown
+			| typeof ChevronRight
+			| typeof Settings
+			| typeof Files
+			| typeof Hammer
+			| null;
 		adminOnly?: boolean;
 		subItems?: Array<{
 			href: string;
 			label: string;
-			icon: any;
+			icon:
+				| typeof Menu
+				| typeof ClipboardList
+				| typeof ClipboardListAlt
+				| typeof Grid3x3
+				| typeof LogOut
+				| typeof ChevronDown
+				| typeof ChevronRight
+				| typeof Settings
+				| typeof Files
+				| typeof Hammer
+				| null;
 			adminOnly?: boolean;
 		}>;
 	};
