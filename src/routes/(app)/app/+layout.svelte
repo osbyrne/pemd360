@@ -27,7 +27,7 @@
 	const isAdmin = $derived(data.isAdmin);
 
 	// Sidebar state
-	let sidebarOpen = $state(false);
+	let sidebarOpen = $state(true);
 
 	// Type definition for navigation links
 	type NavLink = {
@@ -200,6 +200,7 @@
 </script>
 
 <svelte:head>
+	<meta name="color-scheme" content="light dark" />
 	<link rel="icon" href="/favicon.png" />
 	<title>PEMD360</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -210,13 +211,13 @@
 	/>
 </svelte:head>
 
-<div class="flex h-screen overflow-hidden bg-gray-50 font-[Poppins]">
+<div class="relative flex h-screen overflow-hidden bg-gray-50 font-[Poppins]">
 	<!-- Mobile Sidebar Overlay -->
 	{#if sidebarOpen}
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
-			class="fixed inset-0 z-40 bg-gray-900/50 lg:hidden"
+			class="absolute inset-0 z-40 bg-gray-900/50 lg:hidden"
 			onclick={() => (sidebarOpen = false)}
 			transition:fade={{ duration: 200 }}
 		></div>
@@ -224,14 +225,14 @@
 
 	<!-- Sidebar -->
 	<aside
-		class="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-gray-200 bg-white transition-transform duration-300 lg:static lg:translate-x-0 {sidebarOpen
+		class="absolute inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-gray-200 bg-white transition-transform duration-300 lg:static lg:translate-x-0 {sidebarOpen
 			? 'translate-x-0'
 			: '-translate-x-full'}"
 	>
 		<!-- Logo -->
 		<div class="flex h-20 shrink-0 items-center justify-center border-b border-gray-200 px-4">
 			<a
-				href="/app/"
+				href="/"
 				onclick={() => {
 					if (window.innerWidth < 1024) sidebarOpen = false;
 				}}
@@ -242,7 +243,7 @@
 
 		<!-- Navigation - scrollable -->
 		<nav class="flex-1 space-y-1 overflow-y-auto p-4 custom-scrollbar">
-			{#each navLinks as link}
+			{#each navLinks as link (link.label)}
 				{@const IconComponent = link.icon}
 
 				{#if link.subItems && link.subItems.length > 0}
@@ -264,7 +265,7 @@
 
 						{#if expandedMenus[link.label]}
 							<div class="bg-gray-50 space-y-1 py-1" transition:slide={{ duration: 200 }}>
-								{#each link.subItems as subLink}
+								{#each link.subItems as subLink (subLink.href)}
 									{#if !subLink.adminOnly || isAdmin}
 										<a
 											href={subLink.href}
