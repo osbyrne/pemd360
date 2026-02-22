@@ -5,6 +5,13 @@
 /// <reference types="vite-plugin-pwa/client" />
 
 import type { Session, User } from 'better-auth';
+import type { InferSelectModel } from 'drizzle-orm';
+import type { tagsAmiante } from '$lib/server/db/schema';
+import type { PlombTag } from '$lib/server/db/schema';
+import type { TermiteTag } from '$lib/server/db/schema';
+import type { Pemd } from '$lib/server/db/schema';
+import type { CategorieV2 } from '$lib/server/db/schema';
+import type { groupe } from '$lib/server/db/schema';
 
 declare global {
 	namespace App {
@@ -28,6 +35,11 @@ declare global {
 			success: boolean;
 			tag: Tag;
 		}
+		export type TagsAmiante = InferSelectModel<typeof tagsAmiante>;
+		export type PlombTags = InferSelectModel<typeof PlombTag>;
+		export type TermiteTags = InferSelectModel<typeof TermiteTag>;
+		export type Pemds = InferSelectModel<typeof Pemd>;
+		export type CategoriesV2 = InferSelectModel<typeof CategorieV2>;
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}

@@ -2,10 +2,6 @@
 	import { onMount } from 'svelte';
 	import type { PageData, ActionData } from './$types';
 	import type { MpSdk } from '@matterport/sdk';
-	import type { AmianteTag } from '$lib/server/db/schema';
-	import type { PlombTag } from '$lib/server/db/schema';
-	import type { TermiteTag } from '$lib/server/db/schema';
-	import type { Pemd } from '$lib/server/db/schema';
 	import tagAmianteImg from '$lib/assets/tagamiante.png';
 	import tagPlombImg from '$lib/assets/tagplomb.png';
 	import tagTermiteImg from '$lib/assets/tagtermite.png';
@@ -165,7 +161,7 @@
 			}
 			amianteSids = [];
 			if (data.amianteTags && data.amianteTags.length > 0) {
-				const filtered = data.amianteTags.filter((tag: AmianteTag) =>
+				const filtered = data.amianteTags.filter((tag: App.TagsAmiante) =>
 					amiantePresenceSelected.includes(Number(tag.presenceAmiante))
 				);
 				console.log(`Adding ${filtered.length} amiante tags`);
@@ -357,7 +353,7 @@
 				(g) => g.name === selectedPemdGroup || String(g.id) === selectedPemdGroup
 			);
 			if (group) {
-				pemdCategoriesFiltered = categoriesV2.filter((c) => c.groupeId === group.id);
+				pemdCategoriesFiltered = categoriesV2.filter((category) => category.groupeId === group.id);
 			} else {
 				pemdCategoriesFiltered = [];
 			}
@@ -403,14 +399,14 @@
 		}
 
 		if (selectedPemdCategory.trim() !== '') {
-			const cat = categoriesV2.find(
+			const category = categoriesV2.find(
 				(categoriesV2) =>
 					categoriesV2.id === Number(selectedPemdCategory) ||
 					categoriesV2.name === selectedPemdCategory
 			);
-			if (cat) {
+			if (category) {
 				for (const object of allPemdObjects) {
-					if (object.categorieId === cat.id && object.id != null) allowed.add(object.id);
+					if (object.categorieId === category.id && object.id != null) allowed.add(object.id);
 				}
 			}
 			return Array.from(allowed).filter((v): v is number => v != null);
@@ -434,14 +430,14 @@
 						allowed.add(object.id);
 				}
 			}
-			return Array.from(allowed).filter((v): v is number => v != null);
+			return Array.from(allowed).filter((value): value is number => value != null);
 		}
 
 		// no filter: return all object IDs
 		for (const object of allPemdObjects) {
 			if (object.id != null) allowed.add(object.id);
 		}
-		return Array.from(allowed).filter((v): v is number => v != null);
+		return Array.from(allowed).filter((value): value is number => value != null);
 	}
 
 	async function addFilteredPemdTags() {
@@ -451,7 +447,8 @@
 		// remove existing PEMD tags before adding the new filtered set
 		await removePemdTags();
 		const filtered = data.pemdTags.filter(
-			(pemdTag: Pemd) => pemdTag.objetId != null && allowedIds.includes(Number(pemdTag.objetId))
+			(pemdTag: App.Pemds) =>
+				pemdTag.objetId != null && allowedIds.includes(Number(pemdTag.objetId))
 		);
 		console.log(`Adding ${filtered.length} pemd tags (filtered)`);
 		for (const tag of filtered) {
@@ -612,7 +609,7 @@
 			if (group) {
 				// Filter categories by selected group
 				createFormCategoriesFiltered = (data.categoriesV2 || []).filter(
-					(categoriesFiltered: any) => categoriesFiltered.groupeId === group.id
+					(categoriesFiltered: App.CategoriesV2) => categoriesFiltered.groupeId === group.id
 				);
 			} else {
 				createFormCategoriesFiltered = [];
@@ -637,11 +634,13 @@
 		if (catIdValue !== '' && catIdValue !== null && catIdValue !== undefined) {
 			// Find the category by id
 			const catId = typeof catIdValue === 'string' ? Number(catIdValue) : catIdValue;
-			const cat = (data.categoriesV2 || []).find((categorieV2: any) => categorieV2.id === catId);
+			const cat = (data.categoriesV2 || []).find(
+				(categorieV2: App.CategoriesV2) => categorieV2.id === catId
+			);
 			if (cat) {
 				// Filter objects by selected category
 				createFormObjectsFiltered = (data.allPemdObjects || []).filter(
-					(object: any) => object.categorieId === cat.id
+					(object: App.Pemds) => object.categorieId === cat.id
 				);
 			} else {
 				createFormObjectsFiltered = [];
@@ -692,7 +691,7 @@
 				// Suppress noisy analytics/network errors coming from the Matterport SDK (often caused by ad-blockers)
 				handleUnhandledRejection = (ev: PromiseRejectionEvent) => {
 					try {
-						const reason: PromiseRejectionEvent.reason = ev.reason;
+						const reason: PromiseRejectionEvent['reason'] = ev.reason;
 						const msg =
 							typeof reason === 'string'
 								? reason
