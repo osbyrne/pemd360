@@ -209,8 +209,8 @@
 			}
 			plombSids = [];
 			if (data.plombTags && data.plombTags.length > 0) {
-				const filtered = data.plombTags.filter((t: any) =>
-					plombPresenceSelected.includes(Number(t.presencePlomb))
+				const filtered = data.plombTags.filter((plombTag: any) =>
+					plombPresenceSelected.includes(Number(plombTag.presencePlomb))
 				);
 				console.log(`Adding ${filtered.length} plomb tags`);
 				for (const tag of filtered) {
@@ -262,8 +262,8 @@
 			}
 			termiteSids = [];
 			if (data.termiteTags && data.termiteTags.length > 0) {
-				const filtered = data.termiteTags.filter((t: any) =>
-					termitePresenceSelected.includes(Number(t.presenceTermite))
+				const filtered = data.termiteTags.filter((termiteTags: any) =>
+					termitePresenceSelected.includes(Number(termiteTags.presenceTermite))
 				);
 				console.log(`Adding ${filtered.length} termite tags`);
 				for (const tag of filtered) {
@@ -312,20 +312,28 @@
 			allPemdObjects = data.allPemdObjects || objects;
 			return;
 		}
-		for (const f of data.pemdFacets) {
-			if (f.groupeName != null) {
-				if (!groups.some((g) => g.name === f.groupeName)) {
-					groups.push({ id: f.groupeId, name: f.groupeName });
+		for (const pemdFacets of data.pemdFacets) {
+			if (pemdFacets.groupeName != null) {
+				if (!groups.some((group) => group.name === pemdFacets.groupeName)) {
+					groups.push({ id: pemdFacets.groupeId, name: pemdFacets.groupeName });
 				}
 			}
-			if (f.categorieName != null) {
-				if (!categories.some((c) => c.name === f.categorieName)) {
-					categories.push({ id: f.categorieId, name: f.categorieName, groupeId: f.groupeId });
+			if (pemdFacets.categorieName != null) {
+				if (!categories.some((category) => category.name === pemdFacets.categorieName)) {
+					categories.push({
+						id: pemdFacets.categorieId,
+						name: pemdFacets.categorieName,
+						groupeId: pemdFacets.groupeId
+					});
 				}
 			}
-			if (f.objetName != null) {
-				if (!objects.some((o) => o.name === f.objetName)) {
-					objects.push({ id: f.objetId, name: f.objetName, categorieId: f.categorieId });
+			if (pemdFacets.objetName != null) {
+				if (!objects.some((object) => object.name === pemdFacets.objetName)) {
+					objects.push({
+						id: pemdFacets.objetId,
+						name: pemdFacets.objetName,
+						categorieId: pemdFacets.categorieId
+					});
 				}
 			}
 		}
@@ -336,14 +344,6 @@
 		allPemdGroups = data.groups || groups;
 		categoriesV2 = data.categoriesV2 || categories;
 		allPemdObjects = data.allPemdObjects || objects;
-	}
-
-	function isPemdFilterSelected() {
-		return (
-			selectedPemdGroup.trim() !== '' ||
-			selectedPemdCategory.trim() !== '' ||
-			selectedPemdObject.trim() !== ''
-		);
 	}
 
 	// Handlers for group/category changes (run on input) — avoids using rune reactive statements
@@ -372,10 +372,12 @@
 	function handleCategoryChange() {
 		if (selectedPemdCategory && selectedPemdCategory.trim() !== '') {
 			const cat = categoriesV2.find(
-				(c) => c.name === selectedPemdCategory || String(c.id) === selectedPemdCategory
+				(categoriesV2) =>
+					categoriesV2.name === selectedPemdCategory ||
+					String(categoriesV2.id) === selectedPemdCategory
 			);
 			if (cat) {
-				pemdObjectsFiltered = allPemdObjects.filter((o) => o.categorieId === cat.id);
+				pemdObjectsFiltered = allPemdObjects.filter((object) => object.categorieId === cat.id);
 			} else {
 				pemdObjectsFiltered = [];
 			}
@@ -390,19 +392,21 @@
 	function getAllowedObjetIds() {
 		const allowed = new Set<number>();
 		if (selectedPemdObject.trim() !== '') {
-			for (const o of allPemdObjects) {
-				if (o.name === selectedPemdObject && o.id != null) allowed.add(o.id);
+			for (const object of allPemdObjects) {
+				if (object.name === selectedPemdObject && object.id != null) allowed.add(object.id);
 			}
 			return Array.from(allowed).filter((v): v is number => v != null);
 		}
 
 		if (selectedPemdCategory.trim() !== '') {
 			const cat = categoriesV2.find(
-				(c) => c.id === Number(selectedPemdCategory) || c.name === selectedPemdCategory
+				(categoriesV2) =>
+					categoriesV2.id === Number(selectedPemdCategory) ||
+					categoriesV2.name === selectedPemdCategory
 			);
 			if (cat) {
-				for (const o of allPemdObjects) {
-					if (o.categorieId === cat.id && o.id != null) allowed.add(o.id);
+				for (const object of allPemdObjects) {
+					if (object.categorieId === cat.id && object.id != null) allowed.add(object.id);
 				}
 			}
 			return Array.from(allowed).filter((v): v is number => v != null);
@@ -410,21 +414,28 @@
 
 		if (selectedPemdGroup.trim() !== '') {
 			const group = allPemdGroups.find(
-				(g) => g.name === selectedPemdGroup || String(g.id) === selectedPemdGroup
+				(pemdGroup) =>
+					pemdGroup.name === selectedPemdGroup || String(pemdGroup.id) === selectedPemdGroup
 			);
 			if (group) {
-				const allowedCatIds = categoriesV2.filter((c) => c.groupeId === group.id).map((c) => c.id);
-				for (const o of allPemdObjects) {
-					if (o.categorieId != null && allowedCatIds.includes(o.categorieId) && o.id != null)
-						allowed.add(o.id);
+				const allowedCatIds = categoriesV2
+					.filter((catId) => catId.groupeId === group.id)
+					.map((catId) => catId.id);
+				for (const object of allPemdObjects) {
+					if (
+						object.categorieId != null &&
+						allowedCatIds.includes(object.categorieId) &&
+						object.id != null
+					)
+						allowed.add(object.id);
 				}
 			}
 			return Array.from(allowed).filter((v): v is number => v != null);
 		}
 
 		// no filter: return all object IDs
-		for (const o of allPemdObjects) {
-			if (o.id != null) allowed.add(o.id);
+		for (const object of allPemdObjects) {
+			if (object.id != null) allowed.add(object.id);
 		}
 		return Array.from(allowed).filter((v): v is number => v != null);
 	}
@@ -436,7 +447,7 @@
 		// remove existing PEMD tags before adding the new filtered set
 		await removePemdTags();
 		const filtered = data.pemdTags.filter(
-			(t: any) => t.objetId != null && allowedIds.includes(Number(t.objetId))
+			(pemdTag: any) => pemdTag.objetId != null && allowedIds.includes(Number(pemdTag.objetId))
 		);
 		console.log(`Adding ${filtered.length} pemd tags (filtered)`);
 		for (const tag of filtered) {
@@ -622,11 +633,11 @@
 		if (catIdValue !== '' && catIdValue !== null && catIdValue !== undefined) {
 			// Find the category by id
 			const catId = typeof catIdValue === 'string' ? Number(catIdValue) : catIdValue;
-			const cat = (data.categoriesV2 || []).find((c: any) => c.id === catId);
+			const cat = (data.categoriesV2 || []).find((categoriesV2: any) => categoriesV2.id === catId);
 			if (cat) {
 				// Filter objects by selected category
 				createFormObjectsFiltered = (data.allPemdObjects || []).filter(
-					(o: any) => o.categorieId === cat.id
+					(object: any) => object.categorieId === cat.id
 				);
 			} else {
 				createFormObjectsFiltered = [];
@@ -639,7 +650,7 @@
 		}
 	}
 
-	async function addNewPemdTagToModel(tagData: any) {
+	async function addNewPemdTagToModel(tagData: Tag): Promise<TagResponse> {
 		if (!mpSdk) return;
 
 		try {
