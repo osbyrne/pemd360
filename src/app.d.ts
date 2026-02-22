@@ -28,17 +28,6 @@ declare global {
 			success: boolean;
 			tag: Tag;
 		}
-		interface categoriesV2 {
-			id: string | number;
-			nom: string;
-			description: string | null;
-			anchorPosition: string;
-			stemVector: string;
-		}
-		interface categoriesV2Response {
-			success: boolean;
-			categoriesV2: categoriesV2[];
-		}
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}

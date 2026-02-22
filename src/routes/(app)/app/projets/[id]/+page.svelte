@@ -2,6 +2,10 @@
 	import { onMount } from 'svelte';
 	import type { PageData, ActionData } from './$types';
 	import type { MpSdk } from '@matterport/sdk';
+	import type { AmianteTag } from '$lib/server/db/schema';
+	import type { PlombTag } from '$lib/server/db/schema';
+	import type { TermiteTag } from '$lib/server/db/schema';
+	import type { Pemd } from '$lib/server/db/schema';
 	import tagAmianteImg from '$lib/assets/tagamiante.png';
 	import tagPlombImg from '$lib/assets/tagplomb.png';
 	import tagTermiteImg from '$lib/assets/tagtermite.png';
@@ -161,7 +165,7 @@
 			}
 			amianteSids = [];
 			if (data.amianteTags && data.amianteTags.length > 0) {
-				const filtered = data.amianteTags.filter((tag: any) =>
+				const filtered = data.amianteTags.filter((tag: AmianteTag) =>
 					amiantePresenceSelected.includes(Number(tag.presenceAmiante))
 				);
 				console.log(`Adding ${filtered.length} amiante tags`);
@@ -209,7 +213,7 @@
 			}
 			plombSids = [];
 			if (data.plombTags && data.plombTags.length > 0) {
-				const filtered = data.plombTags.filter((plombTag: any) =>
+				const filtered = data.plombTags.filter((plombTag: PlombTag) =>
 					plombPresenceSelected.includes(Number(plombTag.presencePlomb))
 				);
 				console.log(`Adding ${filtered.length} plomb tags`);
@@ -262,7 +266,7 @@
 			}
 			termiteSids = [];
 			if (data.termiteTags && data.termiteTags.length > 0) {
-				const filtered = data.termiteTags.filter((termiteTags: any) =>
+				const filtered = data.termiteTags.filter((termiteTags: TermiteTag) =>
 					termitePresenceSelected.includes(Number(termiteTags.presenceTermite))
 				);
 				console.log(`Adding ${filtered.length} termite tags`);
@@ -447,7 +451,7 @@
 		// remove existing PEMD tags before adding the new filtered set
 		await removePemdTags();
 		const filtered = data.pemdTags.filter(
-			(pemdTag: any) => pemdTag.objetId != null && allowedIds.includes(Number(pemdTag.objetId))
+			(pemdTag: Pemd) => pemdTag.objetId != null && allowedIds.includes(Number(pemdTag.objetId))
 		);
 		console.log(`Adding ${filtered.length} pemd tags (filtered)`);
 		for (const tag of filtered) {
@@ -604,11 +608,11 @@
 		if (groupIdValue !== '' && groupIdValue !== null && groupIdValue !== undefined) {
 			// Find the group by id
 			const groupId = typeof groupIdValue === 'string' ? Number(groupIdValue) : groupIdValue;
-			const group = (data.groups || []).find((g: any) => g.id === groupId);
+			const group = (data.groups || []).find((group: any) => group.id === groupId);
 			if (group) {
 				// Filter categories by selected group
 				createFormCategoriesFiltered = (data.categoriesV2 || []).filter(
-					(c: any) => c.groupeId === group.id
+					(categoriesFiltered: any) => categoriesFiltered.groupeId === group.id
 				);
 			} else {
 				createFormCategoriesFiltered = [];
@@ -633,7 +637,7 @@
 		if (catIdValue !== '' && catIdValue !== null && catIdValue !== undefined) {
 			// Find the category by id
 			const catId = typeof catIdValue === 'string' ? Number(catIdValue) : catIdValue;
-			const cat = (data.categoriesV2 || []).find((categoriesV2: any) => categoriesV2.id === catId);
+			const cat = (data.categoriesV2 || []).find((categorieV2: any) => categorieV2.id === catId);
 			if (cat) {
 				// Filter objects by selected category
 				createFormObjectsFiltered = (data.allPemdObjects || []).filter(
@@ -650,7 +654,7 @@
 		}
 	}
 
-	async function addNewPemdTagToModel(tagData: Tag): Promise<TagResponse> {
+	async function addNewPemdTagToModel(tagData: App.Tag): Promise<App.TagResponse | void> {
 		if (!mpSdk) return;
 
 		try {

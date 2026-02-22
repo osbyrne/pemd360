@@ -230,6 +230,7 @@ export const tagsAmiante = sqliteTable(
 	},
 	(table) => [index('tags_amiante_sid_id_idx').on(table.sidId)]
 );
+export type AmianteTag = typeof tagsAmiante.$inferSelect;
 
 export const tagsPlomb = sqliteTable(
 	'tags_plomb',
@@ -251,6 +252,7 @@ export const tagsPlomb = sqliteTable(
 	},
 	(table) => [index('tags_plomb_sid_id_idx').on(table.sidId)]
 );
+export type PlombTag = typeof tagsPlomb.$inferSelect;
 
 export const tagsTermite = sqliteTable(
 	'tags_termite',
@@ -271,6 +273,7 @@ export const tagsTermite = sqliteTable(
 	},
 	(table) => [index('tags_termite_sid_id_idx').on(table.sidId)]
 );
+export type TermiteTag = typeof tagsTermite.$inferSelect;
 
 export const cerfaDiagnostic = sqliteTable(
 	'cerfa_diagnostic',
@@ -436,3 +439,4 @@ export const pemd = sqliteTable(
 		index('pemd_sid_id_idx').on(table.sidId)
 	]
 );
+export type Pemd = typeof pemd.$inferSelect;
