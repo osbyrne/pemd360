@@ -9,6 +9,7 @@
 	import { Mail, Plus, Pencil, X, Save, MapPin } from 'lucide-svelte';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
+	import PresenceFilterModal from '$lib/components/PresenceFilterModal.svelte';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -96,22 +97,67 @@
 		[] as { id: number | null; name: string | null; categorieId: number | null }[]
 	);
 
-	// helper booleans for modal checkboxes
-	let amiantePresent = $state(true);
-	let amianteAbsent = $state(true);
-	let amianteEnCours = $state(true);
-	let plombPresent = $state(true);
-	let plombAbsent = $state(true);
-	let plombEnCours = $state(true);
-	let termitePresent = $state(true);
-	let termiteAbsent = $state(true);
-	let termiteEnCours = $state(true);
-
 	let mailSids: string[] = [];
 	let amianteSids: string[] = [];
 	let plombSids: string[] = [];
 	let termiteSids: string[] = [];
 	let pemdSids = $state([] as string[]);
+
+	// Generic helper shared by toggleAmiante, togglePlomb, toggleTermite.
+	// Always removes the current SIDs first, then adds filtered tags if `show` is true.
+	// Returns the new SIDs array so callers can reassign their variable.
+	interface PresenceTag {
+		id: unknown;
+		anchorPosition: string;
+		stemVector: string;
+	}
+
+	async function togglePresenceTags<T extends PresenceTag>(
+		show: boolean,
+		currentSids: string[],
+		tags: T[] | undefined,
+		presenceSelected: number[],
+		getPresence: (tag: T) => number,
+		buildLabel: (tag: T) => string,
+		buildDescription: (tag: T) => string,
+		getColor: (tag: T) => { r: number; g: number; b: number },
+		typeName: string
+	): Promise<string[]> {
+		if (!mpSdk) return currentSids;
+
+		for (const sid of currentSids) {
+			try {
+				await mpSdk.Tag.remove(sid);
+			} catch (e) {
+				console.error(`Failed to remove ${typeName} sid`, sid, e);
+			}
+		}
+
+		if (!show || !tags || tags.length === 0) return [];
+
+		const newSids: string[] = [];
+		const filtered = tags.filter((tag) => presenceSelected.includes(getPresence(tag)));
+		console.log(`Adding ${filtered.length} ${typeName} tags`);
+
+		for (const tag of filtered) {
+			try {
+				const anchorPosition = JSON.parse(tag.anchorPosition);
+				const stemVector = JSON.parse(tag.stemVector);
+				const [sid] = await mpSdk.Tag.add({
+					label: buildLabel(tag),
+					description: buildDescription(tag),
+					anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
+					stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
+					color: getColor(tag)
+				});
+				newSids.push(sid);
+			} catch (tagError) {
+				console.error(`Failed to add ${typeName} tag ${tag.id}:`, tagError);
+			}
+		}
+
+		return newSids;
+	}
 
 	async function toggleMail() {
 		if (!mpSdk) return;
@@ -149,152 +195,50 @@
 	}
 
 	async function toggleAmiante() {
-		if (!mpSdk) return;
-		if (showAmiante) {
-			// Remove any previously added amiante tags so we don't duplicate or keep stale tags
-			for (const sid of amianteSids) {
-				try {
-					await mpSdk.Tag.remove(sid);
-				} catch (e) {
-					console.error('Failed to remove previous amiante sid', sid, e);
-				}
-			}
-			amianteSids = [];
-			if (data.amianteTags && data.amianteTags.length > 0) {
-				const filtered = data.amianteTags.filter((tag: App.TagsAmiante) =>
-					amiantePresenceSelected.includes(Number(tag.presenceAmiante))
-				);
-				console.log(`Adding ${filtered.length} amiante tags`);
-				for (const tag of filtered) {
-					try {
-						const anchorPosition = JSON.parse(tag.anchorPosition);
-						const stemVector = JSON.parse(tag.stemVector);
-						const amianteStatus = tag.presenceAmiante ? 'Présence' : 'Absence';
-						const tagDescriptor = {
-							label: `Amiante - ${amianteStatus}`,
-							description: `${tag.description}\nType: ${tag.type}\nÉtage: ${tag.etage}`,
-							anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
-							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
-							color: tag.presenceAmiante ? { r: 1, g: 0, b: 0 } : { r: 0, g: 1, b: 0 }
-						};
-						const [sid] = await mpSdk.Tag.add(tagDescriptor);
-						amianteSids.push(sid);
-					} catch (tagError) {
-						console.error(`Failed to add amiante tag ${tag.id}:`, tagError);
-					}
-				}
-			}
-		} else {
-			for (const sid of amianteSids) {
-				try {
-					await mpSdk.Tag.remove(sid);
-				} catch (e) {
-					console.error(e);
-				}
-			}
-			amianteSids = [];
-		}
+		amianteSids = await togglePresenceTags(
+			showAmiante,
+			amianteSids,
+			data.amianteTags,
+			amiantePresenceSelected,
+			(tag: App.TagsAmiante) => Number(tag.presenceAmiante),
+			(tag) => `Amiante - ${tag.presenceAmiante ? 'Présence' : 'Absence'}`,
+			(tag) => `${tag.description}\nType: ${tag.type}\nÉtage: ${tag.etage}`,
+			(tag) => (tag.presenceAmiante ? { r: 1, g: 0, b: 0 } : { r: 0, g: 1, b: 0 }),
+			'amiante'
+		);
 	}
 
 	async function togglePlomb() {
-		if (!mpSdk) return;
-		if (showPlomb) {
-			// remove previous plomb tags to avoid duplicates / stale display
-			for (const sid of plombSids) {
-				try {
-					await mpSdk.Tag.remove(sid);
-				} catch (e) {
-					console.error('Failed to remove previous plomb sid', sid, e);
-				}
-			}
-			plombSids = [];
-			if (data.plombTags && data.plombTags.length > 0) {
-				const filtered = data.plombTags.filter((plombTag: PlombTag) =>
-					plombPresenceSelected.includes(Number(plombTag.presencePlomb))
-				);
-				console.log(`Adding ${filtered.length} plomb tags`);
-				for (const tag of filtered) {
-					try {
-						const anchorPosition = JSON.parse(tag.anchorPosition);
-						const stemVector = JSON.parse(tag.stemVector);
-						const plombStatus = tag.presencePlomb ? 'Présence' : 'Absence';
-						let description = tag.description;
-						if (tag.presencePlomb && tag.concentration) {
-							description += `\nConcentration: ${tag.concentration}`;
-						}
-						description += `\nÉtage: ${tag.etage}`;
-						const tagDescriptor = {
-							label: `Plomb - ${plombStatus}`,
-							description: description,
-							anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
-							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
-							color: tag.presencePlomb ? { r: 1, g: 0.5, b: 0 } : { r: 0, g: 0.7, b: 1 }
-						};
-						const [sid] = await mpSdk.Tag.add(tagDescriptor);
-						plombSids.push(sid);
-					} catch (tagError) {
-						console.error(`Failed to add plomb tag ${tag.id}:`, tagError);
-					}
-				}
-			}
-		} else {
-			for (const sid of plombSids) {
-				try {
-					await mpSdk.Tag.remove(sid);
-				} catch (e) {
-					console.error(e);
-				}
-			}
-			plombSids = [];
-		}
+		plombSids = await togglePresenceTags(
+			showPlomb,
+			plombSids,
+			data.plombTags,
+			plombPresenceSelected,
+			(tag: App.PlombTags) => Number(tag.presencePlomb),
+			(tag) => `Plomb - ${tag.presencePlomb ? 'Présence' : 'Absence'}`,
+			(tag) => {
+				let desc = tag.description;
+				if (tag.presencePlomb && tag.concentration) desc += `\nConcentration: ${tag.concentration}`;
+				desc += `\nÉtage: ${tag.etage}`;
+				return desc;
+			},
+			(tag) => (tag.presencePlomb ? { r: 1, g: 0.5, b: 0 } : { r: 0, g: 0.7, b: 1 }),
+			'plomb'
+		);
 	}
 
 	async function toggleTermite() {
-		if (!mpSdk) return;
-		if (showTermite) {
-			// remove any previous termite tags
-			for (const sid of termiteSids) {
-				try {
-					await mpSdk.Tag.remove(sid);
-				} catch (e) {
-					console.error('Failed to remove previous termite sid', sid, e);
-				}
-			}
-			termiteSids = [];
-			if (data.termiteTags && data.termiteTags.length > 0) {
-				const filtered = data.termiteTags.filter((termiteTags: TermiteTag) =>
-					termitePresenceSelected.includes(Number(termiteTags.presenceTermite))
-				);
-				console.log(`Adding ${filtered.length} termite tags`);
-				for (const tag of filtered) {
-					try {
-						const anchorPosition = JSON.parse(tag.anchorPosition);
-						const stemVector = JSON.parse(tag.stemVector);
-						const termiteStatus = tag.presenceTermite ? 'Présence' : 'Absence';
-						const tagDescriptor = {
-							label: `Termite - ${termiteStatus}`,
-							description: `${tag.description}\nÉtage: ${tag.etage}`,
-							anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
-							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
-							color: tag.presenceTermite ? { r: 0.6, g: 0.3, b: 0 } : { r: 0.5, g: 1, b: 0.5 }
-						};
-						const [sid] = await mpSdk.Tag.add(tagDescriptor);
-						termiteSids.push(sid);
-					} catch (tagError) {
-						console.error(`Failed to add termite tag ${tag.id}:`, tagError);
-					}
-				}
-			}
-		} else {
-			for (const sid of termiteSids) {
-				try {
-					await mpSdk.Tag.remove(sid);
-				} catch (e) {
-					console.error(e);
-				}
-			}
-			termiteSids = [];
-		}
+		termiteSids = await togglePresenceTags(
+			showTermite,
+			termiteSids,
+			data.termiteTags,
+			termitePresenceSelected,
+			(tag: App.TermiteTags) => Number(tag.presenceTermite),
+			(tag) => `Termite - ${tag.presenceTermite ? 'Présence' : 'Absence'}`,
+			(tag) => `${tag.description}\nÉtage: ${tag.etage}`,
+			(tag) => (tag.presenceTermite ? { r: 0.6, g: 0.3, b: 0 } : { r: 0.5, g: 1, b: 0.5 }),
+			'termite'
+		);
 	}
 
 	// Build cache of PEMD facet lists for client-side filtering
@@ -744,61 +688,15 @@
 
 <div class="h-screen w-full p-6 font-[Poppins] flex flex-col">
 	<!-- Modals -->
-	{#if showAmianteModal}
-		<div class="fixed inset-0 z-50 flex items-center justify-center">
-			<div
-				class="absolute inset-0 bg-black/40"
-				role="button"
-				tabindex="0"
-				aria-label="Fermer le modal"
-				onclick={() => {
-					showAmianteModal = false;
-				}}
-				onkeydown={(e) => {
-					if (e.key === 'Enter' || e.key === ' ') {
-						showAmianteModal = false;
-					}
-				}}
-			></div>
-			<div class="relative z-10 w-80 rounded-lg bg-white p-4 shadow-lg">
-				<h3 class="mb-3 text-lg font-semibold">Filtrer Amiante</h3>
-				<div class="mb-3 flex flex-col gap-2">
-					<label class="flex items-center gap-2">
-						<input type="checkbox" bind:checked={amiantePresent} />
-						<span>Présence</span>
-					</label>
-					<label class="flex items-center gap-2">
-						<input type="checkbox" bind:checked={amianteAbsent} />
-						<span>Absence</span>
-					</label>
-					<label class="flex items-center gap-2">
-						<input type="checkbox" bind:checked={amianteEnCours} />
-						<span>En cours</span>
-					</label>
-				</div>
-				<div class="flex justify-end gap-2">
-					<button
-						class="rounded px-3 py-1 text-sm"
-						onclick={() => {
-							showAmianteModal = false;
-						}}>Annuler</button
-					>
-					<button
-						class="rounded bg-blue-600 px-3 py-1 text-sm text-white"
-						onclick={() => {
-							amiantePresenceSelected = [];
-							if (amiantePresent) amiantePresenceSelected.push(1);
-							if (amianteAbsent) amiantePresenceSelected.push(0);
-							if (amianteEnCours) amiantePresenceSelected.push(2);
-							showAmianteModal = false;
-							showAmiante = true;
-							toggleAmiante();
-						}}>Appliquer</button
-					>
-				</div>
-			</div>
-		</div>
-	{/if}
+	<PresenceFilterModal
+		title="Filtrer Amiante"
+		bind:show={showAmianteModal}
+		onApply={(selected) => {
+			amiantePresenceSelected = selected;
+			showAmiante = true;
+			toggleAmiante();
+		}}
+	/>
 
 	{#if showPemdModal}
 		<div class="fixed inset-0 z-50 flex items-center justify-center">
@@ -879,117 +777,25 @@
 		</div>
 	{/if}
 
-	{#if showPlombModal}
-		<div class="fixed inset-0 z-50 flex items-center justify-center">
-			<div
-				class="absolute inset-0 bg-black/40"
-				role="button"
-				tabindex="0"
-				aria-label="Fermer le modal"
-				onclick={() => {
-					showPlombModal = false;
-				}}
-				onkeydown={(e) => {
-					if (e.key === 'Enter' || e.key === ' ') {
-						showPlombModal = false;
-					}
-				}}
-			></div>
-			<div class="relative z-10 w-80 rounded-lg bg-white p-4 shadow-lg">
-				<h3 class="mb-3 text-lg font-semibold">Filtrer Plomb</h3>
-				<div class="mb-3 flex flex-col gap-2">
-					<label class="flex items-center gap-2">
-						<input type="checkbox" bind:checked={plombPresent} />
-						<span>Présence</span>
-					</label>
-					<label class="flex items-center gap-2">
-						<input type="checkbox" bind:checked={plombAbsent} />
-						<span>Absence</span>
-					</label>
-					<label class="flex items-center gap-2">
-						<input type="checkbox" bind:checked={plombEnCours} />
-						<span>En cours</span>
-					</label>
-				</div>
-				<div class="flex justify-end gap-2">
-					<button
-						class="rounded px-3 py-1 text-sm"
-						onclick={() => {
-							showPlombModal = false;
-						}}>Annuler</button
-					>
-					<button
-						class="rounded bg-blue-600 px-3 py-1 text-sm text-white"
-						onclick={() => {
-							plombPresenceSelected = [];
-							if (plombPresent) plombPresenceSelected.push(1);
-							if (plombAbsent) plombPresenceSelected.push(0);
-							if (plombEnCours) plombPresenceSelected.push(2);
-							showPlombModal = false;
-							showPlomb = true;
-							togglePlomb();
-						}}>Appliquer</button
-					>
-				</div>
-			</div>
-		</div>
-	{/if}
+	<PresenceFilterModal
+		title="Filtrer Plomb"
+		bind:show={showPlombModal}
+		onApply={(selected) => {
+			plombPresenceSelected = selected;
+			showPlomb = true;
+			togglePlomb();
+		}}
+	/>
 
-	{#if showTermiteModal}
-		<div class="fixed inset-0 z-50 flex items-center justify-center">
-			<div
-				class="absolute inset-0 bg-black/40"
-				role="button"
-				tabindex="0"
-				aria-label="Fermer le modal"
-				onclick={() => {
-					showTermiteModal = false;
-				}}
-				onkeydown={(e) => {
-					if (e.key === 'Enter' || e.key === ' ') {
-						showTermiteModal = false;
-					}
-				}}
-			></div>
-			<div class="relative z-10 w-80 rounded-lg bg-white p-4 shadow-lg">
-				<h3 class="mb-3 text-lg font-semibold">Filtrer Termite</h3>
-				<div class="mb-3 flex flex-col gap-2">
-					<label class="flex items-center gap-2">
-						<input type="checkbox" bind:checked={termitePresent} />
-						<span>Présence</span>
-					</label>
-					<label class="flex items-center gap-2">
-						<input type="checkbox" bind:checked={termiteAbsent} />
-						<span>Absence</span>
-					</label>
-					<label class="flex items-center gap-2">
-						<input type="checkbox" bind:checked={termiteEnCours} />
-						<span>En cours</span>
-					</label>
-				</div>
-				<div class="flex justify-end gap-2">
-					<button
-						class="rounded px-3 py-1 text-sm"
-						onclick={() => {
-							showTermiteModal = false;
-						}}>Annuler</button
-					>
-					<button
-						class="rounded bg-blue-600 px-3 py-1 text-sm text-white"
-						onclick={() => {
-							termitePresenceSelected = [];
-							if (termitePresent) termitePresenceSelected.push(1);
-							if (termiteAbsent) termitePresenceSelected.push(0);
-							if (termiteEnCours) termitePresenceSelected.push(2);
-							showTermiteModal = false;
-							showTermite = true;
-							toggleTermite();
-						}}>Appliquer</button
-					>
-				</div>
-			</div>
-		</div>
-	{/if}
+	<PresenceFilterModal
+		title="Filtrer Termite"
+		bind:show={showTermiteModal}
+		onApply={(selected) => {
+			termitePresenceSelected = selected;
+			showTermite = true;
+			toggleTermite();
+		}}
+	/>
 
 	<!-- PEMD Creation Modal -->
 	{#if showPemdCreateModal && pendingTagPosition}
