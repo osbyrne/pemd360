@@ -347,10 +347,7 @@
 				</div>
 			{/if}
 
-			<button
-				onclick={handleLogout}
-				class="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-red-600 transition-colors hover:bg-red-50"
-			>
+			<button onclick={handleLogout} class="btn btn-soft btn-warning">
 				<LogOut class="h-5 w-5 shrink-0" />
 				<span class="font-medium">Déconnexion</span>
 			</button>

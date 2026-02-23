@@ -120,12 +120,7 @@
 
 			<!-- CTA Button -->
 			<div class="mt-8">
-				<a
-					href="/contact"
-					class="inline-block rounded-md bg-emerald-600 px-8 py-3 font-semibold text-white transition-colors hover:bg-emerald-700"
-				>
-					Nous contacter
-				</a>
+				<a href="/contact" class="btn"> Nous contacter </a>
 			</div>
 		</div>
 	</div>

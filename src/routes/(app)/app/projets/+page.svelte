@@ -236,25 +236,16 @@
 
 							<!-- Card Footer -->
 							<div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-2">
-								<a
-									href="/app/details/{projet.id}"
-									class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-100 transition-colors"
-								>
+								<a href="/app/details/{projet.id}" class="btn">
 									<Info class="h-4 w-4" />
 									Détails
 								</a>
-								<a
-									href="/app/projets/{projet.id}"
-									class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-100 transition-colors"
-								>
+								<a href="/app/projets/{projet.id}" class="btn">
 									<Box class="h-4 w-4" />
 									Modèle 3D
 								</a>
 								<div class="relative flex-1">
-									<button
-										onclick={() => toggleCerfaMenu(projet.id)}
-										class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 border border-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors"
-									>
+									<button onclick={() => toggleCerfaMenu(projet.id)} class="btn">
 										<FileText class="h-4 w-4" />
 										Cerfa
 										<ChevronDown class="h-4 w-4" />
@@ -325,51 +316,29 @@
 
 								<!-- Actions -->
 								<div class="flex items-center gap-2">
-									<a
-										href="/app/details/{projet.id}"
-										class="p-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors"
-										title="Voir les détails"
-									>
+									<a href="/app/details/{projet.id}" class="btn" title="Voir les détails">
 										<Info class="h-5 w-5" />
 									</a>
-									<a
-										href="/app/projets/{projet.id}"
-										class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors"
-									>
+									<a href="/app/projets/{projet.id}" class="btn">
 										<Box class="h-4 w-4" />
 										<span class="hidden sm:inline">Modèle 3D</span>
 										<ChevronRight class="h-4 w-4" />
 									</a>
 									<div class="relative">
-										<button
-											onclick={() => toggleCerfaMenu(projet.id)}
-											class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors"
-										>
+										<button onclick={() => toggleCerfaMenu(projet.id)} class="btn">
 											<FileText class="h-4 w-4" />
 											<span class="hidden sm:inline">Cerfa</span>
 											<ChevronDown class="h-4 w-4" />
 										</button>
 										{#if openCerfaMenu === projet.id}
-											<div
-												class="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden z-10"
-												transition:slide={{ duration: 200 }}
-											>
-												<a
-													href="/app/cerfa/informations?projetId={projet.id}"
-													class="block px-4 py-3 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
-												>
+											<div class="absolute z-10" transition:slide={{ duration: 200 }}>
+												<a href="/app/cerfa/informations?projetId={projet.id}" class="btn">
 													Informations
 												</a>
-												<a
-													href="/app/cerfa/pem?projetId={projet.id}"
-													class="block px-4 py-3 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors border-t border-slate-100"
-												>
+												<a href="/app/cerfa/pem?projetId={projet.id}" class="btn">
 													Caractérisation PEM
 												</a>
-												<a
-													href="/app/cerfa/dechets?projetId={projet.id}"
-													class="block px-4 py-3 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors border-t border-slate-100"
-												>
+												<a href="/app/cerfa/dechets?projetId={projet.id}" class="btn">
 													Caractérisation Déchets
 												</a>
 											</div>

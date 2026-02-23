@@ -1,15 +1,5 @@
 <script lang="ts">
-	import {
-		ArrowLeft,
-		Save,
-		Building2,
-		MapPin,
-		Phone,
-		Mail,
-		Hash,
-		Globe,
-		Plus
-	} from 'lucide-svelte';
+	import { ArrowLeft, MapPin, Globe, Plus } from 'lucide-svelte';
 	import type { PageData, ActionData } from './$types';
 	import { enhance } from '$app/forms';
 
@@ -213,16 +203,8 @@
 
 		<!-- Actions -->
 		<div class="flex justify-end gap-3 transition-all pt-4">
-			<a
-				href="/app/admin/etablissements"
-				class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
-			>
-				Annuler
-			</a>
-			<button
-				type="submit"
-				class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-			>
+			<a href="/app/admin/etablissements" class="btn"> Annuler </a>
+			<button type="submit" class="btn">
 				<Plus class="mr-2 h-4 w-4" />
 				Créer l'établissement
 			</button>

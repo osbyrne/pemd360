@@ -4,8 +4,6 @@
 	import slideNumerisation from '$lib/assets/dépollution_8036_Copie.jpg';
 	import slideSuivi from '$lib/assets/suivi.jpg';
 	import slideDiagnostic from '$lib/assets/model_accueil.jpg';
-	import Header from '$lib/components/Header.svelte';
-	import Footer from '$lib/components/Footer.svelte';
 	import { ChevronLeft, ChevronRight, Play } from 'lucide-svelte';
 
 	// Carousel state
@@ -82,19 +80,9 @@
 				>
 					<h1 class="mb-4 text-4xl font-bold md:text-5xl lg:text-6xl">{slide.title}</h1>
 					<p class="mb-8 text-lg leading-relaxed md:text-xl">{slide.description}</p>
-					<div class="flex flex-wrap gap-4">
-						<a
-							href="#pemd"
-							class="rounded-md bg-emerald-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-emerald-700"
-						>
-							En savoir plus
-						</a>
-						<a
-							href="/about"
-							class="rounded-md border-2 border-white px-6 py-3 font-semibold text-white transition-colors hover:bg-white hover:text-gray-900"
-						>
-							Notre entreprise
-						</a>
+					<div class="flex flex-row gap-4">
+						<a class="btn" href="/#pemd">En savoir plus</a>
+						<a class="btn" href="/about">Notre entreprise</a>
 					</div>
 				</div>
 			</div>
@@ -245,12 +233,7 @@
 					à vos besoins.
 				</p>
 			</div>
-			<a
-				href="/contact"
-				class="shrink-0 rounded-md border-2 border-white px-8 py-3 font-semibold text-white transition-colors hover:bg-white hover:text-emerald-700"
-			>
-				Demander un devis
-			</a>
+			<a href="/contact" class="btn btn-secondary"> Demander un devis </a>
 		</div>
 	</div>
 </section>
@@ -310,12 +293,7 @@
 			<h2 class="mb-8 text-3xl font-bold text-white md:text-4xl lg:text-5xl">
 				La meilleure solution pour réaliser votre diagnostic
 			</h2>
-			<a
-				href="#pemd"
-				class="inline-block rounded-md bg-emerald-600 px-8 py-3 font-semibold text-white transition-colors hover:bg-emerald-700"
-			>
-				En savoir plus
-			</a>
+			<a href="#pemd" class="btn btn-secondary"> En savoir plus </a>
 		</div>
 	</div>
 </section>

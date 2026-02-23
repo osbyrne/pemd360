@@ -301,14 +301,14 @@
 					<button
 						onclick={() => (currentPage = Math.max(1, currentPage - 1))}
 						disabled={currentPage === 1}
-						class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+						class="btn"
 					>
 						Précédent
 					</button>
 					<button
 						onclick={() => (currentPage = Math.min(totalPages, currentPage + 1))}
 						disabled={currentPage === totalPages}
-						class="inline-flex items-center gap-1 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+						class="btn"
 					>
 						Suivant
 					</button>

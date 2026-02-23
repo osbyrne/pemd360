@@ -94,10 +94,7 @@
 				Gérez la liste des objets et leurs catégories associées.
 			</p>
 		</div>
-		<button
-			onclick={openCreateModal}
-			class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors shadow-sm"
-		>
+		<button onclick={openCreateModal} class="btn">
 			<Plus class="w-4 h-4" />
 			Ajouter
 		</button>

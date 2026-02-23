@@ -33,12 +33,7 @@
 					class="font-medium text-gray-700 transition-colors hover:text-emerald-600">Contact</a
 				>
 				{#if user}
-					<a
-						href="/app/projets"
-						class="btn rounded-md border-2 border-emerald-600 bg-emerald-600 px-4 py-2 font-medium text-white transition-colors hover:bg-emerald-700"
-					>
-						Tableau de bord
-					</a>
+					<a href="/app/projets" class="btn btn-secondary"> Tableau de bord </a>
 				{:else}
 					<a
 						href="/login"

@@ -27,7 +27,7 @@
 		"@types/better-sqlite3": "^7.6.13",
 		"@types/node": "^22",
 		"@vite-pwa/sveltekit": "^1.1.0",
-		"daisyui": "^5.5.14",
+		"daisyui": "^5.5.19",
 		"drizzle-kit": "^0.31.8",
 		"eslint": "^9.39.1",
 		"eslint-config-prettier": "^10.1.8",

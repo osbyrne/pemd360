@@ -1,6 +1,5 @@
 <script lang="ts">
-	import logoPEMD from '$lib/assets/pemd360.png';
-	import { Mail, Phone, MapPin, Linkedin } from 'lucide-svelte';
+	import { Mail, Phone, MapPin } from 'lucide-svelte';
 </script>
 
 <footer class="bg-gray-900 text-white">
@@ -71,14 +70,12 @@
 			<div>
 				<h5 class="mb-4 text-lg font-semibold">Réseaux sociaux</h5>
 				<div class="flex items-center gap-4">
-					<img src={logoPEMD} alt="PEMD 360" class="h-16 w-auto rounded bg-white object-contain" />
 					<a
 						href="https://fr.linkedin.com/company/depollution-conseil"
 						target="_blank"
 						rel="noopener noreferrer"
 						class="flex items-center gap-2 text-gray-400 transition-colors hover:text-emerald-500"
 					>
-						<Linkedin class="h-6 w-6" />
 						<span class="text-sm">LinkedIn</span>
 					</a>
 				</div>

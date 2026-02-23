@@ -159,12 +159,7 @@
 					Notre équipe est disponible pour répondre à toutes vos questions.
 				</p>
 			</div>
-			<a
-				href="tel:+33631326715"
-				class="shrink-0 rounded-lg border-2 border-white px-8 py-3 font-semibold text-white transition-colors hover:bg-white hover:text-emerald-700"
-			>
-				Appelez-nous : 06 31 32 67 15
-			</a>
+			<a href="tel:+33631326715" class="btn"> Appelez-nous : 06 31 32 67 15 </a>
 		</div>
 	</div>
 </section>

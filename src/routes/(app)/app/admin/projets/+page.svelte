@@ -141,17 +141,11 @@
 				<p class="mt-2 text-sm text-slate-600">Gérez tous les projets de la plateforme.</p>
 			</div>
 			<div class="mt-4 flex flex-wrap gap-3 sm:mt-0">
-				<a
-					href="/app/admin/projets/nouveau"
-					class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-				>
+				<a href="/app/admin/projets/nouveau" class="btn">
 					<Plus size={18} />
 					Nouveau projet
 				</a>
-				<button
-					onclick={downloadCSV}
-					class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
-				>
+				<button onclick={downloadCSV} class="btn">
 					<Download size={16} />
 					Export CSV
 				</button>
@@ -321,17 +315,13 @@
 					sur <span class="font-semibold">{filteredProjets.length}</span> résultats
 				</p>
 				<div class="flex gap-2">
-					<button
-						onclick={() => (page = Math.max(1, page - 1))}
-						disabled={page === 1}
-						class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
-					>
+					<button onclick={() => (page = Math.max(1, page - 1))} disabled={page === 1} class="btn">
 						Précédent
 					</button>
 					<button
 						onclick={() => (page = Math.min(totalPages, page + 1))}
 						disabled={page === totalPages}
-						class="inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+						class="btn"
 					>
 						Suivant
 					</button>
