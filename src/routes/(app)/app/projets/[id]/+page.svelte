@@ -32,17 +32,12 @@
 	let showPemdModal = $state(false);
 
 	// PEMD Edit Mode
-	let pemdEditMode = $state(false);
 	let showPemdCreateModal = $state(false);
 	let pendingTagPosition: {
 		anchorPosition: { x: number; y: number; z: number };
 		normal: { x: number; y: number; z: number };
 	} | null = $state(null);
-	let intersectionSubscription: { cancel: () => void } | null = null;
-	let lastIntersection: {
-		position: { x: number; y: number; z: number };
-		normal: { x: number; y: number; z: number };
-	} | null = $state(null);
+	const editMode = new PemdEditMode((position, normal) => openPemdCreateModal(position, normal));
 	let amiantePresenceSelected: number[] = [0, 1, 2];
 	let plombPresenceSelected: number[] = [0, 1, 2];
 	let termitePresenceSelected: number[] = [0, 1, 2];
@@ -242,72 +237,6 @@
 		showPemd = false;
 	}
 
-	// PEMD Edit Mode Functions
-	let overlayElement: HTMLDivElement | undefined = $state();
-
-	function togglePemdEditMode() {
-		pemdEditMode = !pemdEditMode;
-		if (pemdEditMode) {
-			startListeningForClicks();
-		} else {
-			stopListeningForClicks();
-		}
-	}
-
-	function startListeningForClicks() {
-		if (!mpSdk) return;
-
-		// Subscribe to pointer intersection to track where the user is pointing
-		intersectionSubscription = mpSdk.Pointer.intersection.subscribe((intersectionData: any) => {
-			if (intersectionData && intersectionData.position && intersectionData.normal) {
-				lastIntersection = {
-					position: intersectionData.position,
-					normal: intersectionData.normal
-				};
-			}
-		});
-	}
-
-	function stopListeningForClicks() {
-		if (intersectionSubscription) {
-			intersectionSubscription.cancel();
-			intersectionSubscription = null;
-		}
-		lastIntersection = null;
-	}
-
-	// Handle click on the overlay - this captures clicks on the model
-	function handleOverlayClick(event: MouseEvent) {
-		if (!pemdEditMode || !lastIntersection) return;
-
-		// Prevent the click from doing anything else
-		event.preventDefault();
-		event.stopPropagation();
-
-		// Use the last known intersection position
-		openPemdCreateModal(lastIntersection.position, lastIntersection.normal);
-	}
-
-	// Handle mouse move on overlay - briefly disable pointer-events to let iframe update intersection
-	let pointerEventsTimeout: ReturnType<typeof setTimeout> | null = null;
-
-	function handleOverlayMouseMove(event: MouseEvent) {
-		if (!overlayElement || !pemdEditMode) return;
-
-		// Temporarily disable pointer-events on overlay to let iframe receive the event
-		overlayElement.style.pointerEvents = 'none';
-
-		// Re-enable after a short delay
-		if (pointerEventsTimeout) {
-			clearTimeout(pointerEventsTimeout);
-		}
-		pointerEventsTimeout = setTimeout(() => {
-			if (overlayElement && pemdEditMode) {
-				overlayElement.style.pointerEvents = 'auto';
-			}
-		}, 50);
-	}
-
 	function openPemdCreateModal(
 		position: { x: number; y: number; z: number },
 		normal: { x: number; y: number; z: number }
@@ -366,6 +295,7 @@
 			try {
 				const { setupSdk } = await import('@matterport/sdk');
 				mpSdk = await setupSdk(data.matterportSdkKey, { iframe });
+				editMode.setMpSdk(mpSdk);
 
 				// Suppress noisy analytics/network errors coming from the Matterport SDK (often caused by ad-blockers)
 				handleUnhandledRejection = (ev: PromiseRejectionEvent) => {
@@ -396,11 +326,7 @@
 			if (handleUnhandledRejection)
 				window.removeEventListener('unhandledrejection', handleUnhandledRejection);
 			// Cleanup edit mode listeners
-			stopListeningForClicks();
-			// Clear any pending timeout
-			if (pointerEventsTimeout) {
-				clearTimeout(pointerEventsTimeout);
-			}
+			editMode.cleanup();
 			try {
 				if (mpSdk && mpSdk.disconnect) mpSdk.disconnect();
 			} catch (err) {
@@ -571,19 +497,21 @@
 			</button>
 			<button
 				type="button"
-				title={pemdEditMode ? 'Désactiver le mode édition PEMD' : 'Activer le mode édition PEMD'}
-				aria-pressed={pemdEditMode}
-				onclick={togglePemdEditMode}
-				class={`w-full h-6 flex items-center justify-center rounded-lg border text-xs font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${pemdEditMode ? 'bg-purple-600 text-white ring-1 ring-purple-300 shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-purple-50 hover:text-purple-600'}`}
+				title={editMode.enabled
+					? 'Désactiver le mode édition PEMD'
+					: 'Activer le mode édition PEMD'}
+				aria-pressed={editMode.enabled}
+				onclick={() => editMode.toggle()}
+				class={`w-full h-6 flex items-center justify-center rounded-lg border text-xs font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${editMode.enabled ? 'bg-purple-600 text-white ring-1 ring-purple-300 shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-purple-50 hover:text-purple-600'}`}
 			>
 				<Pencil size={12} class="mr-1" />
-				{pemdEditMode ? 'Édition ON' : 'Éditer'}
+				{editMode.enabled ? 'Édition ON' : 'Éditer'}
 			</button>
 		</div>
 	</div>
 
 	<!-- Edit mode indicator -->
-	{#if pemdEditMode}
+	{#if editMode.enabled}
 		<div
 			class="mb-4 flex items-center justify-between bg-purple-50 border border-purple-200 rounded-lg px-4 py-3"
 		>
@@ -596,7 +524,7 @@
 			</div>
 			<button
 				type="button"
-				onclick={togglePemdEditMode}
+				onclick={() => editMode.toggle()}
 				class="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
 			>
 				<X size={16} />
@@ -618,26 +546,20 @@
 		</iframe>
 
 		<!-- Overlay for capturing clicks in edit mode -->
-		{#if pemdEditMode}
+		{#if editMode.enabled}
 			<div
-				bind:this={overlayElement}
+				bind:this={editMode.overlay}
 				role="button"
 				tabindex="0"
 				aria-label="Cliquez pour ajouter un tag PEMD"
 				class="absolute inset-0 cursor-crosshair z-10"
 				style="background: rgba(147, 51, 234, 0.05);"
-				onclick={handleOverlayClick}
-				onmousemove={handleOverlayMouseMove}
-				onkeydown={(e) => {
-					if (e.key === 'Enter' || e.key === ' ') {
-						if (lastIntersection) {
-							openPemdCreateModal(lastIntersection.position, lastIntersection.normal);
-						}
-					}
-				}}
+				onclick={(e) => editMode.handleOverlayClick(e)}
+				onmousemove={(e) => editMode.handleOverlayMouseMove(e)}
+				onkeydown={(e) => editMode.handleOverlayKeydown(e)}
 			>
 				<!-- Visual indicator showing where the tag will be placed -->
-				{#if lastIntersection}
+				{#if editMode.lastIntersection}
 					<div
 						class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-4 py-2 shadow-lg border border-purple-200"
 					>
@@ -646,9 +568,9 @@
 							<span class="text-sm font-medium">Cliquez pour placer le tag</span>
 						</div>
 						<div class="text-xs text-gray-500 mt-1">
-							Position: X={lastIntersection.position.x.toFixed(2)}, Y={lastIntersection.position.y.toFixed(
+							Position: X={editMode.lastIntersection!.position.x.toFixed(2)}, Y={editMode.lastIntersection!.position.y.toFixed(
 								2
-							)}, Z={lastIntersection.position.z.toFixed(2)}
+							)}, Z={editMode.lastIntersection!.position.z.toFixed(2)}
 						</div>
 					</div>
 				{:else}
