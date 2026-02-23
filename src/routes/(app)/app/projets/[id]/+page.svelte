@@ -10,6 +10,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import PresenceFilterModal from '$lib/components/PresenceFilterModal.svelte';
 	import PemdCreateModal from '$lib/components/PemdCreateModal.svelte';
+	import PemdFilterModal from '$lib/components/PemdFilterModal.svelte';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -44,34 +45,6 @@
 	let amiantePresenceSelected: number[] = [0, 1, 2];
 	let plombPresenceSelected: number[] = [0, 1, 2];
 	let termitePresenceSelected: number[] = [0, 1, 2];
-
-	// PEMD filter / autocomplete state
-	let pemdGroups = $state([] as { id: number | null; name: string | null }[]); // used for project-specific facets as before
-	let pemdCategories = $state(
-		[] as { id: number | null; name: string | null; groupeId: number | null }[]
-	);
-	let pemdObjects = $state(
-		[] as { id: number | null; name: string | null; categorieId: number | null }[]
-	);
-	// Master list of objects (complete set) coming from server
-	let allPemdObjects = $state(
-		[] as { id: number | null; name: string | null; categorieId: number | null }[]
-	);
-	// Master lists coming from server (categorie_v2 and groupe)
-	let allPemdGroups = $state([] as { id: number | null; name: string | null }[]);
-	let categoriesV2 = $state(
-		[] as { id: number | null; name: string | null; groupeId: number | null }[]
-	);
-	let selectedPemdGroup = $state('');
-	let selectedPemdCategory = $state('');
-	let selectedPemdObject = $state('');
-	// Filtered lists (depend on selection)
-	let pemdCategoriesFiltered = $state(
-		[] as { id: number | null; name: string | null; groupeId: number | null }[]
-	);
-	let pemdObjectsFiltered = $state(
-		[] as { id: number | null; name: string | null; categorieId: number | null }[]
-	);
 
 	let mailSids: string[] = [];
 	let amianteSids: string[] = [];
@@ -217,152 +190,8 @@
 		);
 	}
 
-	// Build cache of PEMD facet lists for client-side filtering
-	function buildPemdFacets() {
-		const groups: { id: number | null; name: string | null }[] = [];
-		const categories: { id: number | null; name: string | null; groupeId: number | null }[] = [];
-		const objects: { id: number | null; name: string | null; categorieId: number | null }[] = [];
-		if (!data.pemdFacets) {
-			pemdGroups = groups;
-			pemdCategories = categories;
-			pemdObjects = objects;
-			// set master lists
-			allPemdGroups = data.groups || [];
-			categoriesV2 = data.categoriesV2 || [];
-			allPemdObjects = data.allPemdObjects || objects;
-			return;
-		}
-		for (const pemdFacets of data.pemdFacets) {
-			if (pemdFacets.groupeName != null) {
-				if (!groups.some((group) => group.name === pemdFacets.groupeName)) {
-					groups.push({ id: pemdFacets.groupeId, name: pemdFacets.groupeName });
-				}
-			}
-			if (pemdFacets.categorieName != null) {
-				if (!categories.some((category) => category.name === pemdFacets.categorieName)) {
-					categories.push({
-						id: pemdFacets.categorieId,
-						name: pemdFacets.categorieName,
-						groupeId: pemdFacets.groupeId
-					});
-				}
-			}
-			if (pemdFacets.objetName != null) {
-				if (!objects.some((object) => object.name === pemdFacets.objetName)) {
-					objects.push({
-						id: pemdFacets.objetId,
-						name: pemdFacets.objetName,
-						categorieId: pemdFacets.categorieId
-					});
-				}
-			}
-		}
-		pemdGroups = groups;
-		pemdCategories = categories;
-		pemdObjects = objects;
-		// set master lists from server response if available, otherwise keep what we derived
-		allPemdGroups = data.groups || groups;
-		categoriesV2 = data.categoriesV2 || categories;
-		allPemdObjects = data.allPemdObjects || objects;
-	}
-
-	// Handlers for group/category changes (run on input) — avoids using rune reactive statements
-	function handleGroupChange() {
-		if (selectedPemdGroup && selectedPemdGroup.trim() !== '') {
-			const group = allPemdGroups.find(
-				(g) => g.name === selectedPemdGroup || String(g.id) === selectedPemdGroup
-			);
-			if (group) {
-				pemdCategoriesFiltered = categoriesV2.filter((category) => category.groupeId === group.id);
-			} else {
-				pemdCategoriesFiltered = [];
-			}
-			// Clear downstream selections
-			selectedPemdCategory = '';
-			selectedPemdObject = '';
-		} else {
-			// Show all categories when no group is selected
-			pemdCategoriesFiltered = categoriesV2;
-			pemdObjectsFiltered = allPemdObjects;
-			selectedPemdCategory = '';
-			selectedPemdObject = '';
-		}
-	}
-
-	function handleCategoryChange() {
-		if (selectedPemdCategory && selectedPemdCategory.trim() !== '') {
-			const cat = categoriesV2.find(
-				(categoriesV2) =>
-					categoriesV2.name === selectedPemdCategory ||
-					String(categoriesV2.id) === selectedPemdCategory
-			);
-			if (cat) {
-				pemdObjectsFiltered = allPemdObjects.filter((object) => object.categorieId === cat.id);
-			} else {
-				pemdObjectsFiltered = [];
-			}
-			selectedPemdObject = '';
-		} else {
-			// Show all objects when no category is selected
-			pemdObjectsFiltered = allPemdObjects;
-			selectedPemdObject = '';
-		}
-	}
-
-	function getAllowedObjetIds() {
-		const allowed = new Set<number>();
-		if (selectedPemdObject.trim() !== '') {
-			for (const object of allPemdObjects) {
-				if (object.name === selectedPemdObject && object.id != null) allowed.add(object.id);
-			}
-			return Array.from(allowed).filter((v): v is number => v != null);
-		}
-
-		if (selectedPemdCategory.trim() !== '') {
-			const category = categoriesV2.find(
-				(categoriesV2) =>
-					categoriesV2.id === Number(selectedPemdCategory) ||
-					categoriesV2.name === selectedPemdCategory
-			);
-			if (category) {
-				for (const object of allPemdObjects) {
-					if (object.categorieId === category.id && object.id != null) allowed.add(object.id);
-				}
-			}
-			return Array.from(allowed).filter((v): v is number => v != null);
-		}
-
-		if (selectedPemdGroup.trim() !== '') {
-			const group = allPemdGroups.find(
-				(pemdGroup) =>
-					pemdGroup.name === selectedPemdGroup || String(pemdGroup.id) === selectedPemdGroup
-			);
-			if (group) {
-				const allowedCatIds = categoriesV2
-					.filter((catId) => catId.groupeId === group.id)
-					.map((catId) => catId.id);
-				for (const object of allPemdObjects) {
-					if (
-						object.categorieId != null &&
-						allowedCatIds.includes(object.categorieId) &&
-						object.id != null
-					)
-						allowed.add(object.id);
-				}
-			}
-			return Array.from(allowed).filter((value): value is number => value != null);
-		}
-
-		// no filter: return all object IDs
-		for (const object of allPemdObjects) {
-			if (object.id != null) allowed.add(object.id);
-		}
-		return Array.from(allowed).filter((value): value is number => value != null);
-	}
-
-	async function addFilteredPemdTags() {
+	async function addFilteredPemdTags(allowedIds: number[]) {
 		if (!mpSdk) return;
-		const allowedIds = getAllowedObjetIds();
 		if (!data.pemdTags || data.pemdTags.length === 0) return;
 		// remove existing PEMD tags before adding the new filtered set
 		await removePemdTags();
@@ -603,84 +432,15 @@
 		}}
 	/>
 
-	{#if showPemdModal}
-		<div class="fixed inset-0 z-50 flex items-center justify-center">
-			<div
-				class="absolute inset-0 bg-black/40"
-				role="button"
-				tabindex="0"
-				aria-label="Fermer le modal"
-				onclick={() => {
-					showPemdModal = false;
-				}}
-				onkeydown={(e) => {
-					if (e.key === 'Enter' || e.key === ' ') {
-						showPemdModal = false;
-					}
-				}}
-			></div>
-			<div class="relative z-10 w-96 rounded-lg bg-white p-4 shadow-lg">
-				<h3 class="mb-3 text-lg font-semibold">Filtrer PEMD</h3>
-				<div class="mb-3 flex flex-col gap-2">
-					<label class="flex flex-col">
-						<span class="text-sm text-gray-700">Groupe</span>
-						<select
-							bind:value={selectedPemdGroup}
-							onchange={handleGroupChange}
-							class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-						>
-							<option value="">Tous groupes</option>
-							{#each allPemdGroups as group (group.id)}
-								<option value={group.name}>{group.name}</option>
-							{/each}
-						</select>
-					</label>
-					<label class="flex flex-col">
-						<span class="text-sm text-gray-700">Catégorie</span>
-						<select
-							bind:value={selectedPemdCategory}
-							onchange={handleCategoryChange}
-							class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-						>
-							<option value="">Toutes catégories</option>
-							{#each pemdCategoriesFiltered as category (category.id)}
-								<option value={category.name}>{category.name}</option>
-							{/each}
-						</select>
-					</label>
-					<label class="flex flex-col">
-						<span class="text-sm text-gray-700">Objet</span>
-						<select
-							bind:value={selectedPemdObject}
-							class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-						>
-							<option value="">Tous objets</option>
-							{#each pemdObjectsFiltered as object (object.id)}
-								<option value={object.name}>{object.name}</option>
-							{/each}
-						</select>
-					</label>
-				</div>
-				<div class="flex justify-end gap-3">
-					<button
-						class="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-						onclick={() => {
-							showPemdModal = false;
-						}}>Fermer</button
-					>
-					<button
-						class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
-						onclick={removePemdTags}
-						disabled={pemdSids.length === 0}>Supprimer les tags PEMD</button
-					>
-					<button
-						class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-						onclick={addFilteredPemdTags}>Ajouter dans le modèle</button
-					>
-				</div>
-			</div>
-		</div>
-	{/if}
+	<PemdFilterModal
+		bind:show={showPemdModal}
+		groups={data.groups || []}
+		categoriesV2={data.categoriesV2 || []}
+		allPemdObjects={data.allPemdObjects || []}
+		hasTags={pemdSids.length > 0}
+		onApply={addFilteredPemdTags}
+		onRemove={removePemdTags}
+	/>
 
 	<PresenceFilterModal
 		title="Filtrer Plomb"
@@ -798,8 +558,6 @@
 				title="Afficher les tags PEMD"
 				aria-pressed={showPemd}
 				onclick={() => {
-					// Open modal to choose filters (group / category / object) instead of adding all tags
-					buildPemdFacets();
 					showPemdModal = true;
 				}}
 				class={`w-full h-14 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showPemd ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
