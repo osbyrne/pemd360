@@ -73,24 +73,14 @@
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<div class="space-y-1.5 md:col-span-2">
 					<label for="nom" class="text-sm font-medium text-gray-700">Nom de l'établissement</label>
-					<input
-						type="text"
-						id="nom"
-						name="nom"
-						value={etablissement.nom}
-						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-					/>
+					<br />
+					<input type="text" id="nom" name="nom" value={etablissement.nom} required class="input" />
 				</div>
 
 				<div class="space-y-1.5 md:col-span-2">
 					<label for="societeId" class="text-sm font-medium text-gray-700">Société</label>
-					<select
-						id="societeId"
-						name="societeId"
-						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-					>
+					<br />
+					<select id="societeId" name="societeId" required class="select">
 						{#each societes as societe}
 							<option value={societe.id} selected={societe.id === etablissement.societeId}
 								>{societe.nom}</option
@@ -106,42 +96,33 @@
 						id="raisonSocial"
 						name="raisonSocial"
 						value={etablissement.raisonSocial}
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 					/>
 				</div>
 
 				<div class="space-y-1.5">
 					<label for="siret" class="text-sm font-medium text-gray-700">SIRET</label>
+					<br />
 					<input
 						type="text"
 						id="siret"
 						name="siret"
 						value={etablissement.siret}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 					/>
 				</div>
 
 				<div class="space-y-1.5">
 					<label for="email" class="text-sm font-medium text-gray-700">Email</label>
-					<input
-						type="email"
-						id="email"
-						name="email"
-						value={etablissement.email}
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-					/>
+					<br />
+					<input type="email" id="email" name="email" value={etablissement.email} class="input" />
 				</div>
 
 				<div class="space-y-1.5">
 					<label for="tel" class="text-sm font-medium text-gray-700">Téléphone</label>
-					<input
-						type="tel"
-						id="tel"
-						name="tel"
-						value={etablissement.tel}
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-					/>
+					<br />
+					<input type="tel" id="tel" name="tel" value={etablissement.tel} class="input" />
 				</div>
 			</div>
 		</div>
@@ -158,60 +139,31 @@
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<div class="space-y-1.5 md:col-span-2">
 					<label for="rue" class="text-sm font-medium text-gray-700">Adresse</label>
-					<input
-						type="text"
-						id="rue"
-						name="rue"
-						value={etablissement.rue}
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-					/>
+					<br />
+					<input type="text" id="rue" name="rue" value={etablissement.rue} class="input" />
 				</div>
 				<div class="space-y-1.5">
 					<label for="cp" class="text-sm font-medium text-gray-700">Code Postal</label>
-					<input
-						type="text"
-						id="cp"
-						name="cp"
-						value={etablissement.cp}
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-					/>
+					<br />
+					<input type="text" id="cp" name="cp" value={etablissement.cp} class="input" />
 				</div>
 				<div class="space-y-1.5">
 					<label for="ville" class="text-sm font-medium text-gray-700">Ville</label>
-					<input
-						type="text"
-						id="ville"
-						name="ville"
-						value={etablissement.ville}
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-					/>
+					<br />
+					<input type="text" id="ville" name="ville" value={etablissement.ville} class="input" />
 				</div>
 				<div class="space-y-1.5 md:col-span-2">
 					<label for="fax" class="text-sm font-medium text-gray-700">Fax</label>
-					<input
-						type="text"
-						id="fax"
-						name="fax"
-						value={etablissement.fax}
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-					/>
+					<br />
+					<input type="text" id="fax" name="fax" value={etablissement.fax} class="input" />
 				</div>
 			</div>
 		</div>
 
 		<!-- Actions -->
 		<div class="flex justify-end gap-3 transition-all pt-4">
-			<a
-				href="/app/admin/etablissements/{etablissement.id}"
-				class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
-			>
-				Annuler
-			</a>
-			<button
-				type="submit"
-				disabled={saving}
-				class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50"
-			>
+			<a href="/app/admin/etablissements/{etablissement.id}" class="btn"> Annuler </a>
+			<button type="submit" disabled={saving} class="btn btn-secondary">
 				{#if saving}
 					<LoaderCircle class="mr-2 h-4 w-4 animate-spin" />
 					Enregistrement...

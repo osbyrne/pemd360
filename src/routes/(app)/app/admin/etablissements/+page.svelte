@@ -299,12 +299,7 @@
 						</div>
 					</div>
 					<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
-						<button
-							type="button"
-							class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
-							onclick={closeDeleteModal}
-							disabled={deleteLoading}
-						>
+						<button type="button" class="btn" onclick={closeDeleteModal} disabled={deleteLoading}>
 							Annuler
 						</button>
 						<form
@@ -328,11 +323,7 @@
 							}}
 						>
 							<input type="hidden" name="id" value={selectedEtab.id} />
-							<button
-								type="submit"
-								class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700 disabled:opacity-50"
-								disabled={deleteLoading}
-							>
+							<button type="submit" class="btn btn-warning" disabled={deleteLoading}>
 								{#if deleteLoading}
 									<span class="flex items-center gap-2">
 										<LoaderCircle class="h-4 w-4 animate-spin" />

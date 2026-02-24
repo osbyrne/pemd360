@@ -33,10 +33,7 @@
 				</span>
 			</div>
 		</div>
-		<a
-			href="/app/admin/etablissements/{etablissement.id}/modifier"
-			class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-colors"
-		>
+		<a href="/app/admin/etablissements/{etablissement.id}/modifier" class="btn">
 			<Pencil class="mr-2 h-4 w-4" />
 			Modifier
 		</a>

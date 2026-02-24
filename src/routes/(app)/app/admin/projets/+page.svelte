@@ -378,19 +378,8 @@
 							</div>
 						</div>
 						<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
-							<button
-								type="button"
-								class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
-								onclick={closeDeleteModal}
-							>
-								Annuler
-							</button>
-							<button
-								type="submit"
-								class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700"
-							>
-								Supprimer définitivement
-							</button>
+							<button type="button" class="btn" onclick={closeDeleteModal}> Annuler </button>
+							<button type="submit" class="btn btn-warning"> Supprimer définitivement </button>
 						</div>
 					</form>
 				</div>
