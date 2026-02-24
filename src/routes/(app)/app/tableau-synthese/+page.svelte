@@ -104,11 +104,7 @@
 	<div class="mb-6 flex flex-col sm:flex-row gap-4">
 		<!-- Project Selector -->
 		<div class="w-full sm:w-64">
-			<select
-				class="block w-full rounded-xl border border-gray-300 bg-white py-3 px-4 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-				value={data.selectedProjectId || ''}
-				onchange={handleProjectChange}
-			>
+			<select class="select" value={data.selectedProjectId || ''} onchange={handleProjectChange}>
 				<option value="">Tous les projets</option>
 				{#each data.projects as project}
 					<option value={project.id}>{project.libelle}</option>
@@ -117,7 +113,7 @@
 		</div>
 
 		<!-- Search Bar -->
-		<label class="relative flex-1">
+		<label class="input relative">
 			<Search />
 			<input type="search" bind:value={query} placeholder="Rechercher..." />
 		</label>

@@ -316,16 +316,16 @@
 
 								<!-- Actions -->
 								<div class="flex items-center gap-2">
-									<a href="/app/details/{projet.id}" class="btn" title="Voir les détails">
+									<a href="/app/details/{projet.id}" class="btn btn-ghost" title="Voir les détails">
 										<Info class="h-5 w-5" />
 									</a>
-									<a href="/app/projets/{projet.id}" class="btn">
+									<a href="/app/projets/{projet.id}" class="btn btn-ghost">
 										<Box class="h-4 w-4" />
 										<span class="hidden sm:inline">Modèle 3D</span>
 										<ChevronRight class="h-4 w-4" />
 									</a>
 									<div class="relative">
-										<button onclick={() => toggleCerfaMenu(projet.id)} class="btn">
+										<button onclick={() => toggleCerfaMenu(projet.id)} class="btn btn-ghost">
 											<FileText class="h-4 w-4" />
 											<span class="hidden sm:inline">Cerfa</span>
 											<ChevronDown class="h-4 w-4" />
