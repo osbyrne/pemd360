@@ -205,19 +205,12 @@
 	</div>
 
 	<!-- Search Bar -->
-	<div class="mb-6">
-		<div class="relative">
-			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-				<Search class="h-5 w-5 text-slate-400" />
-			</div>
-			<input
-				type="text"
-				bind:value={query}
-				placeholder="Rechercher par nom, ville ou raison sociale..."
-				class="block w-full rounded-xl border border-slate-300 bg-white py-3 pl-11 pr-4 text-sm placeholder-slate-400 shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-			/>
-		</div>
-	</div>
+	<label class="mb-6 input relative">
+		<Search />
+		<input type="search" bind:value={query} placeholder="nom, ville ou raison sociale..." />
+	</label>
+	<br />
+	<br />
 
 	<!-- List -->
 	<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -273,17 +266,13 @@
 
 						<!-- Actions -->
 						<div class="flex shrink-0 items-center gap-1 border-l border-slate-200 pl-2">
-							<button
-								onclick={() => openEditModal(company)}
-								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600"
-								title="Modifier"
-							>
+							<button onclick={() => openEditModal(company)} class="btn btn-ghost" title="Modifier">
 								<Pencil size={18} />
 							</button>
 
 							<button
 								onclick={() => openDeleteModal(company)}
-								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+								class="btn btn-ghost btn-warning"
 								title="Supprimer"
 							>
 								<Trash2 size={18} />
@@ -374,7 +363,7 @@
 											id="create-nom"
 											name="nom"
 											bind:value={createForm.nom}
-											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+											class="input"
 											placeholder="Ex: Dépollution Conseil"
 											required
 										/>
@@ -388,7 +377,7 @@
 											id="create-tel"
 											name="tel"
 											bind:value={createForm.tel}
-											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+											class="input"
 										/>
 									</div>
 								</div>
@@ -402,7 +391,7 @@
 										id="create-raison"
 										name="raisonSocial"
 										bind:value={createForm.raisonSocial}
-										class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										class="input"
 									/>
 								</div>
 
@@ -413,7 +402,7 @@
 										id="create-rue"
 										name="rue"
 										bind:value={createForm.rue}
-										class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										class="input"
 										placeholder="Numéro et rue"
 									/>
 								</div>
@@ -428,7 +417,7 @@
 											id="create-cp"
 											name="cp"
 											bind:value={createForm.cp}
-											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+											class="input"
 										/>
 									</div>
 									<div class="space-y-1.5">
@@ -440,7 +429,7 @@
 											id="create-ville"
 											name="ville"
 											bind:value={createForm.ville}
-											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+											class="input"
 										/>
 									</div>
 								</div>
@@ -455,7 +444,7 @@
 											id="create-email"
 											name="email"
 											bind:value={createForm.email}
-											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+											class="input"
 										/>
 									</div>
 									<div class="space-y-1.5">
@@ -465,7 +454,7 @@
 											id="create-fax"
 											name="fax"
 											bind:value={createForm.fax}
-											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+											class="input"
 										/>
 									</div>
 								</div>
@@ -480,7 +469,7 @@
 											id="create-siren"
 											name="siren"
 											bind:value={createForm.siren}
-											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+											class="input"
 										/>
 									</div>
 									<div class="space-y-1.5">
@@ -490,25 +479,15 @@
 											id="create-type"
 											name="type"
 											bind:value={createForm.type}
-											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+											class="input"
 										/>
 									</div>
 								</div>
 							</div>
 						</div>
 						<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
-							<button
-								type="button"
-								class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
-								onclick={closeCreateModal}
-							>
-								Annuler
-							</button>
-							<button
-								type="submit"
-								disabled={loading}
-								class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 disabled:opacity-50"
-							>
+							<button type="button" class="btn" onclick={closeCreateModal}> Annuler </button>
+							<button type="submit" disabled={loading} class="btn">
 								{loading ? 'Création...' : 'Créer la société'}
 							</button>
 						</div>
@@ -549,7 +528,7 @@
 							};
 						}}
 					>
-						<input type="hidden" name="id" value={selectedCompany.id} />
+						<input class="input" type="hidden" name="id" value={selectedCompany.id} />
 						<div class="px-6 py-5">
 							<div class="mb-6 flex items-center gap-3">
 								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
@@ -569,7 +548,7 @@
 											id="edit-nom"
 											name="nom"
 											bind:value={editForm.nom}
-											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+											class="input"
 											required
 										/>
 									</div>
@@ -582,7 +561,7 @@
 											id="edit-tel"
 											name="tel"
 											bind:value={editForm.tel}
-											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+											class="input"
 										/>
 									</div>
 								</div>
@@ -596,7 +575,7 @@
 										id="edit-raison"
 										name="raisonSocial"
 										bind:value={editForm.raisonSocial}
-										class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										class="input"
 									/>
 								</div>
 
@@ -607,7 +586,7 @@
 										id="edit-rue"
 										name="rue"
 										bind:value={editForm.rue}
-										class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										class="input"
 									/>
 								</div>
 
@@ -621,7 +600,7 @@
 											id="edit-cp"
 											name="cp"
 											bind:value={editForm.cp}
-											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+											class="input"
 										/>
 									</div>
 									<div class="space-y-1.5">
@@ -631,7 +610,7 @@
 											id="edit-ville"
 											name="ville"
 											bind:value={editForm.ville}
-											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+											class="input"
 										/>
 									</div>
 								</div>
@@ -644,7 +623,7 @@
 											id="edit-email"
 											name="email"
 											bind:value={editForm.email}
-											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+											class="input"
 										/>
 									</div>
 									<div class="space-y-1.5">
@@ -654,7 +633,7 @@
 											id="edit-fax"
 											name="fax"
 											bind:value={editForm.fax}
-											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+											class="input"
 										/>
 									</div>
 								</div>
@@ -667,7 +646,7 @@
 											id="edit-siren"
 											name="siren"
 											bind:value={editForm.siren}
-											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+											class="input"
 										/>
 									</div>
 									<div class="space-y-1.5">
@@ -677,25 +656,15 @@
 											id="edit-type"
 											name="type"
 											bind:value={editForm.type}
-											class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+											class="input"
 										/>
 									</div>
 								</div>
 							</div>
 						</div>
 						<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
-							<button
-								type="button"
-								class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
-								onclick={closeEditModal}
-							>
-								Annuler
-							</button>
-							<button
-								type="submit"
-								disabled={loading}
-								class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 disabled:opacity-50"
-							>
+							<button type="button" class="btn" onclick={closeEditModal}> Annuler </button>
+							<button type="submit" disabled={loading} class="btn">
 								{loading ? 'Enregistrement...' : 'Enregistrer'}
 							</button>
 						</div>
@@ -736,7 +705,7 @@
 							};
 						}}
 					>
-						<input type="hidden" name="id" value={selectedCompany.id} />
+						<input class="input" type="hidden" name="id" value={selectedCompany.id} />
 						<div class="px-6 py-5">
 							<div class="mb-6 flex items-center gap-3">
 								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
@@ -755,18 +724,8 @@
 							</div>
 						</div>
 						<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
-							<button
-								type="button"
-								class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
-								onclick={closeDeleteModal}
-							>
-								Annuler
-							</button>
-							<button
-								type="submit"
-								disabled={loading}
-								class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700 disabled:opacity-50"
-							>
+							<button type="button" class="btn" onclick={closeDeleteModal}> Annuler </button>
+							<button type="submit" disabled={loading} class="btn">
 								{loading ? 'Suppression...' : 'Supprimer définitivement'}
 							</button>
 						</div>

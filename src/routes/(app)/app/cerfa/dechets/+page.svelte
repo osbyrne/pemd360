@@ -108,11 +108,8 @@
 				</p>
 			{/if}
 		</div>
-		<a
-			href="dechets/export?projetId={projetId}"
-			class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
-		>
-			<Download class="w-4 h-4" />
+		<a href="dechets/export?projetId={projetId}" class="btn">
+			<Download />
 			Exporter en Excel
 		</a>
 	</div>
@@ -142,17 +139,10 @@
 	<!-- Filters Section -->
 	<div class="flex flex-col sm:flex-row gap-4 mb-4 items-end">
 		<!-- Search -->
-		<div class="flex-1 w-full relative">
-			<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-				<Search class="w-4 h-4 text-gray-400" />
-			</div>
-			<input
-				type="text"
-				bind:value={searchTerm}
-				placeholder="Rechercher..."
-				class="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none"
-			/>
-		</div>
+		<label class="flex-1 w-full relative">
+			<Search />
+			<input type="search" bind:value={searchTerm} placeholder="Rechercher..." />
+		</label>
 
 		<!-- Filter by valorisation -->
 		<div class="w-full sm:w-64">

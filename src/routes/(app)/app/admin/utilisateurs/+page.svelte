@@ -464,7 +464,7 @@
 	</div>
 
 	<!-- Search Bar -->
-	<label class="input">
+	<label class="mb-6 input relative">
 		<Search />
 		<input type="search" bind:value={query} placeholder="Rechercher par nom ou email..." />
 	</label>
@@ -734,17 +734,14 @@
 									>Projets</label
 								>
 								<!-- Search bar for projects -->
-								<div class="relative mb-2">
-									<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-										<Search />
-									</div>
+								<label class="relative mb-2">
+									<Search />
 									<input
-										type="text"
+										type="search"
 										bind:value={createProjectSearch}
 										placeholder="Rechercher un projet..."
-										class="search input"
 									/>
-								</div>
+								</label>
 								<div
 									class="max-h-40 overflow-y-auto rounded-lg border border-slate-300 bg-white p-2"
 								>

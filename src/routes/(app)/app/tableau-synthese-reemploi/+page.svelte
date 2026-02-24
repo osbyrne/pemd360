@@ -97,11 +97,8 @@
 				Vue de synthèse des éléments PEMD avec potentiel de réemploi par projet.
 			</p>
 		</div>
-		<a
-			href="tableau-synthese-reemploi/export{$pageStore.url.search}"
-			class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
-		>
-			<Download class="w-4 h-4" />
+		<a href="tableau-synthese-reemploi/export{$pageStore.url.search}" class="btn">
+			<Download />
 			Exporter en Excel
 		</a>
 	</div>
@@ -123,17 +120,10 @@
 		</div>
 
 		<!-- Search Bar -->
-		<div class="relative flex-1">
-			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-				<Search class="h-5 w-5 text-gray-400" />
-			</div>
-			<input
-				type="text"
-				bind:value={query}
-				placeholder="Rechercher..."
-				class="block w-full rounded-xl border border-gray-300 bg-white py-3 pl-11 pr-4 text-sm placeholder-gray-400 shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-			/>
-		</div>
+		<label class="relative flex-1">
+			<Search />
+			<input type="search" bind:value={query} placeholder="Rechercher..." />
+		</label>
 	</div>
 
 	<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">

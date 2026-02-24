@@ -24,10 +24,7 @@
 <div class="font-[Poppins] max-w-4xl mx-auto px-4 py-8">
 	<!-- Fil d'ariane / Retour -->
 	<div class="mb-8">
-		<a
-			href="/app/admin/etablissements"
-			class="inline-flex items-center gap-2 text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
-		>
+		<a href="/app/admin/etablissements" class="btn btn-ghost btn-primary">
 			<ArrowLeft class="h-4 w-4" />
 			Retour à la liste
 		</a>
@@ -64,19 +61,14 @@
 						name="nom"
 						value={data_form.nom}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 						placeholder="Ex: Agence Paris"
 					/>
 				</div>
 
 				<div class="space-y-1.5 md:col-span-2">
 					<label for="societeId" class="text-sm font-medium text-gray-700">Société</label>
-					<select
-						id="societeId"
-						name="societeId"
-						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-					>
+					<select id="societeId" name="societeId" required class="select">
 						<option value="" disabled selected={!data_form.societeId}
 							>Sélectionnez une société</option
 						>
@@ -98,7 +90,7 @@
 						name="raisonSocial"
 						value={data_form.raisonSocial}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 					/>
 				</div>
 
@@ -110,7 +102,7 @@
 						name="siret"
 						value={data_form.siret}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 						placeholder="14 chiffres"
 					/>
 				</div>
@@ -123,21 +115,14 @@
 						name="email"
 						value={data_form.email}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 						placeholder="contact@etab.com"
 					/>
 				</div>
 
 				<div class="space-y-1.5">
 					<label for="tel" class="text-sm font-medium text-gray-700">Téléphone *</label>
-					<input
-						type="tel"
-						id="tel"
-						name="tel"
-						value={data_form.tel}
-						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-					/>
+					<input type="tel" id="tel" name="tel" value={data_form.tel} required class="input" />
 				</div>
 			</div>
 		</div>
@@ -160,7 +145,7 @@
 						name="rue"
 						value={data_form.rue}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 						placeholder="123 rue de la Paix"
 					/>
 				</div>
@@ -172,7 +157,7 @@
 						name="cp"
 						value={data_form.cp}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 						placeholder="75000"
 					/>
 				</div>
@@ -184,19 +169,13 @@
 						name="ville"
 						value={data_form.ville}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 						placeholder="Paris"
 					/>
 				</div>
 				<div class="space-y-1.5 md:col-span-2">
 					<label for="fax" class="text-sm font-medium text-gray-700">Fax</label>
-					<input
-						type="text"
-						id="fax"
-						name="fax"
-						value={data_form.fax}
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-					/>
+					<input type="text" id="fax" name="fax" value={data_form.fax} class="input" />
 				</div>
 			</div>
 		</div>

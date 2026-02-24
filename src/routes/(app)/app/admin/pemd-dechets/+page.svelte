@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { page as pageStore } from '$app/stores';
-	import { Trash2, Download, Scale } from 'lucide-svelte';
+	import { Trash2, Download, Scale, Search } from 'lucide-svelte';
 	import PemdTabs from '$lib/components/PemdTabs.svelte';
 	import DeleteConfirmModal from '$lib/components/DeleteConfirmModal.svelte';
-	import SearchInput from '$lib/components/SearchInput.svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import ProjectFilter from '$lib/components/ProjectFilter.svelte';
 
@@ -61,11 +60,8 @@
 			<h1 class="text-2xl font-bold text-gray-900">Inventaire PEMD - Déchets</h1>
 			<p class="text-sm text-gray-500 mt-1">Classification et traitement des déchets par projet.</p>
 		</div>
-		<a
-			href="pemd-dechets/export{$pageStore.url.search}"
-			class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
-		>
-			<Download class="w-4 h-4" />
+		<a href="pemd-dechets/export{$pageStore.url.search}" class="btn">
+			<Download />
 			Exporter en Excel
 		</a>
 	</div>
@@ -73,9 +69,14 @@
 	<!-- Filters & Stats -->
 	<div class="mb-6 flex flex-col md:flex-row gap-4 items-center">
 		<ProjectFilter projects={data.projects} selectedProjectId={data.selectedProjectId} />
-		<SearchInput
-			bind:value={query}
-			placeholder="Rechercher par nature, code déchet, éco-organisme..."
+		<label class="mb-6 input relative">
+			<Search />
+			<input
+				type="search"
+				bind:value={query}
+				placeholder="Rechercher par nature, code déchet, éco-organisme..."
+			/>
+		</label>
 		/>
 
 		<!-- Total Mass Card -->

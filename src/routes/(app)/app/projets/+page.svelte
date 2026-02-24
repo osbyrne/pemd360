@@ -102,15 +102,14 @@
 			<div class="bg-white rounded-2xl border border-slate-200 p-4">
 				<div class="flex flex-col sm:flex-row gap-4">
 					<!-- Search -->
-					<div class="relative flex-1">
-						<Search class="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+					<label class="relative flex-1">
+						<Search />
 						<input
-							type="text"
+							type="search"
 							bind:value={searchQuery}
 							placeholder="Rechercher un projet par nom, référence ou ville..."
-							class="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
 						/>
-					</div>
+					</label>
 
 					<!-- View Toggle & Sort -->
 					<div class="flex items-center gap-2">

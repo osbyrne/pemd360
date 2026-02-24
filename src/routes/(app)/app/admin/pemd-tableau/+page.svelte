@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { page as pageStore } from '$app/stores';
-	import { Trash2, Download } from 'lucide-svelte';
+	import { Trash2, Download, Search } from 'lucide-svelte';
 	import PemdTabs from '$lib/components/PemdTabs.svelte';
 	import DeleteConfirmModal from '$lib/components/DeleteConfirmModal.svelte';
-	import SearchInput from '$lib/components/SearchInput.svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import ProjectFilter from '$lib/components/ProjectFilter.svelte';
 
@@ -64,11 +63,8 @@
 				Vue d'ensemble de l'inventaire Produits, Équipements, Matériaux et Déchets par projet.
 			</p>
 		</div>
-		<a
-			href="pemd-tableau/export{$pageStore.url.search}"
-			class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
-		>
-			<Download class="w-4 h-4" />
+		<a href="pemd-tableau/export{$pageStore.url.search}" class="btn">
+			<Download />
 			Exporter en Excel
 		</a>
 	</div>
@@ -76,9 +72,14 @@
 	<!-- Filters -->
 	<div class="mb-6 flex flex-col sm:flex-row gap-4">
 		<ProjectFilter projects={data.projects} selectedProjectId={data.selectedProjectId} />
-		<SearchInput
-			bind:value={query}
-			placeholder="Rechercher par macro-catégorie, catégorie, objet ou projet..."
+		<label class="mb-6 input relative">
+			<Search />
+			<input
+				type="search"
+				bind:value={query}
+				placeholder="Rechercher par macro-catégorie, catégorie, objet ou projet..."
+			/>
+		</label>
 		/>
 	</div>
 

@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { fade, scale } from 'svelte/transition';
 	import { page as pageStore } from '$app/stores';
-	import { Trash2, Download, X } from 'lucide-svelte';
+	import { Trash2, Download, X, Search } from 'lucide-svelte';
 	import PemdTabs from '$lib/components/PemdTabs.svelte';
 	import DeleteConfirmModal from '$lib/components/DeleteConfirmModal.svelte';
-	import SearchInput from '$lib/components/SearchInput.svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import ProjectFilter from '$lib/components/ProjectFilter.svelte';
 
@@ -82,11 +81,8 @@
 				Gestion des éléments destinés au réemploi par projet.
 			</p>
 		</div>
-		<a
-			href="pemd-reemploi/export{$pageStore.url.search}"
-			class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
-		>
-			<Download class="w-4 h-4" />
+		<a href="pemd-reemploi/export{$pageStore.url.search}" class="btn">
+			<Download />
 			Exporter en Excel
 		</a>
 	</div>
@@ -94,9 +90,15 @@
 	<!-- Filters -->
 	<div class="mb-6 flex flex-col sm:flex-row gap-4">
 		<ProjectFilter projects={data.projects} selectedProjectId={data.selectedProjectId} />
-		<SearchInput
-			bind:value={query}
-			placeholder="Rechercher par macro-catégorie, catégorie, objet ou projet..."
+		<label class="mb-6 input relative">
+			<Search />
+			<input
+				type="search"
+				bind:value={query}
+				placeholder="Rechercher par macro-catégorie, catégorie, objet ou projet..."
+			/>
+		</label>
+
 		/>
 	</div>
 

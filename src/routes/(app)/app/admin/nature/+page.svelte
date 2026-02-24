@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { fade, scale } from 'svelte/transition';
-	import { Pencil, Trash2, Plus, X, Save } from 'lucide-svelte';
-	import SearchInput from '$lib/components/SearchInput.svelte';
+	import { Pencil, Trash2, Plus, X, Search } from 'lucide-svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import DeleteConfirmModal from '$lib/components/DeleteConfirmModal.svelte';
 
@@ -115,9 +114,12 @@
 	</div>
 
 	<!-- Search Bar -->
-	<div class="mb-6">
-		<SearchInput bind:value={query} placeholder="Rechercher par nature..." />
-	</div>
+	<label class="mb-6 input relative">
+		<Search />
+		<input type="search" bind:value={query} placeholder="Rechercher par nature..." />
+	</label>
+	<br />
+	<br />
 
 	<!-- Table -->
 	<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
@@ -153,14 +155,14 @@
 								<div class="flex items-center justify-center gap-2">
 									<button
 										onclick={() => openEditModal(nature)}
-										class="p-1.5 text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+										class="btn btn-ghost"
 										title="Modifier"
 									>
 										<Pencil class="w-4 h-4" />
 									</button>
 									<button
 										onclick={() => openDeleteModal(nature)}
-										class="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+										class="btn btn-ghost btn-warning"
 										title="Supprimer"
 									>
 										<Trash2 class="w-4 h-4" />
@@ -247,7 +249,7 @@
 								name="nature"
 								required
 								bind:value={form.nature}
-								class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 shadow-sm"
+								class="input"
 								placeholder="Ex: Béton"
 							/>
 						</div>
@@ -261,7 +263,7 @@
 								type="number"
 								name="codeDechet"
 								bind:value={form.codeDechet}
-								class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 shadow-sm"
+								class="input"
 							/>
 						</div>
 
@@ -275,7 +277,7 @@
 								step="0.01"
 								name="densite"
 								bind:value={form.densite}
-								class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 shadow-sm"
+								class="input"
 							/>
 						</div>
 
@@ -288,7 +290,7 @@
 								type="text"
 								name="stockage"
 								bind:value={form.stockage}
-								class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 shadow-sm"
+								class="input"
 							/>
 						</div>
 
@@ -301,7 +303,7 @@
 								type="text"
 								name="ecoOrganismeRep"
 								bind:value={form.ecoOrganismeRep}
-								class="w-full rounded-lg border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 shadow-sm"
+								class="input"
 							/>
 						</div>
 					</div>
@@ -318,7 +320,7 @@
 										onchange={(e) => {
 											(form as any)[item.key] = e.currentTarget.checked ? 1 : 0;
 										}}
-										class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500"
+										class="checkbox"
 									/>
 									<input type="hidden" name={item.key} value={form[item.key]} />
 									<label

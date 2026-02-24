@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { fade, scale } from 'svelte/transition';
-	import { Pencil, Trash2, Plus, X, Save } from 'lucide-svelte';
-	import SearchInput from '$lib/components/SearchInput.svelte';
+	import { Pencil, Trash2, Search, Plus, X, Save } from 'lucide-svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import DeleteConfirmModal from '$lib/components/DeleteConfirmModal.svelte';
 
@@ -94,9 +93,12 @@
 	</div>
 
 	<!-- Search Bar -->
-	<div class="mb-6">
-		<SearchInput bind:value={query} placeholder="Rechercher par macro-catégorie..." />
-	</div>
+	<label class="mb-6 input relative">
+		<Search />
+		<input type="search" bind:value={query} placeholder="Rechercher par macro-catégorie..." />
+	</label>
+	<br />
+	<br />
 
 	<!-- Table -->
 	<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
@@ -120,14 +122,14 @@
 								<div class="flex items-center justify-center gap-2">
 									<button
 										onclick={() => openEditModal(groupe)}
-										class="p-1.5 text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+										class="btn btn-ghost"
 										title="Modifier"
 									>
 										<Pencil class="w-4 h-4" />
 									</button>
 									<button
 										onclick={() => openDeleteModal(groupe)}
-										class="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+										class="btn btn-ghost btn-warning"
 										title="Supprimer"
 									>
 										<Trash2 class="w-4 h-4" />
@@ -212,7 +214,7 @@
 							name="groupe"
 							bind:value={form.groupe}
 							required
-							class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+							class="input"
 							placeholder="Ex: Déchets inertes"
 						/>
 					</div>
@@ -221,18 +223,8 @@
 
 			<!-- Modal Footer -->
 			<div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
-				<button
-					type="button"
-					onclick={closeModal}
-					class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-800 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors"
-				>
-					Annuler
-				</button>
-				<button
-					type="submit"
-					form="groupeForm"
-					class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-sm"
-				>
+				<button type="button" onclick={closeModal} class="btn"> Annuler </button>
+				<button type="submit" form="groupeForm" class="btn">
 					<Save class="w-4 h-4" />
 					{isEditMode ? 'Enregistrer' : 'Créer'}
 				</button>

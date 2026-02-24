@@ -154,19 +154,16 @@
 	</div>
 
 	<!-- Search Bar -->
-	<div class="mb-6">
-		<div class="relative">
-			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-				<Search class="h-5 w-5 text-slate-400" />
-			</div>
-			<input
-				type="text"
-				bind:value={query}
-				placeholder="Rechercher par ID Matterport, référence, libellé, ville, établissement..."
-				class="block w-full rounded-xl border border-slate-300 bg-white py-3 pl-11 pr-4 text-sm placeholder-slate-400 shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-			/>
-		</div>
-	</div>
+	<label class="mb-6 input relative">
+		<Search />
+		<input
+			type="search"
+			bind:value={query}
+			placeholder="Rechercher par ID Matterport, référence, libellé, ville, établissement..."
+		/>
+	</label>
+	<br />
+	<br />
 
 	<!-- Table -->
 	<div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">

@@ -29,10 +29,7 @@
 <div class="font-[Poppins] max-w-4xl mx-auto px-4 py-8">
 	<!-- Fil d'ariane / Retour -->
 	<div class="mb-8">
-		<a
-			href="/app/admin/projets"
-			class="inline-flex items-center gap-2 text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
-		>
+		<a href="/app/admin/projets" class="btn btn-ghost btn-primary">
 			<ArrowLeft class="h-4 w-4" />
 			Retour à la liste
 		</a>
@@ -69,7 +66,7 @@
 						name="id"
 						value={data_form.id}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm font-mono"
+						class="input"
 						placeholder="ex: SxQL3iGy1rE (ID de la visite Matterport)"
 					/>
 					<p class="text-xs text-gray-500 mt-1">
@@ -85,7 +82,7 @@
 						name="reference"
 						value={data_form.reference}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 						placeholder="REF-2024-001"
 					/>
 				</div>
@@ -98,7 +95,7 @@
 						name="libelle"
 						value={data_form.libelle}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 						placeholder="Nom du projet"
 					/>
 				</div>
@@ -107,12 +104,7 @@
 					<label for="etablissementId" class="text-sm font-medium text-gray-700"
 						>Établissement *</label
 					>
-					<select
-						id="etablissementId"
-						name="etablissementId"
-						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-					>
+					<select id="etablissementId" name="etablissementId" required class="select">
 						<option value="" disabled selected={!data_form.etablissementId}
 							>Sélectionnez un établissement</option
 						>
@@ -133,7 +125,7 @@
 						id="typeOperation"
 						name="typeOperation"
 						value={data_form.typeOperation}
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 						placeholder="Démolition, Rénovation..."
 					/>
 				</div>
@@ -147,7 +139,7 @@
 						id="maitreDOuvrage"
 						name="maitreDOuvrage"
 						value={data_form.maitreDOuvrage}
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 					/>
 				</div>
 
@@ -161,7 +153,7 @@
 						name="dateDemarrage"
 						value={data_form.dateDemarrage}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 					/>
 				</div>
 
@@ -172,7 +164,7 @@
 						id="dateDeFin"
 						name="dateDeFin"
 						value={data_form.dateDeFin}
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 					/>
 				</div>
 			</div>
@@ -196,7 +188,7 @@
 						name="rue"
 						value={data_form.rue}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 						placeholder="123 rue de la Paix"
 					/>
 				</div>
@@ -209,7 +201,7 @@
 						name="cp"
 						value={data_form.cp}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 						placeholder="75000"
 					/>
 				</div>
@@ -222,7 +214,7 @@
 						name="ville"
 						value={data_form.ville}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 						placeholder="Paris"
 					/>
 				</div>
@@ -234,7 +226,7 @@
 						id="codeInsee"
 						name="codeInsee"
 						value={data_form.codeInsee}
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 						placeholder="75056"
 						maxlength="5"
 					/>
@@ -249,7 +241,7 @@
 						name="section"
 						value={data_form.section}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 						placeholder="AB"
 					/>
 				</div>
@@ -262,7 +254,7 @@
 						name="parcelle"
 						value={data_form.parcelle}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 						placeholder="0123"
 					/>
 				</div>
@@ -271,16 +263,8 @@
 
 		<!-- Actions -->
 		<div class="flex justify-end gap-3 transition-all pt-4">
-			<a
-				href="/app/admin/projets"
-				class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
-			>
-				Annuler
-			</a>
-			<button
-				type="submit"
-				class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-			>
+			<a href="/app/admin/projets" class="btn"> Annuler </a>
+			<button type="submit" class="btn">
 				<Plus class="mr-2 h-4 w-4" />
 				Créer le projet
 			</button>

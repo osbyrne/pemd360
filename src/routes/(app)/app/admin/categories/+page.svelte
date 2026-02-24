@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { fade, scale } from 'svelte/transition';
-	import { Pencil, Trash2, Plus, X, Save } from 'lucide-svelte';
-	import SearchInput from '$lib/components/SearchInput.svelte';
+	import { Pencil, Trash2, Search, Plus, X, Save } from 'lucide-svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import DeleteConfirmModal from '$lib/components/DeleteConfirmModal.svelte';
 
@@ -87,98 +86,99 @@
 	<title>Admin · Catégories</title>
 </svelte:head>
 
-<div class="p-6 max-w-7xl mx-auto">
-	<!-- Header -->
-	<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-		<div>
-			<h1 class="text-2xl font-bold text-gray-900">Gestion des Catégories</h1>
-			<p class="text-sm text-gray-500 mt-1">
-				Gérez la liste des catégories et leurs groupes associés.
-			</p>
-		</div>
-		<button onclick={openCreateModal} class="btn">
-			<Plus class="w-4 h-4" />
-			Ajouter
-		</button>
+<!-- Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+	<div>
+		<h1 class="text-2xl font-bold text-gray-900">Gestion des Catégories</h1>
+		<p class="text-sm text-gray-500 mt-1">
+			Gérez la liste des catégories et leurs groupes associés.
+		</p>
 	</div>
+	<button onclick={openCreateModal} class="btn">
+		<Plus class="w-4 h-4" />
+		Ajouter
+	</button>
+</div>
 
-	<!-- Search Bar -->
-	<div class="mb-6">
-		<SearchInput bind:value={query} placeholder="Rechercher par catégorie ou groupe..." />
-	</div>
+<!-- Search Bar -->
+<label class="mb-6 input relative">
+	<Search />
+	<input type="search" bind:value={query} placeholder="Rechercher par catégorie ou groupe..." />
+</label>
+<br />
+<br />
 
-	<!-- Table -->
-	<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-		<div class="overflow-x-auto">
-			<table class="w-full text-left text-sm text-gray-600">
-				<thead
-					class="bg-gray-50 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200"
-				>
-					<tr>
-						<th class="px-6 py-4 w-20">ID</th>
-						<th class="px-6 py-4">Catégorie</th>
-						<th class="px-6 py-4">Groupe</th>
-						<th class="px-6 py-4 text-center w-32">Actions</th>
+<!-- Table -->
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+	<div class="overflow-x-auto">
+		<table class="w-full text-left text-sm text-gray-600">
+			<thead
+				class="bg-gray-50 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200"
+			>
+				<tr>
+					<th class="px-6 py-4 w-20">ID</th>
+					<th class="px-6 py-4">Catégorie</th>
+					<th class="px-6 py-4">Groupe</th>
+					<th class="px-6 py-4 text-center w-32">Actions</th>
+				</tr>
+			</thead>
+			<tbody class="divide-y divide-gray-100">
+				{#each displayedList as category}
+					<tr class="hover:bg-gray-50 transition-colors">
+						<td class="px-6 py-4 font-mono text-gray-500">#{category.id}</td>
+						<td class="px-6 py-4 font-medium text-gray-900">{category.categorie}</td>
+						<td class="px-6 py-4 text-gray-600">
+							{#if category.groupeName}
+								<span
+									class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+								>
+									{category.groupeName}
+								</span>
+							{:else}
+								<span class="text-gray-400">-</span>
+							{/if}
+						</td>
+						<td class="px-6 py-4">
+							<div class="flex items-center justify-center gap-2">
+								<button
+									onclick={() => openEditModal(category)}
+									class="btn btn-ghost"
+									title="Modifier"
+								>
+									<Pencil class="w-4 h-4" />
+								</button>
+								<button
+									onclick={() => openDeleteModal(category)}
+									class="btn btn-ghost btn-warning"
+									title="Supprimer"
+								>
+									<Trash2 class="w-4 h-4" />
+								</button>
+							</div>
+						</td>
 					</tr>
-				</thead>
-				<tbody class="divide-y divide-gray-100">
-					{#each displayedList as category}
-						<tr class="hover:bg-gray-50 transition-colors">
-							<td class="px-6 py-4 font-mono text-gray-500">#{category.id}</td>
-							<td class="px-6 py-4 font-medium text-gray-900">{category.categorie}</td>
-							<td class="px-6 py-4 text-gray-600">
-								{#if category.groupeName}
-									<span
-										class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-									>
-										{category.groupeName}
-									</span>
-								{:else}
-									<span class="text-gray-400">-</span>
-								{/if}
-							</td>
-							<td class="px-6 py-4">
-								<div class="flex items-center justify-center gap-2">
-									<button
-										onclick={() => openEditModal(category)}
-										class="p-1.5 text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-										title="Modifier"
-									>
-										<Pencil class="w-4 h-4" />
-									</button>
-									<button
-										onclick={() => openDeleteModal(category)}
-										class="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-										title="Supprimer"
-									>
-										<Trash2 class="w-4 h-4" />
-									</button>
-								</div>
-							</td>
-						</tr>
-					{:else}
-						<tr>
-							<td colspan="4" class="px-6 py-12 text-center text-gray-400">
-								{#if query}
-									Aucun résultat pour "{query}".
-								{:else}
-									Aucune catégorie enregistrée.
-								{/if}
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
-
-		<Pagination
-			{page}
-			{totalPages}
-			totalItems={filteredList.length}
-			{perPage}
-			onPageChange={(p) => (page = p)}
-		/>
+				{:else}
+					<tr>
+						<td colspan="4" class="px-6 py-12 text-center text-gray-400">
+							{#if query}
+								Aucun résultat pour "{query}".
+							{:else}
+								Aucune catégorie enregistrée.
+							{/if}
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
 	</div>
+
+	<Pagination
+		{page}
+		{totalPages}
+		totalItems={filteredList.length}
+		{perPage}
+		onPageChange={(p) => (page = p)}
+	/>
 </div>
 
 <!-- Create/Edit Modal -->
@@ -233,7 +233,7 @@
 							name="categorie"
 							bind:value={form.categorie}
 							required
-							class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+							class="input"
 							placeholder="Ex: Béton"
 						/>
 					</div>
@@ -247,7 +247,7 @@
 							name="groupeId"
 							bind:value={form.groupeId}
 							required
-							class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+							class="select"
 						>
 							<option value="">Sélectionner un groupe</option>
 							{#each data.groupes as groupe}
@@ -260,18 +260,8 @@
 
 			<!-- Modal Footer -->
 			<div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
-				<button
-					type="button"
-					onclick={closeModal}
-					class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-800 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors"
-				>
-					Annuler
-				</button>
-				<button
-					type="submit"
-					form="categoryForm"
-					class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-sm"
-				>
+				<button type="button" onclick={closeModal} class="btn"> Annuler </button>
+				<button type="submit" form="categoryForm" class="btn">
 					<Save class="w-4 h-4" />
 					{isEditMode ? 'Enregistrer' : 'Créer'}
 				</button>
