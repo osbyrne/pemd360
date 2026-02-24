@@ -464,19 +464,10 @@
 	</div>
 
 	<!-- Search Bar -->
-	<div class="mb-6">
-		<div class="relative">
-			<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-				<Search />
-			</div>
-			<input
-				type="text"
-				bind:value={query}
-				placeholder="Rechercher par nom ou email..."
-				class="block w-full rounded-xl border border-slate-300 bg-white py-3 pl-11 pr-4 text-sm placeholder-slate-400 shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-			/>
-		</div>
-	</div>
+	<label class="input">
+		<Search />
+		<input type="search" bind:value={query} placeholder="Rechercher par nom ou email..." />
+	</label>
 
 	<!-- Error State -->
 	{#if error}
@@ -492,7 +483,7 @@
 	{/if}
 
 	<!-- Users Grid -->
-	<div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+	<ul class="list bg-base-100 rounded-box shadow-md">
 		{#if loading}
 			<div class="divide-y divide-slate-100">
 				{#each [...Array(5).keys()] as i (i)}
@@ -515,24 +506,7 @@
 		{:else}
 			<div class="divide-y divide-slate-100">
 				{#each displayedUsers as user (user.id)}
-					<div class="flex items-center gap-4 p-4 transition-colors hover:bg-slate-50">
-						<!-- Avatar -->
-						<div class="shrink-0">
-							{#if user.image}
-								<img
-									class="h-12 w-12 rounded-full object-cover ring-2 ring-white shadow"
-									src={user.image}
-									alt={user.name}
-								/>
-							{:else}
-								<div
-									class="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-emerald-400 to-emerald-600 text-white font-bold text-lg shadow"
-								>
-									{user.name?.[0]?.toUpperCase() || '?'}
-								</div>
-							{/if}
-						</div>
-
+					<li class="list-row">
 						<!-- User Info -->
 						<div class="min-w-0 flex-1">
 							<div class="flex items-center gap-2">
@@ -608,7 +582,7 @@
 						<div class="flex items-center gap-1 pl-2 border-l border-slate-200">
 							<button
 								on:click={() => openProjetsModal(user)}
-								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-indigo-600"
+								class="btn btn-ghost"
 								title="Gérer les projets"
 							>
 								<Folder size={18} />
@@ -616,7 +590,7 @@
 
 							<button
 								on:click={() => openEditModal(user)}
-								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-emerald-600"
+								class="btn btn-ghost"
 								title="Modifier les informations"
 							>
 								<Pencil size={18} />
@@ -624,7 +598,7 @@
 
 							<button
 								on:click={() => openPasswordModal(user)}
-								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600"
+								class="btn btn-ghost"
 								title="Changer le mot de passe"
 							>
 								<KeyRound size={18} />
@@ -632,7 +606,7 @@
 
 							<button
 								on:click={() => openBanModal(user)}
-								class="rounded-lg p-2 transition-colors {user.banned
+								class="btn btn-ghost transition-colors {user.banned
 									? 'text-green-500 hover:bg-green-50 hover:text-green-700'
 									: 'text-slate-400 hover:bg-amber-50 hover:text-amber-600'}"
 								title={user.banned ? 'Réactiver le compte' : 'Clôturer le compte'}
@@ -642,13 +616,13 @@
 
 							<button
 								on:click={() => openDeleteModal(user)}
-								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+								class="btn btn-ghost hover:text-red-500 hover:bg-red-50"
 								title="Supprimer"
 							>
 								<X size={18} />
 							</button>
 						</div>
-					</div>
+					</li>
 				{/each}
 			</div>
 		{/if}
@@ -681,7 +655,7 @@
 				</div>
 			</div>
 		{/if}
-	</div>
+	</ul>
 </main>
 
 <!-- MODAL : Créer un utilisateur -->
@@ -717,7 +691,7 @@
 									bind:value={createForm.name}
 									type="text"
 									placeholder="Jean Dupont"
-									class="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+									class="input"
 								/>
 							</div>
 							<div>
@@ -729,7 +703,7 @@
 									bind:value={createForm.email}
 									type="email"
 									placeholder="jean.dupont@exemple.com"
-									class="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+									class="input"
 								/>
 							</div>
 							<div>
@@ -742,18 +716,14 @@
 									type="password"
 									autocomplete="new-password"
 									placeholder="••••••••"
-									class="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+									class="input"
 								/>
 							</div>
 							<div>
 								<label for="create-role" class="block text-sm font-medium text-slate-700 mb-1.5"
 									>Rôle</label
 								>
-								<select
-									id="create-role"
-									bind:value={createForm.role}
-									class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-								>
+								<select id="create-role" bind:value={createForm.role} class="select">
 									<option value="user">Utilisateur</option>
 									<option value="collaborator">Collaborateur</option>
 									<option value="admin">Administrateur</option>
@@ -772,7 +742,7 @@
 										type="text"
 										bind:value={createProjectSearch}
 										placeholder="Rechercher un projet..."
-										class="block w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 text-sm placeholder-slate-400 shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+										class="search input"
 									/>
 								</div>
 								<div
@@ -799,7 +769,7 @@
 															);
 														}
 													}}
-													class="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
+													class="checkbox"
 												/>
 												<span class="text-sm text-slate-700"
 													>{p.libelle} <span class="text-slate-400">({p.reference})</span></span
@@ -817,20 +787,10 @@
 						</div>
 					</div>
 					<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
-						<button
-							type="button"
-							class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
-							on:click={closeCreateModal}
-						>
+						<button type="button" class="btn btn-warning" on:click={closeCreateModal}>
 							Annuler
 						</button>
-						<button
-							type="button"
-							class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700"
-							on:click={createUser}
-						>
-							Créer
-						</button>
+						<button type="button" class="btn btn-secondary" on:click={createUser}> Créer </button>
 					</div>
 				</div>
 			</div>
@@ -869,33 +829,19 @@
 								<label for="edit-name" class="block text-sm font-medium text-slate-700 mb-1.5"
 									>Nom</label
 								>
-								<input
-									id="edit-name"
-									bind:value={editForm.name}
-									type="text"
-									class="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-								/>
+								<input id="edit-name" bind:value={editForm.name} type="text" class="input" />
 							</div>
 							<div>
 								<label for="edit-email" class="block text-sm font-medium text-slate-700 mb-1.5"
 									>Email</label
 								>
-								<input
-									id="edit-email"
-									bind:value={editForm.email}
-									type="email"
-									class="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-								/>
+								<input id="edit-email" bind:value={editForm.email} type="email" class="input" />
 							</div>
 							<div>
 								<label for="edit-role" class="block text-sm font-medium text-slate-700 mb-1.5"
 									>Rôle</label
 								>
-								<select
-									id="edit-role"
-									bind:value={editForm.role}
-									class="block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-								>
+								<select id="edit-role" bind:value={editForm.role} class="select">
 									<option value="user">Utilisateur</option>
 									<option value="collaborator">Collaborateur</option>
 									<option value="admin">Administrateur</option>
@@ -969,20 +915,8 @@
 						</div>
 					</div>
 					<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
-						<button
-							type="button"
-							class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
-							on:click={closePasswordModal}
-						>
-							Annuler
-						</button>
-						<button
-							type="button"
-							class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700"
-							on:click={setPassword}
-						>
-							Mettre à jour
-						</button>
+						<button type="button" class="btn" on:click={closePasswordModal}> Annuler </button>
+						<button type="button" class="btn" on:click={setPassword}> Mettre à jour </button>
 					</div>
 				</div>
 			</div>
@@ -1037,22 +971,16 @@
 									bind:value={banReason}
 									rows="3"
 									placeholder="Ex: Violation des conditions d'utilisation..."
-									class="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+									class="input"
 								></textarea>
 							</div>
 						{/if}
 					</div>
 					<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+						<button type="button" class="btn" on:click={closeBanModal}> Annuler </button>
 						<button
 							type="button"
-							class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
-							on:click={closeBanModal}
-						>
-							Annuler
-						</button>
-						<button
-							type="button"
-							class="rounded-lg px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors {selectedUser.banned
+							class="btn transition-colors {selectedUser.banned
 								? 'bg-green-600 hover:bg-green-700'
 								: 'bg-amber-600 hover:bg-amber-700'}"
 							on:click={confirmBan}
@@ -1100,18 +1028,8 @@
 						</div>
 					</div>
 					<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
-						<button
-							type="button"
-							class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
-							on:click={closeDeleteModal}
-						>
-							Annuler
-						</button>
-						<button
-							type="button"
-							class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700"
-							on:click={confirmDelete}
-						>
+						<button type="button" class="btn" on:click={closeDeleteModal}> Annuler </button>
+						<button type="button" class="btn btn-warning" on:click={confirmDelete}>
 							Supprimer définitivement
 						</button>
 					</div>
@@ -1185,17 +1103,16 @@
 							<div>
 								<div class="block text-sm font-medium text-slate-700 mb-1.5">Projets assignés</div>
 								<!-- Search bar for projects -->
-								<div class="relative mb-2">
-									<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-										<Search />
-									</div>
+								<label class="input">
+									<Search />
 									<input
-										type="text"
+										type="search"
 										bind:value={modalProjectSearch}
+										required
 										placeholder="Rechercher un projet..."
-										class="block w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 text-sm placeholder-slate-400 shadow-sm transition-colors focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
 									/>
-								</div>
+								</label>
+
 								<div
 									class="max-h-64 overflow-y-auto border border-slate-200 rounded-lg divide-y divide-slate-100"
 								>
@@ -1220,7 +1137,7 @@
 															);
 														}
 													}}
-													class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+													class="checkbox"
 												/>
 												<div class="flex-1 min-w-0">
 													<p class="text-sm font-medium text-slate-900 truncate">{p.libelle}</p>
@@ -1239,19 +1156,8 @@
 							</div>
 						</div>
 						<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
-							<button
-								type="button"
-								class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
-								on:click={closeProjetsModal}
-							>
-								Annuler
-							</button>
-							<button
-								type="submit"
-								class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700"
-							>
-								Enregistrer
-							</button>
+							<button type="button" class="btn" on:click={closeProjetsModal}> Annuler </button>
+							<button type="submit" class="btn"> Enregistrer </button>
 						</div>
 					</form>
 				</div>

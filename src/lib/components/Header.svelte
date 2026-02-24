@@ -33,7 +33,7 @@
 					class="font-medium text-gray-700 transition-colors hover:text-emerald-600">Contact</a
 				>
 				{#if user}
-					<a href="/app/projets" class="btn btn-secondary"> Tableau de bord </a>
+					<a href="/app/projets" class="btn"> Tableau de bord </a>
 				{:else}
 					<a href="/login" class="btn"> Se connecter </a>
 				{/if}
