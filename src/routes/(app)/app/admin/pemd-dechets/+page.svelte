@@ -77,7 +77,6 @@
 				placeholder="Rechercher par nature, code déchet, éco-organisme..."
 			/>
 		</label>
-		/>
 
 		<!-- Total Mass Card -->
 		<div

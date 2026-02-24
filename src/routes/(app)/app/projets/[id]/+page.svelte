@@ -502,7 +502,7 @@
 					: 'Activer le mode édition PEMD'}
 				aria-pressed={editMode.enabled}
 				onclick={() => editMode.toggle()}
-				class={`w-full h-6 flex items-center justify-center rounded-lg border text-xs font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${editMode.enabled ? 'bg-purple-600 text-white ring-1 ring-purple-300 shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-purple-50 hover:text-purple-600'}`}
+				class={`btn ${editMode.enabled ? 'bg-purple-600 text-white ring-1 ring-purple-300 shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-purple-50 hover:text-purple-600'}`}
 			>
 				<Pencil size={12} class="mr-1" />
 				{editMode.enabled ? 'Édition ON' : 'Éditer'}
@@ -522,11 +522,7 @@
 					>- Cliquez directement sur le modèle pour ajouter un tag</span
 				>
 			</div>
-			<button
-				type="button"
-				onclick={() => editMode.toggle()}
-				class="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-			>
+			<button type="button" onclick={() => editMode.toggle()} class="btn btn-primary">
 				<X size={16} />
 				Quitter le mode édition
 			</button>

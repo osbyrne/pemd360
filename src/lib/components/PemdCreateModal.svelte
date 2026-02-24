@@ -133,11 +133,7 @@
 					name="anchorPosition"
 					value={JSON.stringify(pendingPosition.anchorPosition)}
 				/>
-				<input
-					type="hidden"
-					name="stemVector"
-					value={JSON.stringify(pendingPosition.normal)}
-				/>
+				<input type="hidden" name="stemVector" value={JSON.stringify(pendingPosition.normal)} />
 
 				<!-- Legend for required fields -->
 				<p class="text-xs text-gray-500 mb-4">
@@ -165,7 +161,7 @@
 								id="pemd-groupe"
 								bind:value={groupId}
 								onchange={handleGroupChange}
-								class="w-full border border-purple-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white"
+								class="select"
 							>
 								<option value="">-- Sélectionner un groupe --</option>
 								{#each groups as group (group.id)}
@@ -192,10 +188,7 @@
 								bind:value={categoryId}
 								onchange={handleCategoryChange}
 								disabled={!groupId || categoriesFiltered.length === 0}
-								class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white disabled:bg-gray-100 disabled:cursor-not-allowed {groupId &&
-								!categoryId
-									? 'border-purple-300'
-									: 'border-gray-300'}"
+								class="select {groupId && !categoryId ? 'border-purple-300' : 'border-gray-300'}"
 							>
 								<option value="">-- Sélectionner une catégorie --</option>
 								{#each categoriesFiltered as categorie (categorie.id)}
@@ -205,7 +198,9 @@
 							{#if !groupId}
 								<p class="text-xs text-gray-400 mt-1">Sélectionnez d'abord un groupe</p>
 							{:else if categoriesFiltered.length === 0}
-								<p class="text-xs text-amber-600 mt-1">Aucune catégorie disponible pour ce groupe</p>
+								<p class="text-xs text-amber-600 mt-1">
+									Aucune catégorie disponible pour ce groupe
+								</p>
 							{:else if !categoryId}
 								<p class="text-xs text-purple-600 mt-1">
 									Sélectionnez une catégorie ({categoriesFiltered.length} disponible{categoriesFiltered.length >
@@ -232,10 +227,7 @@
 								name="objetId"
 								required
 								disabled={!categoryId || objectsFiltered.length === 0}
-								class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white disabled:bg-gray-100 disabled:cursor-not-allowed {categoryId &&
-								!objetId
-									? 'border-red-300'
-									: 'border-gray-300'}"
+								class="btn {categoryId && !objetId ? 'border-red-300' : 'border-gray-300'}"
 							>
 								<option value="">-- Sélectionner un objet --</option>
 								{#each objectsFiltered as object (object.id)}
@@ -245,7 +237,9 @@
 							{#if !categoryId}
 								<p class="text-xs text-gray-400 mt-1">Sélectionnez d'abord une catégorie</p>
 							{:else if objectsFiltered.length === 0}
-								<p class="text-xs text-amber-600 mt-1">Aucun objet disponible pour cette catégorie</p>
+								<p class="text-xs text-amber-600 mt-1">
+									Aucun objet disponible pour cette catégorie
+								</p>
 							{:else if !objetId}
 								<p class="text-xs text-red-500 mt-1">
 									Sélectionnez un objet ({objectsFiltered.length} disponible{objectsFiltered.length >
@@ -277,7 +271,7 @@
 								bind:value={description}
 								name="description"
 								rows="2"
-								class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+								class="input"
 								placeholder="Description du matériau..."
 							></textarea>
 						</div>
@@ -295,7 +289,7 @@
 									min="0"
 									bind:value={quantite}
 									name="quantite"
-									class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+									class="input"
 									placeholder="0"
 								/>
 							</div>
@@ -308,7 +302,7 @@
 									type="text"
 									bind:value={etage}
 									name="etage"
-									class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+									class="input"
 									placeholder="RDC, 1, 2..."
 								/>
 							</div>
@@ -316,12 +310,7 @@
 								<label for="pemd-etat" class="block text-sm font-medium text-gray-600 mb-1"
 									>État</label
 								>
-								<select
-									id="pemd-etat"
-									bind:value={etat}
-									name="etat"
-									class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white"
-								>
+								<select id="pemd-etat" bind:value={etat} name="etat" class="selection:">
 									<option value="">--</option>
 									<option value="Bon">Bon</option>
 									<option value="Moyen">Moyen</option>
@@ -350,7 +339,7 @@
 									min="0"
 									bind:value={longueur}
 									name="longueur"
-									class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+									class="input"
 									placeholder="0.00"
 								/>
 							</div>
@@ -365,7 +354,7 @@
 									min="0"
 									bind:value={largeur}
 									name="largeur"
-									class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+									class="input"
 									placeholder="0.00"
 								/>
 							</div>
@@ -380,7 +369,7 @@
 									min="0"
 									bind:value={epaisseur}
 									name="epaisseur"
-									class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+									class="input"
 									placeholder="0.00"
 								/>
 							</div>
@@ -390,13 +379,15 @@
 					<!-- Section: Potentiel Réemploi (optionnel) -->
 					<div>
 						<label for="pemd-potentiel" class="block text-sm font-medium text-gray-600 mb-1">
-							Potentiel de réemploi <span class="text-gray-400 text-xs font-normal">(optionnel)</span>
+							Potentiel de réemploi <span class="text-gray-400 text-xs font-normal"
+								>(optionnel)</span
+							>
 						</label>
 						<select
 							id="pemd-potentiel"
 							bind:value={potentielReemploi}
 							name="potentielReemploi"
-							class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white"
+							class="select"
 						>
 							<option value="">-- Non défini --</option>
 							<option value="Fort">Fort</option>
@@ -421,18 +412,8 @@
 				</div>
 
 				<div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
-					<button
-						type="button"
-						onclick={onClose}
-						class="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-					>
-						Annuler
-					</button>
-					<button
-						type="submit"
-						disabled={isSaving || !objetId}
-						class="rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-					>
+					<button type="button" onclick={onClose} class="btn"> Annuler </button>
+					<button type="submit" disabled={isSaving || !objetId} class="btn btn-primary">
 						<Save size={16} />
 						{isSaving ? 'Enregistrement...' : 'Enregistrer le tag'}
 					</button>

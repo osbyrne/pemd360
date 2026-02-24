@@ -98,8 +98,6 @@
 				placeholder="Rechercher par macro-catégorie, catégorie, objet ou projet..."
 			/>
 		</label>
-
-		/>
 	</div>
 
 	<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
@@ -321,12 +319,7 @@
 				</div>
 
 				<div class="mt-6 flex justify-end">
-					<button
-						onclick={closeModal}
-						class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
-					>
-						Fermer
-					</button>
+					<button onclick={closeModal} class="btn"> Fermer </button>
 				</div>
 			</div>
 		</div>

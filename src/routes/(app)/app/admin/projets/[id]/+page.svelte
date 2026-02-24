@@ -23,10 +23,7 @@
 <div class="font-[Poppins] max-w-4xl mx-auto px-4 py-8">
 	<!-- Fil d'ariane / Retour -->
 	<div class="mb-8">
-		<a
-			href="/app/admin/projets"
-			class="inline-flex items-center gap-2 text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
-		>
+		<a href="/app/admin/projets" class="btn btn-ghost">
 			<ArrowLeft class="h-4 w-4" />
 			Retour à la liste
 		</a>
@@ -44,10 +41,7 @@
 			</p>
 		</div>
 		<div class="flex gap-3">
-			<a
-				href="/app/admin/projets/{projet.id}/modifier"
-				class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"
-			>
+			<a href="/app/admin/projets/{projet.id}/modifier" class="btn">
 				<Edit class="h-4 w-4" />
 				Modifier
 			</a>

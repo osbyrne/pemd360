@@ -664,7 +664,7 @@
 		<button
 			type="button"
 			aria-label="Fermer la modale"
-			class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+			class="btn"
 			transition:fade
 			on:click={closeCreateModal}
 		></button>
@@ -801,7 +801,7 @@
 		<button
 			type="button"
 			aria-label="Fermer la modale"
-			class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+			class="btn"
 			transition:fade
 			on:click={closeEditModal}
 		></button>
@@ -847,20 +847,8 @@
 						</div>
 					</div>
 					<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
-						<button
-							type="button"
-							class="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
-							on:click={closeEditModal}
-						>
-							Annuler
-						</button>
-						<button
-							type="button"
-							class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700"
-							on:click={saveUserInfo}
-						>
-							Enregistrer
-						</button>
+						<button type="button" class="btn" on:click={closeEditModal}> Annuler </button>
+						<button type="button" class="btn" on:click={saveUserInfo}> Enregistrer </button>
 					</div>
 				</div>
 			</div>
@@ -874,7 +862,7 @@
 		<button
 			type="button"
 			aria-label="Fermer la modale"
-			class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+			class="btn"
 			transition:fade
 			on:click={closePasswordModal}
 		></button>
@@ -904,7 +892,7 @@
 								type="password"
 								autocomplete="new-password"
 								placeholder="Entrez le nouveau mot de passe"
-								class="block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+								class="input"
 							/>
 							<p class="mt-2 text-xs text-slate-500">
 								Le mot de passe doit contenir au moins 8 caractères.
@@ -927,7 +915,7 @@
 		<button
 			type="button"
 			aria-label="Fermer la modale"
-			class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+			class="btn"
 			transition:fade
 			on:click={closeBanModal}
 		></button>
@@ -997,7 +985,7 @@
 		<button
 			type="button"
 			aria-label="Fermer la modale"
-			class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+			class="btn"
 			transition:fade
 			on:click={closeDeleteModal}
 		></button>
@@ -1042,7 +1030,7 @@
 		<button
 			type="button"
 			aria-label="Fermer la modale"
-			class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+			class="btn"
 			transition:fade
 			on:click={closeProjetsModal}
 		></button>

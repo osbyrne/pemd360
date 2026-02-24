@@ -85,13 +85,9 @@
 		}
 
 		if (selectedGroup.trim() !== '') {
-			const group = groups.find(
-				(g) => g.name === selectedGroup || String(g.id) === selectedGroup
-			);
+			const group = groups.find((g) => g.name === selectedGroup || String(g.id) === selectedGroup);
 			if (group) {
-				const allowedCatIds = categoriesV2
-					.filter((c) => c.groupeId === group.id)
-					.map((c) => c.id);
+				const allowedCatIds = categoriesV2.filter((c) => c.groupeId === group.id).map((c) => c.id);
 				for (const o of allPemdObjects) {
 					if (o.categorieId != null && allowedCatIds.includes(o.categorieId) && o.id != null) {
 						allowed.add(o.id);
@@ -128,11 +124,7 @@
 			<div class="mb-3 flex flex-col gap-2">
 				<label class="flex flex-col">
 					<span class="text-sm text-gray-700">Groupe</span>
-					<select
-						bind:value={selectedGroup}
-						onchange={handleGroupChange}
-						class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-					>
+					<select bind:value={selectedGroup} onchange={handleGroupChange} class="select">
 						<option value="">Tous groupes</option>
 						{#each groups as group (group.id)}
 							<option value={group.name}>{group.name}</option>
@@ -141,11 +133,7 @@
 				</label>
 				<label class="flex flex-col">
 					<span class="text-sm text-gray-700">Catégorie</span>
-					<select
-						bind:value={selectedCategory}
-						onchange={handleCategoryChange}
-						class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-					>
+					<select bind:value={selectedCategory} onchange={handleCategoryChange} class="select">
 						<option value="">Toutes catégories</option>
 						{#each categoriesFiltered as category (category.id)}
 							<option value={category.name}>{category.name}</option>
@@ -154,10 +142,7 @@
 				</label>
 				<label class="flex flex-col">
 					<span class="text-sm text-gray-700">Objet</span>
-					<select
-						bind:value={selectedObject}
-						class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-					>
+					<select bind:value={selectedObject} class="select">
 						<option value="">Tous objets</option>
 						{#each objectsFiltered as object (object.id)}
 							<option value={object.name}>{object.name}</option>
@@ -165,23 +150,18 @@
 					</select>
 				</label>
 			</div>
-			<div class="flex justify-end gap-3">
-				<button
-					class="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-					onclick={() => {
-						show = false;
-					}}>Fermer</button
-				>
-				<button
-					class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
-					onclick={onRemove}
-					disabled={!hasTags}>Supprimer les tags PEMD</button
-				>
-				<button
-					class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-					onclick={() => onApply(getAllowedObjetIds())}>Ajouter dans le modèle</button
-				>
-			</div>
+			<button
+				class="btn"
+				onclick={() => {
+					show = false;
+				}}>Fermer</button
+			>
+			<button class="btn btn-warning" onclick={onRemove} disabled={!hasTags}
+				>Supprimer les tags PEMD</button
+			>
+			<button class="btn" onclick={() => onApply(getAllowedObjetIds())}
+				>Ajouter dans le modèle</button
+			>
 		</div>
 	</div>
 {/if}

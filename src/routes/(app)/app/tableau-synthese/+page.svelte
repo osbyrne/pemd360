@@ -278,19 +278,8 @@
 				<form method="POST" action="?/delete" use:enhance={handleFormResult()}>
 					<input type="hidden" name="id" value={currentItem?.id} />
 					<div class="flex gap-3 justify-end">
-						<button
-							type="button"
-							onclick={closeModal}
-							class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-						>
-							Annuler
-						</button>
-						<button
-							type="submit"
-							class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-						>
-							Supprimer
-						</button>
+						<button type="button" onclick={closeModal} class="btn"> Annuler </button>
+						<button type="submit" class="btn btn-warning"> Supprimer </button>
 					</div>
 				</form>
 			</div>
@@ -319,11 +308,7 @@
 		>
 			<div class="flex justify-between items-center mb-4">
 				<h3 class="text-lg font-semibold text-gray-900">QR Code</h3>
-				<button
-					onclick={closeModal}
-					class="text-gray-400 hover:text-gray-600 transition-colors"
-					aria-label="Fermer"
-				>
+				<button onclick={closeModal} class="btn" aria-label="Fermer">
 					<X class="w-6 h-6" />
 				</button>
 			</div>

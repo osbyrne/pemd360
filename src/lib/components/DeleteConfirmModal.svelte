@@ -60,19 +60,8 @@
 					class="w-full flex gap-3"
 				>
 					<input type="hidden" name="id" value={itemId} />
-					<button
-						type="button"
-						onclick={onClose}
-						class="flex-1 px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-800 bg-white border border-gray-300 hover:bg-gray-50 rounded-lg transition-colors"
-					>
-						Annuler
-					</button>
-					<button
-						type="submit"
-						class="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm"
-					>
-						Supprimer
-					</button>
+					<button type="button" onclick={onClose} class="btn"> Annuler </button>
+					<button type="submit" class="btn btn-warning"> Supprimer </button>
 				</form>
 			</div>
 		</div>

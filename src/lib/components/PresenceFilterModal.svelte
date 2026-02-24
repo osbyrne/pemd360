@@ -41,23 +41,21 @@
 			<h3 class="mb-3 text-lg font-semibold">{title}</h3>
 			<div class="mb-3 flex flex-col gap-2">
 				<label class="flex items-center gap-2">
-					<input type="checkbox" bind:checked={present} />
+					<input type="checkbox" bind:checked={present} class="checkbox" />
 					<span>Présence</span>
 				</label>
 				<label class="flex items-center gap-2">
-					<input type="checkbox" bind:checked={absent} />
+					<input type="checkbox" bind:checked={absent} class="checkbox" />
 					<span>Absence</span>
 				</label>
 				<label class="flex items-center gap-2">
-					<input type="checkbox" bind:checked={enCours} />
+					<input type="checkbox" bind:checked={enCours} class="checkbox" />
 					<span>En cours</span>
 				</label>
 			</div>
 			<div class="flex justify-end gap-2">
-				<button class="rounded px-3 py-1 text-sm" onclick={close}>Annuler</button>
-				<button class="rounded bg-blue-600 px-3 py-1 text-sm text-white" onclick={apply}
-					>Appliquer</button
-				>
+				<button class="btn" onclick={close}>Annuler</button>
+				<button class="btn" onclick={apply}>Appliquer</button>
 			</div>
 		</div>
 	</div>

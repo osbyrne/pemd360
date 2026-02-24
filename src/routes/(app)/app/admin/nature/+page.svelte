@@ -337,18 +337,8 @@
 			</div>
 
 			<div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3 shrink-0">
-				<button
-					type="button"
-					onclick={closeModal}
-					class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
-				>
-					Annuler
-				</button>
-				<button
-					type="submit"
-					form="natureForm"
-					class="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 shadow-sm"
-				>
+				<button type="button" onclick={closeModal} class="btn"> Annuler </button>
+				<button type="submit" form="natureForm" class="btn">
 					{isEditMode ? 'Enregistrer' : 'Créer'}
 				</button>
 			</div>

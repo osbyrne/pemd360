@@ -39,11 +39,8 @@
 <div class="font-[Poppins] max-w-4xl mx-auto px-4 py-8">
 	<!-- Fil d'ariane / Retour -->
 	<div class="mb-8">
-		<a
-			href="/app/admin/projets/{projet.id}"
-			class="inline-flex items-center gap-2 text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors"
-		>
-			<ArrowLeft class="h-4 w-4" />
+		<a href="/app/admin/projets/{projet.id}" class="btn btn-ghost">
+			<ArrowLeft />
 			Retour au projet
 		</a>
 	</div>
@@ -73,13 +70,7 @@
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<div class="space-y-1.5 md:col-span-2">
 					<label for="id" class="text-sm font-medium text-gray-700">ID Matterport</label>
-					<input
-						type="text"
-						id="id"
-						value={projet.id}
-						disabled
-						class="block w-full rounded-md border-gray-200 bg-gray-100 px-3 py-2 shadow-sm sm:text-sm font-mono text-gray-600 cursor-not-allowed"
-					/>
+					<input type="text" id="id" value={projet.id} disabled class="input" />
 					<p class="text-xs text-gray-500 mt-1">
 						L'ID Matterport ne peut pas être modifié (clé primaire)
 					</p>
@@ -93,7 +84,7 @@
 						name="reference"
 						value={data_form.reference}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 					/>
 				</div>
 
@@ -105,7 +96,7 @@
 						name="libelle"
 						value={data_form.libelle}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 					/>
 				</div>
 
@@ -113,12 +104,7 @@
 					<label for="etablissementId" class="text-sm font-medium text-gray-700"
 						>Établissement *</label
 					>
-					<select
-						id="etablissementId"
-						name="etablissementId"
-						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-					>
+					<select id="etablissementId" name="etablissementId" required class="select">
 						<option value="" disabled>Sélectionnez un établissement</option>
 						{#each etablissements as etab}
 							<option value={etab.id} selected={etab.id.toString() === data_form.etablissementId}>
@@ -137,7 +123,7 @@
 						id="typeOperation"
 						name="typeOperation"
 						value={data_form.typeOperation}
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 					/>
 				</div>
 
@@ -150,7 +136,7 @@
 						id="maitreDOuvrage"
 						name="maitreDOuvrage"
 						value={data_form.maitreDOuvrage}
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 					/>
 				</div>
 
@@ -164,7 +150,7 @@
 						name="dateDemarrage"
 						value={data_form.dateDemarrage}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 					/>
 				</div>
 
@@ -175,7 +161,7 @@
 						id="dateDeFin"
 						name="dateDeFin"
 						value={data_form.dateDeFin}
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 					/>
 				</div>
 			</div>
@@ -193,26 +179,12 @@
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<div class="space-y-1.5 md:col-span-2">
 					<label for="rue" class="text-sm font-medium text-gray-700">Adresse *</label>
-					<input
-						type="text"
-						id="rue"
-						name="rue"
-						value={data_form.rue}
-						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-					/>
+					<input type="text" id="rue" name="rue" value={data_form.rue} required class="input" />
 				</div>
 
 				<div class="space-y-1.5">
 					<label for="cp" class="text-sm font-medium text-gray-700">Code Postal *</label>
-					<input
-						type="text"
-						id="cp"
-						name="cp"
-						value={data_form.cp}
-						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
-					/>
+					<input type="text" id="cp" name="cp" value={data_form.cp} required class="input" />
 				</div>
 
 				<div class="space-y-1.5">
@@ -223,7 +195,7 @@
 						name="ville"
 						value={data_form.ville}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 					/>
 				</div>
 
@@ -234,7 +206,7 @@
 						id="codeInsee"
 						name="codeInsee"
 						value={data_form.codeInsee}
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 						maxlength="5"
 					/>
 				</div>
@@ -248,7 +220,7 @@
 						name="section"
 						value={data_form.section}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 					/>
 				</div>
 
@@ -260,7 +232,7 @@
 						name="parcelle"
 						value={data_form.parcelle}
 						required
-						class="block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
+						class="input"
 					/>
 				</div>
 			</div>
@@ -268,16 +240,8 @@
 
 		<!-- Actions -->
 		<div class="flex justify-end gap-3 transition-all pt-4">
-			<a
-				href="/app/admin/projets/{projet.id}"
-				class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
-			>
-				Annuler
-			</a>
-			<button
-				type="submit"
-				class="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
-			>
+			<a href="/app/admin/projets/{projet.id}" class="btn"> Annuler </a>
+			<button type="submit" class="btn">
 				<Save class="mr-2 h-4 w-4" />
 				Enregistrer
 			</button>

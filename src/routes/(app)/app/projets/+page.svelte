@@ -102,7 +102,7 @@
 			<div class="bg-white rounded-2xl border border-slate-200 p-4">
 				<div class="flex flex-col sm:flex-row gap-4">
 					<!-- Search -->
-					<label class="relative flex-1">
+					<label class="input relative flex-1">
 						<Search />
 						<input
 							type="search"
@@ -110,6 +110,7 @@
 							placeholder="Rechercher un projet par nom, référence ou ville..."
 						/>
 					</label>
+					<br />
 
 					<!-- View Toggle & Sort -->
 					<div class="flex items-center gap-2">

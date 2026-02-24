@@ -80,7 +80,6 @@
 				placeholder="Rechercher par macro-catégorie, catégorie, objet ou projet..."
 			/>
 		</label>
-		/>
 	</div>
 
 	<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">

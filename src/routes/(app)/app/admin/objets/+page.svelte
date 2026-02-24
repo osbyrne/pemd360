@@ -84,101 +84,95 @@
 	<title>Admin · Objets</title>
 </svelte:head>
 
-< class="p-6 max-w-7xl mx-auto">
-	<!-- Header -->
-	<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-		<div>
-			<h1 class="text-2xl font-bold text-gray-900">Gestion des Objets</h1>
-			<p class="text-sm text-gray-500 mt-1">
-				Gérez la liste des objets et leurs catégories associées.
-			</p>
-		</div>
-		<button onclick={openCreateModal} class="btn">
-			<Plus class="w-4 h-4" />
-			Ajouter
-		</button>
+<!-- Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+	<div>
+		<h1 class="text-2xl font-bold text-gray-900">Gestion des Objets</h1>
+		<p class="text-sm text-gray-500 mt-1">
+			Gérez la liste des objets et leurs catégories associées.
+		</p>
 	</div>
+	<button onclick={openCreateModal} class="btn">
+		<Plus class="w-4 h-4" />
+		Ajouter
+	</button>
+</div>
 
-	<!-- Search Bar -->
-	<label class="mb-6 input relative">
-		<Search />
-		<input type="search" bind:value={query} placeholder="Rechercher par objet ou catégorie..." />
-	</label>
-	<br/>
-	<br/>
+<!-- Search Bar -->
+<label class="mb-6 input relative">
+	<Search />
+	<input type="search" bind:value={query} placeholder="Rechercher par objet ou catégorie..." />
+</label>
+<br />
+<br />
 
-	<!-- Table -->
-	<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-		<div class="overflow-x-auto">
-			<table class="w-full text-left text-sm text-gray-600">
-				<thead
-					class="bg-gray-50 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200"
-				>
-					<tr>
-						<th class="px-6 py-4 w-20">ID</th>
-						<th class="px-6 py-4">Objet</th>
-						<th class="px-6 py-4">Catégorie</th>
-						<th class="px-6 py-4 text-center w-32">Actions</th>
+<!-- Table -->
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+	<div class="overflow-x-auto">
+		<table class="w-full text-left text-sm text-gray-600">
+			<thead
+				class="bg-gray-50 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200"
+			>
+				<tr>
+					<th class="px-6 py-4 w-20">ID</th>
+					<th class="px-6 py-4">Objet</th>
+					<th class="px-6 py-4">Catégorie</th>
+					<th class="px-6 py-4 text-center w-32">Actions</th>
+				</tr>
+			</thead>
+			<tbody class="divide-y divide-gray-100">
+				{#each displayedList as objet}
+					<tr class="hover:bg-gray-50 transition-colors">
+						<td class="px-6 py-4 font-mono text-gray-500">#{objet.id}</td>
+						<td class="px-6 py-4 font-medium text-gray-900">{objet.objet}</td>
+						<td class="px-6 py-4 text-gray-600">
+							{#if objet.categorieName}
+								<span
+									class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
+								>
+									{objet.categorieName}
+								</span>
+							{:else}
+								<span class="text-gray-400">-</span>
+							{/if}
+						</td>
+						<td class="px-6 py-4">
+							<div class="flex items-center justify-center gap-2">
+								<button onclick={() => openEditModal(objet)} class="btn btn-ghost" title="Modifier">
+									<Pencil class="w-4 h-4" />
+								</button>
+								<button
+									onclick={() => openDeleteModal(objet)}
+									class="btn btn-ghost btn-warning"
+									title="Supprimer"
+								>
+									<Trash2 class="w-4 h-4" />
+								</button>
+							</div>
+						</td>
 					</tr>
-				</thead>
-				<tbody class="divide-y divide-gray-100">
-					{#each displayedList as objet}
-						<tr class="hover:bg-gray-50 transition-colors">
-							<td class="px-6 py-4 font-mono text-gray-500">#{objet.id}</td>
-							<td class="px-6 py-4 font-medium text-gray-900">{objet.objet}</td>
-							<td class="px-6 py-4 text-gray-600">
-								{#if objet.categorieName}
-									<span
-										class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
-									>
-										{objet.categorieName}
-									</span>
-								{:else}
-									<span class="text-gray-400">-</span>
-								{/if}
-							</td>
-							<td class="px-6 py-4">
-								<div class="flex items-center justify-center gap-2">
-									<button
-										onclick={() => openEditModal(objet)}
-										class="btn btn-ghost"
-										title="Modifier"
-									>
-										<Pencil class="w-4 h-4" />
-									</button>
-									<button
-										onclick={() => openDeleteModal(objet)}
-										class="btn btn-ghost btn-warning"
-										title="Supprimer"
-									>
-										<Trash2 class="w-4 h-4" />
-									</button>
-								</div>
-							</td>
-						</tr>
-					{:else}
-						<tr>
-							<td colspan="4" class="px-6 py-12 text-center text-gray-400">
-								{#if query}
-									Aucun résultat pour "{query}".
-								{:else}
-									Aucun objet enregistré.
-								{/if}
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
-
-		<Pagination
-			{page}
-			{totalPages}
-			totalItems={filteredList.length}
-			{perPage}
-			onPageChange={(p) => (page = p)}
-		/>
+				{:else}
+					<tr>
+						<td colspan="4" class="px-6 py-12 text-center text-gray-400">
+							{#if query}
+								Aucun résultat pour "{query}".
+							{:else}
+								Aucun objet enregistré.
+							{/if}
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
 	</div>
+
+	<Pagination
+		{page}
+		{totalPages}
+		totalItems={filteredList.length}
+		{perPage}
+		onPageChange={(p) => (page = p)}
+	/>
 </div>
 
 <!-- Create/Edit Modal -->
@@ -205,7 +199,7 @@
 				<h2 class="text-lg font-semibold text-gray-900">
 					{isEditMode ? "Modifier l'objet" : 'Nouvel objet'}
 				</h2>
-				<button onclick={closeModal} class="text-gray-400 hover:text-gray-500 transition-colors">
+				<button onclick={closeModal} class="btn btn-ghost">
 					<X class="w-5 h-5" />
 				</button>
 			</div>
