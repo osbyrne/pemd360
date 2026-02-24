@@ -112,11 +112,7 @@
 					</div>
 				</div>
 
-				<button
-					type="submit"
-					class="flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-3 font-semibold text-white transition-all hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-					disabled={loading}
-				>
+				<button type="submit" class="btn" disabled={loading}>
 					{#if loading}
 						<Loader2 class="h-5 w-5 animate-spin" />
 						<span>Connexion en cours...</span>

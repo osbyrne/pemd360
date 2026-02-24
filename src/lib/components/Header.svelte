@@ -35,12 +35,7 @@
 				{#if user}
 					<a href="/app/projets" class="btn btn-secondary"> Tableau de bord </a>
 				{:else}
-					<a
-						href="/login"
-						class="btn rounded-md border-2 border-emerald-600 bg-emerald-600 px-4 py-2 font-medium text-white transition-colors hover:bg-emerald-700"
-					>
-						Se connecter
-					</a>
+					<a href="/login" class="btn"> Se connecter </a>
 				{/if}
 			</div>
 
