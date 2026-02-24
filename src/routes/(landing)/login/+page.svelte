@@ -2,7 +2,7 @@
 	import { authClient } from '$lib/auth-client';
 	import { goto } from '$app/navigation';
 	import { AlertError } from '$lib/components';
-	import { AtSign, Lock, Eye, EyeOff, Loader2 } from 'lucide-svelte';
+	import { AtSign, Lock, Eye, EyeOff, Loader } from 'lucide-svelte';
 
 	let email = $state('');
 	let password = $state('');
@@ -114,7 +114,7 @@
 
 				<button type="submit" class="btn" disabled={loading}>
 					{#if loading}
-						<Loader2 class="h-5 w-5 animate-spin" />
+						<Loader class="h-5 w-5 animate-spin" />
 						<span>Connexion en cours...</span>
 					{:else}
 						<span>Se connecter</span>
