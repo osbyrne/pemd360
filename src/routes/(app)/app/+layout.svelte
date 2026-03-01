@@ -34,7 +34,7 @@
 		href?: string;
 		label: string;
 		icon:
-			| typeof Menu
+			| null
 			| typeof ClipboardList
 			| typeof ClipboardListAlt
 			| typeof Grid3x3
@@ -44,12 +44,13 @@
 			| typeof Settings
 			| typeof Files
 			| typeof Hammer
-			| null;
+			| typeof Menu;
 		adminOnly?: boolean;
 		subItems?: Array<{
 			href: string;
 			label: string;
 			icon:
+				| null
 				| typeof Menu
 				| typeof ClipboardList
 				| typeof ClipboardListAlt
@@ -59,8 +60,7 @@
 				| typeof ChevronRight
 				| typeof Settings
 				| typeof Files
-				| typeof Hammer
-				| null;
+				| typeof Hammer;
 			adminOnly?: boolean;
 		}>;
 	};
