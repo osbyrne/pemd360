@@ -1,22 +1,9 @@
 <script lang="ts">
-	import {
-		Info,
-		Search,
-		MapPin,
-		Calendar,
-		Building2,
-		Grid3x3,
-		List,
-		ChevronRight,
-		Box,
-		FileText,
-		ChevronDown
-	} from 'lucide-svelte';
+	import { Info, Search, MapPin, Calendar, Building2, ChevronRight, Box } from 'lucide-svelte';
 	import type { PageData } from './$types';
 	import { fade, fly } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { onMount } from 'svelte';
-	import { slide } from 'svelte/transition';
 
 	let { data }: { data: PageData } = $props();
 
@@ -37,20 +24,6 @@
 			month: 'short',
 			year: 'numeric'
 		});
-	}
-
-	function getRelativeTime(date: Date): string {
-		const now = new Date();
-		const d = new Date(date);
-		const diffDays = Math.floor((now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
-
-		if (diffDays === 0) return "Aujourd'hui";
-		if (diffDays === 1) return 'Hier';
-		if (diffDays < 7) return `Il y a ${diffDays} jours`;
-		if (diffDays < 30)
-			return `Il y a ${Math.floor(diffDays / 7)} semaine${Math.floor(diffDays / 7) > 1 ? 's' : ''}`;
-		if (diffDays < 365) return `Il y a ${Math.floor(diffDays / 30)} mois`;
-		return `Il y a ${Math.floor(diffDays / 365)} an${Math.floor(diffDays / 365) > 1 ? 's' : ''}`;
 	}
 
 	let filteredProjets = $derived(
@@ -84,10 +57,6 @@
 			sortBy = field;
 			sortOrder = 'desc';
 		}
-	}
-
-	function toggleCerfaMenu(projetId: string) {
-		openCerfaMenu = openCerfaMenu === projetId ? null : projetId;
 	}
 </script>
 
@@ -142,26 +111,6 @@
 								Ville
 							</button>
 						</div>
-
-						<!-- View Toggle -->
-						<div class="flex items-center gap-1 p-1 rounded-lg bg-slate-100">
-							<button
-								onclick={() => (viewMode = 'grid')}
-								class="p-2 rounded-lg transition-colors {viewMode === 'grid'
-									? 'bg-white text-emerald-600'
-									: 'text-slate-500 hover:text-slate-700'}"
-							>
-								<Grid3x3 class="h-5 w-5" />
-							</button>
-							<button
-								onclick={() => (viewMode = 'list')}
-								class="p-2 rounded-lg transition-colors {viewMode === 'list'
-									? 'bg-white text-emerald-600'
-									: 'text-slate-500 hover:text-slate-700'}"
-							>
-								<List class="h-5 w-5" />
-							</button>
-						</div>
 					</div>
 				</div>
 			</div>
@@ -175,9 +124,6 @@
 					class="flex flex-col items-center justify-center py-20 text-center"
 					in:fade={{ duration: 300 }}
 				>
-					<div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-6">
-						<Building2 class="h-10 w-10 text-slate-400" />
-					</div>
 					<h3 class="text-xl font-semibold text-slate-900 mb-2">
 						{searchQuery ? 'Aucun résultat' : 'Aucun projet disponible'}
 					</h3>
@@ -186,101 +132,8 @@
 							? `Aucun projet ne correspond à "${searchQuery}". Essayez une autre recherche.`
 							: "Vous n'avez pas encore de projets assignés. Contactez votre administrateur."}
 					</p>
-					{#if searchQuery}
-						<button
-							onclick={() => (searchQuery = '')}
-							class="mt-4 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors"
-						>
-							Effacer la recherche
-						</button>
-					{/if}
 				</div>
-			{:else if viewMode === 'grid'}
-				<!-- Grid View -->
-				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-					{#each filteredProjets as projet, i (projet.id)}
-						<div
-							class="group bg-white rounded-2xl border border-slate-200 overflow-hidden"
-							in:fly={{ y: 30, duration: 400, delay: 300 + i * 50 }}
-							animate:flip={{ duration: 300 }}
-						>
-							<!-- Card Header -->
-							<div class="p-6 pb-4">
-								<div class="flex items-start gap-4">
-									<div class="flex-1 min-w-0">
-										<h3 class="font-semibold text-slate-900 text-lg truncate">
-											{projet.libelle}
-										</h3>
-										<p class="text-slate-500 text-sm font-mono mt-0.5">{projet.reference}</p>
-									</div>
-								</div>
-							</div>
-
-							<!-- Card Body -->
-							<div class="px-6 pb-4 space-y-2">
-								{#if projet.societeNom}
-									<div class="flex items-center gap-2 text-sm text-emerald-700 font-medium">
-										<Building2 class="h-4 w-4 text-emerald-600 shrink-0" />
-										<span class="truncate">{projet.societeNom}</span>
-									</div>
-								{/if}
-								<div class="flex items-center gap-2 text-sm text-slate-600">
-									<MapPin class="h-4 w-4 text-slate-400 shrink-0" />
-									<span class="truncate">{projet.ville} ({projet.cp})</span>
-								</div>
-								<div class="flex items-center gap-2 text-sm text-slate-600">
-									<Calendar class="h-4 w-4 text-slate-400 shrink-0" />
-									<span>{formatDate(projet.dateDemarrage)}</span>
-								</div>
-							</div>
-
-							<!-- Card Footer -->
-							<div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-2">
-								<a href="/app/details/{projet.id}" class="btn">
-									<Info class="h-4 w-4" />
-									Détails
-								</a>
-								<a href="/app/projets/{projet.id}" class="btn">
-									<Box class="h-4 w-4" />
-									Modèle 3D
-								</a>
-								<div class="relative flex-1">
-									<button onclick={() => toggleCerfaMenu(projet.id)} class="btn">
-										<FileText class="h-4 w-4" />
-										Cerfa
-										<ChevronDown class="h-4 w-4" />
-									</button>
-									{#if openCerfaMenu === projet.id}
-										<div
-											class="absolute bottom-full mb-2 left-0 right-0 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden z-10"
-											transition:slide={{ duration: 200 }}
-										>
-											<a
-												href="/app/cerfa/informations?projetId={projet.id}"
-												class="block px-4 py-3 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
-											>
-												Informations
-											</a>
-											<a
-												href="/app/cerfa/pem?projetId={projet.id}"
-												class="block px-4 py-3 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors border-t border-slate-100"
-											>
-												Caractérisation PEM
-											</a>
-											<a
-												href="/app/cerfa/dechets?projetId={projet.id}"
-												class="block px-4 py-3 text-sm text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors border-t border-slate-100"
-											>
-												Caractérisation Déchets
-											</a>
-										</div>
-									{/if}
-								</div>
-							</div>
-						</div>
-					{/each}
-				</div>
-			{:else}
+			{:else if viewMode === 'list'}
 				<!-- List View -->
 				<div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
 					<div class="divide-y divide-slate-100">
@@ -324,26 +177,23 @@
 										<span class="hidden sm:inline">Modèle 3D</span>
 										<ChevronRight class="h-4 w-4" />
 									</a>
-									<div class="relative">
-										<button onclick={() => toggleCerfaMenu(projet.id)} class="btn btn-ghost">
-											<FileText class="h-4 w-4" />
-											<span class="hidden sm:inline">Cerfa</span>
-											<ChevronDown class="h-4 w-4" />
-										</button>
-										{#if openCerfaMenu === projet.id}
-											<div class="absolute z-10" transition:slide={{ duration: 200 }}>
-												<a href="/app/cerfa/informations?projetId={projet.id}" class="btn">
-													Informations
-												</a>
-												<a href="/app/cerfa/pem?projetId={projet.id}" class="btn">
-													Caractérisation PEM
-												</a>
-												<a href="/app/cerfa/dechets?projetId={projet.id}" class="btn">
-													Caractérisation Déchets
-												</a>
-											</div>
-										{/if}
-									</div>
+									<details class="dropdown">
+										<summary class="btn btn-ghost">Cerfa</summary>
+										<ul
+											class="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+										>
+											<li>
+												<a href="/app/cerfa/informations?projetId={projet.id}">Informations</a>
+											</li>
+											<li>
+												<a href="/app/cerfa/pem?projetId={projet.id}">Caractérisation PEM</a>
+											</li>
+											<li>
+												<a href="/app/cerfa/dechets?projetId={projet.id}">Caractérisation Déchets</a
+												>
+											</li>
+										</ul>
+									</details>
 								</div>
 							</div>
 						{/each}
