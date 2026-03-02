@@ -408,11 +408,11 @@
 				showMail = !showMail;
 				toggleMail();
 			}}
-			class={`w-full h-20 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showMail ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
+			class={`btn h-20 ${showMail ? 'bg-blue-50' : ''}`}
 		>
 			<Mail
 				size={32}
-				class={`transition-transform ${showMail ? 'scale-110 text-blue-700' : 'text-gray-700'}`}
+				class={`transition-transform ${showMail ? 'text-blue-700' : 'text-gray-700'}`}
 			/>
 		</button>
 
@@ -428,7 +428,7 @@
 					showAmianteModal = true;
 				}
 			}}
-			class={`w-full h-20 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showAmiante ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
+			class={`btn h-20 ${showAmiante ? 'bg-blue-50' : ''}`}
 		>
 			<img
 				src={tagAmianteImg}
@@ -449,7 +449,7 @@
 					showPlombModal = true;
 				}
 			}}
-			class={`w-full h-20 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showPlomb ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
+			class={`btn h-20 ${showPlomb ? 'bg-blue-50' : ''}`}
 		>
 			<img
 				src={tagPlombImg}
@@ -470,7 +470,7 @@
 					showTermiteModal = true;
 				}
 			}}
-			class={`w-full h-20 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showTermite ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
+			class={`btn h-20 ${showTermite ? 'bg-blue-50' : ''}`}
 		>
 			<img
 				src={tagTermiteImg}
@@ -479,55 +479,42 @@
 			/>
 		</button>
 
-		<div class="flex flex-col gap-2">
-			<button
-				type="button"
-				title="Afficher les tags PEMD"
-				aria-pressed={showPemd}
-				onclick={() => {
-					showPemdModal = true;
-				}}
-				class={`w-full h-14 flex items-center justify-center rounded-lg border transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 ${showPemd ? 'bg-blue-50 text-blue-700 ring-1 ring-blue-100 shadow-sm scale-105' : 'bg-gray-50 text-gray-700 hover:scale-105 hover:shadow-sm'}`}
-			>
-				<img
-					src={tagPemdImg}
-					alt="pemd"
-					class={`h-24 w-24 object-contain transition-transform ${showPemd ? 'scale-140' : ''}`}
-				/>
-			</button>
-			<button
-				type="button"
-				title={editMode.enabled
-					? 'Désactiver le mode édition PEMD'
-					: 'Activer le mode édition PEMD'}
-				aria-pressed={editMode.enabled}
-				onclick={() => editMode.toggle()}
-				class={`btn ${editMode.enabled ? 'bg-purple-600 text-white ring-1 ring-purple-300 shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-purple-50 hover:text-purple-600'}`}
-			>
-				<Pencil size={12} class="mr-1" />
-				{editMode.enabled ? 'Édition ON' : 'Éditer'}
-			</button>
-		</div>
-	</div>
-
-	<!-- Edit mode indicator -->
-	{#if editMode.enabled}
-		<div
-			class="mb-4 flex items-center justify-between bg-purple-50 border border-purple-200 rounded-lg px-4 py-3"
+		<button
+			type="button"
+			title="Afficher les tags PEMD"
+			aria-pressed={showPemd}
+			onclick={() => {
+				showPemdModal = true;
+			}}
+			class={`btn h-20 ${showPemd ? 'bg-blue-50' : ''}`}
 		>
-			<div class="flex items-center gap-3">
-				<div class="w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
-				<span class="text-purple-700 font-medium">Mode édition PEMD actif</span>
-				<span class="text-purple-600 text-sm"
-					>- Cliquez directement sur le modèle pour ajouter un tag</span
-				>
-			</div>
-			<button type="button" onclick={() => editMode.toggle()} class="btn btn-primary">
-				<X size={16} />
-				Quitter le mode édition
-			</button>
-		</div>
-	{/if}
+			<img
+				src={tagPemdImg}
+				alt="pemd"
+				class={`h-24 w-24 object-contain transition-transform ${showPemd ? 'scale-140' : ''}`}
+			/>
+		</button>
+
+		<button
+			type="button"
+			title={editMode.enabled ? 'Désactiver le mode édition PEMD' : 'Activer le mode édition PEMD'}
+			aria-pressed={editMode.enabled}
+			onclick={() => editMode.toggle()}
+			class={`btn h-20 ${editMode ? 'bg-blue-50' : ''}`}
+		>
+			<Pencil
+				size={24}
+				class={`object-contain transition-transform ${editMode ? 'scale-140' : ''}`}
+			/>
+			Édition
+		</button>
+
+		<p>Choice of Matterport SDK :</p>
+		<select class="select">
+			<option>NPM package</option>
+			<option>Script tag</option>
+		</select>
+	</div>
 
 	<div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm flex-1 relative">
 		<iframe
