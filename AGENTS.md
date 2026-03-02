@@ -38,7 +38,7 @@ Read /docs/README.md
 
 ### Matterport Not Loading
 
-- Verify `MATTERPORT_SDK_KEY` is set in `.env`
+- Verify `MATTERPORT_SDK_KEY` is set
 - Check browser console for SDK errors
 - Ensure model ID is valid
 

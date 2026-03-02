@@ -6,17 +6,28 @@ PEMD360 is a web application for building diagnostics and waste management (PEMD
 
 ## Pre-Requisite
 
-- Node.js ^22
+- [Node.js ^22](https://nodejs.org/en/download)
+- [bws](https://bitwarden.com/help/cli/#download-and-install)
 
 ## Installation
 
-1. `npm install`
-2. Copy `.env.example` to a new `.env` file, and fill the values.
-3. `npm run dev`
+```bash
+# Install project dependencies:
+npm install
+
+# Create a machine account token on Bitwarden, then export it as an environment variable:
+export BWS_ACCESS_TOKEN="your_machine_account_token"
+
+# Find your project ID on Bitwarden:
+bws projects list
+
+# Run project locally (database is still remote with Turso)
+bws run --project-id your_project_id -- 'npm run dev'
+```
 
 # Database Migration
 
-```sh
+```bash
 # Generate migration
 npm run drizzle-kit generate
 

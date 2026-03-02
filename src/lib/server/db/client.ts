@@ -1,8 +1,6 @@
+/*! 🌼 daisyUI 5.5.19 */
 import { drizzle } from 'drizzle-orm/libsql';
 import { createClient } from '@libsql/client';
-import { config } from 'dotenv';
-
-config({ path: '.env' });
 
 const turso = createClient({
 	url: process.env.TURSO_CONNECTION_URL!,
