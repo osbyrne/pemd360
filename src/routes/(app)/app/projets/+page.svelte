@@ -84,33 +84,24 @@
 					<!-- View Toggle & Sort -->
 					<div class="flex items-center gap-2">
 						<!-- Sort Buttons -->
-						<div class="hidden sm:flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-100">
-							<button
-								onclick={() => toggleSort('date')}
-								class="px-3 py-2 rounded-lg text-xs font-medium transition-colors {sortBy === 'date'
-									? 'bg-white text-emerald-600'
-									: 'text-slate-600 hover:text-slate-900'}"
-							>
-								Date
-							</button>
-							<button
-								onclick={() => toggleSort('name')}
-								class="px-3 py-2 rounded-lg text-xs font-medium transition-colors {sortBy === 'name'
-									? 'bg-white text-emerald-600'
-									: 'text-slate-600 hover:text-slate-900'}"
-							>
-								Nom
-							</button>
-							<button
-								onclick={() => toggleSort('ville')}
-								class="px-3 py-2 rounded-lg text-xs font-medium transition-colors {sortBy ===
-								'ville'
-									? 'bg-white text-emerald-600'
-									: 'text-slate-600 hover:text-slate-900'}"
-							>
-								Ville
-							</button>
-						</div>
+						<button
+							onclick={() => toggleSort('date')}
+							class="btn {sortBy === 'date' ? ' text-emerald-600' : ''}"
+						>
+							Date
+						</button>
+						<button
+							onclick={() => toggleSort('name')}
+							class="btn {sortBy === 'name' ? ' text-emerald-600' : ''}"
+						>
+							Nom
+						</button>
+						<button
+							onclick={() => toggleSort('ville')}
+							class="btn {sortBy === 'ville' ? ' text-emerald-600' : ''}"
+						>
+							Ville
+						</button>
 					</div>
 				</div>
 			</div>

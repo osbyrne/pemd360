@@ -17,6 +17,11 @@ PEMD360 is a web application for building diagnostics and waste management (PEMD
 ```bash
 # Install project dependencies:
 npm install
+
+# Also viable
+bun install
+pnpm install
+deno install
 ```
 
 ## Secrets

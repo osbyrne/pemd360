@@ -63,6 +63,10 @@
     "pdfjs-dist": "^5.4.530"
   },
   "trustedDependencies": [
-    "@matterport/sdk"
+    "@matterport/sdk",
+    "better-sqlite3",
+    "esbuild",
+    "sharp",
+    "workerd"
   ]
 }
