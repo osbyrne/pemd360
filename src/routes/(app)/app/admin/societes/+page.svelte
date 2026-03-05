@@ -237,15 +237,6 @@
 			<div class="divide-y divide-slate-100">
 				{#each displayedCompanies as company (company.id)}
 					<div class="flex items-center gap-4 p-4 transition-colors hover:bg-slate-50">
-						<!-- Avatar -->
-						<div class="shrink-0">
-							<div
-								class="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-emerald-400 to-emerald-600 text-lg font-bold text-white shadow"
-							>
-								{company.nom?.[0]?.toUpperCase() || '?'}
-							</div>
-						</div>
-
 						<!-- Info -->
 						<div class="min-w-0 flex-1">
 							<p class="font-semibold text-slate-900">{company.nom}</p>
