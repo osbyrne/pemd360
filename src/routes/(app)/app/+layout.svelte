@@ -331,11 +331,6 @@
 			{#if data.user}
 				<div class="mb-4 rounded-lg bg-gray-50 p-3">
 					<div class="mb-2 flex items-center gap-3">
-						<div
-							class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white font-semibold"
-						>
-							{data.user.name?.charAt(0).toUpperCase() || 'U'}
-						</div>
 						<div class="flex-1 overflow-hidden">
 							<p class="truncate font-semibold text-gray-900">{data.user.name}</p>
 							<p class="truncate text-xs text-gray-500">
