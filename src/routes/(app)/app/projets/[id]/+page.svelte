@@ -16,7 +16,8 @@
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	let iframe: HTMLIFrameElement;
-	let mpSdk: MpSdk | undefined = $state();
+
+	let MatterportSDK: MpSdk | undefined = $state();
 
 	let showMail = $state(false);
 	let showAmiante = $state(false);
@@ -68,11 +69,11 @@
 		getColor: (tag: T) => { r: number; g: number; b: number },
 		typeName: string
 	): Promise<string[]> {
-		if (!mpSdk) return currentSids;
+		if (!MatterportSDK) return currentSids;
 
 		for (const sid of currentSids) {
 			try {
-				await mpSdk.Tag.remove(sid);
+				await MatterportSDK.Tag.remove(sid);
 			} catch (e) {
 				console.error(`Failed to remove ${typeName} sid`, sid, e);
 			}
@@ -88,7 +89,7 @@
 			try {
 				const anchorPosition = JSON.parse(tag.anchorPosition);
 				const stemVector = JSON.parse(tag.stemVector);
-				const [sid] = await mpSdk.Tag.add({
+				const [sid] = await MatterportSDK.Tag.add({
 					label: buildLabel(tag),
 					description: buildDescription(tag),
 					anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
@@ -105,7 +106,7 @@
 	}
 
 	async function toggleMail() {
-		if (!mpSdk) return;
+		if (!MatterportSDK) return;
 		if (showMail) {
 			if (data.tags && data.tags.length > 0) {
 				console.log(`Adding ${data.tags.length} tags to the model`);
@@ -120,7 +121,7 @@
 							anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
 							stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z }
 						};
-						const [sid] = await mpSdk.Tag.add(tagDescriptor);
+						const [sid] = await MatterportSDK.Tag.add(tagDescriptor);
 						mailSids.push(sid);
 					} catch (tagError) {
 						console.error(`Failed to add tag ${tag.id}:`, tagError);
@@ -130,7 +131,7 @@
 		} else {
 			for (const sid of mailSids) {
 				try {
-					await mpSdk.Tag.remove(sid);
+					await MatterportSDK.Tag.remove(sid);
 				} catch (e) {
 					console.error(e);
 				}
@@ -187,7 +188,7 @@
 	}
 
 	async function addFilteredPemdTags(allowedIds: number[]) {
-		if (!mpSdk) return;
+		if (!MatterportSDK) return;
 		if (!data.pemdTags || data.pemdTags.length === 0) return;
 		// remove existing PEMD tags before adding the new filtered set
 		await removePemdTags();
@@ -213,7 +214,7 @@
 					stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
 					color: { r: 0.6, g: 0.2, b: 0.8 }
 				};
-				const [sid] = await mpSdk.Tag.add(tagDescriptor);
+				const [sid] = await MatterportSDK.Tag.add(tagDescriptor);
 				pemdSids.push(sid);
 			} catch (tagError) {
 				console.error(`Failed to add pemd tag ${tag.id}:`, tagError);
@@ -225,10 +226,10 @@
 	}
 
 	async function removePemdTags() {
-		if (!mpSdk) return;
+		if (!MatterportSDK) return;
 		for (const sid of pemdSids) {
 			try {
-				await mpSdk.Tag.remove(sid);
+				await MatterportSDK.Tag.remove(sid);
 			} catch (e) {
 				console.error('Failed to remove pemd sid', sid, e);
 			}
@@ -262,7 +263,7 @@
 	}
 
 	async function addNewPemdTagToModel(tagData: App.Tag): Promise<App.TagResponse | void> {
-		if (!mpSdk) return;
+		if (!MatterportSDK) return;
 
 		try {
 			const anchorPosition = JSON.parse(tagData.anchorPosition);
@@ -281,7 +282,7 @@
 				color: { r: 0.6, g: 0.2, b: 0.8 }
 			};
 
-			const [sid] = await mpSdk.Tag.add(tagDescriptor);
+			const [sid] = await MatterportSDK.Tag.add(tagDescriptor);
 			pemdSids.push(sid);
 			showPemd = true;
 		} catch (e) {
@@ -294,8 +295,8 @@
 		(async () => {
 			try {
 				const { setupSdk } = await import('@matterport/sdk');
-				mpSdk = await setupSdk(data.matterportSdkKey, { iframe });
-				editMode.setMpSdk(mpSdk);
+				MatterportSDK = await setupSdk(data.matterportSdkKey, { iframe });
+				editMode.setMpSdk(MatterportSDK);
 
 				// Suppress noisy analytics/network errors coming from the Matterport SDK (often caused by ad-blockers)
 				handleUnhandledRejection = (ev: PromiseRejectionEvent) => {
@@ -316,7 +317,7 @@
 				};
 				window.addEventListener('unhandledrejection', handleUnhandledRejection);
 
-				console.log('Matterport SDK connected', mpSdk);
+				console.log('Matterport SDK connected', MatterportSDK);
 			} catch (e) {
 				console.error('Matterport SDK connection failed:', e);
 			}
@@ -328,7 +329,7 @@
 			// Cleanup edit mode listeners
 			editMode.cleanup();
 			try {
-				if (mpSdk && mpSdk.disconnect) mpSdk.disconnect();
+				if (MatterportSDK && MatterportSDK.disconnect) MatterportSDK.disconnect();
 			} catch (err) {
 				console.error('Matterport SDK disconnect failed:', err);
 			}
@@ -508,12 +509,6 @@
 			/>
 			Édition
 		</button>
-
-		<p>Choice of Matterport SDK :</p>
-		<select class="select">
-			<option>NPM package</option>
-			<option>Script tag</option>
-		</select>
 	</div>
 
 	<div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm flex-1 relative">
