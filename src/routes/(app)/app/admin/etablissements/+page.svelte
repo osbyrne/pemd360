@@ -221,7 +221,7 @@
 		{/if}
 
 		<!-- Pagination -->
-		{#if !loading && filteredEtabs.length > 0}
+		{#if !loading && filteredEtabs.length > 0 && totalPages > 1}
 			<div
 				class="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-4 py-3"
 			>

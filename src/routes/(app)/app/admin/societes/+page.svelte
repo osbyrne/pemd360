@@ -216,7 +216,7 @@
 	<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
 		{#if loading}
 			<div class="divide-y divide-slate-100">
-				{#each Array(5) as _}
+				{#each Array(5) as i (i)}
 					<div class="flex items-center gap-4 p-4">
 						<div class="h-12 w-12 animate-pulse rounded-full bg-slate-100"></div>
 						<div class="flex-1 space-y-2">
@@ -275,7 +275,7 @@
 		{/if}
 
 		<!-- Pagination -->
-		{#if !loading && filteredCompanies.length > 0}
+		{#if !loading && filteredCompanies.length > 0 && totalPages > 1}
 			<div
 				class="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-4 py-3"
 			>

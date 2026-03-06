@@ -13,7 +13,7 @@
 	const endItem = $derived(Math.min(totalItems, page * perPage));
 </script>
 
-{#if totalItems > 0}
+{#if totalItems > 0 && totalPages > 1}
 	<div class="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3">
 		<p class="text-sm text-gray-600">
 			Affichage de <span class="font-semibold">{startItem}</span>

@@ -6,7 +6,7 @@
 	import tagPlombImg from '$lib/assets/tagplomb.png';
 	import tagTermiteImg from '$lib/assets/tagtermite.png';
 	import tagPemdImg from '$lib/assets/pemd360.png';
-	import { Mail, Plus, Pencil, X } from 'lucide-svelte';
+	import { Mail, Plus, Pencil } from 'lucide-svelte';
 	import { invalidateAll } from '$app/navigation';
 	import PresenceFilterModal from '$lib/components/PresenceFilterModal.svelte';
 	import PemdCreateModal from '$lib/components/PemdCreateModal.svelte';

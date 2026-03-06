@@ -1,6 +1,6 @@
 <script lang="ts">
 	import CerfaTabs from '$lib/components/CerfaTabs.svelte';
-	import { Search, Filter, X, Download } from 'lucide-svelte';
+	import { Search, X, Download } from 'lucide-svelte';
 	import { page } from '$app/stores';
 	import type { PageData } from './$types';
 
@@ -176,9 +176,7 @@
 			<table class="w-full text-sm text-left">
 				<thead class="bg-gray-50 text-gray-600 border-b border-gray-200">
 					<tr>
-						<th class="px-4 py-3 font-semibold whitespace-nowrap min-w-[300px]"
-							>Catégorie / Nature</th
-						>
+						<th class="px-4 py-3 font-semibold whitespace-nowrap min-w-75">Catégorie / Nature</th>
 						<th class="px-4 py-3 font-semibold whitespace-nowrap">Code</th>
 						<th class="px-4 py-3 font-semibold text-right whitespace-nowrap">Masse (Kg)</th>
 						<th class="px-4 py-3 font-semibold text-right whitespace-nowrap">Vol (m³)</th>
@@ -211,7 +209,7 @@
 					</tr>
 				</thead>
 				<tbody class="divide-y divide-gray-100">
-					{#each paginatedDechets as dechet}
+					{#each paginatedDechets as dechet, i (i)}
 						<tr class="hover:bg-gray-50 transition-colors">
 							<td class="px-4 py-3 align-top">
 								<div class="font-medium text-gray-900">{dechet.categorie || '-'}</div>
@@ -258,7 +256,7 @@
 
 							<td class="px-4 py-3 align-top text-xs text-gray-600 border-l border-gray-100">
 								<div
-									class="max-w-[150px] truncate"
+									class="max-w-37.5 truncate"
 									title={dechet.stockage || dechet.description || ''}
 								>
 									{dechet.stockage || dechet.description || '-'}

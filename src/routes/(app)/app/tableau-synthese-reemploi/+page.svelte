@@ -224,7 +224,7 @@
 		</div>
 
 		<!-- Pagination -->
-		{#if filteredList.length > 0}
+		{#if filteredList.length > 0 && totalPages > 1}
 			<div class="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3">
 				<p class="text-sm text-gray-600">
 					Affichage de <span class="font-semibold"
