@@ -8,9 +8,6 @@ PEMD360 is a web application for building diagnostics and waste management (PEMD
 
 - [Node.js ^22](https://nodejs.org/en/download)
 - [Doppler](https://docs.doppler.com/docs/install-cli)
-- Optional: [bws](https://bitwarden.com/help/cli/#download-and-install)
-- Optional: [Turso CLI](https://docs.turso.tech/cli/introduction)
-- Optional: [Vercel CLI](https://vercel.com/docs/cli)
 
 ## Installation
 
@@ -18,38 +15,12 @@ PEMD360 is a web application for building diagnostics and waste management (PEMD
 # Install project dependencies:
 npm install
 
-# Also viable
-bun install
-pnpm install
-deno install
-```
-
-## Secrets
-
-### With Doppler (recommended)
-
-```bash
 # Login with Doppler to get the environment variables
 doppler login
 
 # Select project and config
 doppler setup
 ```
-
-### With Bitwarden
-
-```bash
-# Create a machine account token on Bitwarden, then export it as an environment variable:
-export BWS_ACCESS_TOKEN="your_machine_account_token"
-
-# Find your project ID on Bitwarden:
-bws project list
-
-# Run project locally (database is still remote with Turso)
-bws run --project-id your_project_id -- 'npm run dev'
-```
-
-I am also considering [Apple Passwords or 1Passwords](https://jonmagic.com/posts/stop-putting-secrets-in-dotenv-files), and [bwenv](https://bwenv.netlify.app/) with [direnv](https://direnv.net/).
 
 # Database Migration
 
@@ -115,3 +86,8 @@ npm run drizzle-kit migrate
 
 - Verify `BETTER_AUTH_SECRET` is set
 - Clear cookies and sessions if having issues
+
+## notes
+
+Run `npm run check` and fix issues before committing
+Also run `npm run format`
