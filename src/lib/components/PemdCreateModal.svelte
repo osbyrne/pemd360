@@ -169,7 +169,7 @@
 								{/each}
 							</select>
 							{#if !groupId}
-								<p class="text-xs text-purple-600 mt-1">Commencez par sélectionner un groupe</p>
+								<p class="text-xs mt-1">Commencez par sélectionner un groupe</p>
 							{/if}
 						</div>
 
@@ -178,7 +178,7 @@
 							<label for="pemd-categorie" class="block text-sm font-medium mb-1">
 								<span
 									class="inline-flex items-center justify-center w-5 h-5 {groupId
-										? 'bg-purple-100 text-purple-700'
+										? 'bg-purple-100 '
 										: ' '} rounded-full text-xs font-bold mr-1">2</span
 								>
 								Catégorie
@@ -202,7 +202,7 @@
 									Aucune catégorie disponible pour ce groupe
 								</p>
 							{:else if !categoryId}
-								<p class="text-xs text-purple-600 mt-1">
+								<p class="text-xs mt-1">
 									Sélectionnez une catégorie ({categoriesFiltered.length} disponible{categoriesFiltered.length >
 									1
 										? 's'
@@ -216,7 +216,7 @@
 							<label for="pemd-objet" class="block text-sm font-medium mb-1">
 								<span
 									class="inline-flex items-center justify-center w-5 h-5 {categoryId
-										? 'bg-purple-100 text-purple-700'
+										? 'bg-purple-100 '
 										: ''} rounded-full text-xs font-bold mr-1">3</span
 								>
 								Objet <span class="text-red-500">*</span>
@@ -241,14 +241,14 @@
 									Aucun objet disponible pour cette catégorie
 								</p>
 							{:else if !objetId}
-								<p class="text-xs text-red-500 mt-1">
+								<p class="text-xs mt-1">
 									Sélectionnez un objet ({objectsFiltered.length} disponible{objectsFiltered.length >
 									1
 										? 's'
 										: ''})
 								</p>
 							{:else}
-								<p class="text-xs text-green-600 mt-1">Objet sélectionné</p>
+								<p class="text-xs mt-1">Objet sélectionné</p>
 							{/if}
 						</div>
 					</div>
@@ -388,7 +388,7 @@
 					</div>
 
 					<!-- Position info (readonly) -->
-					<div class="bg-purple-50 rounded-lg p-3 text-sm text-purple-700 border border-purple-200">
+					<div class="bg-purple-50 rounded-lg p-3 text-sm border border-purple-200">
 						<p class="font-medium mb-1 flex items-center gap-2">
 							<MapPin class="w-4 h-4" />
 							Position sur le modèle 3D

@@ -14,7 +14,7 @@
 							href="mailto:florent.mouriot@depollution-conseil.fr"
 							class="flex items-center gap-3 transition-colors hover:text-emerald-500"
 						>
-							<Mail class="h-4 w-4 text-emerald-500" />
+							<Mail class="h-4 w-4 " />
 							<span>florent.mouriot@depollution-conseil.fr</span>
 						</a>
 					</li>
@@ -23,7 +23,7 @@
 							href="tel:+33631326715"
 							class="flex items-center gap-3 transition-colors hover:text-emerald-500"
 						>
-							<Phone class="h-4 w-4 text-emerald-500" />
+							<Phone class="h-4 w-4 " />
 							<span>06 31 32 67 15</span>
 						</a>
 					</li>
@@ -34,7 +34,7 @@
 							rel="noopener noreferrer"
 							class="flex items-start gap-3 transition-colors hover:text-emerald-500"
 						>
-							<MapPin class="mt-0.5 h-4 w-4 text-emerald-500" />
+							<MapPin class="mt-0.5 h-4 w-4" />
 							<span>7 rue Montespan 91000, Évry-Courcouronnes</span>
 						</a>
 					</li>

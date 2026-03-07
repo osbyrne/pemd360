@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Calendar, MapPin, Building2, Hash, FileText, Target, Download } from 'lucide-svelte';
+	import { MapPin, Building2, Hash, Target, Download } from 'lucide-svelte';
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 
@@ -23,11 +23,11 @@
 	<title>{data.projet.libelle} · Projet</title>
 </svelte:head>
 
-<div class="min-h-screen bg-linear-to-br from-slate-50 via-white to-emerald-50/30">
+<div class="min-h-screen">
 	{#if mounted}
 		<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 			<!-- Header compact -->
-			<div class=" bg-amber-100 rounded-xl p-6 mb-6">
+			<div class=" rounded-xl p-6 mb-6">
 				<h1 class="text-3xl font-bold">{data.projet.libelle}</h1>
 
 				<a href="/api/projects/{data.projet.id}/cerfa" download class="btn">
@@ -99,7 +99,7 @@
 							</div>
 
 							<div class="space-y-3">
-								<div class="p-3 bg-violet-50 rounded-lg border border-violet-100">
+								<div class="p-3 rounded-lg border border-violet-100">
 									<p class="text-xs text-violet-600 mb-1 uppercase tracking-wide font-medium">
 										Code INSEE
 									</p>
@@ -131,7 +131,7 @@
 							</div>
 
 							<div class="space-y-3">
-								<div class="p-3 bg-blue-50 rounded-lg border border-blue-100">
+								<div class="p-3 rounded-lg border border-blue-100">
 									<p class="text-xs text-blue-600 mb-1 uppercase tracking-wide font-medium">
 										Démarrage
 									</p>
@@ -141,7 +141,7 @@
 								</div>
 
 								{#if data.projet.dateDeFin}
-									<div class="p-3 bg-purple-50 rounded-lg border border-purple-100">
+									<div class="p-3 rounded-lg border border-purple-100">
 										<p class="text-xs text-purple-600 mb-1 uppercase tracking-wide font-medium">
 											Fin prévue
 										</p>
@@ -181,9 +181,9 @@
 
 					<!-- Type opération -->
 					{#if data.projet.typeOperation}
-						<div class="bg-linear-to-br from-emerald-500 to-teal-500 rounded-xl p-5 text-white">
+						<div class=" rounded-xl p-5 text-white">
 							<div class="flex items-center gap-2.5 mb-3">
-								<div class="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+								<div class="p-2 backdrop-blur-sm rounded-lg">
 									<Target class="h-4 w-4" />
 								</div>
 								<h2 class="text-base font-semibold">Type d'opération</h2>

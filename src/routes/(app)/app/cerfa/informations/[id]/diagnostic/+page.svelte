@@ -19,7 +19,7 @@
 	let documentsConsultes = $state([...storedDocuments]);
 
 	const documentsList = [
-		"Dossier des Ouvrages Exécutés (DOE) des bâtiments existants",
+		'Dossier des Ouvrages Exécutés (DOE) des bâtiments existants',
 		'Plans',
 		'Diagnostic amiante',
 		'Diagnostic plomb',
@@ -38,13 +38,13 @@
 	</div>
 
 	<div class="card bg-base-100 shadow-sm">
-		<div class="bg-teal-50 border-b border-teal-100 px-6 py-4">
-			<h1 class="text-xl font-semibold text-teal-900">Le diagnostic</h1>
+		<div class="border-b border-teal-100 px-6 py-4">
+			<h1 class="text-xl font-semibold">Le diagnostic</h1>
 		</div>
 		<div class="p-6">
 			<form method="POST" use:enhance class="space-y-6">
 				<div>
-					<label for="derniereVisite" class="block text-sm font-medium  mb-2"
+					<label for="derniereVisite" class="block text-sm font-medium mb-2"
 						>Date de la dernière visite de l'opération</label
 					>
 					<input
@@ -57,7 +57,7 @@
 				</div>
 
 				<div>
-					<label for="batVisite" class="block text-sm font-medium  mb-2"
+					<label for="batVisite" class="block text-sm font-medium mb-2"
 						>Les bâtiments ou parties de bâtiments visitées par le diagnostiqueur</label
 					>
 					<textarea
@@ -70,7 +70,7 @@
 				</div>
 
 				<div>
-					<label for="batNonVisite" class="block text-sm font-medium  mb-2"
+					<label for="batNonVisite" class="block text-sm font-medium mb-2"
 						>Les bâtiments ou parties de bâtiments non visitées par le diagnostiqueur</label
 					>
 					<textarea
@@ -83,7 +83,7 @@
 				</div>
 
 				<div>
-					<label for="raisonsNePasVisite" class="block text-sm font-medium  mb-2"
+					<label for="raisonsNePasVisite" class="block text-sm font-medium mb-2"
 						>Raisons pour n'avoir pas visité ces parties</label
 					>
 					<textarea
@@ -96,7 +96,7 @@
 				</div>
 
 				<div>
-					<div class="block text-sm font-medium  mb-2">
+					<div class="block text-sm font-medium mb-2">
 						Le diagnostic a-t-il identifié des vices ou des désordres apparents dans des composants
 						des bâtiments ?
 					</div>
@@ -129,7 +129,7 @@
 				</div>
 
 				<div>
-					<div class="block text-sm font-medium  mb-2">
+					<div class="block text-sm font-medium mb-2">
 						Le rapport de diagnostic fournit-il des indications sur les précautions de démolition ou
 						de rénovation ?
 					</div>
@@ -162,7 +162,7 @@
 				</div>
 
 				<div>
-					<div class="block text-sm font-medium  mb-2">Documents consultés</div>
+					<div class="block text-sm font-medium mb-2">Documents consultés</div>
 					<div class="space-y-2">
 						{#each documentsList as doc}
 							<label
@@ -184,7 +184,7 @@
 									}}
 									class="checkbox"
 								/>
-								<span class="text-sm ">{doc}</span>
+								<span class="text-sm">{doc}</span>
 							</label>
 						{/each}
 					</div>

@@ -20,8 +20,8 @@
 	</div>
 
 	<div class="card bg-base-100 shadow-sm">
-		<div class="bg-blue-50 border-b border-blue-100 px-6 py-4">
-			<h1 class="text-xl font-semibold text-blue-900">Maître d'Ouvrage</h1>
+		<div class="border-b border-blue-100 px-6 py-4">
+			<h1 class="text-xl font-semibold">Maître d'Ouvrage</h1>
 		</div>
 		<div class="p-6">
 			<form method="POST" use:enhance class="space-y-6">
@@ -91,8 +91,8 @@
 				</div>
 
 				{#if typePersonne === 'physique'}
-					<div class="bg-blue-50 rounded-lg p-4 space-y-4">
-						<h4 class="font-semibold text-blue-900">Si personne physique</h4>
+					<div class="rounded-lg p-4 space-y-4">
+						<h4 class="font-semibold">Si personne physique</h4>
 						<div>
 							<label for="nom" class="block text-sm font-medium mb-2">Nom</label>
 							<input
@@ -117,8 +117,8 @@
 						</div>
 					</div>
 				{:else}
-					<div class="bg-blue-50 rounded-lg p-4 space-y-4">
-						<h4 class="font-semibold text-blue-900">Si personne morale</h4>
+					<div class="rounded-lg p-4 space-y-4">
+						<h4 class="font-semibold">Si personne morale</h4>
 						<div>
 							<label for="raisonSociale" class="block text-sm font-medium mb-2"
 								>Raison sociale</label

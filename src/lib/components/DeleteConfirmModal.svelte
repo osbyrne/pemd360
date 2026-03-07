@@ -44,7 +44,7 @@
 		>
 			<div class="flex flex-col items-center text-center">
 				<div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
-					<Trash2 class="w-6 h-6 text-red-600" />
+					<Trash2 class="w-6 h-6 " />
 				</div>
 				<h3 class="text-lg font-semibold mb-2">Confirmer la suppression</h3>
 				<p class="text-sm mb-6">

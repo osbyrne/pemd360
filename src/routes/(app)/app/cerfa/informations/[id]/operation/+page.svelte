@@ -43,16 +43,14 @@
 	</div>
 
 	<div class="card bg-base-100 shadow-sm">
-		<div class="bg-amber-50 border-b border-amber-100 px-6 py-4">
-			<h1 class="text-xl font-semibold text-amber-900">L'opération</h1>
+		<div class="border-b border-amber-100 px-6 py-4">
+			<h1 class="text-xl font-semibold">L'opération</h1>
 		</div>
 		<div class="p-6">
 			<form method="POST" use:enhance class="space-y-6">
 				<div class="grid grid-cols-1 gap-4">
 					<div>
-						<label for="adresse" class="block text-sm font-medium  mb-2"
-							>Adresse</label
-						>
+						<label for="adresse" class="block text-sm font-medium mb-2">Adresse</label>
 						<input
 							id="adresse"
 							name="adresse"
@@ -64,9 +62,7 @@
 					</div>
 					<div class="grid grid-cols-2 gap-4">
 						<div>
-							<label for="cp" class="block text-sm font-medium  mb-2"
-								>Code postal</label
-							>
+							<label for="cp" class="block text-sm font-medium mb-2">Code postal</label>
 							<input
 								id="cp"
 								name="cp"
@@ -77,9 +73,7 @@
 							/>
 						</div>
 						<div>
-							<label for="commune" class="block text-sm font-medium  mb-2"
-								>Commune</label
-							>
+							<label for="commune" class="block text-sm font-medium mb-2">Commune</label>
 							<input
 								id="commune"
 								name="commune"
@@ -94,9 +88,7 @@
 
 				<div class="grid grid-cols-2 gap-4">
 					<div>
-						<label for="dateDebut" class="block text-sm font-medium  mb-2"
-							>Date de début</label
-						>
+						<label for="dateDebut" class="block text-sm font-medium mb-2">Date de début</label>
 						<input
 							id="dateDebut"
 							name="dateDebut"
@@ -106,9 +98,7 @@
 						/>
 					</div>
 					<div>
-						<label for="dateFin" class="block text-sm font-medium  mb-2"
-							>Date de fin</label
-						>
+						<label for="dateFin" class="block text-sm font-medium mb-2">Date de fin</label>
 						<input
 							id="dateFin"
 							name="dateFin"
@@ -120,9 +110,7 @@
 				</div>
 
 				<div>
-					<label for="operation" class="block text-sm font-medium  mb-2"
-						>L'opération est-elle</label
-					>
+					<label for="operation" class="block text-sm font-medium mb-2">L'opération est-elle</label>
 					<select id="operation" name="operation" class="select">
 						<option value="">Sélectionnez...</option>
 						<option value="demolition" selected={data.operation?.operation === 'demolition'}
@@ -137,11 +125,11 @@
 					</select>
 				</div>
 
-				<div class="bg-red-50 rounded-lg p-4 space-y-4">
-					<h4 class="font-semibold text-red-900">Démolition</h4>
+				<div class="rounded-lg p-4 space-y-4">
+					<h4 class="font-semibold">Démolition</h4>
 					<div class="grid grid-cols-2 gap-4">
 						<div>
-							<label for="nbBatDemolition" class="block text-sm font-medium  mb-2"
+							<label for="nbBatDemolition" class="block text-sm font-medium mb-2"
 								>Nombre de bâtiments concernés</label
 							>
 							<input
@@ -154,7 +142,7 @@
 							/>
 						</div>
 						<div>
-							<label for="surfaceDemolir" class="block text-sm font-medium  mb-2"
+							<label for="surfaceDemolir" class="block text-sm font-medium mb-2"
 								>Surface totale de plancher (m²)</label
 							>
 							<input
@@ -170,11 +158,11 @@
 					</div>
 				</div>
 
-				<div class="bg-blue-50 rounded-lg p-4 space-y-4">
-					<h4 class="font-semibold text-blue-900">Rénovation significative</h4>
+				<div class="rounded-lg p-4 space-y-4">
+					<h4 class="font-semibold">Rénovation significative</h4>
 					<div class="grid grid-cols-2 gap-4">
 						<div>
-							<label for="nbBatRenovation" class="block text-sm font-medium  mb-2"
+							<label for="nbBatRenovation" class="block text-sm font-medium mb-2"
 								>Nombre de bâtiments concernés</label
 							>
 							<input
@@ -187,7 +175,7 @@
 							/>
 						</div>
 						<div>
-							<label for="surfaceRenover" class="block text-sm font-medium  mb-2"
+							<label for="surfaceRenover" class="block text-sm font-medium mb-2"
 								>Surface totale de plancher (m²)</label
 							>
 							<input
@@ -204,9 +192,7 @@
 				</div>
 
 				<div>
-					<div class="block text-sm font-medium  mb-2">
-						Typologies principales des bâtiments
-					</div>
+					<div class="block text-sm font-medium mb-2">Typologies principales des bâtiments</div>
 					<div class="grid grid-cols-2 gap-3">
 						{#each typologiesList as typologie}
 							<label
@@ -228,14 +214,14 @@
 									}}
 									class="checkbox"
 								/>
-								<span class="text-sm ">{typologie}</span>
+								<span class="text-sm">{typologie}</span>
 							</label>
 						{/each}
 					</div>
 				</div>
 
 				<div>
-					<label for="datePermis" class="block text-sm font-medium  mb-2"
+					<label for="datePermis" class="block text-sm font-medium mb-2"
 						>Date d'obtention du permis de construction du bâtiment le plus ancien</label
 					>
 					<input
@@ -248,7 +234,7 @@
 				</div>
 
 				<div>
-					<div class="block text-sm font-medium  mb-2">
+					<div class="block text-sm font-medium mb-2">
 						Cochez, s'il y en a eu, le(s) type(s) d'opération(s) auxquel(s) le bâtiment a été soumis
 						depuis la date mentionnée ci-dessus :
 					</div>
@@ -268,14 +254,10 @@
 								}}
 								class="checkbox"
 							/>
-							<span class="text-sm ">Rénovation importante</span>
+							<span class="text-sm">Rénovation importante</span>
 						</label>
 						{#if operationsSoumis.includes('renovation')}
-							<input
-								type="month"
-								name="dateRenovation"
-								class="input"
-							/>
+							<input type="month" name="dateRenovation" class="input" />
 						{/if}
 						<label class="flex items-center gap-2">
 							<input
@@ -292,9 +274,7 @@
 								}}
 								class="checkbox"
 							/>
-							<span class="text-sm "
-								>Opération de décontamination (ex: désamiantage)</span
-							>
+							<span class="text-sm">Opération de décontamination (ex: désamiantage)</span>
 						</label>
 						<label class="flex items-center gap-2">
 							<input
@@ -311,7 +291,7 @@
 								}}
 								class="checkbox"
 							/>
-							<span class="text-sm ">Autre intervention importante</span>
+							<span class="text-sm">Autre intervention importante</span>
 						</label>
 						<label class="flex items-center gap-2">
 							<input
@@ -328,7 +308,7 @@
 								}}
 								class="checkbox"
 							/>
-							<span class="text-sm ">Aucune opération</span>
+							<span class="text-sm">Aucune opération</span>
 						</label>
 						<label class="flex items-center gap-2">
 							<input
@@ -345,7 +325,7 @@
 								}}
 								class="checkbox"
 							/>
-							<span class="text-sm ">Ne sait pas</span>
+							<span class="text-sm">Ne sait pas</span>
 						</label>
 					</div>
 				</div>

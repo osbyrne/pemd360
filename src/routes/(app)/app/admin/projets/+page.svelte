@@ -173,7 +173,7 @@
 			</div>
 		{:else}
 			<div class="overflow-x-auto">
-				<table class="w-full">
+				<table class="table">
 					<thead class="border-b">
 						<tr>
 							<th>ID Matterport</th>
