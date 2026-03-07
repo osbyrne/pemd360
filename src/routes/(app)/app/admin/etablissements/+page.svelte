@@ -118,10 +118,8 @@
 	<div class="mb-8">
 		<div class="sm:flex sm:items-center sm:justify-between">
 			<div>
-				<h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-					Gestion des établissements
-				</h1>
-				<p class="mt-2 text-sm text-slate-600">Gérez les établissements de votre organisation.</p>
+				<h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Gestion des établissements</h1>
+				<p class="mt-2 text-sm">Gérez les établissements de votre organisation.</p>
 			</div>
 			<div class="mt-4 flex flex-wrap gap-3 sm:mt-0">
 				<a href="/app/admin/etablissements/nouveau" class="btn">
@@ -145,55 +143,55 @@
 	<br />
 
 	<!-- List -->
-	<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+	<div class="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
 		{#if loading}
 			<div class="divide-y divide-slate-100">
 				{#each Array(5) as _}
 					<div class="flex items-center gap-4 p-4">
-						<div class="h-12 w-12 animate-pulse rounded-full bg-slate-100"></div>
+						<div class="h-12 w-12 animate-pulse rounded-full"></div>
 						<div class="flex-1 space-y-2">
-							<div class="h-4 w-32 animate-pulse rounded bg-slate-100"></div>
-							<div class="h-3 w-48 animate-pulse rounded bg-slate-100"></div>
+							<div class="h-4 w-32 animate-pulse rounded"></div>
+							<div class="h-3 w-48 animate-pulse rounded"></div>
 						</div>
-						<div class="h-6 w-16 animate-pulse rounded-full bg-slate-100"></div>
+						<div class="h-6 w-16 animate-pulse rounded-full"></div>
 					</div>
 				{/each}
 			</div>
 		{:else if displayedEtabs.length === 0}
 			<div class="flex flex-col items-center justify-center px-4 py-16">
-				<Building2 size={48} strokeWidth={1.5} class="mb-4 text-slate-300" />
-				<p class="font-medium text-slate-500">Aucun établissement trouvé</p>
-				<p class="mt-1 text-sm text-slate-400">Essayez de modifier vos critères de recherche</p>
+				<Building2 size={48} strokeWidth={1.5} class="mb-4 " />
+				<p class="font-medium">Aucun établissement trouvé</p>
+				<p class="mt-1 text-sm">Essayez de modifier vos critères de recherche</p>
 			</div>
 		{:else}
 			<div class="divide-y divide-slate-100">
 				{#each displayedEtabs as etab (etab.id)}
-					<div class="flex items-center gap-4 p-4 transition-colors hover:bg-slate-50">
+					<div class="flex items-center gap-4 p-4 transition-colors hover:">
 						<!-- Info -->
 						<div class="min-w-0 flex-1">
 							<div class="flex items-center gap-2">
-								<p class="truncate font-semibold text-slate-900">{etab.nom}</p>
+								<p class="truncate font-semibold">{etab.nom}</p>
 							</div>
-							<p class="truncate text-sm text-slate-500">{etab.email || "Pas d'email"}</p>
+							<p class="truncate text-sm">{etab.email || "Pas d'email"}</p>
 						</div>
 
 						<!-- Location -->
 						<div class="hidden w-32 sm:flex sm:flex-col sm:items-start">
-							<p class="text-sm font-medium text-slate-900">{etab.ville || '-'}</p>
-							<p class="text-xs text-slate-500">{etab.cp || '-'}</p>
+							<p class="text-sm font-medium">{etab.ville || '-'}</p>
+							<p class="text-xs">{etab.cp || '-'}</p>
 						</div>
 
 						<!-- SIRET -->
 						<div class="mr-4 hidden w-36 md:flex md:flex-col md:items-end">
-							<p class="text-xs text-slate-400">SIRET</p>
-							<p class="font-mono text-sm font-medium text-slate-600">{etab.siret || '-'}</p>
+							<p class="text-xs">SIRET</p>
+							<p class="font-mono text-sm font-medium">{etab.siret || '-'}</p>
 						</div>
 
 						<!-- Actions -->
 						<div class="flex items-center gap-1 border-l border-slate-200 pl-2">
 							<a
 								href="/app/admin/etablissements/{etab.id}"
-								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-emerald-600"
+								class="rounded-lg p-2 transition-colors hover: hover:text-emerald-600"
 								title="Voir les détails"
 							>
 								<Eye size={18} />
@@ -201,7 +199,7 @@
 
 							<a
 								href="/app/admin/etablissements/{etab.id}/modifier"
-								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600"
+								class="rounded-lg p-2 transition-colors hover: hover:text-blue-600"
 								title="Modifier"
 							>
 								<Pencil size={18} />
@@ -209,7 +207,7 @@
 
 							<button
 								onclick={() => openDeleteModal(etab)}
-								class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+								class="rounded-lg p-2 transition-colors hover:bg-red-50 hover:text-red-600"
 								title="Supprimer"
 							>
 								<Trash2 size={18} />
@@ -222,10 +220,8 @@
 
 		<!-- Pagination -->
 		{#if !loading && filteredEtabs.length > 0 && totalPages > 1}
-			<div
-				class="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-4 py-3"
-			>
-				<p class="text-sm text-slate-600">
+			<div class="flex items-center justify-between border-t border-slate-200 px-4 py-3">
+				<p class="text-sm">
 					Affichage de <span class="font-semibold"
 						>{Math.min(filteredEtabs.length, (page - 1) * perPage + 1)}</span
 					>
@@ -254,14 +250,11 @@
 <!-- MODAL : Supprimer -->
 {#if isDeleteModalOpen && selectedEtab}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div
-			class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
-			transition:fade
-		></div>
+		<div class="fixed inset-0 /60 backdrop-blur-sm transition-opacity" transition:fade></div>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
-					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+					class="relative w-full max-w-md transform overflow-hidden rounded-2xl shadow-2xl transition-all"
 					transition:scale
 				>
 					<div class="px-6 py-5">
@@ -270,8 +263,8 @@
 								<Trash2 size={20} class="text-red-600" />
 							</div>
 							<div>
-								<h3 class="text-lg font-semibold text-slate-900">Supprimer l'établissement</h3>
-								<p class="text-sm text-slate-500">{selectedEtab.nom}</p>
+								<h3 class="text-lg font-semibold">Supprimer l'établissement</h3>
+								<p class="text-sm">{selectedEtab.nom}</p>
 							</div>
 						</div>
 						<div class="rounded-lg border border-red-200 bg-red-50 p-4">
@@ -281,7 +274,7 @@
 							</p>
 						</div>
 					</div>
-					<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+					<div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
 						<button type="button" class="btn" onclick={closeDeleteModal} disabled={deleteLoading}>
 							Annuler
 						</button>

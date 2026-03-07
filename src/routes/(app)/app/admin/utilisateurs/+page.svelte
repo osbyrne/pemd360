@@ -443,12 +443,8 @@
 	<div class="mb-8">
 		<div class="sm:flex sm:items-center sm:justify-between">
 			<div>
-				<h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-					Gestion des utilisateurs
-				</h1>
-				<p class="mt-2 text-sm text-slate-600">
-					Gérez les utilisateurs, leurs rôles et leurs accès.
-				</p>
+				<h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Gestion des utilisateurs</h1>
+				<p class="mt-2 text-sm">Gérez les utilisateurs, leurs rôles et leurs accès.</p>
 			</div>
 			<div class="mt-4 flex flex-wrap gap-3 sm:mt-0">
 				<button on:click={openCreateModal} class="btn">
@@ -488,20 +484,20 @@
 			<div class="divide-y divide-slate-100">
 				{#each [...Array(5).keys()] as i (i)}
 					<div class="flex items-center gap-4 p-4">
-						<div class="h-12 w-12 rounded-full bg-slate-100 animate-pulse"></div>
+						<div class="h-12 w-12 rounded-full animate-pulse"></div>
 						<div class="flex-1 space-y-2">
-							<div class="h-4 w-32 rounded bg-slate-100 animate-pulse"></div>
-							<div class="h-3 w-48 rounded bg-slate-100 animate-pulse"></div>
+							<div class="h-4 w-32 rounded animate-pulse"></div>
+							<div class="h-3 w-48 rounded animate-pulse"></div>
 						</div>
-						<div class="h-6 w-16 rounded-full bg-slate-100 animate-pulse"></div>
+						<div class="h-6 w-16 rounded-full animate-pulse"></div>
 					</div>
 				{/each}
 			</div>
 		{:else if displayedUsers.length === 0}
 			<div class="flex flex-col items-center justify-center py-16 px-4">
 				<Users />
-				<p class="text-slate-500 font-medium">Aucun utilisateur trouvé</p>
-				<p class="text-sm text-slate-400 mt-1">Essayez de modifier vos critères de recherche</p>
+				<p class=" font-medium">Aucun utilisateur trouvé</p>
+				<p class="text-sm mt-1">Essayez de modifier vos critères de recherche</p>
 			</div>
 		{:else}
 			<div class="divide-y divide-slate-100">
@@ -510,7 +506,7 @@
 						<!-- User Info -->
 						<div class="min-w-0 flex-1">
 							<div class="flex items-center gap-2">
-								<p class="truncate font-semibold text-slate-900">{user.name}</p>
+								<p class="truncate font-semibold">{user.name}</p>
 								{#if user.role === 'admin'}
 									<span
 										class="inline-flex items-center rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700"
@@ -525,13 +521,13 @@
 									</span>
 								{:else}
 									<span
-										class="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700"
+										class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
 									>
 										Utilisateur
 									</span>
 								{/if}
 							</div>
-							<p class="truncate text-sm text-slate-500">{user.email}</p>
+							<p class="truncate text-sm">{user.email}</p>
 						</div>
 
 						<!-- Status -->
@@ -555,22 +551,20 @@
 
 						<!-- Date -->
 						<div class="hidden md:flex md:flex-col md:items-end w-36 mr-4">
-							<p class="text-xs text-slate-400">Inscrit le</p>
-							<p class="text-sm font-medium text-slate-600 whitespace-nowrap">
+							<p class="text-xs">Inscrit le</p>
+							<p class="text-sm font-medium whitespace-nowrap">
 								{formatDate(user.createdAt)}
 							</p>
 						</div>
 
 						<!-- Projets -->
 						<div class="hidden lg:flex lg:flex-col lg:items-end w-32 mr-4">
-							<p class="text-xs text-slate-400">Projets</p>
+							<p class="text-xs">Projets</p>
 							{#if user.role === 'admin'}
-								<p class="text-sm font-medium text-slate-600 whitespace-nowrap truncate max-w-30">
-									tous
-								</p>
+								<p class="text-sm font-medium whitespace-nowrap truncate max-w-30">tous</p>
 							{:else}
 								<p
-									class="text-sm font-medium text-slate-600 whitespace-nowrap truncate max-w-30"
+									class="text-sm font-medium whitespace-nowrap truncate max-w-30"
 									title={getProjetsNames(getUserProjets(user.id))}
 								>
 									{getProjetsCount(user.id)} projet{getProjetsCount(user.id) > 1 ? 's' : ''}
@@ -608,7 +602,7 @@
 								on:click={() => openBanModal(user)}
 								class="btn btn-ghost transition-colors {user.banned
 									? 'text-green-500 hover:bg-green-50 hover:text-green-700'
-									: 'text-slate-400 hover:bg-amber-50 hover:text-amber-600'}"
+									: ' hover:bg-amber-50 hover:text-amber-600'}"
 								title={user.banned ? 'Réactiver le compte' : 'Clôturer le compte'}
 							>
 								<Ban />
@@ -629,10 +623,8 @@
 
 		<!-- Pagination -->
 		{#if !loading && filteredUsers.length > 0 && totalPages > 1}
-			<div
-				class="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-4 py-3"
-			>
-				<p class="text-sm text-slate-600">
+			<div class="flex items-center justify-between border-t border-slate-200 px-4 py-3">
+				<p class="text-sm">
 					Affichage de <span class="font-semibold"
 						>{Math.min(filteredUsers.length, (page - 1) * perPage + 1)}</span
 					>
@@ -671,7 +663,7 @@
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
-					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+					class="relative w-full max-w-md transform overflow-hidden rounded-2xl shadow-2xl transition-all"
 					transition:scale
 				>
 					<div class="px-6 py-5">
@@ -679,13 +671,11 @@
 							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
 								<UserPlus />
 							</div>
-							<h3 class="text-lg font-semibold text-slate-900">Créer un utilisateur</h3>
+							<h3 class="text-lg font-semibold">Créer un utilisateur</h3>
 						</div>
 						<div class="space-y-4">
 							<div>
-								<label for="create-name" class="block text-sm font-medium text-slate-700 mb-1.5"
-									>Nom</label
-								>
+								<label for="create-name" class="block text-sm font-medium mb-1.5">Nom</label>
 								<input
 									id="create-name"
 									bind:value={createForm.name}
@@ -695,9 +685,7 @@
 								/>
 							</div>
 							<div>
-								<label for="create-email" class="block text-sm font-medium text-slate-700 mb-1.5"
-									>Email</label
-								>
+								<label for="create-email" class="block text-sm font-medium mb-1.5">Email</label>
 								<input
 									id="create-email"
 									bind:value={createForm.email}
@@ -707,7 +695,7 @@
 								/>
 							</div>
 							<div>
-								<label for="create-password" class="block text-sm font-medium text-slate-700 mb-1.5"
+								<label for="create-password" class="block text-sm font-medium mb-1.5"
 									>Mot de passe</label
 								>
 								<input
@@ -720,9 +708,7 @@
 								/>
 							</div>
 							<div>
-								<label for="create-role" class="block text-sm font-medium text-slate-700 mb-1.5"
-									>Rôle</label
-								>
+								<label for="create-role" class="block text-sm font-medium mb-1.5">Rôle</label>
 								<select id="create-role" bind:value={createForm.role} class="select">
 									<option value="user">Utilisateur</option>
 									<option value="collaborator">Collaborateur</option>
@@ -730,9 +716,7 @@
 								</select>
 							</div>
 							<div>
-								<label for="create-projets" class="block text-sm font-medium text-slate-700 mb-1.5"
-									>Projets</label
-								>
+								<label for="create-projets" class="block text-sm font-medium mb-1.5">Projets</label>
 								<!-- Search bar for projects -->
 								<label class="relative mb-2">
 									<Search />
@@ -742,16 +726,14 @@
 										placeholder="Rechercher un projet..."
 									/>
 								</label>
-								<div
-									class="max-h-40 overflow-y-auto rounded-lg border border-slate-300 bg-white p-2"
-								>
+								<div class="max-h-40 overflow-y-auto rounded-lg border border-slate-300 p-2">
 									{#if projets.length === 0}
-										<p class="text-sm text-slate-500 py-2 px-2">Aucun projet disponible</p>
+										<p class="text-sm py-2 px-2">Aucun projet disponible</p>
 									{:else if filteredCreateProjets.length === 0}
-										<p class="text-sm text-slate-500 py-2 px-2">Aucun projet trouvé</p>
+										<p class="text-sm py-2 px-2">Aucun projet trouvé</p>
 									{:else}{#each filteredCreateProjets as p (p.id)}
 											<label
-												class="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-slate-50 cursor-pointer"
+												class="flex items-center gap-2 rounded px-2 py-1.5 hover: cursor-pointer"
 											>
 												<input
 													type="checkbox"
@@ -768,22 +750,22 @@
 													}}
 													class="checkbox"
 												/>
-												<span class="text-sm text-slate-700"
-													>{p.libelle} <span class="text-slate-400">({p.reference})</span></span
+												<span class="text-sm"
+													>{p.libelle} <span class="">({p.reference})</span></span
 												>
 											</label>
 										{/each}
 									{/if}
 								</div>
 								{#if createForm.projetIds.length > 0}
-									<p class="text-xs text-slate-500 mt-1">
+									<p class="text-xs mt-1">
 										{createForm.projetIds.length} projet(s) sélectionné(s)
 									</p>
 								{/if}
 							</div>
 						</div>
 					</div>
-					<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+					<div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
 						<button type="button" class="btn btn-warning" on:click={closeCreateModal}>
 							Annuler
 						</button>
@@ -808,7 +790,7 @@
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
-					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+					class="relative w-full max-w-md transform overflow-hidden rounded-2xl shadow-2xl transition-all"
 					transition:scale
 				>
 					<div class="px-6 py-5">
@@ -817,27 +799,21 @@
 								<Pencil />
 							</div>
 							<div>
-								<h3 class="text-lg font-semibold text-slate-900">Modifier l'utilisateur</h3>
-								<p class="text-sm text-slate-500">{selectedUser.email}</p>
+								<h3 class="text-lg font-semibold">Modifier l'utilisateur</h3>
+								<p class="text-sm">{selectedUser.email}</p>
 							</div>
 						</div>
 						<div class="space-y-4">
 							<div>
-								<label for="edit-name" class="block text-sm font-medium text-slate-700 mb-1.5"
-									>Nom</label
-								>
+								<label for="edit-name" class="block text-sm font-medium mb-1.5">Nom</label>
 								<input id="edit-name" bind:value={editForm.name} type="text" class="input" />
 							</div>
 							<div>
-								<label for="edit-email" class="block text-sm font-medium text-slate-700 mb-1.5"
-									>Email</label
-								>
+								<label for="edit-email" class="block text-sm font-medium mb-1.5">Email</label>
 								<input id="edit-email" bind:value={editForm.email} type="email" class="input" />
 							</div>
 							<div>
-								<label for="edit-role" class="block text-sm font-medium text-slate-700 mb-1.5"
-									>Rôle</label
-								>
+								<label for="edit-role" class="block text-sm font-medium mb-1.5">Rôle</label>
 								<select id="edit-role" bind:value={editForm.role} class="select">
 									<option value="user">Utilisateur</option>
 									<option value="collaborator">Collaborateur</option>
@@ -846,7 +822,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+					<div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
 						<button type="button" class="btn" on:click={closeEditModal}> Annuler </button>
 						<button type="button" class="btn" on:click={saveUserInfo}> Enregistrer </button>
 					</div>
@@ -869,7 +845,7 @@
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
-					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+					class="relative w-full max-w-md transform overflow-hidden rounded-2xl shadow-2xl transition-all"
 					transition:scale
 				>
 					<div class="px-6 py-5">
@@ -878,12 +854,12 @@
 								<Pencil />
 							</div>
 							<div>
-								<h3 class="text-lg font-semibold text-slate-900">Changer le mot de passe</h3>
-								<p class="text-sm text-slate-500">{selectedUser.name}</p>
+								<h3 class="text-lg font-semibold">Changer le mot de passe</h3>
+								<p class="text-sm">{selectedUser.name}</p>
 							</div>
 						</div>
 						<div>
-							<label for="new-password" class="block text-sm font-medium text-slate-700 mb-1.5"
+							<label for="new-password" class="block text-sm font-medium mb-1.5"
 								>Nouveau mot de passe</label
 							>
 							<input
@@ -894,12 +870,10 @@
 								placeholder="Entrez le nouveau mot de passe"
 								class="input"
 							/>
-							<p class="mt-2 text-xs text-slate-500">
-								Le mot de passe doit contenir au moins 8 caractères.
-							</p>
+							<p class="mt-2 text-xs">Le mot de passe doit contenir au moins 8 caractères.</p>
 						</div>
 					</div>
-					<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+					<div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
 						<button type="button" class="btn" on:click={closePasswordModal}> Annuler </button>
 						<button type="button" class="btn" on:click={setPassword}> Mettre à jour </button>
 					</div>
@@ -922,7 +896,7 @@
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
-					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+					class="relative w-full max-w-md transform overflow-hidden rounded-2xl shadow-2xl transition-all"
 					transition:scale
 				>
 					<div class="px-6 py-5">
@@ -935,20 +909,20 @@
 								<X />
 							</div>
 							<div>
-								<h3 class="text-lg font-semibold text-slate-900">
+								<h3 class="text-lg font-semibold">
 									{selectedUser.banned ? 'Réactiver le compte' : 'Clôturer le compte'}
 								</h3>
-								<p class="text-sm text-slate-500">{selectedUser.name}</p>
+								<p class="text-sm">{selectedUser.name}</p>
 							</div>
 						</div>
 						{#if selectedUser.banned}
-							<p class="text-sm text-slate-600">
+							<p class="text-sm">
 								Êtes-vous sûr de vouloir réactiver ce compte ? Il pourra à nouveau accéder à la
 								plateforme.
 							</p>
 						{:else}
 							<div>
-								<label for="ban-reason" class="block text-sm font-medium text-slate-700 mb-1.5"
+								<label for="ban-reason" class="block text-sm font-medium mb-1.5"
 									>Raison de la clôture (optionnel)</label
 								>
 								<textarea
@@ -961,7 +935,7 @@
 							</div>
 						{/if}
 					</div>
-					<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+					<div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
 						<button type="button" class="btn" on:click={closeBanModal}> Annuler </button>
 						<button
 							type="button"
@@ -992,7 +966,7 @@
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
-					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+					class="relative w-full max-w-md transform overflow-hidden rounded-2xl shadow-2xl transition-all"
 					transition:scale
 				>
 					<div class="px-6 py-5">
@@ -1001,8 +975,8 @@
 								<X />
 							</div>
 							<div>
-								<h3 class="text-lg font-semibold text-slate-900">Supprimer l'utilisateur</h3>
-								<p class="text-sm text-slate-500">{selectedUser.name}</p>
+								<h3 class="text-lg font-semibold">Supprimer l'utilisateur</h3>
+								<p class="text-sm">{selectedUser.name}</p>
 							</div>
 						</div>
 						<div class="rounded-lg bg-red-50 border border-red-200 p-4">
@@ -1012,7 +986,7 @@
 							</p>
 						</div>
 					</div>
-					<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+					<div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
 						<button type="button" class="btn" on:click={closeDeleteModal}> Annuler </button>
 						<button type="button" class="btn btn-warning" on:click={confirmDelete}>
 							Supprimer définitivement
@@ -1037,7 +1011,7 @@
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
-					class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+					class="relative w-full max-w-lg transform overflow-hidden rounded-2xl shadow-2xl transition-all"
 					transition:scale
 				>
 					<form
@@ -1081,12 +1055,12 @@
 									<Folder />
 								</div>
 								<div>
-									<h3 class="text-lg font-semibold text-slate-900">Gérer les projets</h3>
-									<p class="text-sm text-slate-500">{selectedUser.name}</p>
+									<h3 class="text-lg font-semibold">Gérer les projets</h3>
+									<p class="text-sm">{selectedUser.name}</p>
 								</div>
 							</div>
 							<div>
-								<div class="block text-sm font-medium text-slate-700 mb-1.5">Projets assignés</div>
+								<div class="block text-sm font-medium mb-1.5">Projets assignés</div>
 								<!-- Search bar for projects -->
 								<label class="input">
 									<Search />
@@ -1102,12 +1076,12 @@
 									class="max-h-64 overflow-y-auto border border-slate-200 rounded-lg divide-y divide-slate-100"
 								>
 									{#if projets.length === 0}
-										<p class="p-4 text-sm text-slate-500 text-center">Aucun projet disponible</p>
+										<p class="p-4 text-sm text-center">Aucun projet disponible</p>
 									{:else if filteredModalProjets.length === 0}
-										<p class="p-4 text-sm text-slate-500 text-center">Aucun projet trouvé</p>
+										<p class="p-4 text-sm text-center">Aucun projet trouvé</p>
 									{:else}
 										{#each filteredModalProjets as p}
-											<label class="flex items-center gap-3 p-3 hover:bg-slate-50 cursor-pointer">
+											<label class="flex items-center gap-3 p-3 hover: cursor-pointer">
 												<input
 													type="checkbox"
 													name="projetIds"
@@ -1125,14 +1099,14 @@
 													class="checkbox"
 												/>
 												<div class="flex-1 min-w-0">
-													<p class="text-sm font-medium text-slate-900 truncate">{p.libelle}</p>
-													<p class="text-xs text-slate-500 truncate">Réf: {p.reference}</p>
+													<p class="text-sm font-medium truncate">{p.libelle}</p>
+													<p class="text-xs truncate">Réf: {p.reference}</p>
 												</div>
 											</label>
 										{/each}
 									{/if}
 								</div>
-								<p class="mt-2 text-xs text-slate-500">
+								<p class="mt-2 text-xs">
 									{projetsForm.projetIds.length} projet{projetsForm.projetIds.length > 1 ? 's' : ''} sélectionné{projetsForm
 										.projetIds.length > 1
 										? 's'
@@ -1140,7 +1114,7 @@
 								</p>
 							</div>
 						</div>
-						<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+						<div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
 							<button type="button" class="btn" on:click={closeProjetsModal}> Annuler </button>
 							<button type="submit" class="btn"> Enregistrer </button>
 						</div>

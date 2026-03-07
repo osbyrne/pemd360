@@ -58,8 +58,8 @@
 
 	<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
 		<div>
-			<h1 class="text-2xl font-bold text-gray-900">Inventaire PEMD - Tableau Général</h1>
-			<p class="text-sm text-gray-500 mt-1">
+			<h1 class="text-2xl font-bold">Inventaire PEMD - Tableau Général</h1>
+			<p class="text-sm mt-1">
 				Vue d'ensemble de l'inventaire Produits, Équipements, Matériaux et Déchets par projet.
 			</p>
 		</div>
@@ -82,12 +82,10 @@
 		</label>
 	</div>
 
-	<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+	<div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
 		<div class="overflow-x-auto">
-			<table class="w-full text-left text-sm text-gray-600">
-				<thead
-					class="bg-gray-50 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200"
-				>
+			<table class="w-full text-left text-sm">
+				<thead class=" text-xs uppercase font-semibold border-b border-gray-200">
 					<tr>
 						<th class="px-6 py-4">Groupe</th>
 						<th class="px-6 py-4">Catégorie</th>
@@ -111,7 +109,7 @@
 				<tbody class="divide-y divide-gray-100">
 					{#if displayedList.length === 0}
 						<tr>
-							<td colspan="17" class="px-6 py-12 text-center text-gray-400">
+							<td colspan="17" class="px-6 py-12 text-center">
 								{#if query}
 									Aucun résultat pour "{query}".
 								{:else}
@@ -121,8 +119,8 @@
 						</tr>
 					{:else}
 						{#each displayedList as item}
-							<tr class="hover:bg-gray-50 transition-colors">
-								<td class="px-6 py-4 font-medium text-gray-900">{item.groupe || '-'}</td>
+							<tr class="hover: transition-colors">
+								<td class="px-6 py-4 font-medium">{item.groupe || '-'}</td>
 								<td class="px-6 py-4">{item.categorie || '-'}</td>
 								<td class="px-6 py-4">{item.objet || '-'}</td>
 								<td class="px-6 py-4">{item.estimationAge || '-'}</td>
@@ -143,7 +141,7 @@
 											class="h-12 w-12 object-cover rounded shadow-sm bg-white"
 										/>
 									{:else}
-										<span class="text-xs text-gray-400">N/A</span>
+										<span class="text-xs">N/A</span>
 									{/if}
 								</td>
 								<td class="px-6 py-4">{item.etage || '-'}</td>
@@ -152,7 +150,7 @@
 									<div class="flex items-center justify-center gap-2">
 										<button
 											onclick={() => openDeleteModal(item)}
-											class="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+											class="p-1.5 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
 											title="Supprimer"
 										>
 											<Trash2 class="w-4 h-4" />

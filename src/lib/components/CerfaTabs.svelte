@@ -15,7 +15,7 @@
 			href: '/app/cerfa/dechets',
 			label: 'Caractérisation Déchets',
 			icon: Trash2,
-			color: 'text-gray-600'
+			color: ''
 		}
 	];
 
@@ -25,11 +25,7 @@
 <Tabs {tabs} useTabColorWhenActive={true}>
 	{#snippet actions()}
 		{#if projetId}
-			<a
-				href="/api/projects/{projetId}/cerfa"
-				target="_blank"
-				class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-emerald-700 bg-emerald-50 rounded-md hover:bg-emerald-100 transition-colors border border-emerald-200"
-			>
+			<a href="/api/projects/{projetId}/cerfa" target="_blank" class="btn">
 				<Download class="h-4 w-4" />
 				Télécharger CERFA
 			</a>

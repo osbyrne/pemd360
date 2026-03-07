@@ -233,13 +233,13 @@
 	/>
 </svelte:head>
 
-<div class="relative flex h-screen overflow-hidden bg-gray-50 font-[Poppins]">
+<div class="relative flex h-screen overflow-hidden font-[Poppins]">
 	<!-- Mobile Sidebar Overlay -->
 	{#if sidebarOpen}
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
-			class="absolute inset-0 z-40 bg-gray-900/50 lg:hidden"
+			class="absolute inset-0 z-40 lg:hidden"
 			onclick={() => (sidebarOpen = false)}
 			transition:fade={{ duration: 200 }}
 		></div>
@@ -247,12 +247,12 @@
 
 	<!-- Sidebar -->
 	<aside
-		class="absolute inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-gray-200 bg-white transition-transform duration-300 lg:static lg:translate-x-0 {sidebarOpen
+		class="absolute inset-y-0 left-0 z-50 flex w-64 flex-col transition-transform duration-300 lg:static lg:translate-x-0 {sidebarOpen
 			? 'translate-x-0'
 			: '-translate-x-full'}"
 	>
 		<!-- Logo -->
-		<div class="flex h-20 shrink-0 items-center justify-center border-b border-gray-200 px-4">
+		<div class="flex h-20 shrink-0 items-center justify-center px-4">
 			<a
 				href="/"
 				onclick={() => {
@@ -270,10 +270,7 @@
 
 				{#if link.subItems && link.subItems.length > 0}
 					<div class="rounded-lg overflow-hidden">
-						<button
-							class="flex w-full items-center justify-between gap-3 px-4 py-3 text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
-							onclick={() => toggleMenu(link.label)}
-						>
+						<button class="btn btn-ghost" onclick={() => toggleMenu(link.label)}>
 							<div class="flex items-center gap-3">
 								<IconComponent class="h-5 w-5" />
 								<span class="font-medium">{link.label}</span>
@@ -286,7 +283,7 @@
 						</button>
 
 						{#if expandedMenus[link.label]}
-							<div class="bg-gray-50 space-y-1 py-1" transition:slide={{ duration: 200 }}>
+							<div class="space-y-1 py-1" transition:slide={{ duration: 200 }}>
 								{#each link.subItems as subLink (subLink.href)}
 									{#if !subLink.adminOnly || isAdmin}
 										<a
@@ -295,7 +292,7 @@
 												subLink.href
 											)
 												? 'text-emerald-600 font-medium'
-												: 'text-gray-600 hover:text-emerald-600'}"
+												: 'hover:text-emerald-600'}"
 											onclick={() => {
 												if (window.innerWidth < 1024) sidebarOpen = false;
 											}}
@@ -310,11 +307,7 @@
 				{:else}
 					<a
 						href={link.href}
-						class="flex items-center gap-3 rounded-lg px-4 py-3 transition-colors {isActive(
-							link.href!
-						)
-							? 'bg-emerald-600 text-white shadow-md'
-							: 'text-gray-700 hover:bg-emerald-50 hover:text-emerald-600'}"
+						class="btn btn-ghost"
 						onclick={() => {
 							if (window.innerWidth < 1024) sidebarOpen = false;
 						}}
@@ -327,18 +320,18 @@
 		</nav>
 
 		<!-- User Profile Section - Fixed at bottom -->
-		<div class="shrink-0 border-t border-gray-200 p-4">
+		<div class="shrink-0 p-4">
 			{#if data.user}
-				<div class="mb-4 rounded-lg bg-gray-50 p-3">
+				<div class="mb-4 rounded-lg p-3">
 					<div class="mb-2 flex items-center gap-3">
 						<div class="flex-1 overflow-hidden">
-							<p class="truncate font-semibold text-gray-900">{data.user.name}</p>
-							<p class="truncate text-xs text-gray-500">
+							<p class="truncate font-semibold">{data.user.name}</p>
+							<p class="truncate text-xs">
 								{data.user.role || 'Utilisateur'}
 							</p>
 						</div>
 					</div>
-					<p class="truncate text-xs text-gray-600">{data.user.email}</p>
+					<p class="truncate text-xs">{data.user.email}</p>
 				</div>
 			{/if}
 
@@ -352,16 +345,11 @@
 	<!-- Main Content -->
 	<main class="flex-1 overflow-y-auto min-w-0 w-full relative">
 		<!-- Mobile Header for Hamburger -->
-		<div
-			class="sticky top-0 z-30 flex items-center border-b border-gray-200 bg-white px-4 py-2 lg:hidden"
-		>
-			<button
-				class="rounded-lg p-2 text-gray-600 hover:bg-gray-100"
-				onclick={() => (sidebarOpen = !sidebarOpen)}
-			>
+		<div class="sticky top-0 z-30 flex items-center px-4 py-2 lg:hidden">
+			<button class="btn" onclick={() => (sidebarOpen = !sidebarOpen)}>
 				<Menu class="h-6 w-6" />
 			</button>
-			<span class="ml-3 font-semibold text-gray-900">Menu</span>
+			<span class="ml-3 font-semibold">Menu</span>
 		</div>
 
 		<!-- Page Content -->

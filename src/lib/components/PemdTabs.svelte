@@ -19,7 +19,7 @@
 			href: '/app/admin/pemd-dechets',
 			label: 'Tableau Déchets',
 			icon: Trash2,
-			color: 'text-gray-600'
+			color: ''
 		}
 	];
 </script>

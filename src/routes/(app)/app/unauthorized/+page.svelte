@@ -11,7 +11,7 @@
 	<title>Accès Non Autorisé - PEMD360</title>
 </svelte:head>
 
-<div class="flex min-h-screen items-center justify-center bg-gray-50 px-4 font-[Poppins]">
+<div class="flex min-h-screen items-center justify-center px-4 font-[Poppins]">
 	<div class="w-full max-w-md text-center">
 		<div class="mb-6 flex justify-center">
 			<div class="rounded-full bg-red-100 p-6">
@@ -19,9 +19,9 @@
 			</div>
 		</div>
 
-		<h1 class="mb-4 text-4xl font-bold text-gray-900">Accès Non Autorisé</h1>
+		<h1 class="mb-4 text-4xl font-bold">Accès Non Autorisé</h1>
 
-		<p class="mb-8 text-lg text-gray-600">
+		<p class="mb-8 text-lg">
 			Vous n'avez pas les permissions nécessaires pour accéder à cette page. Cette section est
 			réservée aux administrateurs.
 		</p>

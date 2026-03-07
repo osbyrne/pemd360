@@ -7,7 +7,7 @@
 	let mobileMenuOpen = $state(false);
 </script>
 
-<header class="sticky top-0 z-50 bg-white shadow-md">
+<header class="sticky top-0 z-50 shadow-md">
 	<nav class="container mx-auto px-4 py-3">
 		<div class="flex items-center justify-between">
 			<!-- Logos -->
@@ -22,16 +22,9 @@
 
 			<!-- Desktop Navigation -->
 			<div class="hidden items-center gap-6 md:flex">
-				<a href="/" class="font-medium text-gray-700 transition-colors hover:text-emerald-600"
-					>Accueil</a
-				>
-				<a href="/about" class="font-medium text-gray-700 transition-colors hover:text-emerald-600"
-					>À propos</a
-				>
-				<a
-					href="/contact"
-					class="font-medium text-gray-700 transition-colors hover:text-emerald-600">Contact</a
-				>
+				<a href="/" class="font-medium transition-colors hover:text-emerald-600">Accueil</a>
+				<a href="/about" class="font-medium transition-colors hover:text-emerald-600">À propos</a>
+				<a href="/contact" class="font-medium transition-colors hover:text-emerald-600">Contact</a>
 				{#if user}
 					<a href="/app/projets" class="btn"> Tableau de bord </a>
 				{:else}
@@ -41,7 +34,7 @@
 
 			<!-- Mobile menu button -->
 			<button
-				class="rounded-md p-2 text-gray-700 hover:bg-gray-100 md:hidden"
+				class="rounded-md p-2 hover: md:hidden"
 				onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
 				aria-label="Toggle menu"
 			>
@@ -59,17 +52,17 @@
 				<div class="flex flex-col gap-3">
 					<a
 						href="/"
-						class="font-medium text-gray-700 transition-colors hover:text-emerald-600"
+						class="font-medium transition-colors hover:text-emerald-600"
 						onclick={() => (mobileMenuOpen = false)}>Accueil</a
 					>
 					<a
 						href="/about"
-						class="font-medium text-gray-700 transition-colors hover:text-emerald-600"
+						class="font-medium transition-colors hover:text-emerald-600"
 						onclick={() => (mobileMenuOpen = false)}>À propos</a
 					>
 					<a
 						href="/contact"
-						class="font-medium text-gray-700 transition-colors hover:text-emerald-600"
+						class="font-medium transition-colors hover:text-emerald-600"
 						onclick={() => (mobileMenuOpen = false)}>Contact</a
 					>
 					{#if user}

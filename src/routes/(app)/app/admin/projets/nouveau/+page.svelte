@@ -37,8 +37,8 @@
 
 	<!-- Titre -->
 	<div class="mb-8">
-		<h1 class="text-3xl font-bold text-gray-900 mb-2">Nouveau projet</h1>
-		<p class="text-sm text-gray-500">Créez un nouveau projet dans la plateforme.</p>
+		<h1 class="text-3xl font-bold mb-2">Nouveau projet</h1>
+		<p class="text-sm">Créez un nouveau projet dans la plateforme.</p>
 	</div>
 
 	{#if form?.message}
@@ -49,17 +49,17 @@
 
 	<form method="POST" use:enhance class="space-y-8">
 		<!-- Section Identité -->
-		<div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+		<div class="p-6 rounded-xl border border-gray-200 shadow-sm">
 			<div class="flex items-center gap-3 mb-6">
 				<div class="p-2 bg-emerald-50 rounded-lg">
 					<ChartNoAxesCombined class="text-emerald-600" />
 				</div>
-				<h2 class="text-xl font-semibold text-gray-900">Informations du projet</h2>
+				<h2 class="text-xl font-semibold">Informations du projet</h2>
 			</div>
 
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<div class="space-y-1.5 md:col-span-2">
-					<label for="id" class="text-sm font-medium text-gray-700">ID Matterport *</label>
+					<label for="id" class="text-sm font-medium">ID Matterport *</label>
 					<input
 						type="text"
 						id="id"
@@ -69,13 +69,13 @@
 						class="input"
 						placeholder="ex: SxQL3iGy1rE (ID de la visite Matterport)"
 					/>
-					<p class="text-xs text-gray-500 mt-1">
+					<p class="text-xs mt-1">
 						L'identifiant unique de la visite Matterport (visible dans l'URL de la visite)
 					</p>
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="reference" class="text-sm font-medium text-gray-700">Référence *</label>
+					<label for="reference" class="text-sm font-medium">Référence *</label>
 					<input
 						type="text"
 						id="reference"
@@ -88,7 +88,7 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="libelle" class="text-sm font-medium text-gray-700">Libellé *</label>
+					<label for="libelle" class="text-sm font-medium">Libellé *</label>
 					<input
 						type="text"
 						id="libelle"
@@ -101,9 +101,7 @@
 				</div>
 
 				<div class="space-y-1.5 md:col-span-2">
-					<label for="etablissementId" class="text-sm font-medium text-gray-700"
-						>Établissement *</label
-					>
+					<label for="etablissementId" class="text-sm font-medium">Établissement *</label>
 					<select id="etablissementId" name="etablissementId" required class="select">
 						<option value="" disabled selected={!data_form.etablissementId}
 							>Sélectionnez un établissement</option
@@ -117,9 +115,7 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="typeOperation" class="text-sm font-medium text-gray-700"
-						>Type d'opération</label
-					>
+					<label for="typeOperation" class="text-sm font-medium">Type d'opération</label>
 					<input
 						type="text"
 						id="typeOperation"
@@ -131,9 +127,7 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="maitreDOuvrage" class="text-sm font-medium text-gray-700"
-						>Maître d'ouvrage</label
-					>
+					<label for="maitreDOuvrage" class="text-sm font-medium">Maître d'ouvrage</label>
 					<input
 						type="text"
 						id="maitreDOuvrage"
@@ -144,9 +138,7 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="dateDemarrage" class="text-sm font-medium text-gray-700"
-						>Date de démarrage *</label
-					>
+					<label for="dateDemarrage" class="text-sm font-medium">Date de démarrage *</label>
 					<input
 						type="date"
 						id="dateDemarrage"
@@ -158,7 +150,7 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="dateDeFin" class="text-sm font-medium text-gray-700">Date de fin</label>
+					<label for="dateDeFin" class="text-sm font-medium">Date de fin</label>
 					<input
 						type="date"
 						id="dateDeFin"
@@ -171,17 +163,17 @@
 		</div>
 
 		<!-- Section Localisation -->
-		<div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+		<div class="p-6 rounded-xl border border-gray-200 shadow-sm">
 			<div class="flex items-center gap-3 mb-6">
 				<div class="p-2 bg-emerald-50 rounded-lg">
 					<MapPin class="text-emerald-600" />
 				</div>
-				<h2 class="text-xl font-semibold text-gray-900">Localisation</h2>
+				<h2 class="text-xl font-semibold">Localisation</h2>
 			</div>
 
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<div class="space-y-1.5 md:col-span-2">
-					<label for="rue" class="text-sm font-medium text-gray-700">Adresse *</label>
+					<label for="rue" class="text-sm font-medium">Adresse *</label>
 					<input
 						type="text"
 						id="rue"
@@ -194,7 +186,7 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="cp" class="text-sm font-medium text-gray-700">Code Postal *</label>
+					<label for="cp" class="text-sm font-medium">Code Postal *</label>
 					<input
 						type="text"
 						id="cp"
@@ -207,7 +199,7 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="ville" class="text-sm font-medium text-gray-700">Ville *</label>
+					<label for="ville" class="text-sm font-medium">Ville *</label>
 					<input
 						type="text"
 						id="ville"
@@ -220,7 +212,7 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="codeInsee" class="text-sm font-medium text-gray-700">Code INSEE</label>
+					<label for="codeInsee" class="text-sm font-medium">Code INSEE</label>
 					<input
 						type="text"
 						id="codeInsee"
@@ -233,8 +225,7 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="section" class="text-sm font-medium text-gray-700">Section cadastrale *</label
-					>
+					<label for="section" class="text-sm font-medium">Section cadastrale *</label>
 					<input
 						type="text"
 						id="section"
@@ -247,7 +238,7 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="parcelle" class="text-sm font-medium text-gray-700">Parcelle *</label>
+					<label for="parcelle" class="text-sm font-medium">Parcelle *</label>
 					<input
 						type="text"
 						id="parcelle"

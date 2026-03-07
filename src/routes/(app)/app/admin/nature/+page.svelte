@@ -102,10 +102,8 @@
 	<!-- Header -->
 	<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
 		<div>
-			<h1 class="text-2xl font-bold text-gray-900">Gestion des Natures</h1>
-			<p class="text-sm text-gray-500 mt-1">
-				Gérez la liste des natures de déchets et leurs propriétés.
-			</p>
+			<h1 class="text-2xl font-bold">Gestion des Natures</h1>
+			<p class="text-sm mt-1">Gérez la liste des natures de déchets et leurs propriétés.</p>
 		</div>
 		<button onclick={openCreateModal} class="btn">
 			<Plus class="w-4 h-4" />
@@ -122,12 +120,10 @@
 	<br />
 
 	<!-- Table -->
-	<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+	<div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
 		<div class="overflow-x-auto">
-			<table class="w-full text-left text-sm text-gray-600">
-				<thead
-					class="bg-gray-50 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200"
-				>
+			<table class="w-full text-left text-sm">
+				<thead class=" text-xs uppercase font-semibold border-b border-gray-200">
 					<tr>
 						<th class="px-6 py-4">Nature</th>
 						<th class="px-6 py-4">Code Déchet</th>
@@ -138,15 +134,15 @@
 				</thead>
 				<tbody class="divide-y divide-gray-100">
 					{#each displayedList as nature}
-						<tr class="hover:bg-gray-50 transition-colors">
-							<td class="px-6 py-4 font-medium text-gray-900">{nature.nature}</td>
-							<td class="px-6 py-4 font-mono text-gray-500">{nature.codeDechet || '-'}</td>
+						<tr class="hover: transition-colors">
+							<td class="px-6 py-4 font-medium">{nature.nature}</td>
+							<td class="px-6 py-4 font-mono">{nature.codeDechet || '-'}</td>
 							<td class="px-6 py-4">{nature.densite || '-'}</td>
 							<td class="px-6 py-4 text-center">
 								<div
 									class="inline-flex items-center justify-center w-6 h-6 rounded-full {nature.recyclable
 										? 'bg-green-100 text-green-600'
-										: 'bg-gray-100 text-gray-400'}"
+										: ''}"
 								>
 									{#if nature.recyclable}✓{/if}
 								</div>
@@ -172,7 +168,7 @@
 						</tr>
 					{:else}
 						<tr>
-							<td colspan="5" class="px-6 py-12 text-center text-gray-400">
+							<td colspan="5" class="px-6 py-12 text-center">
 								{#if query}
 									Aucun résultat pour "{query}".
 								{:else}
@@ -204,25 +200,20 @@
 	>
 		<button
 			type="button"
-			class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity cursor-default w-full h-full border-0"
+			class="fixed inset-0 backdrop-blur-sm transition-opacity cursor-default w-full h-full border-0"
 			transition:fade
 			onclick={closeModal}
 			aria-label="Fermer la modal"
 		></button>
 		<div
-			class="relative w-full max-w-2xl bg-white rounded-xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]"
+			class="relative w-full max-w-2xl rounded-xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]"
 			transition:scale={{ start: 0.95 }}
 		>
-			<div
-				class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50/50"
-			>
-				<h3 class="text-lg font-semibold text-gray-900">
+			<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+				<h3 class="text-lg font-semibold">
 					{isEditMode ? 'Modifier la nature' : 'Ajouter une nature'}
 				</h3>
-				<button
-					onclick={closeModal}
-					class="text-gray-400 hover:text-gray-500 p-1 rounded-lg hover:bg-gray-100"
-				>
+				<button onclick={closeModal} class=" hover: p-1 rounded-lg hover:">
 					<X class="w-5 h-5" />
 				</button>
 			</div>
@@ -241,8 +232,7 @@
 
 					<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
 						<div class="sm:col-span-2">
-							<label for="nature" class="block text-sm font-medium text-gray-700 mb-1">Nature</label
-							>
+							<label for="nature" class="block text-sm font-medium mb-1">Nature</label>
 							<input
 								id="nature"
 								type="text"
@@ -255,9 +245,7 @@
 						</div>
 
 						<div>
-							<label for="codeDechet" class="block text-sm font-medium text-gray-700 mb-1"
-								>Code Déchet</label
-							>
+							<label for="codeDechet" class="block text-sm font-medium mb-1">Code Déchet</label>
 							<input
 								id="codeDechet"
 								type="number"
@@ -268,9 +256,7 @@
 						</div>
 
 						<div>
-							<label for="densite" class="block text-sm font-medium text-gray-700 mb-1"
-								>Densité</label
-							>
+							<label for="densite" class="block text-sm font-medium mb-1">Densité</label>
 							<input
 								id="densite"
 								type="number"
@@ -282,9 +268,7 @@
 						</div>
 
 						<div>
-							<label for="stockage" class="block text-sm font-medium text-gray-700 mb-1"
-								>Stockage</label
-							>
+							<label for="stockage" class="block text-sm font-medium mb-1">Stockage</label>
 							<input
 								id="stockage"
 								type="text"
@@ -295,7 +279,7 @@
 						</div>
 
 						<div>
-							<label for="ecoOrganismeRep" class="block text-sm font-medium text-gray-700 mb-1"
+							<label for="ecoOrganismeRep" class="block text-sm font-medium mb-1"
 								>Eco Organisme REP</label
 							>
 							<input
@@ -309,10 +293,10 @@
 					</div>
 
 					<div class="border-t border-gray-100 pt-6">
-						<h4 class="text-sm font-medium text-gray-900 mb-4">Propriétés (0 ou 1)</h4>
+						<h4 class="text-sm font-medium mb-4">Propriétés (0 ou 1)</h4>
 						<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 							{#each booleanFields as item}
-								<div class="flex items-center gap-3 bg-gray-50 rounded-lg p-3">
+								<div class="flex items-center gap-3 rounded-lg p-3">
 									<input
 										type="checkbox"
 										id={item.key}
@@ -323,10 +307,7 @@
 										class="checkbox"
 									/>
 									<input type="hidden" name={item.key} value={form[item.key]} />
-									<label
-										for={item.key}
-										class="text-sm text-gray-700 cursor-pointer select-none flex-1"
-									>
+									<label for={item.key} class="text-sm cursor-pointer select-none flex-1">
 										{item.label}
 									</label>
 								</div>
@@ -336,7 +317,7 @@
 				</form>
 			</div>
 
-			<div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3 shrink-0">
+			<div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 shrink-0">
 				<button type="button" onclick={closeModal} class="btn"> Annuler </button>
 				<button type="submit" form="natureForm" class="btn">
 					{isEditMode ? 'Enregistrer' : 'Créer'}

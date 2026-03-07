@@ -92,8 +92,8 @@
 <div class="p-6 max-w-7xl mx-auto">
 	<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
 		<div>
-			<h1 class="text-2xl font-bold text-gray-900">Tableaux Synthèse Réemploi</h1>
-			<p class="text-sm text-gray-500 mt-1">
+			<h1 class="text-2xl font-bold">Tableaux Synthèse Réemploi</h1>
+			<p class="text-sm mt-1">
 				Vue de synthèse des éléments PEMD avec potentiel de réemploi par projet.
 			</p>
 		</div>
@@ -122,12 +122,10 @@
 		</label>
 	</div>
 
-	<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+	<div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
 		<div class="overflow-x-auto">
-			<table class="w-full text-left text-sm text-gray-600">
-				<thead
-					class="bg-gray-50 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200"
-				>
+			<table class="w-full text-left text-sm">
+				<thead class=" text-xs uppercase font-semibold border-b border-gray-200">
 					<tr>
 						<th class="px-6 py-4">Description</th>
 						<th class="px-6 py-4">État</th>
@@ -142,7 +140,7 @@
 				<tbody class="divide-y divide-gray-100">
 					{#if displayedList.length === 0}
 						<tr>
-							<td colspan="8" class="px-6 py-12 text-center text-gray-400">
+							<td colspan="8" class="px-6 py-12 text-center">
 								{#if query}
 									Aucun résultat pour "{query}".
 								{:else}
@@ -152,10 +150,8 @@
 						</tr>
 					{:else}
 						{#each displayedList as item}
-							<tr class="hover:bg-gray-50 transition-colors">
-								<td class="px-6 py-4 font-medium text-gray-900"
-									>{item.description || item.objet || '-'}</td
-								>
+							<tr class="hover: transition-colors">
+								<td class="px-6 py-4 font-medium">{item.description || item.objet || '-'}</td>
 								<td class="px-6 py-4">
 									{#if item.etat}
 										<span
@@ -164,7 +160,7 @@
 											{item.etat}
 										</span>
 									{:else}
-										<span class="text-gray-400">-</span>
+										<span class="">-</span>
 									{/if}
 								</td>
 								<td class="px-6 py-4">{item.etage || '-'}</td>
@@ -176,11 +172,11 @@
 											{item.potentielReemploi}
 										</span>
 									{:else}
-										<span class="text-gray-400">-</span>
+										<span class="">-</span>
 									{/if}
 								</td>
 								<td class="px-6 py-4">
-									<span class="font-medium {item.reemploi ? 'text-green-600' : 'text-gray-500'}">
+									<span class="font-medium {item.reemploi ? 'text-green-600' : ''}">
 										{getCoefficientReemploi(item)}
 									</span>
 								</td>
@@ -192,13 +188,13 @@
 											class="h-16 w-16 object-cover rounded shadow-sm bg-white"
 										/>
 									{:else}
-										<span class="text-xs text-gray-400">N/A</span>
+										<span class="text-xs">N/A</span>
 									{/if}
 								</td>
 								<td class="px-6 py-4 text-center">
 									<button
 										onclick={() => openQrModal(item)}
-										class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+										class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm hover: hover: rounded-lg transition-colors"
 										title="Afficher QR Code"
 									>
 										<QrCode class="w-4 h-4" />
@@ -209,7 +205,7 @@
 									<div class="flex items-center justify-center gap-2">
 										<button
 											onclick={() => openDeleteModal(item)}
-											class="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+											class="p-1.5 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
 											title="Supprimer"
 										>
 											<Trash2 class="w-4 h-4" />
@@ -225,8 +221,8 @@
 
 		<!-- Pagination -->
 		{#if filteredList.length > 0 && totalPages > 1}
-			<div class="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3">
-				<p class="text-sm text-gray-600">
+			<div class="flex items-center justify-between border-t border-gray-200 px-4 py-3">
+				<p class="text-sm">
 					Affichage de <span class="font-semibold"
 						>{Math.min(filteredList.length, (page - 1) * perPage + 1)}</span
 					>
@@ -258,7 +254,7 @@
 		aria-modal="true"
 	>
 		<div
-			class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"
+			class="fixed inset-0 backdrop-blur-sm transition-opacity"
 			transition:fade
 			onclick={closeModal}
 			onkeydown={(e) => e.key === 'Escape' && closeModal()}
@@ -266,12 +262,12 @@
 			tabindex="-1"
 		></div>
 		<div
-			class="relative w-full max-w-md bg-white rounded-xl shadow-xl overflow-hidden"
+			class="relative w-full max-w-md rounded-xl shadow-xl overflow-hidden"
 			transition:scale={{ start: 0.95 }}
 		>
 			<div class="p-6">
-				<h3 class="text-lg font-semibold text-gray-900 mb-2">Confirmer la suppression</h3>
-				<p class="text-sm text-gray-600 mb-6">
+				<h3 class="text-lg font-semibold mb-2">Confirmer la suppression</h3>
+				<p class="text-sm mb-6">
 					Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.
 				</p>
 				<form method="POST" action="?/delete" use:enhance={handleFormResult()}>
@@ -294,7 +290,7 @@
 		aria-modal="true"
 	>
 		<div
-			class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"
+			class="fixed inset-0 backdrop-blur-sm transition-opacity"
 			transition:fade
 			onclick={closeModal}
 			onkeydown={(e) => e.key === 'Escape' && closeModal()}
@@ -302,27 +298,27 @@
 			tabindex="-1"
 		></div>
 		<div
-			class="relative w-full max-w-md bg-white rounded-xl shadow-xl overflow-hidden p-6"
+			class="relative w-full max-w-md rounded-xl shadow-xl overflow-hidden p-6"
 			transition:scale={{ start: 0.95 }}
 		>
 			<div class="flex justify-between items-center mb-4">
-				<h3 class="text-lg font-semibold text-gray-900">QR Code</h3>
+				<h3 class="text-lg font-semibold">QR Code</h3>
 				<button onclick={closeModal} class="btn" aria-label="Fermer">
 					<X class="w-6 h-6" />
 				</button>
 			</div>
 			<div class="flex flex-col items-center">
-				<div class="bg-white p-4 rounded-lg border-2 border-gray-200">
+				<div class="p-4 rounded-lg border-2 border-gray-200">
 					<!-- Placeholder pour le QR Code - à remplacer par une vraie bibliothèque QR -->
-					<div class="w-48 h-48 bg-gray-100 flex items-center justify-center">
-						<span class="text-gray-400 text-sm text-center">QR Code<br />{qrItem?.id}</span>
+					<div class="w-48 h-48 flex items-center justify-center">
+						<span class=" text-sm text-center">QR Code<br />{qrItem?.id}</span>
 					</div>
 				</div>
-				<p class="text-sm text-gray-600 mt-4 text-center font-medium">
+				<p class="text-sm mt-4 text-center font-medium">
 					{qrItem?.objet || qrItem?.description}
 				</p>
 				{#if qrItem?.description && qrItem?.objet}
-					<p class="text-xs text-gray-500 mt-1 text-center">{qrItem.description}</p>
+					<p class="text-xs mt-1 text-center">{qrItem.description}</p>
 				{/if}
 			</div>
 		</div>

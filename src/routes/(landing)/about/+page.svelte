@@ -36,7 +36,7 @@
 						Accueil
 					</a>
 				</li>
-				<li class="text-gray-400">/</li>
+				<li class="">/</li>
 				<li class="text-emerald-400">À propos de nous</li>
 			</ol>
 		</nav>
@@ -49,7 +49,7 @@
 		<div class="grid items-center gap-12 lg:grid-cols-2">
 			<!-- Image -->
 			<div class="flex justify-center">
-				<div class="overflow-hidden rounded-lg bg-white p-6 shadow-xl">
+				<div class="overflow-hidden rounded-lg p-6 shadow-xl">
 					<img src={logoDC} alt="Dépollution Conseil" class="h-auto max-w-sm" />
 				</div>
 			</div>
@@ -61,9 +61,9 @@
 				>
 					Qui sommes-nous ?
 				</span>
-				<h2 class="mb-6 text-3xl font-bold text-gray-900 lg:text-4xl">Dépollution Conseil</h2>
+				<h2 class="mb-6 text-3xl font-bold lg:text-4xl">Dépollution Conseil</h2>
 
-				<div class="space-y-4 text-gray-600">
+				<div class="space-y-4">
 					<p class="text-justify leading-relaxed">
 						Depuis 2014, Dépollution Conseil, c'est avant tout un savoir-faire rigoureux, des études
 						précises et un accompagnement soigné mis en œuvre pour mener à bien vos projets.
@@ -78,7 +78,7 @@
 				<!-- Services List -->
 				<div class="my-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
 					{#each services as service}
-						<div class="flex items-center gap-2 text-sm text-gray-600">
+						<div class="flex items-center gap-2 text-sm">
 							<CheckCircle class="h-5 w-5 shrink-0 text-emerald-500" />
 							<span>{service}</span>
 						</div>
@@ -88,11 +88,11 @@
 				<!-- Contact Info -->
 				<div class="flex flex-wrap items-center gap-6 border-y border-gray-200 py-4">
 					<div class="border-l-2 border-emerald-500 pl-4">
-						<h5 class="font-semibold text-gray-900">Groupe Dépollution Conseil</h5>
+						<h5 class="font-semibold">Groupe Dépollution Conseil</h5>
 					</div>
 					<div class="border-l-2 border-emerald-500 pl-4">
-						<h5 class="font-semibold text-gray-900">06 31 32 67 15</h5>
-						<p class="text-xs text-gray-500">Vous pouvez nous poser des questions</p>
+						<h5 class="font-semibold">06 31 32 67 15</h5>
+						<p class="text-xs">Vous pouvez nous poser des questions</p>
 					</div>
 				</div>
 			</div>
@@ -101,7 +101,7 @@
 </section>
 
 <!-- Innovation Section -->
-<section class="bg-gray-50 py-16 lg:py-24">
+<section class=" py-16 lg:py-24">
 	<div class="container mx-auto px-4">
 		<div class="mx-auto max-w-3xl text-center">
 			<span
@@ -109,10 +109,10 @@
 			>
 				Vers une économie circulaire
 			</span>
-			<h2 class="mb-6 text-3xl font-bold text-gray-900 lg:text-4xl">
+			<h2 class="mb-6 text-3xl font-bold lg:text-4xl">
 				Dépollution Conseil vous propose une solution innovante
 			</h2>
-			<p class="text-lg leading-relaxed text-gray-600">
+			<p class="text-lg leading-relaxed">
 				Depuis 2021, nous proposons un nouveau service dans le domaine de l'économie circulaire.
 				Cette nouvelle branche a permis la création d'une application web permettant d'élaborer des
 				diagnostics Produits, Équipements, Matériaux et Déchets (PEMD) en ligne.

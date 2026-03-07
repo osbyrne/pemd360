@@ -120,7 +120,7 @@
 </section>
 
 <!-- Diagnostic PEMD Section -->
-<section id="pemd" class="bg-gray-50 py-16 lg:py-24">
+<section id="pemd" class=" py-16 lg:py-24">
 	<div class="container mx-auto px-4 mb-6">
 		<div class="grid items-center gap-12 lg:grid-cols-2">
 			<!-- Content -->
@@ -128,7 +128,7 @@
 				<span class="mb-2 inline-block text-sm font-semibold tracking-wider text-emerald-600"
 					>NOTRE ACTIVITÉ</span
 				>
-				<h2 class="mb-6 text-3xl font-bold text-gray-900 lg:text-4xl">Le Diagnostic PEMD</h2>
+				<h2 class="mb-6 text-3xl font-bold lg:text-4xl">Le Diagnostic PEMD</h2>
 				<div class="space-y-4">
 					<p class="text-justify leading-relaxed">
 						<a
@@ -201,18 +201,18 @@
 					class="flex flex-wrap items-center gap-6 border-y border-gray-200 py-4 text-sm md:text-base"
 				>
 					<div class="border-l-2 border-emerald-500 pl-4">
-						<h5 class="font-semibold text-gray-900">Dépollution Conseil</h5>
+						<h5 class="font-semibold">Dépollution Conseil</h5>
 					</div>
 					<div class="border-l-2 border-emerald-500 pl-4">
-						<h5 class="font-semibold text-gray-900">06 31 32 67 15</h5>
-						<p class="text-xs text-gray-500">Vous pouvez nous poser des questions</p>
+						<h5 class="font-semibold">06 31 32 67 15</h5>
+						<p class="text-xs">Vous pouvez nous poser des questions</p>
 					</div>
 				</div>
 			</div>
 
 			<!-- Image -->
 			<div class="order-1 lg:order-2">
-				<div class="overflow-hidden rounded-lg border-4 border-white bg-white p-4 shadow-xl">
+				<div class="overflow-hidden rounded-lg border-4 border-white p-4 shadow-xl">
 					<img src={logoPEMD} alt="PEMD 360" class="mx-auto mb-4 h-auto w-full max-w-md" />
 				</div>
 			</div>
@@ -239,13 +239,13 @@
 </section>
 
 <!-- Why Us Section -->
-<section id="services" class="bg-gray-50 py-16 lg:py-24">
+<section id="services" class=" py-16 lg:py-24">
 	<div class="container mx-auto px-4">
-		<div class="mx-auto max-w-4xl rounded-2xl bg-white p-8 shadow-xl lg:p-12">
+		<div class="mx-auto max-w-4xl rounded-2xl p-8 shadow-xl lg:p-12">
 			<span class="mb-2 inline-block text-sm font-semibold tracking-wider text-emerald-600">
 				POURQUOI DÉPOLLUTION CONSEIL ?
 			</span>
-			<h2 class="mb-10 text-3xl font-bold text-gray-900 lg:text-4xl">
+			<h2 class="mb-10 text-3xl font-bold lg:text-4xl">
 				Nous révolutionnons les anciennes méthodes de travail
 			</h2>
 
@@ -258,8 +258,8 @@
 							{item.num}
 						</div>
 						<div>
-							<h5 class="mb-1 text-lg font-semibold text-gray-900">{item.title}</h5>
-							<p class="text-gray-600">{item.desc}</p>
+							<h5 class="mb-1 text-lg font-semibold">{item.title}</h5>
+							<p class="">{item.desc}</p>
 						</div>
 					</li>
 				{/each}
@@ -273,7 +273,7 @@
 	class="relative bg-cover bg-center bg-fixed py-20 lg:py-32"
 	style="background-image: url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1920&q=80&auto=format&fit=crop')"
 >
-	<div class="absolute inset-0 bg-gray-900/70"></div>
+	<div class="absolute inset-0 /70"></div>
 	<div class="container relative z-10 mx-auto px-4">
 		<div class="mx-auto flex max-w-3xl flex-col items-center text-center">
 			<!-- Play Button -->

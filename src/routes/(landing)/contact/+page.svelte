@@ -75,7 +75,7 @@
 						Accueil
 					</a>
 				</li>
-				<li class="text-gray-400">/</li>
+				<li class="">/</li>
 				<li class="text-emerald-400">Contact</li>
 			</ol>
 		</nav>
@@ -93,10 +93,8 @@
 				>
 					Contactez-nous
 				</span>
-				<h2 class="mb-6 text-3xl font-bold text-gray-900 lg:text-4xl">
-					Nous sommes à votre écoute
-				</h2>
-				<p class="mb-8 text-gray-600">
+				<h2 class="mb-6 text-3xl font-bold lg:text-4xl">Nous sommes à votre écoute</h2>
+				<p class="mb-8">
 					Vous avez un projet de démolition ou de rénovation significative ? N'hésitez pas à nous
 					contacter pour obtenir un devis ou des informations sur nos services de diagnostic PEMD.
 				</p>
@@ -108,7 +106,7 @@
 							href={info.href}
 							target={info.icon === 'location' ? '_blank' : undefined}
 							rel={info.icon === 'location' ? 'noopener noreferrer' : undefined}
-							class="flex items-start gap-4 rounded-lg p-4 transition-colors hover:bg-gray-50"
+							class="flex items-start gap-4 rounded-lg p-4 transition-colors hover:"
 						>
 							<div
 								class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600"
@@ -122,8 +120,8 @@
 								{/if}
 							</div>
 							<div>
-								<h5 class="font-semibold text-gray-900">{info.label}</h5>
-								<p class="text-gray-600">{info.value}</p>
+								<h5 class="font-semibold">{info.label}</h5>
+								<p class="">{info.value}</p>
 							</div>
 						</a>
 					{/each}

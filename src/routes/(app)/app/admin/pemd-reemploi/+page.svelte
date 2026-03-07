@@ -76,10 +76,8 @@
 
 	<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
 		<div>
-			<h1 class="text-2xl font-bold text-gray-900">Inventaire PEMD - Réemploi</h1>
-			<p class="text-sm text-gray-500 mt-1">
-				Gestion des éléments destinés au réemploi par projet.
-			</p>
+			<h1 class="text-2xl font-bold">Inventaire PEMD - Réemploi</h1>
+			<p class="text-sm mt-1">Gestion des éléments destinés au réemploi par projet.</p>
 		</div>
 		<a href="pemd-reemploi/export{$pageStore.url.search}" class="btn">
 			<Download />
@@ -100,12 +98,10 @@
 		</label>
 	</div>
 
-	<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+	<div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
 		<div class="overflow-x-auto">
-			<table class="w-full text-left text-sm text-gray-600">
-				<thead
-					class="bg-gray-50 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200"
-				>
+			<table class="w-full text-left text-sm">
+				<thead class=" text-xs uppercase font-semibold border-b border-gray-200">
 					<tr>
 						<th class="px-6 py-4">PEMD</th>
 						<th class="px-6 py-4">Description</th>
@@ -121,7 +117,7 @@
 				<tbody class="divide-y divide-gray-100">
 					{#if displayedList.length === 0}
 						<tr>
-							<td colspan="9" class="px-6 py-12 text-center text-gray-400">
+							<td colspan="9" class="px-6 py-12 text-center">
 								{#if query}
 									Aucun résultat pour "{query}".
 								{:else}
@@ -131,8 +127,8 @@
 						</tr>
 					{:else}
 						{#each displayedList as item}
-							<tr class="hover:bg-gray-50 transition-colors">
-								<td class="px-6 py-4 font-medium text-gray-900">{item.objet || '-'}</td>
+							<tr class="hover: transition-colors">
+								<td class="px-6 py-4 font-medium">{item.objet || '-'}</td>
 								<td class="px-6 py-4">{item.description || '-'}</td>
 								<td class="px-6 py-4">{item.etat || '-'}</td>
 								<td class="px-6 py-4">{item.etage || '-'}</td>
@@ -154,7 +150,7 @@
 											class="h-12 w-12 object-cover rounded shadow-sm bg-white"
 										/>
 									{:else}
-										<span class="text-xs text-gray-400">N/A</span>
+										<span class="text-xs">N/A</span>
 									{/if}
 								</td>
 								<td class="px-6 py-4">
@@ -179,7 +175,7 @@
 									<div class="flex items-center justify-center gap-2">
 										<button
 											onclick={() => openDeleteModal(item)}
-											class="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+											class="p-1.5 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
 											title="Supprimer"
 										>
 											<Trash2 class="w-4 h-4" />
@@ -217,7 +213,7 @@
 		aria-modal="true"
 	>
 		<div
-			class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"
+			class="fixed inset-0 backdrop-blur-sm transition-opacity"
 			transition:fade
 			onclick={closeModal}
 			onkeydown={(e) => e.key === 'Escape' && closeModal()}
@@ -225,27 +221,23 @@
 			tabindex="-1"
 		></div>
 		<div
-			class="relative w-full max-w-md bg-white rounded-xl shadow-xl overflow-hidden p-6"
+			class="relative w-full max-w-md rounded-xl shadow-xl overflow-hidden p-6"
 			transition:scale={{ start: 0.95 }}
 		>
 			<div class="flex justify-between items-center mb-4">
-				<h3 class="text-lg font-semibold text-gray-900">QR Code</h3>
-				<button
-					onclick={closeModal}
-					class="text-gray-400 hover:text-gray-600 transition-colors"
-					aria-label="Fermer"
-				>
+				<h3 class="text-lg font-semibold">QR Code</h3>
+				<button onclick={closeModal} class=" hover: transition-colors" aria-label="Fermer">
 					<X class="w-6 h-6" />
 				</button>
 			</div>
 			<div class="flex flex-col items-center">
-				<div class="bg-white p-4 rounded-lg border-2 border-gray-200">
+				<div class="p-4 rounded-lg border-2 border-gray-200">
 					<!-- Placeholder pour le QR Code - à remplacer par une vraie bibliothèque QR -->
-					<div class="w-48 h-48 bg-gray-100 flex items-center justify-center">
-						<span class="text-gray-400 text-sm text-center">QR Code<br />{qrItem?.id}</span>
+					<div class="w-48 h-48 flex items-center justify-center">
+						<span class=" text-sm text-center">QR Code<br />{qrItem?.id}</span>
 					</div>
 				</div>
-				<p class="text-sm text-gray-600 mt-4 text-center">{qrItem?.objet}</p>
+				<p class="text-sm mt-4 text-center">{qrItem?.objet}</p>
 			</div>
 		</div>
 	</div>
@@ -258,7 +250,7 @@
 		aria-modal="true"
 	>
 		<div
-			class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"
+			class="fixed inset-0 backdrop-blur-sm transition-opacity"
 			transition:fade
 			onclick={closeModal}
 			onkeydown={(e) => e.key === 'Escape' && closeModal()}
@@ -266,23 +258,19 @@
 			tabindex="-1"
 		></div>
 		<div
-			class="relative w-full max-w-2xl bg-white rounded-xl shadow-xl overflow-hidden"
+			class="relative w-full max-w-2xl rounded-xl shadow-xl overflow-hidden"
 			transition:scale={{ start: 0.95 }}
 		>
 			<div class="flex justify-between items-center p-6 border-b border-gray-200">
-				<h3 class="text-xl font-semibold text-gray-900">Carte PEMD</h3>
-				<button
-					onclick={closeModal}
-					class="text-gray-400 hover:text-gray-600 transition-colors"
-					aria-label="Fermer"
-				>
+				<h3 class="text-xl font-semibold">Carte PEMD</h3>
+				<button onclick={closeModal} class=" hover: transition-colors" aria-label="Fermer">
 					<X class="w-6 h-6" />
 				</button>
 			</div>
 
 			<div class="p-6">
-				<h4 class="text-lg font-medium text-gray-900 mb-2">{cardItem?.objet}</h4>
-				<p class="text-sm text-gray-600 mb-6">{cardItem?.description || 'Aucune description'}</p>
+				<h4 class="text-lg font-medium mb-2">{cardItem?.objet}</h4>
+				<p class="text-sm mb-6">{cardItem?.description || 'Aucune description'}</p>
 
 				{#if cardItem?.image}
 					<div class="mb-6">
@@ -295,24 +283,24 @@
 				{/if}
 
 				<div class="grid grid-cols-2 gap-4">
-					<div class="bg-gray-50 p-4 rounded-lg">
-						<p class="text-xs text-gray-500 uppercase mb-1">Localisation</p>
-						<p class="text-sm font-medium text-gray-900">Étage {cardItem?.etage || 'N/A'}</p>
+					<div class=" p-4 rounded-lg">
+						<p class="text-xs uppercase mb-1">Localisation</p>
+						<p class="text-sm font-medium">Étage {cardItem?.etage || 'N/A'}</p>
 					</div>
 
-					<div class="bg-gray-50 p-4 rounded-lg">
-						<p class="text-xs text-gray-500 uppercase mb-1">État</p>
-						<p class="text-sm font-medium text-gray-900">{cardItem?.etat || 'N/A'}</p>
+					<div class=" p-4 rounded-lg">
+						<p class="text-xs uppercase mb-1">État</p>
+						<p class="text-sm font-medium">{cardItem?.etat || 'N/A'}</p>
 					</div>
 
-					<div class="bg-gray-50 p-4 rounded-lg">
-						<p class="text-xs text-gray-500 uppercase mb-1">Coefficient de réemploi</p>
-						<p class="text-sm font-medium text-gray-900">{cardItem?.reemploi ?? 'N/A'}</p>
+					<div class=" p-4 rounded-lg">
+						<p class="text-xs uppercase mb-1">Coefficient de réemploi</p>
+						<p class="text-sm font-medium">{cardItem?.reemploi ?? 'N/A'}</p>
 					</div>
 
-					<div class="bg-gray-50 p-4 rounded-lg">
-						<p class="text-xs text-gray-500 uppercase mb-1">Masse</p>
-						<p class="text-sm font-medium text-gray-900">
+					<div class=" p-4 rounded-lg">
+						<p class="text-xs uppercase mb-1">Masse</p>
+						<p class="text-sm font-medium">
 							{cardItem?.masse ? `${cardItem.masse} Kg` : 'N/A'}
 						</p>
 					</div>

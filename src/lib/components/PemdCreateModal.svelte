@@ -105,13 +105,13 @@
 				if (e.key === 'Enter' || e.key === ' ') onClose();
 			}}
 		></div>
-		<div class="relative z-10 w-125 max-h-[90vh] overflow-y-auto rounded-lg bg-white p-6 shadow-lg">
+		<div class="relative z-10 w-125 max-h-[90vh] overflow-y-auto rounded-lg p-6 shadow-lg">
 			<div class="flex items-center justify-between mb-4">
 				<h3 class="text-lg font-semibold flex items-center gap-2">
 					<Plus size={20} />
 					Nouveau tag PEMD
 				</h3>
-				<button type="button" onclick={onClose} class="text-gray-400 hover:text-gray-600">
+				<button type="button" onclick={onClose} class=" hover:">
 					<X size={24} />
 				</button>
 			</div>
@@ -136,21 +136,21 @@
 				<input type="hidden" name="stemVector" value={JSON.stringify(pendingPosition.normal)} />
 
 				<!-- Legend for required fields -->
-				<p class="text-xs text-gray-500 mb-4">
+				<p class="text-xs mb-4">
 					Les champs marqués d'un <span class="text-red-500 font-medium">*</span> sont obligatoires
 				</p>
 
 				<div class="space-y-4">
 					<!-- Section: Identification du matériau -->
 					<div class="border-b border-gray-200 pb-4">
-						<h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+						<h4 class="text-sm font-semibold mb-3 flex items-center gap-2">
 							<span class="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
 							Identification du matériau <span class="text-red-500">*</span>
 						</h4>
 
 						<!-- Étape 1: Groupe -->
 						<div class="mb-3">
-							<label for="pemd-groupe" class="block text-sm font-medium text-gray-700 mb-1">
+							<label for="pemd-groupe" class="block text-sm font-medium mb-1">
 								<span
 									class="inline-flex items-center justify-center w-5 h-5 bg-purple-100 text-purple-700 rounded-full text-xs font-bold mr-1"
 									>1</span
@@ -175,11 +175,11 @@
 
 						<!-- Étape 2: Catégorie -->
 						<div class="mb-3">
-							<label for="pemd-categorie" class="block text-sm font-medium text-gray-700 mb-1">
+							<label for="pemd-categorie" class="block text-sm font-medium mb-1">
 								<span
 									class="inline-flex items-center justify-center w-5 h-5 {groupId
 										? 'bg-purple-100 text-purple-700'
-										: 'bg-gray-200 text-gray-400'} rounded-full text-xs font-bold mr-1">2</span
+										: ' '} rounded-full text-xs font-bold mr-1">2</span
 								>
 								Catégorie
 							</label>
@@ -196,7 +196,7 @@
 								{/each}
 							</select>
 							{#if !groupId}
-								<p class="text-xs text-gray-400 mt-1">Sélectionnez d'abord un groupe</p>
+								<p class="text-xs mt-1">Sélectionnez d'abord un groupe</p>
 							{:else if categoriesFiltered.length === 0}
 								<p class="text-xs text-amber-600 mt-1">
 									Aucune catégorie disponible pour ce groupe
@@ -213,11 +213,11 @@
 
 						<!-- Étape 3: Objet (OBLIGATOIRE) -->
 						<div>
-							<label for="pemd-objet" class="block text-sm font-medium text-gray-700 mb-1">
+							<label for="pemd-objet" class="block text-sm font-medium mb-1">
 								<span
 									class="inline-flex items-center justify-center w-5 h-5 {categoryId
 										? 'bg-purple-100 text-purple-700'
-										: 'bg-gray-200 text-gray-400'} rounded-full text-xs font-bold mr-1">3</span
+										: ''} rounded-full text-xs font-bold mr-1">3</span
 								>
 								Objet <span class="text-red-500">*</span>
 							</label>
@@ -235,7 +235,7 @@
 								{/each}
 							</select>
 							{#if !categoryId}
-								<p class="text-xs text-gray-400 mt-1">Sélectionnez d'abord une catégorie</p>
+								<p class="text-xs mt-1">Sélectionnez d'abord une catégorie</p>
 							{:else if objectsFiltered.length === 0}
 								<p class="text-xs text-amber-600 mt-1">
 									Aucun objet disponible pour cette catégorie
@@ -255,15 +255,15 @@
 
 					<!-- Section: Informations complémentaires (optionnel) -->
 					<div class="border-b border-gray-200 pb-4">
-						<h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
-							<span class="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
+						<h4 class="text-sm font-semibold mb-3 flex items-center gap-2">
+							<span class="w-1.5 h-1.5 rounded-full"></span>
 							Informations complémentaires
-							<span class="text-gray-400 text-xs font-normal">(optionnel)</span>
+							<span class=" text-xs font-normal">(optionnel)</span>
 						</h4>
 
 						<!-- Description -->
 						<div class="mb-3">
-							<label for="pemd-description" class="block text-sm font-medium text-gray-600 mb-1"
+							<label for="pemd-description" class="block text-sm font-medium mb-1"
 								>Description</label
 							>
 							<textarea
@@ -279,9 +279,7 @@
 						<!-- Row: Quantité, Étage, État -->
 						<div class="grid grid-cols-3 gap-3">
 							<div>
-								<label for="pemd-quantite" class="block text-sm font-medium text-gray-600 mb-1"
-									>Quantité</label
-								>
+								<label for="pemd-quantite" class="block text-sm font-medium mb-1">Quantité</label>
 								<input
 									id="pemd-quantite"
 									type="number"
@@ -294,9 +292,7 @@
 								/>
 							</div>
 							<div>
-								<label for="pemd-etage" class="block text-sm font-medium text-gray-600 mb-1"
-									>Étage</label
-								>
+								<label for="pemd-etage" class="block text-sm font-medium mb-1">Étage</label>
 								<input
 									id="pemd-etage"
 									type="text"
@@ -307,9 +303,7 @@
 								/>
 							</div>
 							<div>
-								<label for="pemd-etat" class="block text-sm font-medium text-gray-600 mb-1"
-									>État</label
-								>
+								<label for="pemd-etat" class="block text-sm font-medium mb-1">État</label>
 								<select id="pemd-etat" bind:value={etat} name="etat" class="selection:">
 									<option value="">--</option>
 									<option value="Bon">Bon</option>
@@ -322,14 +316,14 @@
 
 					<!-- Section: Dimensions (optionnel) -->
 					<div class="border-b border-gray-200 pb-4">
-						<h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
-							<span class="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
-							Dimensions <span class="text-gray-400 text-xs font-normal">(optionnel)</span>
+						<h4 class="text-sm font-semibold mb-3 flex items-center gap-2">
+							<span class="w-1.5 h-1.5 rounded-full"></span>
+							Dimensions <span class=" text-xs font-normal">(optionnel)</span>
 						</h4>
 
 						<div class="grid grid-cols-3 gap-3">
 							<div>
-								<label for="pemd-longueur" class="block text-sm font-medium text-gray-600 mb-1"
+								<label for="pemd-longueur" class="block text-sm font-medium mb-1"
 									>Longueur (m)</label
 								>
 								<input
@@ -344,9 +338,7 @@
 								/>
 							</div>
 							<div>
-								<label for="pemd-largeur" class="block text-sm font-medium text-gray-600 mb-1"
-									>Largeur (m)</label
-								>
+								<label for="pemd-largeur" class="block text-sm font-medium mb-1">Largeur (m)</label>
 								<input
 									id="pemd-largeur"
 									type="number"
@@ -359,7 +351,7 @@
 								/>
 							</div>
 							<div>
-								<label for="pemd-epaisseur" class="block text-sm font-medium text-gray-600 mb-1"
+								<label for="pemd-epaisseur" class="block text-sm font-medium mb-1"
 									>Épaisseur (m)</label
 								>
 								<input
@@ -378,10 +370,8 @@
 
 					<!-- Section: Potentiel Réemploi (optionnel) -->
 					<div>
-						<label for="pemd-potentiel" class="block text-sm font-medium text-gray-600 mb-1">
-							Potentiel de réemploi <span class="text-gray-400 text-xs font-normal"
-								>(optionnel)</span
-							>
+						<label for="pemd-potentiel" class="block text-sm font-medium mb-1">
+							Potentiel de réemploi <span class=" text-xs font-normal">(optionnel)</span>
 						</label>
 						<select
 							id="pemd-potentiel"

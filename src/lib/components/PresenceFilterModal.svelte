@@ -37,7 +37,7 @@
 				if (e.key === 'Enter' || e.key === ' ') close();
 			}}
 		></div>
-		<div class="relative z-10 w-80 rounded-lg bg-white p-4 shadow-lg">
+		<div class="relative z-10 w-80 rounded-lg p-4 shadow-lg">
 			<h3 class="mb-3 text-lg font-semibold">{title}</h3>
 			<div class="mb-3 flex flex-col gap-2">
 				<label class="flex items-center gap-2">

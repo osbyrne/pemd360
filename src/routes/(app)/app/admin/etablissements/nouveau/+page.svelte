@@ -32,8 +32,8 @@
 
 	<!-- Titre -->
 	<div class="mb-8">
-		<h1 class="text-3xl font-bold text-gray-900 mb-2">Nouveau établissement</h1>
-		<p class="text-sm text-gray-500">Créez un nouvel établissement dans votre organisation.</p>
+		<h1 class="text-3xl font-bold mb-2">Nouveau établissement</h1>
+		<p class="text-sm">Créez un nouvel établissement dans votre organisation.</p>
 	</div>
 
 	{#if form?.message}
@@ -44,17 +44,17 @@
 
 	<form method="POST" use:enhance class="space-y-8">
 		<!-- Section Identifiants & Contact -->
-		<div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+		<div class="p-6 rounded-xl border border-gray-200 shadow-sm">
 			<div class="flex items-center gap-3 mb-6">
 				<div class="p-2 bg-emerald-50 rounded-lg">
 					<Globe class="h-6 w-6 text-emerald-600" />
 				</div>
-				<h2 class="text-xl font-semibold text-gray-900">Identité & Contact</h2>
+				<h2 class="text-xl font-semibold">Identité & Contact</h2>
 			</div>
 
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<div class="space-y-1.5 md:col-span-2">
-					<label for="nom" class="text-sm font-medium text-gray-700">Nom de l'établissement</label>
+					<label for="nom" class="text-sm font-medium">Nom de l'établissement</label>
 					<input
 						type="text"
 						id="nom"
@@ -67,7 +67,7 @@
 				</div>
 
 				<div class="space-y-1.5 md:col-span-2">
-					<label for="societeId" class="text-sm font-medium text-gray-700">Société</label>
+					<label for="societeId" class="text-sm font-medium">Société</label>
 					<select id="societeId" name="societeId" required class="select">
 						<option value="" disabled selected={!data_form.societeId}
 							>Sélectionnez une société</option
@@ -81,9 +81,7 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="raisonSocial" class="text-sm font-medium text-gray-700"
-						>Raison Sociale *</label
-					>
+					<label for="raisonSocial" class="text-sm font-medium">Raison Sociale *</label>
 					<input
 						type="text"
 						id="raisonSocial"
@@ -95,7 +93,7 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="siret" class="text-sm font-medium text-gray-700">SIRET</label>
+					<label for="siret" class="text-sm font-medium">SIRET</label>
 					<input
 						type="text"
 						id="siret"
@@ -108,7 +106,7 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="email" class="text-sm font-medium text-gray-700">Email *</label>
+					<label for="email" class="text-sm font-medium">Email *</label>
 					<input
 						type="email"
 						id="email"
@@ -121,24 +119,24 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="tel" class="text-sm font-medium text-gray-700">Téléphone *</label>
+					<label for="tel" class="text-sm font-medium">Téléphone *</label>
 					<input type="tel" id="tel" name="tel" value={data_form.tel} required class="input" />
 				</div>
 			</div>
 		</div>
 
 		<!-- Section Localisation -->
-		<div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+		<div class="p-6 rounded-xl border border-gray-200 shadow-sm">
 			<div class="flex items-center gap-3 mb-6">
 				<div class="p-2 bg-emerald-50 rounded-lg">
 					<MapPin class="h-6 w-6 text-emerald-600" />
 				</div>
-				<h2 class="text-xl font-semibold text-gray-900">Localisation</h2>
+				<h2 class="text-xl font-semibold">Localisation</h2>
 			</div>
 
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<div class="space-y-1.5 md:col-span-2">
-					<label for="rue" class="text-sm font-medium text-gray-700">Adresse *</label>
+					<label for="rue" class="text-sm font-medium">Adresse *</label>
 					<input
 						type="text"
 						id="rue"
@@ -150,7 +148,7 @@
 					/>
 				</div>
 				<div class="space-y-1.5">
-					<label for="cp" class="text-sm font-medium text-gray-700">Code Postal *</label>
+					<label for="cp" class="text-sm font-medium">Code Postal *</label>
 					<input
 						type="text"
 						id="cp"
@@ -162,7 +160,7 @@
 					/>
 				</div>
 				<div class="space-y-1.5">
-					<label for="ville" class="text-sm font-medium text-gray-700">Ville *</label>
+					<label for="ville" class="text-sm font-medium">Ville *</label>
 					<input
 						type="text"
 						id="ville"
@@ -174,7 +172,7 @@
 					/>
 				</div>
 				<div class="space-y-1.5 md:col-span-2">
-					<label for="fax" class="text-sm font-medium text-gray-700">Fax</label>
+					<label for="fax" class="text-sm font-medium">Fax</label>
 					<input type="text" id="fax" name="fax" value={data_form.fax} class="input" />
 				</div>
 			</div>

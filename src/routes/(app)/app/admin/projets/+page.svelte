@@ -135,10 +135,8 @@
 	<div class="mb-8">
 		<div class="sm:flex sm:items-center sm:justify-between">
 			<div>
-				<h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-					Gestion des projets
-				</h1>
-				<p class="mt-2 text-sm text-slate-600">Gérez tous les projets de la plateforme.</p>
+				<h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Gestion des projets</h1>
+				<p class="mt-2 text-sm">Gérez tous les projets de la plateforme.</p>
 			</div>
 			<div class="mt-4 flex flex-wrap gap-3 sm:mt-0">
 				<a href="/app/admin/projets/nouveau" class="btn">
@@ -166,73 +164,47 @@
 	<br />
 
 	<!-- Table -->
-	<div class="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+	<div class="rounded-xl border border-slate-200 shadow-sm overflow-hidden">
 		{#if displayedProjets.length === 0}
 			<div class="flex flex-col items-center justify-center py-16 px-4">
-				<ChartNoAxesCombined size={48} strokeWidth={1.5} class="text-slate-300 mb-4" />
-				<p class="text-slate-500 font-medium">Aucun projet trouvé</p>
-				<p class="text-sm text-slate-400 mt-1">
-					Créez un nouveau projet ou modifiez vos critères de recherche
-				</p>
+				<ChartNoAxesCombined size={48} strokeWidth={1.5} class=" mb-4" />
+				<p class=" font-medium">Aucun projet trouvé</p>
+				<p class="text-sm mt-1">Créez un nouveau projet ou modifiez vos critères de recherche</p>
 			</div>
 		{:else}
 			<div class="overflow-x-auto">
 				<table class="w-full">
-					<thead class="bg-slate-50 border-b border-slate-200">
+					<thead class="border-b">
 						<tr>
-							<th
-								class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
-								>ID Matterport</th
-							>
-							<th
-								class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
-								>Référence</th
-							>
-							<th
-								class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
-								>Libellé</th
-							>
-							<th
-								class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
-								>Ville</th
-							>
-							<th
-								class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
-								>Établissement</th
-							>
-							<th
-								class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
-								>Société</th
-							>
-							<th
-								class="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
-								>Démarrage</th
-							>
-							<th
-								class="px-6 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider"
-								>Actions</th
-							>
+							<th>ID Matterport</th>
+							<th>Référence</th>
+							<th>Libellé</th>
+							<th>Ville</th>
+							<th>Établissement</th>
+							<th>Société</th>
+							<th>Démarrage</th>
+							<th>Actions</th>
 						</tr>
 					</thead>
 					<tbody class="divide-y divide-slate-100">
 						{#each displayedProjets as proj (proj.id)}
-							<tr class="hover:bg-slate-50 transition-colors">
+							<tr class="hover: transition-colors">
 								<td class="px-6 py-4">
 									<span class="text-xs font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded"
 										>{proj.id}</span
 									>
 								</td>
 								<td class="px-6 py-4">
-									<span class="text-sm font-medium text-slate-900">{proj.reference}</span>
+									<span class="text-sm font-medium">{proj.reference}</span>
 								</td>
 								<td class="px-6 py-4">
-									<span class="text-sm text-slate-700">{proj.libelle}</span>
+									<span class="text-sm">{proj.libelle}</span>
 								</td>
 								<td class="px-6 py-4">
-									<span class="text-sm text-slate-600">{proj.ville}</span>
+									<span class="text-sm">{proj.ville}</span>
 								</td>
 								<td class="px-6 py-4">
-									<span class="text-sm text-slate-600">{proj.etablissementNom || '-'}</span>
+									<span class="text-sm">{proj.etablissementNom || '-'}</span>
 								</td>
 								<td class="px-6 py-4">
 									<span
@@ -242,27 +214,27 @@
 									</span>
 								</td>
 								<td class="px-6 py-4">
-									<span class="text-sm text-slate-600">{formatDate(proj.dateDemarrage)}</span>
+									<span class="text-sm">{formatDate(proj.dateDemarrage)}</span>
 								</td>
 								<td class="px-6 py-4">
 									<div class="flex items-center justify-end">
 										<div class="relative">
 											<button
 												onclick={() => toggleDropdown(proj.id)}
-												class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+												class="rounded-lg p-2 transition-colors hover: hover:"
 												title="Actions"
 											>
 												<MoreHorizontal size={18} />
 											</button>
 											{#if openDropdownId === proj.id}
 												<div
-													class="absolute right-0 mt-2 w-48 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 z-10"
+													class="absolute right-0 mt-2 w-48 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 z-10"
 													transition:scale={{ duration: 100 }}
 												>
 													<div class="py-1">
 														<a
 															href="/app/admin/projets/{proj.id}"
-															class="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+															class="flex items-center gap-3 px-4 py-2 text-sm hover: transition-colors"
 															onclick={closeDropdown}
 														>
 															<Eye size={16} />
@@ -270,7 +242,7 @@
 														</a>
 														<a
 															href="/app/admin/projets/{proj.id}/modifier"
-															class="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+															class="flex items-center gap-3 px-4 py-2 text-sm hover: transition-colors"
 															onclick={closeDropdown}
 														>
 															<Pencil size={16} />
@@ -301,10 +273,8 @@
 
 		<!-- Pagination -->
 		{#if filteredProjets.length > 0 && totalPages > 1}
-			<div
-				class="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-4 py-3"
-			>
-				<p class="text-sm text-slate-600">
+			<div class="flex items-center justify-between border-t border-slate-200 px-4 py-3">
+				<p class="text-sm">
 					Affichage de <span class="font-semibold"
 						>{Math.min(filteredProjets.length, (page - 1) * perPage + 1)}</span
 					>
@@ -331,14 +301,11 @@
 <!-- MODAL : Supprimer -->
 {#if isDeleteModalOpen && selectedProjet}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div
-			class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
-			transition:fade
-		></div>
+		<div class="fixed inset-0 /60 backdrop-blur-sm transition-opacity" transition:fade></div>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
-					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+					class="relative w-full max-w-md transform overflow-hidden rounded-2xl shadow-2xl transition-all"
 					transition:scale
 				>
 					<form
@@ -363,8 +330,8 @@
 									<Trash2 size={20} class="text-red-600" />
 								</div>
 								<div>
-									<h3 class="text-lg font-semibold text-slate-900">Supprimer le projet</h3>
-									<p class="text-sm text-slate-500">{selectedProjet.libelle}</p>
+									<h3 class="text-lg font-semibold">Supprimer le projet</h3>
+									<p class="text-sm">{selectedProjet.libelle}</p>
 								</div>
 							</div>
 							<div class="rounded-lg bg-red-50 border border-red-200 p-4">
@@ -374,7 +341,7 @@
 								</p>
 							</div>
 						</div>
-						<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+						<div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
 							<button type="button" class="btn" onclick={closeDeleteModal}> Annuler </button>
 							<button type="submit" class="btn btn-warning"> Supprimer définitivement </button>
 						</div>

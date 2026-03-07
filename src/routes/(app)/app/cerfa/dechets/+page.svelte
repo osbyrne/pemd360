@@ -100,9 +100,9 @@
 	<!-- Header Section -->
 	<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
 		<div>
-			<h1 class="text-2xl font-bold text-gray-900">Caractérisation des déchets</h1>
+			<h1 class="text-2xl font-bold">Caractérisation des déchets</h1>
 			{#if data.projetInfo}
-				<p class="text-sm text-gray-600 mt-1">
+				<p class="text-sm mt-1">
 					Projet: <span class="font-medium">{data.projetInfo.libelle}</span>
 					(Réf: {data.projetInfo.reference})
 				</p>
@@ -116,40 +116,43 @@
 
 	<!-- Statistics Summary (Simplified) -->
 	<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-		<div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-			<p class="text-xs font-medium text-gray-500 uppercase">Total déchets</p>
-			<p class="text-xl font-bold text-gray-900 mt-1">{stats.total}</p>
+		<div class="card bg-base-100 w-96 shadow-sm">
+			<div class="card-body">
+				<p class="">Total déchets</p>
+				<p class="text-xl font-bold">{stats.total}</p>
+			</div>
 		</div>
-		<div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-			<p class="text-xs font-medium text-gray-500 uppercase">Masse totale</p>
-			<p class="text-xl font-bold text-gray-900 mt-1">
-				{formatLargeNumber(stats.totalMasse)}
-				<span class="text-sm font-normal text-gray-500">kg</span>
-			</p>
+		<div class="card bg-base-100 w-96 shadow-sm">
+			<div class="card-body">
+				<p class="">Masse totale</p>
+				<p class="text-xl font-bold">
+					{formatLargeNumber(stats.totalMasse)}
+					<span class="text-sm font-normal">kg</span>
+				</p>
+			</div>
 		</div>
-		<div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-			<p class="text-xs font-medium text-gray-500 uppercase">Volume total</p>
-			<p class="text-xl font-bold text-gray-900 mt-1">
-				{formatLargeNumber(stats.totalVolume)}
-				<span class="text-sm font-normal text-gray-500">m³</span>
-			</p>
+		<div class="card bg-base-100 w-96 shadow-sm">
+			<div class="card-body">
+				<p class="">Volume total</p>
+				<p class="text-xl font-bold">
+					{formatLargeNumber(stats.totalVolume)}
+					<span class="text-sm font-normal">m³</span>
+				</p>
+			</div>
 		</div>
 	</div>
 
 	<!-- Filters Section -->
-	<div class="flex flex-col sm:flex-row gap-4 mb-4 items-end">
+	<div class="flex flex-col sm:flex-row gap-4">
 		<!-- Search -->
-		<label class="flex-1 w-full relative">
+		<label class="mb-6 input relative">
 			<Search />
 			<input type="search" bind:value={searchTerm} placeholder="Rechercher..." />
 		</label>
 
 		<!-- Filter by valorisation -->
 		<div class="w-full sm:w-64">
-			<select
-				bind:value={filterByValorisation}
-				class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
-			>
+			<select bind:value={filterByValorisation} class="select">
 				<option value="all">Tous les déchets</option>
 				<option value="valorisable">Valorisables</option>
 				<option value="non-valorisable">Non valorisables</option>
@@ -162,7 +165,7 @@
 					searchTerm = '';
 					filterByValorisation = 'all';
 				}}
-				class="px-3 py-2 text-sm text-gray-600 hover:text-gray-900 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+				class="px-3 py-2 text-sm hover: border border-gray-300 rounded-md hover: transition-colors"
 			>
 				<X class="w-4 h-4 inline mr-1" />
 				Reset
@@ -171,10 +174,10 @@
 	</div>
 
 	<!-- Tableau des déchets (Simple & Clean) -->
-	<div class="bg-white border border-gray-200 shadow-sm rounded-lg overflow-hidden flex flex-col">
+	<div class="border border-gray-200 shadow-sm rounded-lg overflow-hidden flex flex-col">
 		<div class="overflow-x-auto">
 			<table class="w-full text-sm text-left">
-				<thead class="bg-gray-50 text-gray-600 border-b border-gray-200">
+				<thead class=" border-b border-gray-200">
 					<tr>
 						<th class="px-4 py-3 font-semibold whitespace-nowrap min-w-75">Catégorie / Nature</th>
 						<th class="px-4 py-3 font-semibold whitespace-nowrap">Code</th>
@@ -210,23 +213,23 @@
 				</thead>
 				<tbody class="divide-y divide-gray-100">
 					{#each paginatedDechets as dechet, i (i)}
-						<tr class="hover:bg-gray-50 transition-colors">
+						<tr class="hover: transition-colors">
 							<td class="px-4 py-3 align-top">
-								<div class="font-medium text-gray-900">{dechet.categorie || '-'}</div>
+								<div class="font-medium">{dechet.categorie || '-'}</div>
 								{#if dechet.objet && dechet.objet !== dechet.categorie}
-									<div class="text-xs text-gray-500 mt-0.5">{dechet.objet}</div>
+									<div class="text-xs mt-0.5">{dechet.objet}</div>
 								{/if}
 								{#if dechet.nature && dechet.nature !== dechet.objet}
-									<div class="text-xs text-gray-500 italic mt-0.5">{dechet.nature}</div>
+									<div class="text-xs italic mt-0.5">{dechet.nature}</div>
 								{/if}
 							</td>
-							<td class="px-4 py-3 align-top font-mono text-xs text-gray-600">
+							<td class="px-4 py-3 align-top font-mono text-xs">
 								{dechet.codeDechet || '-'}
 							</td>
-							<td class="px-4 py-3 align-top text-right font-medium text-gray-900">
+							<td class="px-4 py-3 align-top text-right font-medium">
 								{formatNumber(dechet.masse)}
 							</td>
-							<td class="px-4 py-3 align-top text-right text-gray-600">
+							<td class="px-4 py-3 align-top text-right">
 								{formatNumber(dechet.volume)}
 							</td>
 
@@ -254,7 +257,7 @@
 							</td>
 							<!-- End checklist columns -->
 
-							<td class="px-4 py-3 align-top text-xs text-gray-600 border-l border-gray-100">
+							<td class="px-4 py-3 align-top text-xs border-l border-gray-100">
 								<div
 									class="max-w-37.5 truncate"
 									title={dechet.stockage || dechet.description || ''}
@@ -265,7 +268,7 @@
 						</tr>
 					{:else}
 						<tr>
-							<td colspan="12" class="px-6 py-12 text-center text-gray-500"> Aucun résultat. </td>
+							<td colspan="12" class="px-6 py-12 text-center"> Aucun résultat. </td>
 						</tr>
 					{/each}
 				</tbody>
@@ -273,9 +276,9 @@
 		</div>
 
 		<!-- Pagination Controls -->
-		{#if filteredDechets.length > 0}
-			<div class="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3">
-				<p class="text-sm text-gray-600">
+		{#if filteredDechets.length > 0 && totalPages > 1}
+			<div class="flex items-center justify-between border-t border-gray-200 px-4 py-3">
+				<p class="text-sm">
 					Affichage de <span class="font-semibold"
 						>{Math.min(filteredDechets.length, (currentPage - 1) * itemsPerPage + 1)}</span
 					>
@@ -305,7 +308,7 @@
 		{/if}
 	</div>
 
-	<div class="mt-4 text-xs text-gray-500 flex gap-4">
+	<div class="mt-4 text-xs flex gap-4">
 		<span>Légende :</span>
 		<span>☑ = Oui / Applicable</span>
 		<span>☐ = Non / Non applicable</span>

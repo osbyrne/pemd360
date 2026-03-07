@@ -119,11 +119,11 @@
 				if (e.key === 'Enter' || e.key === ' ') show = false;
 			}}
 		></div>
-		<div class="relative z-10 w-96 rounded-lg bg-white p-4 shadow-lg">
+		<div class="relative z-10 w-96 rounded-lg p-4 shadow-lg">
 			<h3 class="mb-3 text-lg font-semibold">Filtrer PEMD</h3>
 			<div class="mb-3 flex flex-col gap-2">
 				<label class="flex flex-col">
-					<span class="text-sm text-gray-700">Groupe</span>
+					<span class="text-sm ">Groupe</span>
 					<select bind:value={selectedGroup} onchange={handleGroupChange} class="select">
 						<option value="">Tous groupes</option>
 						{#each groups as group (group.id)}
@@ -132,7 +132,7 @@
 					</select>
 				</label>
 				<label class="flex flex-col">
-					<span class="text-sm text-gray-700">Catégorie</span>
+					<span class="text-sm ">Catégorie</span>
 					<select bind:value={selectedCategory} onchange={handleCategoryChange} class="select">
 						<option value="">Toutes catégories</option>
 						{#each categoriesFiltered as category (category.id)}
@@ -141,7 +141,7 @@
 					</select>
 				</label>
 				<label class="flex flex-col">
-					<span class="text-sm text-gray-700">Objet</span>
+					<span class="text-sm ">Objet</span>
 					<select bind:value={selectedObject} class="select">
 						<option value="">Tous objets</option>
 						{#each objectsFiltered as object (object.id)}

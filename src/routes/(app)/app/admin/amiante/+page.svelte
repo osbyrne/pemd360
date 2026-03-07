@@ -51,8 +51,8 @@
 	<RiskTabs />
 	<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
 		<div>
-			<h1 class="text-2xl font-bold text-gray-900">Inventaire Amiante</h1>
-			<p class="text-sm text-gray-500 mt-1">Liste des tags amiante détectés.</p>
+			<h1 class="text-2xl font-bold">Inventaire Amiante</h1>
+			<p class="text-sm mt-1">Liste des tags amiante détectés.</p>
 		</div>
 		<a href="amiante/export{$pageStore.url.search}" class="btn">
 			<Download />
@@ -74,12 +74,10 @@
 		<br />
 	</div>
 
-	<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+	<div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
 		<div class="overflow-x-auto">
-			<table class="w-full text-left text-sm text-gray-600">
-				<thead
-					class="bg-gray-50 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200"
-				>
+			<table class="w-full text-left text-sm">
+				<thead class=" text-xs uppercase font-semibold border-b border-gray-200">
 					<tr>
 						<th class="px-6 py-4">Nom du prélèvement</th>
 						<th class="px-6 py-4">Description</th>
@@ -92,7 +90,7 @@
 				<tbody class="divide-y divide-gray-100">
 					{#if displayedList.length === 0}
 						<tr>
-							<td colspan="6" class="px-6 py-12 text-center text-gray-400">
+							<td colspan="6" class="px-6 py-12 text-center">
 								{#if query}
 									Aucun résultat pour "{query}".
 								{:else}
@@ -102,8 +100,8 @@
 						</tr>
 					{:else}
 						{#each displayedList as item (item.id || item.label)}
-							<tr class="hover:bg-gray-50 transition-colors">
-								<td class="px-6 py-4 font-medium text-gray-900"> {item.label} </td>
+							<tr class="hover: transition-colors">
+								<td class="px-6 py-4 font-medium"> {item.label} </td>
 								<td class="px-6 py-4"> {item.description || '-'} </td>
 								<td class="px-6 py-4"> {item.etage || '-'} </td>
 								<td class="px-6 py-4"> {item.type || '-'} </td>
@@ -115,7 +113,7 @@
 											class="h-12 w-12 object-cover rounded shadow-sm bg-white"
 										/>
 									{:else}
-										<span class="text-xs text-gray-400">N/A</span>
+										<span class="text-xs">N/A</span>
 									{/if}
 								</td>
 								<td class="px-6 py-4">

@@ -57,8 +57,8 @@
 
 	<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
 		<div>
-			<h1 class="text-2xl font-bold text-gray-900">Inventaire PEMD - Déchets</h1>
-			<p class="text-sm text-gray-500 mt-1">Classification et traitement des déchets par projet.</p>
+			<h1 class="text-2xl font-bold">Inventaire PEMD - Déchets</h1>
+			<p class="text-sm mt-1">Classification et traitement des déchets par projet.</p>
 		</div>
 		<a href="pemd-dechets/export{$pageStore.url.search}" class="btn">
 			<Download />
@@ -99,12 +99,10 @@
 		</div>
 	</div>
 
-	<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+	<div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
 		<div class="overflow-x-auto">
-			<table class="w-full text-left text-sm text-gray-600">
-				<thead
-					class="bg-gray-50 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200"
-				>
+			<table class="w-full text-left text-sm">
+				<thead class=" text-xs uppercase font-semibold border-b border-gray-200">
 					<tr>
 						<th class="px-6 py-4">Nature</th>
 						<th class="px-6 py-4">Code déchet</th>
@@ -123,7 +121,7 @@
 				<tbody class="divide-y divide-gray-100">
 					{#if displayedList.length === 0}
 						<tr>
-							<td colspan="12" class="px-6 py-12 text-center text-gray-400">
+							<td colspan="12" class="px-6 py-12 text-center">
 								{#if query}
 									Aucun résultat pour "{query}".
 								{:else}
@@ -133,15 +131,15 @@
 						</tr>
 					{:else}
 						{#each displayedList as item}
-							<tr class="hover:bg-gray-50 transition-colors">
-								<td class="px-6 py-4 font-medium text-gray-900">{item.nature || '-'}</td>
+							<tr class="hover: transition-colors">
+								<td class="px-6 py-4 font-medium">{item.nature || '-'}</td>
 								<td class="px-6 py-4">{item.codeDechet || '-'}</td>
 								<td class="px-6 py-4">{item.masse || '-'}</td>
 								<td class="px-6 py-4">
 									<span
 										class="inline-flex items-center px-2 py-1 rounded text-xs font-medium {item.reutilisation
 											? 'bg-green-100 text-green-800'
-											: 'bg-gray-100 text-gray-600'}"
+											: ' '}"
 									>
 										{item.reutilisation ? 'Oui' : 'Non'}
 									</span>
@@ -150,7 +148,7 @@
 									<span
 										class="inline-flex items-center px-2 py-1 rounded text-xs font-medium {item.recyclable
 											? 'bg-blue-100 text-blue-800'
-											: 'bg-gray-100 text-gray-600'}"
+											: ' '}"
 									>
 										{item.recyclable ? 'Oui' : 'Non'}
 									</span>
@@ -159,7 +157,7 @@
 									<span
 										class="inline-flex items-center px-2 py-1 rounded text-xs font-medium {item.valorisationMatiere
 											? 'bg-emerald-100 text-emerald-800'
-											: 'bg-gray-100 text-gray-600'}"
+											: ' '}"
 									>
 										{item.valorisationMatiere ? 'Oui' : 'Non'}
 									</span>
@@ -168,7 +166,7 @@
 									<span
 										class="inline-flex items-center px-2 py-1 rounded text-xs font-medium {item.valorisationEnergetique
 											? 'bg-orange-100 text-orange-800'
-											: 'bg-gray-100 text-gray-600'}"
+											: ' '}"
 									>
 										{item.valorisationEnergetique ? 'Oui' : 'Non'}
 									</span>
@@ -177,7 +175,7 @@
 									<span
 										class="inline-flex items-center px-2 py-1 rounded text-xs font-medium {item.nonValorisation
 											? 'bg-red-100 text-red-800'
-											: 'bg-gray-100 text-gray-600'}"
+											: ' '}"
 									>
 										{item.nonValorisation ? 'Oui' : 'Non'}
 									</span>
@@ -186,7 +184,7 @@
 									<span
 										class="inline-flex items-center px-2 py-1 rounded text-xs font-medium {item.incinerationSansValorisationEnergetique
 											? 'bg-purple-100 text-purple-800'
-											: 'bg-gray-100 text-gray-600'}"
+											: ' '}"
 									>
 										{item.incinerationSansValorisationEnergetique ? 'Oui' : 'Non'}
 									</span>
@@ -197,7 +195,7 @@
 									<div class="flex items-center justify-center gap-2">
 										<button
 											onclick={() => openDeleteModal(item)}
-											class="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+											class="p-1.5 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
 											title="Supprimer"
 										>
 											<Trash2 class="w-4 h-4" />

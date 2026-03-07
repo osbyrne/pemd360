@@ -411,10 +411,7 @@
 			}}
 			class={`btn h-20 ${showMail ? 'bg-blue-50' : ''}`}
 		>
-			<Mail
-				size={32}
-				class={`transition-transform ${showMail ? 'text-blue-700' : 'text-gray-700'}`}
-			/>
+			<Mail size={32} class={`transition-transform ${showMail ? 'text-blue-700' : ''}`} />
 		</button>
 
 		<button
@@ -511,7 +508,7 @@
 		</button>
 	</div>
 
-	<div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm flex-1 relative">
+	<div class="overflow-hidden rounded-xl border border-gray-200 shadow-sm flex-1 relative">
 		<iframe
 			bind:this={iframe}
 			title="Matterport Showcase"
@@ -545,7 +542,7 @@
 							<Plus size={16} />
 							<span class="text-sm font-medium">Cliquez pour placer le tag</span>
 						</div>
-						<div class="text-xs text-gray-500 mt-1">
+						<div class="text-xs mt-1">
 							Position: X={editMode.lastIntersection!.position.x.toFixed(2)}, Y={editMode.lastIntersection!.position.y.toFixed(
 								2
 							)}, Z={editMode.lastIntersection!.position.z.toFixed(2)}
@@ -555,7 +552,7 @@
 					<div
 						class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-4 py-2 shadow-lg border border-gray-200"
 					>
-						<div class="flex items-center gap-2 text-gray-500">
+						<div class="flex items-center gap-2">
 							<span class="text-sm">Déplacez le curseur sur le modèle...</span>
 						</div>
 					</div>

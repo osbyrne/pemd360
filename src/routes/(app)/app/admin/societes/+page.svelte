@@ -184,12 +184,8 @@
 	<div class="mb-8">
 		<div class="sm:flex sm:items-center sm:justify-between">
 			<div>
-				<h1 class="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-					Gestion des sociétés
-				</h1>
-				<p class="mt-2 text-sm text-slate-600">
-					Gérez la liste des sociétés et leurs établissements rattachés.
-				</p>
+				<h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Gestion des sociétés</h1>
+				<p class="mt-2 text-sm">Gérez la liste des sociétés et leurs établissements rattachés.</p>
 			</div>
 			<div class="mt-4 flex flex-wrap gap-3 sm:mt-0">
 				<button onclick={openCreateModal} class="btn">
@@ -213,46 +209,46 @@
 	<br />
 
 	<!-- List -->
-	<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+	<div class="overflow-hidden rounded-xl border border-slate-200 shadow-sm">
 		{#if loading}
 			<div class="divide-y divide-slate-100">
 				{#each Array(5) as i (i)}
 					<div class="flex items-center gap-4 p-4">
-						<div class="h-12 w-12 animate-pulse rounded-full bg-slate-100"></div>
+						<div class="h-12 w-12 animate-pulse rounded-full"></div>
 						<div class="flex-1 space-y-2">
-							<div class="h-4 w-32 animate-pulse rounded bg-slate-100"></div>
-							<div class="h-3 w-48 animate-pulse rounded bg-slate-100"></div>
+							<div class="h-4 w-32 animate-pulse rounded"></div>
+							<div class="h-3 w-48 animate-pulse rounded"></div>
 						</div>
-						<div class="h-6 w-16 animate-pulse rounded-full bg-slate-100"></div>
+						<div class="h-6 w-16 animate-pulse rounded-full"></div>
 					</div>
 				{/each}
 			</div>
 		{:else if displayedCompanies.length === 0}
 			<div class="flex flex-col items-center justify-center px-4 py-16">
-				<Building2 size={48} strokeWidth={1.5} class="mb-4 text-slate-300" />
-				<p class="font-medium text-slate-500">Aucune société trouvée</p>
-				<p class="mt-1 text-sm text-slate-400">Essayez de modifier vos critères de recherche</p>
+				<Building2 size={48} strokeWidth={1.5} class="mb-4 " />
+				<p class="font-medium">Aucune société trouvée</p>
+				<p class="mt-1 text-sm">Essayez de modifier vos critères de recherche</p>
 			</div>
 		{:else}
 			<div class="divide-y divide-slate-100">
 				{#each displayedCompanies as company (company.id)}
-					<div class="flex items-center gap-4 p-4 transition-colors hover:bg-slate-50">
+					<div class="flex items-center gap-4 p-4 transition-colors hover:">
 						<!-- Info -->
 						<div class="min-w-0 flex-1">
-							<p class="font-semibold text-slate-900">{company.nom}</p>
-							<p class="text-sm text-slate-500">{company.raisonSocial || '-'}</p>
+							<p class="font-semibold">{company.nom}</p>
+							<p class="text-sm">{company.raisonSocial || '-'}</p>
 						</div>
 
 						<!-- Location -->
 						<div class="hidden shrink-0 sm:flex sm:flex-col sm:items-start">
-							<p class="text-sm font-medium text-slate-900">{company.ville || '-'}</p>
-							<p class="text-xs text-slate-500">{company.cp || '-'}</p>
+							<p class="text-sm font-medium">{company.ville || '-'}</p>
+							<p class="text-xs">{company.cp || '-'}</p>
 						</div>
 
 						<!-- Email / Tel -->
 						<div class="mr-4 hidden shrink-0 md:flex md:flex-col md:items-end">
-							<p class="text-sm text-slate-900">{company.email || '-'}</p>
-							<p class="text-xs text-slate-500">{company.tel || '-'}</p>
+							<p class="text-sm">{company.email || '-'}</p>
+							<p class="text-xs">{company.tel || '-'}</p>
 						</div>
 
 						<!-- Actions -->
@@ -276,10 +272,8 @@
 
 		<!-- Pagination -->
 		{#if !loading && filteredCompanies.length > 0 && totalPages > 1}
-			<div
-				class="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-4 py-3"
-			>
-				<p class="text-sm text-slate-600">
+			<div class="flex items-center justify-between border-t border-slate-200 px-4 py-3">
+				<p class="text-sm">
 					Affichage de <span class="font-semibold"
 						>{Math.min(filteredCompanies.length, (page - 1) * perPage + 1)}</span
 					>
@@ -308,14 +302,11 @@
 <!-- MODAL : Créer -->
 {#if isCreateModalOpen}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div
-			class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
-			transition:fade
-		></div>
+		<div class="fixed inset-0 /60 backdrop-blur-sm transition-opacity" transition:fade></div>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
-					class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+					class="relative w-full max-w-lg transform overflow-hidden rounded-2xl shadow-2xl transition-all"
 					transition:scale
 				>
 					<form
@@ -341,14 +332,14 @@
 									<Plus size={20} class="text-emerald-600" />
 								</div>
 								<div>
-									<h3 class="text-lg font-semibold text-slate-900">Nouvelle société</h3>
-									<p class="text-sm text-slate-500">Remplissez les informations ci-dessous</p>
+									<h3 class="text-lg font-semibold">Nouvelle société</h3>
+									<p class="text-sm">Remplissez les informations ci-dessous</p>
 								</div>
 							</div>
 							<div class="space-y-4">
 								<div class="grid grid-cols-2 gap-4">
 									<div class="space-y-1.5">
-										<label for="create-nom" class="text-sm font-medium text-slate-700">Nom</label>
+										<label for="create-nom" class="text-sm font-medium">Nom</label>
 										<input
 											type="text"
 											id="create-nom"
@@ -360,9 +351,7 @@
 										/>
 									</div>
 									<div class="space-y-1.5">
-										<label for="create-tel" class="text-sm font-medium text-slate-700"
-											>Téléphone</label
-										>
+										<label for="create-tel" class="text-sm font-medium">Téléphone</label>
 										<input
 											type="tel"
 											id="create-tel"
@@ -374,9 +363,7 @@
 								</div>
 
 								<div class="space-y-1.5">
-									<label for="create-raison" class="text-sm font-medium text-slate-700"
-										>Raison sociale</label
-									>
+									<label for="create-raison" class="text-sm font-medium">Raison sociale</label>
 									<input
 										type="text"
 										id="create-raison"
@@ -387,7 +374,7 @@
 								</div>
 
 								<div class="space-y-1.5">
-									<label for="create-rue" class="text-sm font-medium text-slate-700">Adresse</label>
+									<label for="create-rue" class="text-sm font-medium">Adresse</label>
 									<input
 										type="text"
 										id="create-rue"
@@ -400,9 +387,7 @@
 
 								<div class="grid grid-cols-2 gap-4">
 									<div class="space-y-1.5">
-										<label for="create-cp" class="text-sm font-medium text-slate-700"
-											>Code postal</label
-										>
+										<label for="create-cp" class="text-sm font-medium">Code postal</label>
 										<input
 											type="text"
 											id="create-cp"
@@ -412,9 +397,7 @@
 										/>
 									</div>
 									<div class="space-y-1.5">
-										<label for="create-ville" class="text-sm font-medium text-slate-700"
-											>Ville</label
-										>
+										<label for="create-ville" class="text-sm font-medium">Ville</label>
 										<input
 											type="text"
 											id="create-ville"
@@ -427,9 +410,7 @@
 
 								<div class="grid grid-cols-2 gap-4">
 									<div class="space-y-1.5">
-										<label for="create-email" class="text-sm font-medium text-slate-700"
-											>Email</label
-										>
+										<label for="create-email" class="text-sm font-medium">Email</label>
 										<input
 											type="email"
 											id="create-email"
@@ -439,7 +420,7 @@
 										/>
 									</div>
 									<div class="space-y-1.5">
-										<label for="create-fax" class="text-sm font-medium text-slate-700">Fax</label>
+										<label for="create-fax" class="text-sm font-medium">Fax</label>
 										<input
 											type="tel"
 											id="create-fax"
@@ -452,9 +433,7 @@
 
 								<div class="grid grid-cols-2 gap-4">
 									<div class="space-y-1.5">
-										<label for="create-siren" class="text-sm font-medium text-slate-700"
-											>SIREN</label
-										>
+										<label for="create-siren" class="text-sm font-medium">SIREN</label>
 										<input
 											type="text"
 											id="create-siren"
@@ -464,7 +443,7 @@
 										/>
 									</div>
 									<div class="space-y-1.5">
-										<label for="create-type" class="text-sm font-medium text-slate-700">Type</label>
+										<label for="create-type" class="text-sm font-medium">Type</label>
 										<input
 											type="number"
 											id="create-type"
@@ -476,7 +455,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+						<div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
 							<button type="button" class="btn" onclick={closeCreateModal}> Annuler </button>
 							<button type="submit" disabled={loading} class="btn">
 								{loading ? 'Création...' : 'Créer la société'}
@@ -492,14 +471,11 @@
 <!-- MODAL : Éditer -->
 {#if isEditModalOpen && selectedCompany}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div
-			class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
-			transition:fade
-		></div>
+		<div class="fixed inset-0 /60 backdrop-blur-sm transition-opacity" transition:fade></div>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
-					class="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+					class="relative w-full max-w-lg transform overflow-hidden rounded-2xl shadow-2xl transition-all"
 					transition:scale
 				>
 					<form
@@ -526,14 +502,14 @@
 									<Pencil size={20} class="text-blue-600" />
 								</div>
 								<div>
-									<h3 class="text-lg font-semibold text-slate-900">Modifier la société</h3>
-									<p class="text-sm text-slate-500">{selectedCompany.nom}</p>
+									<h3 class="text-lg font-semibold">Modifier la société</h3>
+									<p class="text-sm">{selectedCompany.nom}</p>
 								</div>
 							</div>
 							<div class="space-y-4">
 								<div class="grid grid-cols-2 gap-4">
 									<div class="space-y-1.5">
-										<label for="edit-nom" class="text-sm font-medium text-slate-700">Nom</label>
+										<label for="edit-nom" class="text-sm font-medium">Nom</label>
 										<input
 											type="text"
 											id="edit-nom"
@@ -544,9 +520,7 @@
 										/>
 									</div>
 									<div class="space-y-1.5">
-										<label for="edit-tel" class="text-sm font-medium text-slate-700"
-											>Téléphone</label
-										>
+										<label for="edit-tel" class="text-sm font-medium">Téléphone</label>
 										<input
 											type="tel"
 											id="edit-tel"
@@ -558,9 +532,7 @@
 								</div>
 
 								<div class="space-y-1.5">
-									<label for="edit-raison" class="text-sm font-medium text-slate-700"
-										>Raison sociale</label
-									>
+									<label for="edit-raison" class="text-sm font-medium">Raison sociale</label>
 									<input
 										type="text"
 										id="edit-raison"
@@ -571,7 +543,7 @@
 								</div>
 
 								<div class="space-y-1.5">
-									<label for="edit-rue" class="text-sm font-medium text-slate-700">Adresse</label>
+									<label for="edit-rue" class="text-sm font-medium">Adresse</label>
 									<input
 										type="text"
 										id="edit-rue"
@@ -583,9 +555,7 @@
 
 								<div class="grid grid-cols-2 gap-4">
 									<div class="space-y-1.5">
-										<label for="edit-cp" class="text-sm font-medium text-slate-700"
-											>Code postal</label
-										>
+										<label for="edit-cp" class="text-sm font-medium">Code postal</label>
 										<input
 											type="text"
 											id="edit-cp"
@@ -595,7 +565,7 @@
 										/>
 									</div>
 									<div class="space-y-1.5">
-										<label for="edit-ville" class="text-sm font-medium text-slate-700">Ville</label>
+										<label for="edit-ville" class="text-sm font-medium">Ville</label>
 										<input
 											type="text"
 											id="edit-ville"
@@ -608,7 +578,7 @@
 
 								<div class="grid grid-cols-2 gap-4">
 									<div class="space-y-1.5">
-										<label for="edit-email" class="text-sm font-medium text-slate-700">Email</label>
+										<label for="edit-email" class="text-sm font-medium">Email</label>
 										<input
 											type="email"
 											id="edit-email"
@@ -618,7 +588,7 @@
 										/>
 									</div>
 									<div class="space-y-1.5">
-										<label for="edit-fax" class="text-sm font-medium text-slate-700">Fax</label>
+										<label for="edit-fax" class="text-sm font-medium">Fax</label>
 										<input
 											type="tel"
 											id="edit-fax"
@@ -631,7 +601,7 @@
 
 								<div class="grid grid-cols-2 gap-4">
 									<div class="space-y-1.5">
-										<label for="edit-siren" class="text-sm font-medium text-slate-700">SIREN</label>
+										<label for="edit-siren" class="text-sm font-medium">SIREN</label>
 										<input
 											type="text"
 											id="edit-siren"
@@ -641,7 +611,7 @@
 										/>
 									</div>
 									<div class="space-y-1.5">
-										<label for="edit-type" class="text-sm font-medium text-slate-700">Type</label>
+										<label for="edit-type" class="text-sm font-medium">Type</label>
 										<input
 											type="number"
 											id="edit-type"
@@ -653,7 +623,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+						<div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
 							<button type="button" class="btn" onclick={closeEditModal}> Annuler </button>
 							<button type="submit" disabled={loading} class="btn">
 								{loading ? 'Enregistrement...' : 'Enregistrer'}
@@ -669,14 +639,11 @@
 <!-- MODAL : Supprimer -->
 {#if isDeleteModalOpen && selectedCompany}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div
-			class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
-			transition:fade
-		></div>
+		<div class="fixed inset-0 /60 backdrop-blur-sm transition-opacity" transition:fade></div>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
 				<div
-					class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all"
+					class="relative w-full max-w-md transform overflow-hidden rounded-2xl shadow-2xl transition-all"
 					transition:scale
 				>
 					<form
@@ -703,8 +670,8 @@
 									<Trash2 size={20} class="text-red-600" />
 								</div>
 								<div>
-									<h3 class="text-lg font-semibold text-slate-900">Supprimer la société</h3>
-									<p class="text-sm text-slate-500">{selectedCompany.nom}</p>
+									<h3 class="text-lg font-semibold">Supprimer la société</h3>
+									<p class="text-sm">{selectedCompany.nom}</p>
 								</div>
 							</div>
 							<div class="rounded-lg border border-red-200 bg-red-50 p-4">
@@ -714,7 +681,7 @@
 								</p>
 							</div>
 						</div>
-						<div class="flex justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+						<div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
 							<button type="button" class="btn" onclick={closeDeleteModal}> Annuler </button>
 							<button type="submit" disabled={loading} class="btn">
 								{loading ? 'Suppression...' : 'Supprimer définitivement'}

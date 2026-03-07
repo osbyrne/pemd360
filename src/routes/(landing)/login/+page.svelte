@@ -46,10 +46,10 @@
 >
 	<div class="w-full max-w-md mb-4">
 		<!-- Card -->
-		<div class="rounded-2xl bg-white p-8 shadow-xl">
+		<div class="rounded-2xl p-8 shadow-xl">
 			<div class="mb-6">
-				<h1 class="text-3xl font-bold text-gray-900">Bienvenue</h1>
-				<p class="mt-2 text-gray-600">Connectez-vous à votre compte</p>
+				<h1 class="text-3xl font-bold ">Bienvenue</h1>
+				<p class="mt-2 ">Connectez-vous à votre compte</p>
 			</div>
 
 			{#if error}
@@ -64,18 +64,18 @@
 				class="space-y-6"
 			>
 				<div>
-					<label for="email" class="mb-2 block text-sm font-medium text-gray-700">
+					<label for="email" class="mb-2 block text-sm font-medium ">
 						Adresse email
 					</label>
 					<div class="relative">
 						<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-							<AtSign class="h-5 w-5 text-gray-400" />
+							<AtSign class="h-5 w-5" />
 						</div>
 						<input
 							id="email"
 							type="email"
 							placeholder="vous@exemple.com"
-							class="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-4 text-gray-900 placeholder-gray-400 transition-all focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+							class="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-4  placeholder-gray-400 transition-all focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 							bind:value={email}
 							required
 						/>
@@ -83,24 +83,24 @@
 				</div>
 
 				<div>
-					<label for="password" class="mb-2 block text-sm font-medium text-gray-700">
+					<label for="password" class="mb-2 block text-sm font-medium ">
 						Mot de passe
 					</label>
 					<div class="relative">
 						<div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-							<Lock class="h-5 w-5 text-gray-400" />
+							<Lock class="h-5 w-5" />
 						</div>
 						<input
 							id="password"
 							type={showPassword ? 'text' : 'password'}
 							placeholder="••••••••"
-							class="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-12 text-gray-900 placeholder-gray-400 transition-all focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+							class="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-12  placeholder-gray-400 transition-all focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
 							bind:value={password}
 							required
 						/>
 						<button
 							type="button"
-							class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+							class="absolute inset-y-0 right-0 flex items-center pr-3 hover:"
 							onclick={() => (showPassword = !showPassword)}
 						>
 							{#if showPassword}
@@ -125,7 +125,7 @@
 
 		<!-- Footer -->
 		<div class="mt-2 text-center">
-			<a href="/" class="text-sm text-gray-600 hover:text-emerald-600"> ← Retour à l'accueil </a>
+			<a href="/" class="text-sm  hover:text-emerald-600"> ← Retour à l'accueil </a>
 		</div>
 	</div>
 </div>

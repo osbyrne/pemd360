@@ -2,13 +2,13 @@
 	import { Mail, Phone, MapPin } from 'lucide-svelte';
 </script>
 
-<footer class="bg-gray-900 text-white">
+<footer>
 	<div class="container mx-auto px-4 py-12">
 		<div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
 			<!-- Contact -->
 			<div>
 				<h5 class="mb-4 text-lg font-semibold">Contact</h5>
-				<ul class="space-y-3 text-sm text-gray-400">
+				<ul class="space-y-3 text-sm">
 					<li>
 						<a
 							href="mailto:florent.mouriot@depollution-conseil.fr"
@@ -46,21 +46,16 @@
 				<h5 class="mb-4 text-lg font-semibold">Liens utiles</h5>
 				<ul class="space-y-2 text-sm">
 					<li>
-						<a href="/" class="text-gray-400 transition-colors hover:text-emerald-500">Accueil</a>
+						<a href="/" class=" transition-colors hover:text-emerald-500">Accueil</a>
 					</li>
 					<li>
-						<a href="/about" class="text-gray-400 transition-colors hover:text-emerald-500"
-							>À propos</a
-						>
+						<a href="/about" class="transition-colors hover:text-emerald-500">À propos</a>
 					</li>
 					<li>
-						<a href="/contact" class="text-gray-400 transition-colors hover:text-emerald-500"
-							>Contact</a
-						>
+						<a href="/contact" class="transition-colors hover:text-emerald-500">Contact</a>
 					</li>
 					<li>
-						<a href="/mentions" class="text-gray-400 transition-colors hover:text-emerald-500"
-							>Mentions légales</a
+						<a href="/mentions" class="transition-colors hover:text-emerald-500">Mentions légales</a
 						>
 					</li>
 				</ul>
@@ -74,7 +69,7 @@
 						href="https://fr.linkedin.com/company/depollution-conseil"
 						target="_blank"
 						rel="noopener noreferrer"
-						class="flex items-center gap-2 text-gray-400 transition-colors hover:text-emerald-500"
+						class="flex items-center gap-2 transition-colors hover:text-emerald-500"
 					>
 						<span class="text-sm">LinkedIn</span>
 					</a>
@@ -85,7 +80,7 @@
 
 	<!-- Copyright -->
 	<div class="border-t border-gray-800 py-4">
-		<div class="container mx-auto px-4 text-center text-sm text-gray-500">
+		<div class="container mx-auto px-4 text-center text-sm">
 			© {new Date().getFullYear()} PEMD 360 - Dépollution Conseil. Tous droits réservés.
 		</div>
 	</div>

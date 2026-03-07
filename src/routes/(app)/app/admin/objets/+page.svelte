@@ -87,10 +87,8 @@
 <!-- Header -->
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
 	<div>
-		<h1 class="text-2xl font-bold text-gray-900">Gestion des Objets</h1>
-		<p class="text-sm text-gray-500 mt-1">
-			Gérez la liste des objets et leurs catégories associées.
-		</p>
+		<h1 class="text-2xl font-bold">Gestion des Objets</h1>
+		<p class="text-sm mt-1">Gérez la liste des objets et leurs catégories associées.</p>
 	</div>
 	<button onclick={openCreateModal} class="btn">
 		<Plus class="w-4 h-4" />
@@ -107,12 +105,10 @@
 <br />
 
 <!-- Table -->
-<div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+<div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
 	<div class="overflow-x-auto">
-		<table class="w-full text-left text-sm text-gray-600">
-			<thead
-				class="bg-gray-50 text-xs uppercase font-semibold text-gray-500 border-b border-gray-200"
-			>
+		<table class="w-full text-left text-sm">
+			<thead class=" text-xs uppercase font-semibold border-b border-gray-200">
 				<tr>
 					<th class="px-6 py-4 w-20">ID</th>
 					<th class="px-6 py-4">Objet</th>
@@ -122,10 +118,10 @@
 			</thead>
 			<tbody class="divide-y divide-gray-100">
 				{#each displayedList as objet}
-					<tr class="hover:bg-gray-50 transition-colors">
-						<td class="px-6 py-4 font-mono text-gray-500">#{objet.id}</td>
-						<td class="px-6 py-4 font-medium text-gray-900">{objet.objet}</td>
-						<td class="px-6 py-4 text-gray-600">
+					<tr class="hover: transition-colors">
+						<td class="px-6 py-4 font-mono">#{objet.id}</td>
+						<td class="px-6 py-4 font-medium">{objet.objet}</td>
+						<td class="px-6 py-4">
 							{#if objet.categorieName}
 								<span
 									class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
@@ -133,7 +129,7 @@
 									{objet.categorieName}
 								</span>
 							{:else}
-								<span class="text-gray-400">-</span>
+								<span class="">-</span>
 							{/if}
 						</td>
 						<td class="px-6 py-4">
@@ -153,7 +149,7 @@
 					</tr>
 				{:else}
 					<tr>
-						<td colspan="4" class="px-6 py-12 text-center text-gray-400">
+						<td colspan="4" class="px-6 py-12 text-center">
 							{#if query}
 								Aucun résultat pour "{query}".
 							{:else}
@@ -183,7 +179,7 @@
 		aria-modal="true"
 	>
 		<div
-			class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity"
+			class="fixed inset-0 backdrop-blur-sm transition-opacity"
 			transition:fade
 			role="button"
 			tabindex="-1"
@@ -191,12 +187,12 @@
 			onkeydown={(e) => e.key === 'Escape' && closeModal()}
 		></div>
 		<div
-			class="relative w-full max-w-lg bg-white rounded-xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]"
+			class="relative w-full max-w-lg rounded-xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]"
 			transition:scale={{ start: 0.95 }}
 		>
 			<!-- Modal Header -->
-			<div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50">
-				<h2 class="text-lg font-semibold text-gray-900">
+			<div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+				<h2 class="text-lg font-semibold">
 					{isEditMode ? "Modifier l'objet" : 'Nouvel objet'}
 				</h2>
 				<button onclick={closeModal} class="btn btn-ghost">
@@ -218,7 +214,7 @@
 					{/if}
 
 					<div>
-						<label for="objet" class="block text-sm font-medium text-gray-700 mb-1">
+						<label for="objet" class="block text-sm font-medium mb-1">
 							Nom de l'objet <span class="text-red-500">*</span>
 						</label>
 						<input
@@ -233,7 +229,7 @@
 					</div>
 
 					<div>
-						<label for="categorieId" class="block text-sm font-medium text-gray-700 mb-1">
+						<label for="categorieId" class="block text-sm font-medium mb-1">
 							Catégorie <span class="text-red-500">*</span>
 						</label>
 						<select
@@ -253,7 +249,7 @@
 			</div>
 
 			<!-- Modal Footer -->
-			<div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-3">
+			<div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
 				<button type="button" onclick={closeModal} class="btn"> Annuler </button>
 				<button type="submit" form="objetForm" class="btn">
 					<Save class="w-4 h-4" />

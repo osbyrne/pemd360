@@ -35,8 +35,8 @@
 
 	<!-- Titre -->
 	<div class="mb-8">
-		<h1 class="text-3xl font-bold text-gray-900 mb-2">Modifier l'établissement</h1>
-		<p class="text-sm text-gray-500">Mettez à jour les informations de {etablissement.nom}.</p>
+		<h1 class="text-3xl font-bold mb-2">Modifier l'établissement</h1>
+		<p class="text-sm">Mettez à jour les informations de {etablissement.nom}.</p>
 	</div>
 
 	{#if form?.message}
@@ -62,23 +62,23 @@
 		class="space-y-8"
 	>
 		<!-- Section Identifiants & Contact -->
-		<div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+		<div class="p-6 rounded-xl border border-gray-200 shadow-sm">
 			<div class="flex items-center gap-3 mb-6">
 				<div class="p-2 bg-emerald-50 rounded-lg">
 					<Globe class="h-6 w-6 text-emerald-600" />
 				</div>
-				<h2 class="text-xl font-semibold text-gray-900">Identité & Contact</h2>
+				<h2 class="text-xl font-semibold">Identité & Contact</h2>
 			</div>
 
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<div class="space-y-1.5 md:col-span-2">
-					<label for="nom" class="text-sm font-medium text-gray-700">Nom de l'établissement</label>
+					<label for="nom" class="text-sm font-medium">Nom de l'établissement</label>
 					<br />
 					<input type="text" id="nom" name="nom" value={etablissement.nom} required class="input" />
 				</div>
 
 				<div class="space-y-1.5 md:col-span-2">
-					<label for="societeId" class="text-sm font-medium text-gray-700">Société</label>
+					<label for="societeId" class="text-sm font-medium">Société</label>
 					<br />
 					<select id="societeId" name="societeId" required class="select">
 						{#each societes as societe}
@@ -90,7 +90,7 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="raisonSocial" class="text-sm font-medium text-gray-700">Raison Sociale</label>
+					<label for="raisonSocial" class="text-sm font-medium">Raison Sociale</label>
 					<input
 						type="text"
 						id="raisonSocial"
@@ -101,7 +101,7 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="siret" class="text-sm font-medium text-gray-700">SIRET</label>
+					<label for="siret" class="text-sm font-medium">SIRET</label>
 					<br />
 					<input
 						type="text"
@@ -114,13 +114,13 @@
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="email" class="text-sm font-medium text-gray-700">Email</label>
+					<label for="email" class="text-sm font-medium">Email</label>
 					<br />
 					<input type="email" id="email" name="email" value={etablissement.email} class="input" />
 				</div>
 
 				<div class="space-y-1.5">
-					<label for="tel" class="text-sm font-medium text-gray-700">Téléphone</label>
+					<label for="tel" class="text-sm font-medium">Téléphone</label>
 					<br />
 					<input type="tel" id="tel" name="tel" value={etablissement.tel} class="input" />
 				</div>
@@ -128,32 +128,32 @@
 		</div>
 
 		<!-- Section Localisation -->
-		<div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+		<div class="p-6 rounded-xl border border-gray-200 shadow-sm">
 			<div class="flex items-center gap-3 mb-6">
 				<div class="p-2 bg-emerald-50 rounded-lg">
 					<MapPin class="h-6 w-6 text-emerald-600" />
 				</div>
-				<h2 class="text-xl font-semibold text-gray-900">Localisation</h2>
+				<h2 class="text-xl font-semibold">Localisation</h2>
 			</div>
 
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<div class="space-y-1.5 md:col-span-2">
-					<label for="rue" class="text-sm font-medium text-gray-700">Adresse</label>
+					<label for="rue" class="text-sm font-medium">Adresse</label>
 					<br />
 					<input type="text" id="rue" name="rue" value={etablissement.rue} class="input" />
 				</div>
 				<div class="space-y-1.5">
-					<label for="cp" class="text-sm font-medium text-gray-700">Code Postal</label>
+					<label for="cp" class="text-sm font-medium">Code Postal</label>
 					<br />
 					<input type="text" id="cp" name="cp" value={etablissement.cp} class="input" />
 				</div>
 				<div class="space-y-1.5">
-					<label for="ville" class="text-sm font-medium text-gray-700">Ville</label>
+					<label for="ville" class="text-sm font-medium">Ville</label>
 					<br />
 					<input type="text" id="ville" name="ville" value={etablissement.ville} class="input" />
 				</div>
 				<div class="space-y-1.5 md:col-span-2">
-					<label for="fax" class="text-sm font-medium text-gray-700">Fax</label>
+					<label for="fax" class="text-sm font-medium">Fax</label>
 					<br />
 					<input type="text" id="fax" name="fax" value={etablissement.fax} class="input" />
 				</div>
