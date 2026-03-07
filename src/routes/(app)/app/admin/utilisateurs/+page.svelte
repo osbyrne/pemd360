@@ -1,24 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { authClient } from '$lib/auth-client';
-	import { scale } from 'svelte/transition';
-	import { enhance } from '$app/forms';
-	import { invalidateAll } from '$app/navigation';
 	import {
-		Pencil,
 		Users,
-		Folder,
 		Bug,
-		KeyRound,
-		X,
-		UserPlus,
 		UserPen,
 		RefreshCcw,
 		Search,
-		Ban,
+		Pencil,
 		ArrowLeft,
-		ArrowRight,
-		SquareCheckBig
+		ArrowRight
 	} from 'lucide-svelte';
 
 	export let data;
@@ -29,10 +20,8 @@
 		name: string;
 		role?: string;
 		banned: boolean;
-		image?: string;
 		createdAt: Date;
 		emailVerified: boolean;
-		projetIds?: string[];
 	};
 
 	type Projet = {
@@ -41,102 +30,19 @@
 		reference: string;
 	};
 
-	// State
 	let users: User[] = [];
 	let loading = true;
 	let error: string | null = null;
 
-	// Projets from server
 	$: projets = (data.projets || []) as Projet[];
 	$: usersWithProjets = (data.usersWithProjets || []) as { userId: string; projetId: string }[];
 
-	// Pagination & Search
 	let query = '';
 	let perPage = 25;
 	let page = 1;
 
-	// Modals State
-	let isEditModalOpen = false;
-	let isCreateModalOpen = false;
-	let isPasswordModalOpen = false;
-	let isBanModalOpen = false;
-	let isDeleteModalOpen = false;
-	let isProjetsModalOpen = false;
-
-	// Toast/Notification
-	let toast: { message: string; type: 'success' | 'error' } | null = null;
-
-	// Clôture de compte (formulaire)
-	let banReason = '';
-
-	// Active User for actions
-	let selectedUser: User | null = null;
-
-	// Show toast
-	function showToast(message: string, type: 'success' | 'error' = 'success') {
-		toast = { message, type };
-		setTimeout(() => (toast = null), 3000);
-	}
-
-	// Forms
-	let editForm = {
-		name: '',
-		email: '',
-		role: 'user'
-	};
-
-	let createForm = {
-		email: '',
-		password: '',
-		name: '',
-		role: 'user',
-		projetIds: [] as string[]
-	};
-
-	let passwordForm = {
-		newPassword: ''
-	};
-
-	let projetsForm = {
-		projetIds: [] as string[]
-	};
-
-	// Search filters for project selection
-	let createProjectSearch = '';
-	let modalProjectSearch = '';
-
-	// Get user's projets
-	function getUserProjets(userId: string): string[] {
-		return usersWithProjets.filter((up) => up.userId === userId).map((up) => up.projetId);
-	}
-
-	// Get projets names
-	function getProjetsNames(projetIds: string[]): string {
-		if (!projetIds || projetIds.length === 0) return 'Aucun';
-		const names = projetIds.map((id) => {
-			const p = projets.find((proj) => proj.id === id);
-			return p?.libelle || 'Inconnu';
-		});
-		if (names.length <= 2) return names.join(', ');
-		return `${names.slice(0, 2).join(', ')} +${names.length - 2}`;
-	}
-
-	// Filter projects based on search
-	$: filteredCreateProjets = projets.filter((p) => {
-		if (!createProjectSearch) return true;
-		const search = createProjectSearch.toLowerCase();
-		return p.libelle.toLowerCase().includes(search) || p.reference.toLowerCase().includes(search);
-	});
-
-	$: filteredModalProjets = projets.filter((p) => {
-		if (!modalProjectSearch) return true;
-		const search = modalProjectSearch.toLowerCase();
-		return p.libelle.toLowerCase().includes(search) || p.reference.toLowerCase().includes(search);
-	});
-
-	// Get projets count
-	function getProjetsCount(userId: string): number {
-		return getUserProjets(userId).length;
+	function getUserProjetsCount(userId: string): number {
+		return usersWithProjets.filter((up) => up.userId === userId).length;
 	}
 
 	async function loadUsers() {
@@ -144,51 +50,22 @@
 		error = null;
 		try {
 			const res = await authClient.admin.listUsers({
-				query: {
-					limit: 100,
-					sortBy: 'createdAt',
-					sortDirection: 'desc'
-				}
+				query: { limit: 100, sortBy: 'createdAt', sortDirection: 'desc' }
 			});
-
 			if (res.data) {
-				users = (res.data.users as unknown as User[]).map((u) => ({
-					...u,
-					projetIds: getUserProjets(u.id)
-				}));
-			} else {
-				if (res.error) error = res.error.message || 'Une erreur est survenue';
+				users = res.data.users as unknown as User[];
+			} else if (res.error) {
+				error = res.error.message || 'Une erreur est survenue';
 			}
 		} catch (e: unknown) {
-			if (e instanceof Error) {
-				console.log(e.message || 'Échec du chargement des utilisateurs');
-			} else {
-				console.log(String(e));
-			}
+			error = e instanceof Error ? e.message : 'Échec du chargement';
 		} finally {
 			loading = false;
 		}
 	}
 
-	// Close modals on Escape
-	function handleKeydown(e: KeyboardEvent) {
-		if (e.key === 'Escape') {
-			if (isProjetsModalOpen) closeProjetsModal();
-			else if (isCreateModalOpen) closeCreateModal();
-			else if (isEditModalOpen) closeEditModal();
-			else if (isPasswordModalOpen) closePasswordModal();
-			else if (isBanModalOpen) closeBanModal();
-			else if (isDeleteModalOpen) closeDeleteModal();
-		}
-	}
+	onMount(loadUsers);
 
-	onMount(() => {
-		loadUsers();
-		window.addEventListener('keydown', handleKeydown);
-		return () => window.removeEventListener('keydown', handleKeydown);
-	});
-
-	// Derived
 	$: filteredUsers = users.filter((u) => {
 		if (!query) return true;
 		const q = query.toLowerCase();
@@ -197,233 +74,6 @@
 
 	$: totalPages = Math.ceil(filteredUsers.length / perPage);
 	$: displayedUsers = filteredUsers.slice((page - 1) * perPage, page * perPage);
-
-	// --- Actions ---
-
-	// PROJETS MODAL
-	function openProjetsModal(user: User) {
-		selectedUser = user;
-		projetsForm.projetIds = getUserProjets(user.id);
-		modalProjectSearch = '';
-		isProjetsModalOpen = true;
-	}
-
-	function closeProjetsModal() {
-		isProjetsModalOpen = false;
-		selectedUser = null;
-	}
-
-	// EDIT USER INFO
-	function openEditModal(user: User) {
-		selectedUser = user;
-		editForm.name = user.name || '';
-		editForm.email = user.email || '';
-		editForm.role = user.role || 'user';
-		isEditModalOpen = true;
-	}
-
-	function closeEditModal() {
-		isEditModalOpen = false;
-		selectedUser = null;
-	}
-
-	async function saveUserInfo() {
-		if (!selectedUser) return;
-		try {
-			const res = await authClient.admin.setRole({
-				userId: selectedUser.id,
-				role: editForm.role as 'visiteur' | 'administrateur' | 'administrateur'
-			});
-			if (res.error) {
-				showToast('Échec de la mise à jour : ' + res.error.message, 'error');
-				return;
-			}
-			users = users.map((u) =>
-				u.id === selectedUser?.id
-					? { ...u, name: editForm.name, email: editForm.email, role: editForm.role }
-					: u
-			);
-			closeEditModal();
-			showToast('Utilisateur mis à jour avec succès');
-		} catch (e: unknown) {
-			const message = e instanceof Error ? e.message : 'Échec de la mise à jour';
-			showToast(message, 'error');
-		}
-	}
-
-	// CREATE USER
-	function openCreateModal() {
-		createForm = { email: '', password: '', name: '', role: 'user', projetIds: [] };
-		createProjectSearch = '';
-		isCreateModalOpen = true;
-	}
-
-	function closeCreateModal() {
-		isCreateModalOpen = false;
-	}
-
-	async function createUser() {
-		try {
-			const res = await authClient.admin.createUser({
-				email: createForm.email,
-				password: createForm.password,
-				name: createForm.name,
-				role: createForm.role as any
-			});
-
-			if (res.data) {
-				const newUserId = res.data.user.id;
-
-				// Assigner les projets si sélectionnés
-				if (createForm.projetIds.length > 0) {
-					const formData = new FormData();
-					formData.append('userId', newUserId);
-					createForm.projetIds.forEach((id) => formData.append('projetIds', id));
-
-					await fetch('?/setProjets', {
-						method: 'POST',
-						body: formData
-					});
-				}
-
-				// Recharger les données du serveur pour obtenir les associations mises à jour
-				await invalidateAll();
-				// Recharger les utilisateurs pour afficher le nouvel utilisateur
-				await loadUsers();
-				closeCreateModal();
-				showToast('Utilisateur créé avec succès');
-			} else if (res.error) {
-				showToast('Échec de la création : ' + res.error.message, 'error');
-			}
-		} catch (e: unknown) {
-			if (e instanceof Error) {
-				console.log(e.message || 'Échec du chargement des utilisateurs');
-				showToast("Échec de la création de l'utilisateur", 'error');
-			} else {
-				console.log(String(e));
-			}
-		}
-	}
-
-	// CLÔTURE / RÉACTIVATION DE COMPTE
-	function openBanModal(user: User) {
-		selectedUser = user;
-		banReason = '';
-		isBanModalOpen = true;
-	}
-
-	function closeBanModal() {
-		isBanModalOpen = false;
-		selectedUser = null;
-		banReason = '';
-	}
-
-	async function confirmBan() {
-		if (!selectedUser) return;
-		const wasBanned = selectedUser.banned;
-		try {
-			if (wasBanned) {
-				const res = await authClient.admin.unbanUser({ userId: selectedUser.id });
-				if (res.error) {
-					showToast('Échec de la réactivation : ' + res.error.message, 'error');
-					return;
-				}
-				users = users.map((u) => (u.id === selectedUser!.id ? { ...u, banned: false } : u));
-				showToast('Compte réactivé avec succès');
-			} else {
-				const res = await authClient.admin.banUser({
-					userId: selectedUser.id,
-					banReason: banReason || 'Action administrative'
-				});
-				if (res.error) {
-					showToast('Échec de la clôture : ' + res.error.message, 'error');
-					return;
-				}
-				users = users.map((u) => (u.id === selectedUser!.id ? { ...u, banned: true } : u));
-				showToast('Compte clôturé avec succès');
-			}
-			closeBanModal();
-		} catch (e: unknown) {
-			if (e instanceof Error) {
-				console.log(e.message || 'Échec du chargement des utilisateurs');
-				showToast(
-					wasBanned ? 'Échec de la réactivation du compte' : 'Échec de la clôture du compte',
-					'error'
-				);
-			} else {
-				console.log(String(e));
-				showToast(
-					wasBanned ? 'Échec de la réactivation du compte' : 'Échec de la clôture du compte',
-					'error'
-				);
-			}
-		}
-	}
-
-	// DELETE USER
-	function openDeleteModal(user: User) {
-		selectedUser = user;
-		isDeleteModalOpen = true;
-	}
-
-	function closeDeleteModal() {
-		isDeleteModalOpen = false;
-		selectedUser = null;
-	}
-
-	async function confirmDelete() {
-		if (!selectedUser) return;
-		try {
-			const res = await authClient.admin.removeUser({
-				userId: selectedUser.id
-			});
-			if (res.error) {
-				showToast('Échec de la suppression : ' + res.error.message, 'error');
-				return;
-			}
-			users = users.filter((u) => u.id !== selectedUser!.id);
-			closeDeleteModal();
-			showToast('Utilisateur supprimé avec succès');
-		} catch (e: unknown) {
-			const message = e instanceof Error ? e.message : 'Échec de la suppression';
-			showToast(message, 'error');
-		}
-	}
-
-	function openPasswordModal(user: User) {
-		selectedUser = user;
-		passwordForm.newPassword = '';
-		isPasswordModalOpen = true;
-	}
-
-	function closePasswordModal() {
-		isPasswordModalOpen = false;
-		selectedUser = null;
-	}
-
-	async function setPassword() {
-		if (!selectedUser) return;
-		try {
-			const res = await authClient.admin.setUserPassword({
-				userId: selectedUser.id,
-				newPassword: passwordForm.newPassword
-			});
-			if (res.error) {
-				showToast('Échec de la mise à jour du mot de passe : ' + res.error.message, 'error');
-				return;
-			}
-			closePasswordModal();
-			showToast('Mot de passe mis à jour avec succès');
-		} catch (e: unknown) {
-			if (e instanceof Error) {
-				console.log(e.message || 'Échec du chargement des utilisateurs');
-				showToast('Échec de la mise à jour du mot de passe', 'error');
-			} else {
-				console.log(String(e));
-				showToast('Échec de la mise à jour du mot de passe', 'error');
-			}
-		}
-	}
 
 	function formatDate(date: Date): string {
 		return new Date(date).toLocaleDateString('fr-FR', {
@@ -447,10 +97,10 @@
 				<p class="mt-2 text-sm">Gérez les utilisateurs, leurs rôles et leurs accès.</p>
 			</div>
 			<div class="mt-4 flex flex-wrap gap-3 sm:mt-0">
-				<button on:click={openCreateModal} class="btn">
-					<UserPen size={24} />
+				<a href="/app/admin/utilisateurs/nouveau" class="btn">
+					<UserPen size={20} />
 					Nouvel utilisateur
-				</button>
+				</a>
 				<button on:click={loadUsers} class="btn">
 					<RefreshCcw size={20} />
 					Actualiser
@@ -478,7 +128,7 @@
 		</div>
 	{/if}
 
-	<!-- Users Grid -->
+	<!-- Users List -->
 	<ul class="list bg-base-100 rounded-box shadow-md">
 		{#if loading}
 			<div class="divide-y divide-slate-100">
@@ -496,7 +146,7 @@
 		{:else if displayedUsers.length === 0}
 			<div class="flex flex-col items-center justify-center py-16 px-4">
 				<Users />
-				<p class=" font-medium">Aucun utilisateur trouvé</p>
+				<p class="font-medium">Aucun utilisateur trouvé</p>
 				<p class="text-sm mt-1">Essayez de modifier vos critères de recherche</p>
 			</div>
 		{:else}
@@ -520,9 +170,7 @@
 										Collaborateur
 									</span>
 								{:else}
-									<span
-										class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
-									>
+									<span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium">
 										Utilisateur
 									</span>
 								{/if}
@@ -552,70 +200,28 @@
 						<!-- Date -->
 						<div class="hidden md:flex md:flex-col md:items-end w-36 mr-4">
 							<p class="text-xs">Inscrit le</p>
-							<p class="text-sm font-medium whitespace-nowrap">
-								{formatDate(user.createdAt)}
-							</p>
+							<p class="text-sm font-medium whitespace-nowrap">{formatDate(user.createdAt)}</p>
 						</div>
 
 						<!-- Projets -->
-						<div class="hidden lg:flex lg:flex-col lg:items-end w-32 mr-4">
+						<div class="hidden lg:flex lg:flex-col lg:items-end w-24 mr-4">
 							<p class="text-xs">Projets</p>
 							{#if user.role === 'admin'}
-								<p class="text-sm font-medium whitespace-nowrap truncate max-w-30">tous</p>
+								<p class="text-sm font-medium">tous</p>
 							{:else}
-								<p
-									class="text-sm font-medium whitespace-nowrap truncate max-w-30"
-									title={getProjetsNames(getUserProjets(user.id))}
-								>
-									{getProjetsCount(user.id)} projet{getProjetsCount(user.id) > 1 ? 's' : ''}
-								</p>
+								<p class="text-sm font-medium">{getUserProjetsCount(user.id)}</p>
 							{/if}
 						</div>
 
-						<!-- Actions -->
-						<div class="flex items-center gap-1 pl-2 border-l border-slate-200">
-							<button
-								on:click={() => openProjetsModal(user)}
+						<!-- Edit link -->
+						<div class="flex items-center pl-2 border-l border-slate-200">
+							<a
+								href="/app/admin/utilisateurs/{user.id}"
 								class="btn btn-ghost"
-								title="Gérer les projets"
-							>
-								<Folder size={18} />
-							</button>
-
-							<button
-								on:click={() => openEditModal(user)}
-								class="btn btn-ghost"
-								title="Modifier les informations"
+								title="Modifier l'utilisateur"
 							>
 								<Pencil size={18} />
-							</button>
-
-							<button
-								on:click={() => openPasswordModal(user)}
-								class="btn btn-ghost"
-								title="Changer le mot de passe"
-							>
-								<KeyRound size={18} />
-							</button>
-
-							<button
-								on:click={() => openBanModal(user)}
-								class="btn btn-ghost transition-colors {user.banned
-									? 'text-green-500 hover:bg-green-50 hover:text-green-700'
-									: ' hover:bg-amber-50 hover:text-amber-600'}"
-								title={user.banned ? 'Réactiver le compte' : 'Clôturer le compte'}
-							>
-								<Ban />
-							</button>
-
-							<button
-								on:click={() => openDeleteModal(user)}
-								class="btn btn-ghost hover:text-red-500 hover:bg-red-50"
-								title="Supprimer"
-							>
-								<X size={18} />
-							</button>
-
+							</a>
 						</div>
 					</li>
 				{/each}
@@ -650,391 +256,3 @@
 		{/if}
 	</ul>
 </main>
-
-<!-- MODAL : Créer un utilisateur -->
-{#if isCreateModalOpen}
-	<input type="checkbox" id="create-modal" class="modal-toggle" bind:checked={isCreateModalOpen} />
-	<div class="modal" role="dialog">
-		<div class="modal-box">
-			<div class="flex items-center gap-3 mb-6">
-				<div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
-					<UserPlus />
-				</div>
-				<h3 class="text-lg font-semibold">Créer un utilisateur</h3>
-			</div>
-			<div class="space-y-4">
-				<div>
-					<label for="create-name" class="block text-sm font-medium mb-1.5">Nom</label>
-					<input
-						id="create-name"
-						bind:value={createForm.name}
-						type="text"
-						placeholder="Jean Dupont"
-						class="input"
-					/>
-				</div>
-				<div>
-					<label for="create-email" class="block text-sm font-medium mb-1.5">Email</label>
-					<input
-						id="create-email"
-						bind:value={createForm.email}
-						type="email"
-						placeholder="jean.dupont@exemple.com"
-						class="input"
-					/>
-				</div>
-				<div>
-					<label for="create-password" class="block text-sm font-medium mb-1.5">Mot de passe</label>
-					<input
-						id="create-password"
-						bind:value={createForm.password}
-						type="password"
-						autocomplete="new-password"
-						placeholder="••••••••"
-						class="input"
-					/>
-				</div>
-				<div>
-					<label for="create-role" class="block text-sm font-medium mb-1.5">Rôle</label>
-					<select id="create-role" bind:value={createForm.role} class="select">
-						<option value="user">Utilisateur</option>
-						<option value="collaborator">Collaborateur</option>
-						<option value="admin">Administrateur</option>
-					</select>
-				</div>
-				<div>
-					<label for="create-projets" class="block text-sm font-medium mb-1.5">Projets</label>
-					<label class="relative mb-2">
-						<Search />
-						<input
-							type="search"
-							bind:value={createProjectSearch}
-							placeholder="Rechercher un projet..."
-						/>
-					</label>
-					<div class="max-h-40 overflow-y-auto rounded-lg border border-slate-300 p-2">
-						{#if projets.length === 0}
-							<p class="text-sm py-2 px-2">Aucun projet disponible</p>
-						{:else if filteredCreateProjets.length === 0}
-							<p class="text-sm py-2 px-2">Aucun projet trouvé</p>
-						{:else}
-							{#each filteredCreateProjets as p (p.id)}
-								<label class="flex items-center gap-2 rounded px-2 py-1.5 hover: cursor-pointer">
-									<input
-										type="checkbox"
-										value={p.id}
-										checked={createForm.projetIds.includes(p.id)}
-										on:change={(e) => {
-											if (e.currentTarget.checked) {
-												createForm.projetIds = [...createForm.projetIds, p.id];
-											} else {
-												createForm.projetIds = createForm.projetIds.filter(
-													(id) => id !== p.id
-												);
-											}
-										}}
-										class="checkbox"
-									/>
-									<span class="text-sm"
-										>{p.libelle} <span class="">({p.reference})</span></span
-									>
-								</label>
-							{/each}
-						{/if}
-					</div>
-					{#if createForm.projetIds.length > 0}
-						<p class="text-xs mt-1">
-							{createForm.projetIds.length} projet(s) sélectionné(s)
-						</p>
-					{/if}
-				</div>
-			</div>
-			<div class="modal-action">
-				<label for="create-modal" class="btn btn-warning" on:click={closeCreateModal}>Annuler</label>
-				<button type="button" class="btn btn-secondary" on:click={createUser}>Créer</button>
-			</div>
-		</div>
-	</div>
-{/if}
-
-<!-- MODAL : Modifier les informations -->
-{#if isEditModalOpen && selectedUser}
-	<input type="checkbox" id="edit-modal" class="modal-toggle" bind:checked={isEditModalOpen} />
-	<div class="modal" role="dialog">
-		<div class="modal-box">
-			<div class="flex items-center gap-3 mb-6">
-				<div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-					<Pencil />
-				</div>
-				<div>
-					<h3 class="text-lg font-semibold">Modifier l'utilisateur</h3>
-					<p class="text-sm">{selectedUser.email}</p>
-				</div>
-			</div>
-			<div class="space-y-4">
-				<div>
-					<label for="edit-name" class="block text-sm font-medium mb-1.5">Nom</label>
-					<input id="edit-name" bind:value={editForm.name} type="text" class="input" />
-				</div>
-				<div>
-					<label for="edit-email" class="block text-sm font-medium mb-1.5">Email</label>
-					<input id="edit-email" bind:value={editForm.email} type="email" class="input" />
-				</div>
-				<div>
-					<label for="edit-role" class="block text-sm font-medium mb-1.5">Rôle</label>
-					<select id="edit-role" bind:value={editForm.role} class="select">
-						<option value="user">Utilisateur</option>
-						<option value="collaborator">Collaborateur</option>
-						<option value="admin">Administrateur</option>
-					</select>
-				</div>
-			</div>
-			<div class="modal-action">
-				<label for="edit-modal" class="btn" on:click={closeEditModal}>Annuler</label>
-				<button type="button" class="btn" on:click={saveUserInfo}>Enregistrer</button>
-			</div>
-		</div>
-	</div>
-{/if}
-
-<!-- MODAL : Changer le mot de passe -->
-{#if isPasswordModalOpen && selectedUser}
-	<input type="checkbox" id="password-modal" class="modal-toggle" bind:checked={isPasswordModalOpen} />
-	<div class="modal" role="dialog">
-		<div class="modal-box">
-			<div class="flex items-center gap-3 mb-6">
-				<div class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100">
-					<Pencil />
-				</div>
-				<div>
-					<h3 class="text-lg font-semibold">Changer le mot de passe</h3>
-					<p class="text-sm">{selectedUser.name}</p>
-				</div>
-			</div>
-			<div>
-				<label for="new-password" class="block text-sm font-medium mb-1.5"
-					>Nouveau mot de passe</label
-				>
-				<input
-					id="new-password"
-					bind:value={passwordForm.newPassword}
-					type="password"
-					autocomplete="new-password"
-					placeholder="Entrez le nouveau mot de passe"
-					class="input"
-				/>
-				<p class="mt-2 text-xs">Le mot de passe doit contenir au moins 8 caractères.</p>
-			</div>
-			<div class="modal-action">
-				<label for="password-modal" class="btn" on:click={closePasswordModal}>Annuler</label>
-				<button type="button" class="btn" on:click={setPassword}>Mettre à jour</button>
-			</div>
-		</div>
-	</div>
-{/if}
-
-<!-- MODAL : Clôture / Réactivation de compte -->
-{#if isBanModalOpen && selectedUser}
-	<input type="checkbox" id="ban-modal" class="modal-toggle" bind:checked={isBanModalOpen} />
-	<div class="modal" role="dialog">
-		<div class="modal-box">
-			<div class="flex items-center gap-3 mb-6">
-				<div
-					class="flex h-10 w-10 items-center justify-center rounded-full {selectedUser.banned
-						? 'bg-green-100'
-						: 'bg-amber-100'}"
-				>
-					<X />
-				</div>
-				<div>
-					<h3 class="text-lg font-semibold">
-						{selectedUser.banned ? 'Réactiver le compte' : 'Clôturer le compte'}
-					</h3>
-					<p class="text-sm">{selectedUser.name}</p>
-				</div>
-			</div>
-			{#if selectedUser.banned}
-				<p class="text-sm">
-					Êtes-vous sûr de vouloir réactiver ce compte ? Il pourra à nouveau accéder à la
-					plateforme.
-				</p>
-			{:else}
-				<div>
-					<label for="ban-reason" class="block text-sm font-medium mb-1.5"
-						>Raison de la clôture (optionnel)</label
-					>
-					<textarea
-						id="ban-reason"
-						bind:value={banReason}
-						rows="3"
-						placeholder="Ex: Violation des conditions d'utilisation..."
-						class="input"
-					></textarea>
-				</div>
-			{/if}
-			<div class="modal-action">
-				<label for="ban-modal" class="btn" on:click={closeBanModal}>Annuler</label>
-				<button
-					type="button"
-					class="btn transition-colors {selectedUser.banned
-						? 'bg-green-600 hover:bg-green-700'
-						: 'bg-amber-600 hover:bg-amber-700'}"
-					on:click={confirmBan}
-				>
-					{selectedUser.banned ? 'Réactiver' : 'Clôturer'}
-				</button>
-			</div>
-		</div>
-	</div>
-{/if}
-
-<!-- MODAL : Supprimer -->
-{#if isDeleteModalOpen && selectedUser}
-	<input type="checkbox" id="delete-modal" class="modal-toggle" bind:checked={isDeleteModalOpen} />
-	<div class="modal" role="dialog">
-		<div class="modal-box">
-			<div class="flex items-center gap-3 mb-6">
-				<div>
-					<h3 class="text-lg font-semibold">Supprimer l'utilisateur</h3>
-					<p class="text-sm">{selectedUser.name}</p>
-				</div>
-			</div>
-			<div class="rounded-lg bg-red-50 border border-red-200 p-4">
-				<p class="text-sm text-red-800">
-					<strong>Attention :</strong> Cette action est irréversible. Toutes les données associées
-					à cet utilisateur seront définitivement supprimées.
-				</p>
-			</div>
-			<div class="modal-action">
-				<label for="delete-modal" class="btn" on:click={closeDeleteModal}>Annuler</label>
-				<button type="button" class="btn btn-warning" on:click={confirmDelete}>
-					Supprimer définitivement
-				</button>
-			</div>
-		</div>
-	</div>
-{/if}
-
-<!-- MODAL : Gérer les projets -->
-{#if isProjetsModalOpen && selectedUser}
-	<input type="checkbox" id="projets-modal" class="modal-toggle" bind:checked={isProjetsModalOpen} />
-	<div class="modal" role="dialog">
-		<div class="modal-box max-w-lg">
-			<form
-				method="POST"
-				action="?/setProjets"
-				use:enhance={() => {
-					return async ({ result }) => {
-						if (result.type === 'success') {
-							await invalidateAll();
-
-							usersWithProjets = usersWithProjets.filter(
-								(up) => up.userId !== selectedUser?.id
-							);
-							const newAssocs = projetsForm.projetIds.map((projetId) => ({
-								userId: selectedUser!.id,
-								projetId
-							}));
-							usersWithProjets = [...usersWithProjets, ...newAssocs];
-
-							users = users.map((u) =>
-								u.id === selectedUser?.id ? { ...u, projetIds: projetsForm.projetIds } : u
-							);
-
-							closeProjetsModal();
-							showToast('Projets mis à jour avec succès');
-						} else {
-							showToast('Échec de la mise à jour', 'error');
-						}
-					};
-				}}
-			>
-				<input type="hidden" name="userId" value={selectedUser.id} />
-				<div class="flex items-center gap-3 mb-6">
-					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100">
-						<Folder />
-					</div>
-					<div>
-						<h3 class="text-lg font-semibold">Gérer les projets</h3>
-						<p class="text-sm">{selectedUser.name}</p>
-					</div>
-				</div>
-				<div>
-					<div class="block text-sm font-medium mb-1.5">Projets assignés</div>
-					<label class="input">
-						<Search />
-						<input
-							type="search"
-							bind:value={modalProjectSearch}
-							required
-							placeholder="Rechercher un projet..."
-						/>
-					</label>
-
-					<div
-						class="max-h-64 overflow-y-auto border border-slate-200 rounded-lg divide-y divide-slate-100"
-					>
-						{#if projets.length === 0}
-							<p class="p-4 text-sm text-center">Aucun projet disponible</p>
-						{:else if filteredModalProjets.length === 0}
-							<p class="p-4 text-sm text-center">Aucun projet trouvé</p>
-						{:else}
-							{#each filteredModalProjets as p, i (i)}
-								<label class="flex items-center gap-3 p-3 hover: cursor-pointer">
-									<input
-										type="checkbox"
-										name="projetIds"
-										value={p.id}
-										checked={projetsForm.projetIds.includes(p.id)}
-										on:change={(e) => {
-											if (e.currentTarget.checked) {
-												projetsForm.projetIds = [...projetsForm.projetIds, p.id];
-											} else {
-												projetsForm.projetIds = projetsForm.projetIds.filter(
-													(id) => id !== p.id
-												);
-											}
-										}}
-										class="checkbox"
-									/>
-									<div class="flex-1 min-w-0">
-										<p class="text-sm font-medium truncate">{p.libelle}</p>
-										<p class="text-xs truncate">Réf: {p.reference}</p>
-									</div>
-								</label>
-							{/each}
-						{/if}
-					</div>
-					<p class="mt-2 text-xs">
-						{projetsForm.projetIds.length} projet{projetsForm.projetIds.length > 1 ? 's' : ''} sélectionné{projetsForm
-							.projetIds.length > 1
-							? 's'
-							: ''}
-					</p>
-				</div>
-				<div class="modal-action">
-					<label for="projets-modal" class="btn" on:click={closeProjetsModal}>Annuler</label>
-					<button type="submit" class="btn">Enregistrer</button>
-				</div>
-			</form>
-		</div>
-	</div>
-{/if}
-
-<!-- TOAST NOTIFICATION -->
-{#if toast}
-	<div class="fixed bottom-4 right-4 z-50" transition:scale={{ duration: 200 }}>
-		<div
-			class="flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg {toast.type === 'success'
-				? 'bg-emerald-600'
-				: 'bg-red-600'} text-white"
-		>
-			{#if toast.type === 'success'}
-				<SquareCheckBig />
-			{:else}
-				<Ban />
-			{/if}
-			<span class="text-sm font-medium">{toast.message}</span>
-		</div>
-	</div>
-{/if}
