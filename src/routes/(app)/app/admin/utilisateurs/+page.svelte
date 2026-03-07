@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { authClient } from '$lib/auth-client';
-	import { fade, scale } from 'svelte/transition';
+	import { scale } from 'svelte/transition';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import {
@@ -615,6 +615,7 @@
 							>
 								<X size={18} />
 							</button>
+
 						</div>
 					</li>
 				{/each}
@@ -652,126 +653,105 @@
 
 <!-- MODAL : Créer un utilisateur -->
 {#if isCreateModalOpen}
-	<div class="relative z-50" role="dialog" aria-modal="true">
-		<button
-			type="button"
-			aria-label="Fermer la modale"
-			class="btn"
-			transition:fade
-			on:click={closeCreateModal}
-		></button>
-		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-			<div class="flex min-h-full items-center justify-center p-4">
-				<div
-					class="relative w-full max-w-md transform overflow-hidden rounded-2xl shadow-2xl transition-all"
-					transition:scale
-				>
-					<div class="px-6 py-5">
-						<div class="flex items-center gap-3 mb-6">
-							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
-								<UserPlus />
-							</div>
-							<h3 class="text-lg font-semibold">Créer un utilisateur</h3>
-						</div>
-						<div class="space-y-4">
-							<div>
-								<label for="create-name" class="block text-sm font-medium mb-1.5">Nom</label>
-								<input
-									id="create-name"
-									bind:value={createForm.name}
-									type="text"
-									placeholder="Jean Dupont"
-									class="input"
-								/>
-							</div>
-							<div>
-								<label for="create-email" class="block text-sm font-medium mb-1.5">Email</label>
-								<input
-									id="create-email"
-									bind:value={createForm.email}
-									type="email"
-									placeholder="jean.dupont@exemple.com"
-									class="input"
-								/>
-							</div>
-							<div>
-								<label for="create-password" class="block text-sm font-medium mb-1.5"
-									>Mot de passe</label
-								>
-								<input
-									id="create-password"
-									bind:value={createForm.password}
-									type="password"
-									autocomplete="new-password"
-									placeholder="••••••••"
-									class="input"
-								/>
-							</div>
-							<div>
-								<label for="create-role" class="block text-sm font-medium mb-1.5">Rôle</label>
-								<select id="create-role" bind:value={createForm.role} class="select">
-									<option value="user">Utilisateur</option>
-									<option value="collaborator">Collaborateur</option>
-									<option value="admin">Administrateur</option>
-								</select>
-							</div>
-							<div>
-								<label for="create-projets" class="block text-sm font-medium mb-1.5">Projets</label>
-								<!-- Search bar for projects -->
-								<label class="relative mb-2">
-									<Search />
-									<input
-										type="search"
-										bind:value={createProjectSearch}
-										placeholder="Rechercher un projet..."
-									/>
-								</label>
-								<div class="max-h-40 overflow-y-auto rounded-lg border border-slate-300 p-2">
-									{#if projets.length === 0}
-										<p class="text-sm py-2 px-2">Aucun projet disponible</p>
-									{:else if filteredCreateProjets.length === 0}
-										<p class="text-sm py-2 px-2">Aucun projet trouvé</p>
-									{:else}{#each filteredCreateProjets as p (p.id)}
-											<label
-												class="flex items-center gap-2 rounded px-2 py-1.5 hover: cursor-pointer"
-											>
-												<input
-													type="checkbox"
-													value={p.id}
-													checked={createForm.projetIds.includes(p.id)}
-													on:change={(e) => {
-														if (e.currentTarget.checked) {
-															createForm.projetIds = [...createForm.projetIds, p.id];
-														} else {
-															createForm.projetIds = createForm.projetIds.filter(
-																(id) => id !== p.id
-															);
-														}
-													}}
-													class="checkbox"
-												/>
-												<span class="text-sm"
-													>{p.libelle} <span class="">({p.reference})</span></span
-												>
-											</label>
-										{/each}
-									{/if}
-								</div>
-								{#if createForm.projetIds.length > 0}
-									<p class="text-xs mt-1">
-										{createForm.projetIds.length} projet(s) sélectionné(s)
-									</p>
-								{/if}
-							</div>
-						</div>
-					</div>
-					<div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
-						<button type="button" class="btn btn-warning" on:click={closeCreateModal}>
-							Annuler
-						</button>
-						<button type="button" class="btn btn-secondary" on:click={createUser}> Créer </button>
-					</div>
+	<input type="checkbox" id="create-modal" class="modal-toggle" bind:checked={isCreateModalOpen} />
+	<div class="modal" role="dialog">
+		<div class="modal-box">
+			<div class="flex items-center gap-3 mb-6">
+				<div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
+					<UserPlus />
 				</div>
+				<h3 class="text-lg font-semibold">Créer un utilisateur</h3>
+			</div>
+			<div class="space-y-4">
+				<div>
+					<label for="create-name" class="block text-sm font-medium mb-1.5">Nom</label>
+					<input
+						id="create-name"
+						bind:value={createForm.name}
+						type="text"
+						placeholder="Jean Dupont"
+						class="input"
+					/>
+				</div>
+				<div>
+					<label for="create-email" class="block text-sm font-medium mb-1.5">Email</label>
+					<input
+						id="create-email"
+						bind:value={createForm.email}
+						type="email"
+						placeholder="jean.dupont@exemple.com"
+						class="input"
+					/>
+				</div>
+				<div>
+					<label for="create-password" class="block text-sm font-medium mb-1.5">Mot de passe</label>
+					<input
+						id="create-password"
+						bind:value={createForm.password}
+						type="password"
+						autocomplete="new-password"
+						placeholder="••••••••"
+						class="input"
+					/>
+				</div>
+				<div>
+					<label for="create-role" class="block text-sm font-medium mb-1.5">Rôle</label>
+					<select id="create-role" bind:value={createForm.role} class="select">
+						<option value="user">Utilisateur</option>
+						<option value="collaborator">Collaborateur</option>
+						<option value="admin">Administrateur</option>
+					</select>
+				</div>
+				<div>
+					<label for="create-projets" class="block text-sm font-medium mb-1.5">Projets</label>
+					<label class="relative mb-2">
+						<Search />
+						<input
+							type="search"
+							bind:value={createProjectSearch}
+							placeholder="Rechercher un projet..."
+						/>
+					</label>
+					<div class="max-h-40 overflow-y-auto rounded-lg border border-slate-300 p-2">
+						{#if projets.length === 0}
+							<p class="text-sm py-2 px-2">Aucun projet disponible</p>
+						{:else if filteredCreateProjets.length === 0}
+							<p class="text-sm py-2 px-2">Aucun projet trouvé</p>
+						{:else}
+							{#each filteredCreateProjets as p (p.id)}
+								<label class="flex items-center gap-2 rounded px-2 py-1.5 hover: cursor-pointer">
+									<input
+										type="checkbox"
+										value={p.id}
+										checked={createForm.projetIds.includes(p.id)}
+										on:change={(e) => {
+											if (e.currentTarget.checked) {
+												createForm.projetIds = [...createForm.projetIds, p.id];
+											} else {
+												createForm.projetIds = createForm.projetIds.filter(
+													(id) => id !== p.id
+												);
+											}
+										}}
+										class="checkbox"
+									/>
+									<span class="text-sm"
+										>{p.libelle} <span class="">({p.reference})</span></span
+									>
+								</label>
+							{/each}
+						{/if}
+					</div>
+					{#if createForm.projetIds.length > 0}
+						<p class="text-xs mt-1">
+							{createForm.projetIds.length} projet(s) sélectionné(s)
+						</p>
+					{/if}
+				</div>
+			</div>
+			<div class="modal-action">
+				<label for="create-modal" class="btn btn-warning" on:click={closeCreateModal}>Annuler</label>
+				<button type="button" class="btn btn-secondary" on:click={createUser}>Créer</button>
 			</div>
 		</div>
 	</div>
@@ -779,54 +759,39 @@
 
 <!-- MODAL : Modifier les informations -->
 {#if isEditModalOpen && selectedUser}
-	<div class="relative z-50" role="dialog" aria-modal="true">
-		<button
-			type="button"
-			aria-label="Fermer la modale"
-			class="btn"
-			transition:fade
-			on:click={closeEditModal}
-		></button>
-		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-			<div class="flex min-h-full items-center justify-center p-4">
-				<div
-					class="relative w-full max-w-md transform overflow-hidden rounded-2xl shadow-2xl transition-all"
-					transition:scale
-				>
-					<div class="px-6 py-5">
-						<div class="flex items-center gap-3 mb-6">
-							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-								<Pencil />
-							</div>
-							<div>
-								<h3 class="text-lg font-semibold">Modifier l'utilisateur</h3>
-								<p class="text-sm">{selectedUser.email}</p>
-							</div>
-						</div>
-						<div class="space-y-4">
-							<div>
-								<label for="edit-name" class="block text-sm font-medium mb-1.5">Nom</label>
-								<input id="edit-name" bind:value={editForm.name} type="text" class="input" />
-							</div>
-							<div>
-								<label for="edit-email" class="block text-sm font-medium mb-1.5">Email</label>
-								<input id="edit-email" bind:value={editForm.email} type="email" class="input" />
-							</div>
-							<div>
-								<label for="edit-role" class="block text-sm font-medium mb-1.5">Rôle</label>
-								<select id="edit-role" bind:value={editForm.role} class="select">
-									<option value="user">Utilisateur</option>
-									<option value="collaborator">Collaborateur</option>
-									<option value="admin">Administrateur</option>
-								</select>
-							</div>
-						</div>
-					</div>
-					<div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
-						<button type="button" class="btn" on:click={closeEditModal}> Annuler </button>
-						<button type="button" class="btn" on:click={saveUserInfo}> Enregistrer </button>
-					</div>
+	<input type="checkbox" id="edit-modal" class="modal-toggle" bind:checked={isEditModalOpen} />
+	<div class="modal" role="dialog">
+		<div class="modal-box">
+			<div class="flex items-center gap-3 mb-6">
+				<div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
+					<Pencil />
 				</div>
+				<div>
+					<h3 class="text-lg font-semibold">Modifier l'utilisateur</h3>
+					<p class="text-sm">{selectedUser.email}</p>
+				</div>
+			</div>
+			<div class="space-y-4">
+				<div>
+					<label for="edit-name" class="block text-sm font-medium mb-1.5">Nom</label>
+					<input id="edit-name" bind:value={editForm.name} type="text" class="input" />
+				</div>
+				<div>
+					<label for="edit-email" class="block text-sm font-medium mb-1.5">Email</label>
+					<input id="edit-email" bind:value={editForm.email} type="email" class="input" />
+				</div>
+				<div>
+					<label for="edit-role" class="block text-sm font-medium mb-1.5">Rôle</label>
+					<select id="edit-role" bind:value={editForm.role} class="select">
+						<option value="user">Utilisateur</option>
+						<option value="collaborator">Collaborateur</option>
+						<option value="admin">Administrateur</option>
+					</select>
+				</div>
+			</div>
+			<div class="modal-action">
+				<label for="edit-modal" class="btn" on:click={closeEditModal}>Annuler</label>
+				<button type="button" class="btn" on:click={saveUserInfo}>Enregistrer</button>
 			</div>
 		</div>
 	</div>
@@ -834,50 +799,35 @@
 
 <!-- MODAL : Changer le mot de passe -->
 {#if isPasswordModalOpen && selectedUser}
-	<div class="relative z-50" role="dialog" aria-modal="true">
-		<button
-			type="button"
-			aria-label="Fermer la modale"
-			class="btn"
-			transition:fade
-			on:click={closePasswordModal}
-		></button>
-		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-			<div class="flex min-h-full items-center justify-center p-4">
-				<div
-					class="relative w-full max-w-md transform overflow-hidden rounded-2xl shadow-2xl transition-all"
-					transition:scale
-				>
-					<div class="px-6 py-5">
-						<div class="flex items-center gap-3 mb-6">
-							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100">
-								<Pencil />
-							</div>
-							<div>
-								<h3 class="text-lg font-semibold">Changer le mot de passe</h3>
-								<p class="text-sm">{selectedUser.name}</p>
-							</div>
-						</div>
-						<div>
-							<label for="new-password" class="block text-sm font-medium mb-1.5"
-								>Nouveau mot de passe</label
-							>
-							<input
-								id="new-password"
-								bind:value={passwordForm.newPassword}
-								type="password"
-								autocomplete="new-password"
-								placeholder="Entrez le nouveau mot de passe"
-								class="input"
-							/>
-							<p class="mt-2 text-xs">Le mot de passe doit contenir au moins 8 caractères.</p>
-						</div>
-					</div>
-					<div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
-						<button type="button" class="btn" on:click={closePasswordModal}> Annuler </button>
-						<button type="button" class="btn" on:click={setPassword}> Mettre à jour </button>
-					</div>
+	<input type="checkbox" id="password-modal" class="modal-toggle" bind:checked={isPasswordModalOpen} />
+	<div class="modal" role="dialog">
+		<div class="modal-box">
+			<div class="flex items-center gap-3 mb-6">
+				<div class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100">
+					<Pencil />
 				</div>
+				<div>
+					<h3 class="text-lg font-semibold">Changer le mot de passe</h3>
+					<p class="text-sm">{selectedUser.name}</p>
+				</div>
+			</div>
+			<div>
+				<label for="new-password" class="block text-sm font-medium mb-1.5"
+					>Nouveau mot de passe</label
+				>
+				<input
+					id="new-password"
+					bind:value={passwordForm.newPassword}
+					type="password"
+					autocomplete="new-password"
+					placeholder="Entrez le nouveau mot de passe"
+					class="input"
+				/>
+				<p class="mt-2 text-xs">Le mot de passe doit contenir au moins 8 caractères.</p>
+			</div>
+			<div class="modal-action">
+				<label for="password-modal" class="btn" on:click={closePasswordModal}>Annuler</label>
+				<button type="button" class="btn" on:click={setPassword}>Mettre à jour</button>
 			</div>
 		</div>
 	</div>
@@ -885,69 +835,54 @@
 
 <!-- MODAL : Clôture / Réactivation de compte -->
 {#if isBanModalOpen && selectedUser}
-	<div class="relative z-50" role="dialog" aria-modal="true">
-		<button
-			type="button"
-			aria-label="Fermer la modale"
-			class="btn"
-			transition:fade
-			on:click={closeBanModal}
-		></button>
-		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-			<div class="flex min-h-full items-center justify-center p-4">
+	<input type="checkbox" id="ban-modal" class="modal-toggle" bind:checked={isBanModalOpen} />
+	<div class="modal" role="dialog">
+		<div class="modal-box">
+			<div class="flex items-center gap-3 mb-6">
 				<div
-					class="relative w-full max-w-md transform overflow-hidden rounded-2xl shadow-2xl transition-all"
-					transition:scale
+					class="flex h-10 w-10 items-center justify-center rounded-full {selectedUser.banned
+						? 'bg-green-100'
+						: 'bg-amber-100'}"
 				>
-					<div class="px-6 py-5">
-						<div class="flex items-center gap-3 mb-6">
-							<div
-								class="flex h-10 w-10 items-center justify-center rounded-full {selectedUser.banned
-									? 'bg-green-100'
-									: 'bg-amber-100'}"
-							>
-								<X />
-							</div>
-							<div>
-								<h3 class="text-lg font-semibold">
-									{selectedUser.banned ? 'Réactiver le compte' : 'Clôturer le compte'}
-								</h3>
-								<p class="text-sm">{selectedUser.name}</p>
-							</div>
-						</div>
-						{#if selectedUser.banned}
-							<p class="text-sm">
-								Êtes-vous sûr de vouloir réactiver ce compte ? Il pourra à nouveau accéder à la
-								plateforme.
-							</p>
-						{:else}
-							<div>
-								<label for="ban-reason" class="block text-sm font-medium mb-1.5"
-									>Raison de la clôture (optionnel)</label
-								>
-								<textarea
-									id="ban-reason"
-									bind:value={banReason}
-									rows="3"
-									placeholder="Ex: Violation des conditions d'utilisation..."
-									class="input"
-								></textarea>
-							</div>
-						{/if}
-					</div>
-					<div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
-						<button type="button" class="btn" on:click={closeBanModal}> Annuler </button>
-						<button
-							type="button"
-							class="btn transition-colors {selectedUser.banned
-								? 'bg-green-600 hover:bg-green-700'
-								: 'bg-amber-600 hover:bg-amber-700'}"
-							on:click={confirmBan}
-						>
-							{selectedUser.banned ? 'Réactiver' : 'Clôturer'}
-						</button>
-					</div>
+					<X />
 				</div>
+				<div>
+					<h3 class="text-lg font-semibold">
+						{selectedUser.banned ? 'Réactiver le compte' : 'Clôturer le compte'}
+					</h3>
+					<p class="text-sm">{selectedUser.name}</p>
+				</div>
+			</div>
+			{#if selectedUser.banned}
+				<p class="text-sm">
+					Êtes-vous sûr de vouloir réactiver ce compte ? Il pourra à nouveau accéder à la
+					plateforme.
+				</p>
+			{:else}
+				<div>
+					<label for="ban-reason" class="block text-sm font-medium mb-1.5"
+						>Raison de la clôture (optionnel)</label
+					>
+					<textarea
+						id="ban-reason"
+						bind:value={banReason}
+						rows="3"
+						placeholder="Ex: Violation des conditions d'utilisation..."
+						class="input"
+					></textarea>
+				</div>
+			{/if}
+			<div class="modal-action">
+				<label for="ban-modal" class="btn" on:click={closeBanModal}>Annuler</label>
+				<button
+					type="button"
+					class="btn transition-colors {selectedUser.banned
+						? 'bg-green-600 hover:bg-green-700'
+						: 'bg-amber-600 hover:bg-amber-700'}"
+					on:click={confirmBan}
+				>
+					{selectedUser.banned ? 'Réactiver' : 'Clôturer'}
+				</button>
 			</div>
 		</div>
 	</div>
@@ -955,44 +890,26 @@
 
 <!-- MODAL : Supprimer -->
 {#if isDeleteModalOpen && selectedUser}
-	<div class="relative z-50" role="dialog" aria-modal="true">
-		<button
-			type="button"
-			aria-label="Fermer la modale"
-			class="btn"
-			transition:fade
-			on:click={closeDeleteModal}
-		></button>
-		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-			<div class="flex min-h-full items-center justify-center p-4">
-				<div
-					class="relative w-full max-w-md transform overflow-hidden rounded-2xl shadow-2xl transition-all"
-					transition:scale
-				>
-					<div class="px-6 py-5">
-						<div class="flex items-center gap-3 mb-6">
-							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-								<X />
-							</div>
-							<div>
-								<h3 class="text-lg font-semibold">Supprimer l'utilisateur</h3>
-								<p class="text-sm">{selectedUser.name}</p>
-							</div>
-						</div>
-						<div class="rounded-lg bg-red-50 border border-red-200 p-4">
-							<p class="text-sm text-red-800">
-								<strong>Attention :</strong> Cette action est irréversible. Toutes les données associées
-								à cet utilisateur seront définitivement supprimées.
-							</p>
-						</div>
-					</div>
-					<div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
-						<button type="button" class="btn" on:click={closeDeleteModal}> Annuler </button>
-						<button type="button" class="btn btn-warning" on:click={confirmDelete}>
-							Supprimer définitivement
-						</button>
-					</div>
+	<input type="checkbox" id="delete-modal" class="modal-toggle" bind:checked={isDeleteModalOpen} />
+	<div class="modal" role="dialog">
+		<div class="modal-box">
+			<div class="flex items-center gap-3 mb-6">
+				<div>
+					<h3 class="text-lg font-semibold">Supprimer l'utilisateur</h3>
+					<p class="text-sm">{selectedUser.name}</p>
 				</div>
+			</div>
+			<div class="rounded-lg bg-red-50 border border-red-200 p-4">
+				<p class="text-sm text-red-800">
+					<strong>Attention :</strong> Cette action est irréversible. Toutes les données associées
+					à cet utilisateur seront définitivement supprimées.
+				</p>
+			</div>
+			<div class="modal-action">
+				<label for="delete-modal" class="btn" on:click={closeDeleteModal}>Annuler</label>
+				<button type="button" class="btn btn-warning" on:click={confirmDelete}>
+					Supprimer définitivement
+				</button>
 			</div>
 		</div>
 	</div>
@@ -1000,127 +917,106 @@
 
 <!-- MODAL : Gérer les projets -->
 {#if isProjetsModalOpen && selectedUser}
-	<div class="relative z-50" role="dialog" aria-modal="true">
-		<button
-			type="button"
-			aria-label="Fermer la modale"
-			class="btn"
-			transition:fade
-			on:click={closeProjetsModal}
-		></button>
-		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-			<div class="flex min-h-full items-center justify-center p-4">
-				<div
-					class="relative w-full max-w-lg transform overflow-hidden rounded-2xl shadow-2xl transition-all"
-					transition:scale
-				>
-					<form
-						method="POST"
-						action="?/setProjets"
-						use:enhance={() => {
-							return async ({ result }) => {
-								if (result.type === 'success') {
-									// Invalider les données du serveur pour les recharger
-									await invalidateAll();
+	<input type="checkbox" id="projets-modal" class="modal-toggle" bind:checked={isProjetsModalOpen} />
+	<div class="modal" role="dialog">
+		<div class="modal-box max-w-lg">
+			<form
+				method="POST"
+				action="?/setProjets"
+				use:enhance={() => {
+					return async ({ result }) => {
+						if (result.type === 'success') {
+							await invalidateAll();
 
-									// Mettre à jour usersWithProjets localement
-									// D'abord retirer toutes les associations pour cet utilisateur
-									usersWithProjets = usersWithProjets.filter(
-										(up) => up.userId !== selectedUser?.id
-									);
-									// Puis ajouter les nouvelles
-									const newAssocs = projetsForm.projetIds.map((projetId) => ({
-										userId: selectedUser!.id,
-										projetId
-									}));
-									usersWithProjets = [...usersWithProjets, ...newAssocs];
+							usersWithProjets = usersWithProjets.filter(
+								(up) => up.userId !== selectedUser?.id
+							);
+							const newAssocs = projetsForm.projetIds.map((projetId) => ({
+								userId: selectedUser!.id,
+								projetId
+							}));
+							usersWithProjets = [...usersWithProjets, ...newAssocs];
 
-									// Mettre à jour aussi le tableau users
-									users = users.map((u) =>
-										u.id === selectedUser?.id ? { ...u, projetIds: projetsForm.projetIds } : u
-									);
+							users = users.map((u) =>
+								u.id === selectedUser?.id ? { ...u, projetIds: projetsForm.projetIds } : u
+							);
 
-									closeProjetsModal();
-									showToast('Projets mis à jour avec succès');
-								} else {
-									showToast('Échec de la mise à jour', 'error');
-								}
-							};
-						}}
-					>
-						<input type="hidden" name="userId" value={selectedUser.id} />
-						<div class="px-6 py-5">
-							<div class="flex items-center gap-3 mb-6">
-								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100">
-									<Folder />
-								</div>
-								<div>
-									<h3 class="text-lg font-semibold">Gérer les projets</h3>
-									<p class="text-sm">{selectedUser.name}</p>
-								</div>
-							</div>
-							<div>
-								<div class="block text-sm font-medium mb-1.5">Projets assignés</div>
-								<!-- Search bar for projects -->
-								<label class="input">
-									<Search />
-									<input
-										type="search"
-										bind:value={modalProjectSearch}
-										required
-										placeholder="Rechercher un projet..."
-									/>
-								</label>
-
-								<div
-									class="max-h-64 overflow-y-auto border border-slate-200 rounded-lg divide-y divide-slate-100"
-								>
-									{#if projets.length === 0}
-										<p class="p-4 text-sm text-center">Aucun projet disponible</p>
-									{:else if filteredModalProjets.length === 0}
-										<p class="p-4 text-sm text-center">Aucun projet trouvé</p>
-									{:else}
-										{#each filteredModalProjets as p}
-											<label class="flex items-center gap-3 p-3 hover: cursor-pointer">
-												<input
-													type="checkbox"
-													name="projetIds"
-													value={p.id}
-													checked={projetsForm.projetIds.includes(p.id)}
-													on:change={(e) => {
-														if (e.currentTarget.checked) {
-															projetsForm.projetIds = [...projetsForm.projetIds, p.id];
-														} else {
-															projetsForm.projetIds = projetsForm.projetIds.filter(
-																(id) => id !== p.id
-															);
-														}
-													}}
-													class="checkbox"
-												/>
-												<div class="flex-1 min-w-0">
-													<p class="text-sm font-medium truncate">{p.libelle}</p>
-													<p class="text-xs truncate">Réf: {p.reference}</p>
-												</div>
-											</label>
-										{/each}
-									{/if}
-								</div>
-								<p class="mt-2 text-xs">
-									{projetsForm.projetIds.length} projet{projetsForm.projetIds.length > 1 ? 's' : ''} sélectionné{projetsForm
-										.projetIds.length > 1
-										? 's'
-										: ''}
-								</p>
-							</div>
-						</div>
-						<div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
-							<button type="button" class="btn" on:click={closeProjetsModal}> Annuler </button>
-							<button type="submit" class="btn"> Enregistrer </button>
-						</div>
-					</form>
+							closeProjetsModal();
+							showToast('Projets mis à jour avec succès');
+						} else {
+							showToast('Échec de la mise à jour', 'error');
+						}
+					};
+				}}
+			>
+				<input type="hidden" name="userId" value={selectedUser.id} />
+				<div class="flex items-center gap-3 mb-6">
+					<div class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100">
+						<Folder />
+					</div>
+					<div>
+						<h3 class="text-lg font-semibold">Gérer les projets</h3>
+						<p class="text-sm">{selectedUser.name}</p>
+					</div>
 				</div>
-			</div>
+				<div>
+					<div class="block text-sm font-medium mb-1.5">Projets assignés</div>
+					<label class="input">
+						<Search />
+						<input
+							type="search"
+							bind:value={modalProjectSearch}
+							required
+							placeholder="Rechercher un projet..."
+						/>
+					</label>
+
+					<div
+						class="max-h-64 overflow-y-auto border border-slate-200 rounded-lg divide-y divide-slate-100"
+					>
+						{#if projets.length === 0}
+							<p class="p-4 text-sm text-center">Aucun projet disponible</p>
+						{:else if filteredModalProjets.length === 0}
+							<p class="p-4 text-sm text-center">Aucun projet trouvé</p>
+						{:else}
+							{#each filteredModalProjets as p, i (i)}
+								<label class="flex items-center gap-3 p-3 hover: cursor-pointer">
+									<input
+										type="checkbox"
+										name="projetIds"
+										value={p.id}
+										checked={projetsForm.projetIds.includes(p.id)}
+										on:change={(e) => {
+											if (e.currentTarget.checked) {
+												projetsForm.projetIds = [...projetsForm.projetIds, p.id];
+											} else {
+												projetsForm.projetIds = projetsForm.projetIds.filter(
+													(id) => id !== p.id
+												);
+											}
+										}}
+										class="checkbox"
+									/>
+									<div class="flex-1 min-w-0">
+										<p class="text-sm font-medium truncate">{p.libelle}</p>
+										<p class="text-xs truncate">Réf: {p.reference}</p>
+									</div>
+								</label>
+							{/each}
+						{/if}
+					</div>
+					<p class="mt-2 text-xs">
+						{projetsForm.projetIds.length} projet{projetsForm.projetIds.length > 1 ? 's' : ''} sélectionné{projetsForm
+							.projetIds.length > 1
+							? 's'
+							: ''}
+					</p>
+				</div>
+				<div class="modal-action">
+					<label for="projets-modal" class="btn" on:click={closeProjetsModal}>Annuler</label>
+					<button type="submit" class="btn">Enregistrer</button>
+				</div>
+			</form>
 		</div>
 	</div>
 {/if}
