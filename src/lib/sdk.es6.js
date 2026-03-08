@@ -1,4 +1,5 @@
 /*! 🌼 daisyUI 5.5.19 */
+/* @vite-ignore */
 var e = {
 		d: (t, s) => {
 			for (var n in s)
