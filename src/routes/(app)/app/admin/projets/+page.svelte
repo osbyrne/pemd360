@@ -11,10 +11,9 @@
 		MoreHorizontal,
 		Eye,
 		Pencil,
-		Trash2,
-		CircleCheck,
-		CircleX
+		Trash2
 	} from 'lucide-svelte';
+	import Toast from '$lib/components/Toast.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -352,20 +351,4 @@
 	</div>
 {/if}
 
-<!-- TOAST NOTIFICATION -->
-{#if toast}
-	<div class="fixed bottom-4 right-4 z-50" transition:scale={{ duration: 200 }}>
-		<div
-			class="flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg {toast.type === 'success'
-				? 'bg-emerald-600'
-				: 'bg-red-600'} text-white"
-		>
-			{#if toast.type === 'success'}
-				<CircleCheck size={20} />
-			{:else}
-				<CircleX size={20} />
-			{/if}
-			<span class="text-sm font-medium">{toast.message}</span>
-		</div>
-	</div>
-{/if}
+<Toast {toast} />
