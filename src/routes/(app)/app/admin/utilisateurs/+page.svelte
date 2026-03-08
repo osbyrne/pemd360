@@ -3,6 +3,7 @@
 	import { authClient } from '$lib/auth-client';
 	import { enhance } from '$app/forms';
 	import Toast from '$lib/components/Toast.svelte';
+	import Pagination from '$lib/components/Pagination.svelte';
 	import { invalidateAll } from '$app/navigation';
 	import {
 		Pencil,
@@ -15,9 +16,7 @@
 		UserPen,
 		RefreshCcw,
 		Search,
-		Ban,
-		ArrowLeft,
-		ArrowRight
+		Ban
 	} from 'lucide-svelte';
 
 	export let data;
@@ -986,30 +985,14 @@
 		{/if}
 
 		<!-- Pagination -->
-		{#if !loading && filteredUsers.length > 0 && totalPages > 1}
-			<div class="flex items-center justify-between border-t border-slate-200 px-4 py-3">
-				<p class="text-sm">
-					Affichage de <span class="font-semibold"
-						>{Math.min(filteredUsers.length, (page - 1) * perPage + 1)}</span
-					>
-					à <span class="font-semibold">{Math.min(filteredUsers.length, page * perPage)}</span>
-					sur <span class="font-semibold">{filteredUsers.length}</span> résultats
-				</p>
-				<div class="flex gap-2">
-					<button on:click={() => (page = Math.max(1, page - 1))} disabled={page === 1} class="btn">
-						<ArrowLeft />
-						Précédent
-					</button>
-					<button
-						on:click={() => (page = Math.min(totalPages, page + 1))}
-						disabled={page === totalPages}
-						class="btn"
-					>
-						Suivant
-						<ArrowRight />
-					</button>
-				</div>
-			</div>
+		{#if !loading}
+			<Pagination
+				{page}
+				{totalPages}
+				totalItems={filteredUsers.length}
+				{perPage}
+				onPageChange={(p) => (page = p)}
+			/>
 		{/if}
 	</ul>
 </main>

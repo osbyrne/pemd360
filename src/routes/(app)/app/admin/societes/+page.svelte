@@ -3,17 +3,9 @@
 	import { fade, scale } from 'svelte/transition';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
-	import {
-		Plus,
-		Download,
-		Search,
-		Building2,
-		Pencil,
-		Trash2,
-		ChevronLeft,
-		ChevronRight
-	} from 'lucide-svelte';
+	import { Plus, Download, Search, Building2, Pencil, Trash2 } from 'lucide-svelte';
 	import Toast from '$lib/components/Toast.svelte';
+	import Pagination from '$lib/components/Pagination.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -270,30 +262,14 @@
 		{/if}
 
 		<!-- Pagination -->
-		{#if !loading && filteredCompanies.length > 0 && totalPages > 1}
-			<div class="flex items-center justify-between border-t border-slate-200 px-4 py-3">
-				<p class="text-sm">
-					Affichage de <span class="font-semibold"
-						>{Math.min(filteredCompanies.length, (page - 1) * perPage + 1)}</span
-					>
-					à <span class="font-semibold">{Math.min(filteredCompanies.length, page * perPage)}</span>
-					sur <span class="font-semibold">{filteredCompanies.length}</span> résultats
-				</p>
-				<div class="flex gap-2">
-					<button onclick={() => (page = Math.max(1, page - 1))} disabled={page === 1} class="btn">
-						<ChevronLeft size={16} />
-						Précédent
-					</button>
-					<button
-						onclick={() => (page = Math.min(totalPages, page + 1))}
-						disabled={page === totalPages}
-						class="btn"
-					>
-						Suivant
-						<ChevronRight size={16} />
-					</button>
-				</div>
-			</div>
+		{#if !loading}
+			<Pagination
+				{page}
+				{totalPages}
+				totalItems={filteredCompanies.length}
+				{perPage}
+				onPageChange={(p) => (page = p)}
+			/>
 		{/if}
 	</div>
 </main>

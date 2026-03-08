@@ -14,6 +14,7 @@
 		Trash2
 	} from 'lucide-svelte';
 	import Toast from '$lib/components/Toast.svelte';
+	import Pagination from '$lib/components/Pagination.svelte';
 
 	let { data }: { data: PageData } = $props();
 
@@ -271,29 +272,13 @@
 		{/if}
 
 		<!-- Pagination -->
-		{#if filteredProjets.length > 0 && totalPages > 1}
-			<div class="flex items-center justify-between border-t border-slate-200 px-4 py-3">
-				<p class="text-sm">
-					Affichage de <span class="font-semibold"
-						>{Math.min(filteredProjets.length, (page - 1) * perPage + 1)}</span
-					>
-					à <span class="font-semibold">{Math.min(filteredProjets.length, page * perPage)}</span>
-					sur <span class="font-semibold">{filteredProjets.length}</span> résultats
-				</p>
-				<div class="flex gap-2">
-					<button onclick={() => (page = Math.max(1, page - 1))} disabled={page === 1} class="btn">
-						Précédent
-					</button>
-					<button
-						onclick={() => (page = Math.min(totalPages, page + 1))}
-						disabled={page === totalPages}
-						class="btn"
-					>
-						Suivant
-					</button>
-				</div>
-			</div>
-		{/if}
+		<Pagination
+			{page}
+			{totalPages}
+			totalItems={filteredProjets.length}
+			{perPage}
+			onPageChange={(p) => (page = p)}
+		/>
 	</div>
 </main>
 
