@@ -19,6 +19,8 @@
 		onRemove
 	}: Props = $props();
 
+	let dialog: HTMLDialogElement;
+
 	let selectedGroup = $state('');
 	let selectedCategory = $state('');
 	let selectedObject = $state('');
@@ -26,6 +28,15 @@
 	let objectsFiltered = $state(
 		[] as { id: number | null; name: string | null; categorieId: number | null }[]
 	);
+
+	$effect(() => {
+		if (!dialog) return;
+		if (show) {
+			dialog.showModal();
+		} else {
+			dialog.close();
+		}
+	});
 
 	function handleGroupChange() {
 		if (selectedGroup && selectedGroup.trim() !== '') {
@@ -105,63 +116,49 @@
 	}
 </script>
 
-{#if show}
-	<div class="fixed inset-0 z-50 flex items-center justify-center">
-		<div
-			class="absolute inset-0 bg-black/40"
-			role="button"
-			tabindex="0"
-			aria-label="Fermer le modal"
-			onclick={() => {
-				show = false;
-			}}
-			onkeydown={(e) => {
-				if (e.key === 'Enter' || e.key === ' ') show = false;
-			}}
-		></div>
-		<div class="relative z-10 w-96 rounded-lg p-4 shadow-lg">
-			<h3 class="mb-3 text-lg font-semibold">Filtrer PEMD</h3>
-			<div class="mb-3 flex flex-col gap-2">
-				<label class="flex flex-col">
-					<span class="text-sm ">Groupe</span>
-					<select bind:value={selectedGroup} onchange={handleGroupChange} class="select">
-						<option value="">Tous groupes</option>
-						{#each groups as group (group.id)}
-							<option value={group.name}>{group.name}</option>
-						{/each}
-					</select>
-				</label>
-				<label class="flex flex-col">
-					<span class="text-sm ">Catégorie</span>
-					<select bind:value={selectedCategory} onchange={handleCategoryChange} class="select">
-						<option value="">Toutes catégories</option>
-						{#each categoriesFiltered as category (category.id)}
-							<option value={category.name}>{category.name}</option>
-						{/each}
-					</select>
-				</label>
-				<label class="flex flex-col">
-					<span class="text-sm ">Objet</span>
-					<select bind:value={selectedObject} class="select">
-						<option value="">Tous objets</option>
-						{#each objectsFiltered as object (object.id)}
-							<option value={object.name}>{object.name}</option>
-						{/each}
-					</select>
-				</label>
-			</div>
-			<button
-				class="btn"
-				onclick={() => {
-					show = false;
-				}}>Fermer</button
-			>
-			<button class="btn btn-warning" onclick={onRemove} disabled={!hasTags}
-				>Supprimer les tags PEMD</button
-			>
-			<button class="btn" onclick={() => onApply(getAllowedObjetIds())}
-				>Ajouter dans le modèle</button
-			>
+<dialog bind:this={dialog} class="modal" onclose={() => (show = false)}>
+	<div class="modal-box">
+		<h3 class="mb-3 text-lg font-semibold">Filtrer PEMD</h3>
+		<div class="mb-3 flex flex-col gap-2">
+			<label class="flex flex-col">
+				<span class="text-sm">Groupe</span>
+				<select bind:value={selectedGroup} onchange={handleGroupChange} class="select">
+					<option value="">Tous groupes</option>
+					{#each groups as group (group.id)}
+						<option value={group.name}>{group.name}</option>
+					{/each}
+				</select>
+			</label>
+			<label class="flex flex-col">
+				<span class="text-sm">Catégorie</span>
+				<select bind:value={selectedCategory} onchange={handleCategoryChange} class="select">
+					<option value="">Toutes catégories</option>
+					{#each categoriesFiltered as category (category.id)}
+						<option value={category.name}>{category.name}</option>
+					{/each}
+				</select>
+			</label>
+			<label class="flex flex-col">
+				<span class="text-sm">Objet</span>
+				<select bind:value={selectedObject} class="select">
+					<option value="">Tous objets</option>
+					{#each objectsFiltered as object (object.id)}
+						<option value={object.name}>{object.name}</option>
+					{/each}
+				</select>
+			</label>
+		</div>
+		<div class="modal-action">
+			<button class="btn" onclick={() => (show = false)}>Fermer</button>
+			<button class="btn btn-warning" onclick={onRemove} disabled={!hasTags}>
+				Supprimer les tags PEMD
+			</button>
+			<button class="btn" onclick={() => onApply(getAllowedObjetIds())}>
+				Ajouter dans le modèle
+			</button>
 		</div>
 	</div>
-{/if}
+	<form method="dialog" class="modal-backdrop">
+		<button onclick={() => (show = false)}>close</button>
+	</form>
+</dialog>

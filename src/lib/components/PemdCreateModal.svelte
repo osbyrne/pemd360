@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Plus, X, Save, MapPin } from 'lucide-svelte';
+	import { Plus, Save, MapPin } from 'lucide-svelte';
 
 	interface Props {
 		show: boolean;
@@ -15,6 +15,8 @@
 	}
 
 	let { show, pendingPosition, groups, categoriesV2, allPemdObjects, onClose }: Props = $props();
+
+	let dialog: HTMLDialogElement;
 
 	// Form field state — reset each time the modal opens
 	let objetId = $state('');
@@ -37,9 +39,10 @@
 
 	let isSaving = $state(false);
 
-	// Reset all fields when the modal opens
+	// Sync dialog open/close state and reset fields when opening
 	$effect(() => {
-		if (show) {
+		if (!dialog) return;
+		if (show && pendingPosition) {
 			objetId = '';
 			description = '';
 			quantite = '';
@@ -53,6 +56,9 @@
 			categoryId = '';
 			categoriesFiltered = [];
 			objectsFiltered = [];
+			dialog.showModal();
+		} else {
+			dialog.close();
 		}
 	});
 
@@ -93,27 +99,14 @@
 	}
 </script>
 
-{#if show && pendingPosition}
-	<div class="fixed inset-0 z-50 flex items-center justify-center">
-		<div
-			class="absolute inset-0 bg-black/40"
-			role="button"
-			tabindex="0"
-			aria-label="Fermer le modal"
-			onclick={onClose}
-			onkeydown={(e) => {
-				if (e.key === 'Enter' || e.key === ' ') onClose();
-			}}
-		></div>
-		<div class="relative z-10 w-125 max-h-[90vh] overflow-y-auto rounded-lg p-6 shadow-lg">
-			<div class="flex items-center justify-between mb-4">
-				<h3 class="text-lg font-semibold flex items-center gap-2">
-					<Plus size={20} />
-					Nouveau tag PEMD
-				</h3>
-				<button type="button" onclick={onClose} class=" hover:">
-					<X size={24} />
-				</button>
+<dialog bind:this={dialog} class="modal" onclose={onClose}>
+	<div class="modal-box max-w-lg max-h-[90vh] overflow-y-auto">
+		{#if pendingPosition}
+			<div class="flex items-center gap-3 mb-4">
+				<div class="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
+					<Plus size={20} class="text-purple-700" />
+				</div>
+				<h3 class="text-lg font-semibold">Nouveau tag PEMD</h3>
 			</div>
 
 			<form
@@ -178,8 +171,8 @@
 							<label for="pemd-categorie" class="block text-sm font-medium mb-1">
 								<span
 									class="inline-flex items-center justify-center w-5 h-5 {groupId
-										? 'bg-purple-100 '
-										: ' '} rounded-full text-xs font-bold mr-1">2</span
+										? 'bg-purple-100'
+										: ''} rounded-full text-xs font-bold mr-1">2</span
 								>
 								Catégorie
 							</label>
@@ -216,7 +209,7 @@
 							<label for="pemd-objet" class="block text-sm font-medium mb-1">
 								<span
 									class="inline-flex items-center justify-center w-5 h-5 {categoryId
-										? 'bg-purple-100 '
+										? 'bg-purple-100'
 										: ''} rounded-full text-xs font-bold mr-1">3</span
 								>
 								Objet <span class="text-red-500">*</span>
@@ -227,7 +220,7 @@
 								name="objetId"
 								required
 								disabled={!categoryId || objectsFiltered.length === 0}
-								class="btn {categoryId && !objetId ? 'border-red-300' : 'border-gray-300'}"
+								class="select {categoryId && !objetId ? 'border-red-300' : 'border-gray-300'}"
 							>
 								<option value="">-- Sélectionner un objet --</option>
 								{#each objectsFiltered as object (object.id)}
@@ -258,7 +251,7 @@
 						<h4 class="text-sm font-semibold mb-3 flex items-center gap-2">
 							<span class="w-1.5 h-1.5 rounded-full"></span>
 							Informations complémentaires
-							<span class=" text-xs font-normal">(optionnel)</span>
+							<span class="text-xs font-normal">(optionnel)</span>
 						</h4>
 
 						<!-- Description -->
@@ -304,7 +297,7 @@
 							</div>
 							<div>
 								<label for="pemd-etat" class="block text-sm font-medium mb-1">État</label>
-								<select id="pemd-etat" bind:value={etat} name="etat" class="selection:">
+								<select id="pemd-etat" bind:value={etat} name="etat" class="select">
 									<option value="">--</option>
 									<option value="Bon">Bon</option>
 									<option value="Moyen">Moyen</option>
@@ -318,7 +311,7 @@
 					<div class="border-b border-gray-200 pb-4">
 						<h4 class="text-sm font-semibold mb-3 flex items-center gap-2">
 							<span class="w-1.5 h-1.5 rounded-full"></span>
-							Dimensions <span class=" text-xs font-normal">(optionnel)</span>
+							Dimensions <span class="text-xs font-normal">(optionnel)</span>
 						</h4>
 
 						<div class="grid grid-cols-3 gap-3">
@@ -371,7 +364,7 @@
 					<!-- Section: Potentiel Réemploi (optionnel) -->
 					<div>
 						<label for="pemd-potentiel" class="block text-sm font-medium mb-1">
-							Potentiel de réemploi <span class=" text-xs font-normal">(optionnel)</span>
+							Potentiel de réemploi <span class="text-xs font-normal">(optionnel)</span>
 						</label>
 						<select
 							id="pemd-potentiel"
@@ -401,14 +394,17 @@
 					</div>
 				</div>
 
-				<div class="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
-					<button type="button" onclick={onClose} class="btn"> Annuler </button>
+				<div class="modal-action">
+					<button type="button" onclick={onClose} class="btn">Annuler</button>
 					<button type="submit" disabled={isSaving || !objetId} class="btn btn-primary">
 						<Save size={16} />
 						{isSaving ? 'Enregistrement...' : 'Enregistrer le tag'}
 					</button>
 				</div>
 			</form>
-		</div>
+		{/if}
 	</div>
-{/if}
+	<form method="dialog" class="modal-backdrop">
+		<button onclick={onClose}>close</button>
+	</form>
+</dialog>

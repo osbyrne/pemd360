@@ -7,9 +7,20 @@
 
 	let { title, show = $bindable(), onApply }: Props = $props();
 
+	let dialog: HTMLDialogElement;
+
 	let present = $state(true);
 	let absent = $state(true);
 	let enCours = $state(true);
+
+	$effect(() => {
+		if (!dialog) return;
+		if (show) {
+			dialog.showModal();
+		} else {
+			dialog.close();
+		}
+	});
 
 	function close() {
 		show = false;
@@ -25,38 +36,29 @@
 	}
 </script>
 
-{#if show}
-	<div class="fixed inset-0 z-50 flex items-center justify-center">
-		<div
-			class="absolute inset-0 bg-black/40"
-			role="button"
-			tabindex="0"
-			aria-label="Fermer le modal"
-			onclick={close}
-			onkeydown={(e) => {
-				if (e.key === 'Enter' || e.key === ' ') close();
-			}}
-		></div>
-		<div class="relative z-10 w-80 rounded-lg p-4 shadow-lg">
-			<h3 class="mb-3 text-lg font-semibold">{title}</h3>
-			<div class="mb-3 flex flex-col gap-2">
-				<label class="flex items-center gap-2">
-					<input type="checkbox" bind:checked={present} class="checkbox" />
-					<span>Présence</span>
-				</label>
-				<label class="flex items-center gap-2">
-					<input type="checkbox" bind:checked={absent} class="checkbox" />
-					<span>Absence</span>
-				</label>
-				<label class="flex items-center gap-2">
-					<input type="checkbox" bind:checked={enCours} class="checkbox" />
-					<span>En cours</span>
-				</label>
-			</div>
-			<div class="flex justify-end gap-2">
-				<button class="btn" onclick={close}>Annuler</button>
-				<button class="btn" onclick={apply}>Appliquer</button>
-			</div>
+<dialog bind:this={dialog} class="modal" onclose={() => (show = false)}>
+	<div class="modal-box">
+		<h3 class="mb-3 text-lg font-semibold">{title}</h3>
+		<div class="mb-3 flex flex-col gap-2">
+			<label class="flex items-center gap-2">
+				<input type="checkbox" bind:checked={present} class="checkbox" />
+				<span>Présence</span>
+			</label>
+			<label class="flex items-center gap-2">
+				<input type="checkbox" bind:checked={absent} class="checkbox" />
+				<span>Absence</span>
+			</label>
+			<label class="flex items-center gap-2">
+				<input type="checkbox" bind:checked={enCours} class="checkbox" />
+				<span>En cours</span>
+			</label>
+		</div>
+		<div class="modal-action">
+			<button class="btn" onclick={close}>Annuler</button>
+			<button class="btn" onclick={apply}>Appliquer</button>
 		</div>
 	</div>
-{/if}
+	<form method="dialog" class="modal-backdrop">
+		<button onclick={close}>close</button>
+	</form>
+</dialog>
