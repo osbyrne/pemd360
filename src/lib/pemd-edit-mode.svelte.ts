@@ -1,3 +1,4 @@
+/*! 🌼 daisyUI 5.5.19 */
 import type { MpSdk } from '@matterport/sdk';
 
 type Vec3 = { x: number; y: number; z: number };
@@ -31,11 +32,13 @@ export class PemdEditMode {
 
 	#start() {
 		if (!this.#mpSdk) return;
-		this.#subscription = this.#mpSdk.Pointer.intersection.subscribe((data: any) => {
-			if (data && data.position && data.normal) {
-				this.lastIntersection = { position: data.position, normal: data.normal };
+		this.#subscription = this.#mpSdk.Pointer.intersection.subscribe(
+			(data: { position: Vec3; normal: Vec3 }) => {
+				if (data && data.position && data.normal) {
+					this.lastIntersection = { position: data.position, normal: data.normal };
+				}
 			}
-		});
+		);
 	}
 
 	#stop() {
