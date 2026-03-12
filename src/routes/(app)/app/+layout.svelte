@@ -335,7 +335,7 @@
 				</div>
 			{/if}
 
-			<button onclick={handleLogout} class="btn btn-soft btn-warning">
+			<button onclick={handleLogout} class="btn">
 				<LogOut class="h-5 w-5 shrink-0" />
 				<span class="font-medium">Déconnexion</span>
 			</button>
