@@ -3,7 +3,6 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import { Plus, Download, Search, Building2, Pencil, Trash2 } from 'lucide-svelte';
-	import Toast from '$lib/components/Toast.svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
 
 	let { data }: { data: PageData } = $props();
@@ -625,4 +624,10 @@
 	</div>
 </main>
 
-<Toast {toast} />
+{#if toast}
+	<div class="toast">
+		<div class="alert alert-info">
+			<span class="text-sm font-medium">{toast.message}</span>
+		</div>
+	</div>
+{/if}

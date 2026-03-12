@@ -2,7 +2,6 @@
 	import { onMount } from 'svelte';
 	import { authClient } from '$lib/auth-client';
 	import { enhance } from '$app/forms';
-	import Toast from '$lib/components/Toast.svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import { invalidateAll } from '$app/navigation';
 	import {
@@ -997,4 +996,10 @@
 	</ul>
 </main>
 
-<Toast {toast} />
+{#if toast}
+	<div class="toast">
+		<div class="alert alert-info">
+			<span class="text-sm font-medium">{toast.message}</span>
+		</div>
+	</div>
+{/if}

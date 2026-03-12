@@ -2,8 +2,16 @@
 	import type { PageData, ActionData } from './$types';
 	import { fade, scale } from 'svelte/transition';
 	import { enhance } from '$app/forms';
-	import { Plus, Download, Search, Building2, Eye, Pencil, Trash2, LoaderCircle } from 'lucide-svelte';
-	import Toast from '$lib/components/Toast.svelte';
+	import {
+		Plus,
+		Download,
+		Search,
+		Building2,
+		Eye,
+		Pencil,
+		Trash2,
+		LoaderCircle
+	} from 'lucide-svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
@@ -290,4 +298,10 @@
 	</div>
 {/if}
 
-<Toast {toast} />
+{#if toast}
+	<div class="toast">
+		<div class="alert alert-info">
+			<span class="text-sm font-medium">{toast.message}</span>
+		</div>
+	</div>
+{/if}
