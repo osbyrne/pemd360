@@ -162,10 +162,7 @@
 										<Info class="h-5 w-5" />
 									</a>
 									<a href="/app/projets/{projet.id}" class="btn btn-ghost">
-										<span class="hidden sm:inline">SDK NPM</span>
-									</a>
-									<a href="/app/projets/script/{projet.id}" class="btn btn-ghost">
-										<span class="hidden sm:inline">SDK script</span>
+										<span class="hidden sm:inline">Modèle 3D</span>
 									</a>
 									<a href="/app/cerfa/informations?projetId={projet.id}" class="btn btn-ghost"
 										>Cerfa</a

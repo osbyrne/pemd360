@@ -12,10 +12,13 @@
 	import PemdCreateModal from '$lib/components/PemdCreateModal.svelte';
 	import PemdFilterModal from '$lib/components/PemdFilterModal.svelte';
 	import { PemdEditMode } from '$lib/pemd-edit-mode.svelte';
+	import { connect as MatterportSDK_script } from '$lib/sdk.es6.js';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
 	let iframe: HTMLIFrameElement;
+
+	let SDK_choice = $state('NPM');
 
 	let MatterportSDK: MpSdk | undefined = $state();
 
@@ -290,13 +293,41 @@
 		}
 	}
 
+	async function connectSdk(choice: string) {
+		if (choice === 'NPM') {
+			const { setupSdk } = await import('@matterport/sdk');
+			MatterportSDK = await setupSdk(data.matterportSdkKey, { iframe });
+		} else {
+			MatterportSDK = (await MatterportSDK_script(iframe, {
+				applicationKey: data.matterportSdkKey
+			})) as unknown as MpSdk;
+		}
+		editMode.setMpSdk(MatterportSDK);
+		console.log('Matterport SDK connected via', choice, MatterportSDK);
+	}
+
+	function disconnectSdk() {
+		try {
+			if (MatterportSDK && MatterportSDK.disconnect) MatterportSDK.disconnect();
+		} catch (err) {
+			console.error('Matterport SDK disconnect failed:', err);
+		}
+		MatterportSDK = undefined;
+	}
+
+	function reloadIframe() {
+		if (iframe) {
+			iframe.src = iframe.src;
+		}
+	}
+
+	let mounted = false;
+
 	onMount(() => {
 		let handleUnhandledRejection: (ev: PromiseRejectionEvent) => void;
 		(async () => {
 			try {
-				const { setupSdk } = await import('@matterport/sdk');
-				MatterportSDK = await setupSdk(data.matterportSdkKey, { iframe });
-				editMode.setMpSdk(MatterportSDK);
+				await connectSdk(SDK_choice);
 
 				// Suppress noisy analytics/network errors coming from the Matterport SDK (often caused by ad-blockers)
 				handleUnhandledRejection = (ev: PromiseRejectionEvent) => {
@@ -316,24 +347,40 @@
 					}
 				};
 				window.addEventListener('unhandledrejection', handleUnhandledRejection);
-
-				console.log('Matterport SDK connected', MatterportSDK);
+				mounted = true;
 			} catch (e) {
 				console.error('Matterport SDK connection failed:', e);
 			}
 		})();
 
 		return () => {
+			mounted = false;
 			if (handleUnhandledRejection)
 				window.removeEventListener('unhandledrejection', handleUnhandledRejection);
-			// Cleanup edit mode listeners
 			editMode.cleanup();
-			try {
-				if (MatterportSDK && MatterportSDK.disconnect) MatterportSDK.disconnect();
-			} catch (err) {
-				console.error('Matterport SDK disconnect failed:', err);
-			}
+			disconnectSdk();
 		};
+	});
+
+	// Reconnect when SDK_choice changes after initial mount
+	$effect(() => {
+		const choice = SDK_choice;
+		if (!mounted) return;
+
+		// Run async reconnection
+		(async () => {
+			disconnectSdk();
+			reloadIframe();
+			// Wait for iframe to reload before reconnecting
+			await new Promise<void>((resolve) => {
+				iframe.addEventListener('load', () => resolve(), { once: true });
+			});
+			try {
+				await connectSdk(choice);
+			} catch (e) {
+				console.error('Matterport SDK reconnection failed:', e);
+			}
+		})();
 	});
 
 	// Effect to handle form submission result
@@ -349,7 +396,6 @@
 </script>
 
 <div class="h-screen w-full p-6 font-[Poppins] flex flex-col">
-	<!-- Modals -->
 	<PresenceFilterModal
 		title="Filtrer Amiante"
 		bind:show={showAmianteModal}
@@ -390,7 +436,6 @@
 		}}
 	/>
 
-	<!-- PEMD Creation Modal -->
 	<PemdCreateModal
 		show={showPemdCreateModal}
 		pendingPosition={pendingTagPosition}
@@ -400,7 +445,7 @@
 		onClose={closePemdCreateModal}
 	/>
 
-	<div class="mb-6 grid grid-cols-6 gap-4 w-full">
+	<div class="join mb-6 grid grid-cols-7 w-full">
 		<button
 			type="button"
 			title="Afficher les mail tags"
@@ -409,7 +454,7 @@
 				showMail = !showMail;
 				toggleMail();
 			}}
-			class={`btn h-20 ${showMail ? 'bg-blue-50' : ''}`}
+			class={`btn join-item ${showMail ? 'bg-gray-500' : ''}`}
 		>
 			<Mail size={32} class={`transition-transform ${showMail ? 'text-blue-700' : ''}`} />
 		</button>
@@ -426,7 +471,7 @@
 					showAmianteModal = true;
 				}
 			}}
-			class={`btn h-20 ${showAmiante ? 'bg-blue-50' : ''}`}
+			class={`btn join-item ${showAmiante ? 'bg-gray-500' : ''}`}
 		>
 			<img
 				src={tagAmianteImg}
@@ -447,7 +492,7 @@
 					showPlombModal = true;
 				}
 			}}
-			class={`btn h-20 ${showPlomb ? 'bg-blue-50' : ''}`}
+			class={`btn join-item ${showPlomb ? 'bg-gray-500' : ''}`}
 		>
 			<img
 				src={tagPlombImg}
@@ -468,7 +513,7 @@
 					showTermiteModal = true;
 				}
 			}}
-			class={`btn h-20 ${showTermite ? 'bg-blue-50' : ''}`}
+			class={`btn join-item ${showTermite ? 'bg-gray-500' : ''}`}
 		>
 			<img
 				src={tagTermiteImg}
@@ -484,7 +529,7 @@
 			onclick={() => {
 				showPemdModal = true;
 			}}
-			class={`btn h-20 ${showPemd ? 'bg-blue-50' : ''}`}
+			class={`btn join-item ${showPemd ? 'bg-gray-500' : ''}`}
 		>
 			<img
 				src={tagPemdImg}
@@ -498,14 +543,16 @@
 			title={editMode.enabled ? 'Désactiver le mode édition PEMD' : 'Activer le mode édition PEMD'}
 			aria-pressed={editMode.enabled}
 			onclick={() => editMode.toggle()}
-			class={`btn h-20 ${editMode ? 'bg-blue-50' : ''}`}
+			class="btn"
 		>
-			<Pencil
-				size={24}
-				class={`object-contain transition-transform ${editMode ? 'scale-140' : ''}`}
-			/>
+			<Pencil size={20} />
 			Édition
 		</button>
+
+		<select bind:value={SDK_choice} class="select join-item appearance-none">
+			<option selected>NPM</option>
+			<option>Script</option>
+		</select>
 	</div>
 
 	<div class="overflow-hidden rounded-xl border border-gray-200 shadow-sm flex-1 relative">
