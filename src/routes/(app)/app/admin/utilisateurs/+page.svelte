@@ -4,19 +4,8 @@
 	import { enhance } from '$app/forms';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import { invalidateAll } from '$app/navigation';
-	import {
-		Pencil,
-		Users,
-		Folder,
-		Bug,
-		KeyRound,
-		X,
-		UserPlus,
-		UserPen,
-		RefreshCcw,
-		Search,
-		Ban
-	} from 'lucide-svelte';
+	import { Pencil, Users, Folder, Bug, KeyRound, X, RefreshCcw, Search, Ban } from 'lucide-svelte';
+	import CreateUserModal from '$lib/components/CreateUserModal.svelte';
 
 	export let data;
 
@@ -54,7 +43,6 @@
 
 	// Modals
 	let editModal: HTMLDialogElement;
-	let createModal: HTMLDialogElement;
 	let passwordModal: HTMLDialogElement;
 	let banModal: HTMLDialogElement;
 	let deleteModal: HTMLDialogElement;
@@ -82,14 +70,6 @@
 		role: 'user'
 	};
 
-	let createForm = {
-		email: '',
-		password: '',
-		name: '',
-		role: 'user',
-		projetIds: [] as string[]
-	};
-
 	let passwordForm = {
 		newPassword: ''
 	};
@@ -99,7 +79,6 @@
 	};
 
 	// Search filters for project selection
-	let createProjectSearch = '';
 	let modalProjectSearch = '';
 
 	// Get user's projets
@@ -119,12 +98,6 @@
 	}
 
 	// Filter projects based on search
-	$: filteredCreateProjets = projets.filter((p) => {
-		if (!createProjectSearch) return true;
-		const search = createProjectSearch.toLowerCase();
-		return p.libelle.toLowerCase().includes(search) || p.reference.toLowerCase().includes(search);
-	});
-
 	$: filteredModalProjets = projets.filter((p) => {
 		if (!modalProjectSearch) return true;
 		const search = modalProjectSearch.toLowerCase();
@@ -231,60 +204,6 @@
 		} catch (e: unknown) {
 			const message = e instanceof Error ? e.message : 'Échec de la mise à jour';
 			showToast(message, 'error');
-		}
-	}
-
-	// CREATE USER
-	function openCreateModal() {
-		createForm = { email: '', password: '', name: '', role: 'user', projetIds: [] };
-		createProjectSearch = '';
-		createModal?.showModal();
-	}
-
-	function closeCreateModal() {
-		createModal?.close();
-	}
-
-	async function createUser() {
-		try {
-			const res = await authClient.admin.createUser({
-				email: createForm.email,
-				password: createForm.password,
-				name: createForm.name,
-				role: createForm.role as any
-			});
-
-			if (res.data) {
-				const newUserId = res.data.user.id;
-
-				// Assigner les projets si sélectionnés
-				if (createForm.projetIds.length > 0) {
-					const formData = new FormData();
-					formData.append('userId', newUserId);
-					createForm.projetIds.forEach((id) => formData.append('projetIds', id));
-
-					await fetch('?/setProjets', {
-						method: 'POST',
-						body: formData
-					});
-				}
-
-				// Recharger les données du serveur pour obtenir les associations mises à jour
-				await invalidateAll();
-				// Recharger les utilisateurs pour afficher le nouvel utilisateur
-				await loadUsers();
-				closeCreateModal();
-				showToast('Utilisateur créé avec succès');
-			} else if (res.error) {
-				showToast('Échec de la création : ' + res.error.message, 'error');
-			}
-		} catch (e: unknown) {
-			if (e instanceof Error) {
-				console.log(e.message || 'Échec du chargement des utilisateurs');
-				showToast("Échec de la création de l'utilisateur", 'error');
-			} else {
-				console.log(String(e));
-			}
 		}
 	}
 
@@ -430,117 +349,11 @@
 				<p class="mt-2 text-sm">Gérez les utilisateurs, leurs rôles et leurs accès.</p>
 			</div>
 			<div class="mt-4 flex flex-wrap gap-3 sm:mt-0">
-				<button on:click={openCreateModal} class="btn">
-					<UserPen size={24} />
-					Nouvel utilisateur
-				</button>
-				<dialog bind:this={createModal} class="modal">
-					<div class="modal-box">
-						<div class="flex items-center gap-3 mb-6">
-							<div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
-								<UserPlus />
-							</div>
-							<h3 class="text-lg font-semibold">Créer un utilisateur</h3>
-						</div>
-						<div class="space-y-4">
-							<div>
-								<label for="create-name" class="block text-sm font-medium mb-1.5">Nom</label>
-								<input
-									id="create-name"
-									bind:value={createForm.name}
-									type="text"
-									placeholder="Jean Dupont"
-									class="input"
-								/>
-							</div>
-							<div>
-								<label for="create-email" class="block text-sm font-medium mb-1.5">Email</label>
-								<input
-									id="create-email"
-									bind:value={createForm.email}
-									type="email"
-									placeholder="jean.dupont@exemple.com"
-									class="input"
-								/>
-							</div>
-							<div>
-								<label for="create-password" class="block text-sm font-medium mb-1.5"
-									>Mot de passe</label
-								>
-								<input
-									id="create-password"
-									bind:value={createForm.password}
-									type="password"
-									autocomplete="new-password"
-									placeholder="••••••••"
-									class="input"
-								/>
-							</div>
-							<div>
-								<label for="create-role" class="block text-sm font-medium mb-1.5">Rôle</label>
-								<select id="create-role" bind:value={createForm.role} class="select">
-									<option value="user">Utilisateur</option>
-									<option value="collaborator">Collaborateur</option>
-									<option value="admin">Administrateur</option>
-								</select>
-							</div>
-							<div>
-								<label for="create-projets" class="block text-sm font-medium mb-1.5">Projets</label>
-								<label class="relative mb-2">
-									<Search />
-									<input
-										type="search"
-										bind:value={createProjectSearch}
-										placeholder="Rechercher un projet..."
-									/>
-								</label>
-								<div class="max-h-40 overflow-y-auto rounded-lg border border-slate-300 p-2">
-									{#if projets.length === 0}
-										<p class="text-sm py-2 px-2">Aucun projet disponible</p>
-									{:else if filteredCreateProjets.length === 0}
-										<p class="text-sm py-2 px-2">Aucun projet trouvé</p>
-									{:else}
-										{#each filteredCreateProjets as p (p.id)}
-											<label
-												class="flex items-center gap-2 rounded px-2 py-1.5 hover: cursor-pointer"
-											>
-												<input
-													type="checkbox"
-													value={p.id}
-													checked={createForm.projetIds.includes(p.id)}
-													on:change={(e) => {
-														if (e.currentTarget.checked) {
-															createForm.projetIds = [...createForm.projetIds, p.id];
-														} else {
-															createForm.projetIds = createForm.projetIds.filter(
-																(id) => id !== p.id
-															);
-														}
-													}}
-													class="checkbox"
-												/>
-												<span class="text-sm"
-													>{p.libelle} <span class="">({p.reference})</span></span
-												>
-											</label>
-										{/each}
-									{/if}
-								</div>
-								{#if createForm.projetIds.length > 0}
-									<p class="text-xs mt-1">
-										{createForm.projetIds.length} projet(s) sélectionné(s)
-									</p>
-								{/if}
-							</div>
-						</div>
-						<div class="modal-action">
-							<button type="button" class="btn btn-warning" on:click={closeCreateModal}
-								>Annuler</button
-							>
-							<button type="button" class="btn btn-secondary" on:click={createUser}>Créer</button>
-						</div>
-					</div>
-				</dialog>
+				<CreateUserModal
+					{projets}
+					on:created={loadUsers}
+					on:toast={(e) => showToast(e.detail.message, e.detail.type)}
+				/>
 				<button on:click={loadUsers} class="btn">
 					<RefreshCcw size={20} />
 					Actualiser
