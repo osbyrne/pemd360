@@ -185,7 +185,7 @@
 										<img
 											src={item.image}
 											alt="Miniature"
-											class="h-16 w-16 object-cover rounded shadow-sm bg-white"
+											class="h-16 w-16 object-cover rounded shadow-sm"
 										/>
 									{:else}
 										<span class="text-xs">N/A</span>
