@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { fade, scale } from 'svelte/transition';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import {
@@ -228,7 +227,6 @@
 											{#if openDropdownId === proj.id}
 												<div
 													class="absolute right-0 mt-2 w-48 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 z-10"
-													transition:scale={{ duration: 100 }}
 												>
 													<div class="py-1">
 														<a
@@ -284,13 +282,10 @@
 <!-- MODAL : Supprimer -->
 {#if isDeleteModalOpen && selectedProjet}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 /60 backdrop-blur-sm transition-opacity" transition:fade></div>
+		<div class="fixed inset-0 /60 backdrop-blur-sm transition-opacity"></div>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
 			<div class="flex min-h-full items-center justify-center p-4">
-				<div
-					class="relative w-full max-w-md transform overflow-hidden rounded-2xl shadow-2xl transition-all"
-					transition:scale
-				>
+				<div class="relative w-full max-w-md transform overflow-hidden rounded-2xl shadow-2xl">
 					<form
 						method="POST"
 						action="?/delete"

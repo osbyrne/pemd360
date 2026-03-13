@@ -1,7 +1,6 @@
 export { default as Header } from './Header.svelte';
 export { default as Footer } from './Footer.svelte';
 export { default as Tabs } from './Tabs.svelte';
-export { default as RiskTabs } from './RiskTabs.svelte';
 export { default as PemdTabs } from './PemdTabs.svelte';
 export { default as CerfaTabs } from './CerfaTabs.svelte';
 export { default as DeleteConfirmModal } from './DeleteConfirmModal.svelte';

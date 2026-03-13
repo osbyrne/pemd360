@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Info, Search, MapPin, Calendar, Building2, ChevronRight, Box } from 'lucide-svelte';
 	import type { PageData } from './$types';
-	import { fade, fly } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
 	import { onMount } from 'svelte';
 
@@ -109,10 +108,7 @@
 		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 			{#if filteredProjets.length === 0}
 				<!-- Empty State -->
-				<div
-					class="flex flex-col items-center justify-center py-20 text-center"
-					in:fade={{ duration: 300 }}
-				>
+				<div class="flex flex-col items-center justify-center py-20 text-center">
 					<h3 class="text-xl font-semibold mb-2">
 						{searchQuery ? 'Aucun résultat' : 'Aucun projet disponible'}
 					</h3>
@@ -174,7 +170,7 @@
 
 			<!-- Results count -->
 			{#if filteredProjets.length > 0 && searchQuery}
-				<p class="mt-6 text-center text-sm" in:fade>
+				<p class="mt-6 text-center text-sm">
 					{filteredProjets.length} résultat{filteredProjets.length > 1 ? 's' : ''} pour "{searchQuery}"
 				</p>
 			{/if}

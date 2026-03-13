@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { fade, scale } from 'svelte/transition';
 	import { Pencil, Trash2, Search, Plus, X, Save } from 'lucide-svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import DeleteConfirmModal from '$lib/components/DeleteConfirmModal.svelte';
@@ -186,7 +185,6 @@
 	>
 		<div
 			class="fixed inset-0 backdrop-blur-sm transition-opacity"
-			transition:fade
 			role="button"
 			tabindex="-1"
 			onclick={closeModal}
@@ -194,7 +192,6 @@
 		></div>
 		<div
 			class="relative w-full max-w-lg rounded-xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]"
-			transition:scale={{ start: 0.95 }}
 		>
 			<!-- Modal Header -->
 			<div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">

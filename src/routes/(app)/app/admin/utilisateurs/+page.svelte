@@ -87,9 +87,9 @@
 			});
 
 			if (res.data) {
-				users = (res.data.users as unknown as User[]).map((u) => ({
-					...u,
-					projetIds: getUserProjets(u.id)
+				users = (res.data.users as unknown as User[]).map((user) => ({
+					...user,
+					projetIds: getUserProjets(user.id)
 				}));
 			} else {
 				if (res.error) error = res.error.message || 'Une erreur est survenue';
@@ -173,10 +173,6 @@
 					on:created={loadUsers}
 					on:toast={(e) => showToast(e.detail.message, e.detail.type)}
 				/>
-				<button on:click={loadUsers} class="btn">
-					<RefreshCcw size={20} />
-					Actualiser
-				</button>
 			</div>
 		</div>
 	</div>

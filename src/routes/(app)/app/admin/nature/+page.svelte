@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { fade, scale } from 'svelte/transition';
 	import { Pencil, Trash2, Plus, X, Search } from 'lucide-svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import DeleteConfirmModal from '$lib/components/DeleteConfirmModal.svelte';
@@ -201,13 +200,11 @@
 		<button
 			type="button"
 			class="fixed inset-0 backdrop-blur-sm transition-opacity cursor-default w-full h-full border-0"
-			transition:fade
 			onclick={closeModal}
 			aria-label="Fermer la modal"
 		></button>
 		<div
 			class="relative w-full max-w-2xl rounded-xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]"
-			transition:scale={{ start: 0.95 }}
 		>
 			<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
 				<h3 class="text-lg font-semibold">

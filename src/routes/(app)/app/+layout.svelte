@@ -2,7 +2,6 @@
 	import { authClient } from '$lib/auth-client';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { fade } from 'svelte/transition';
 	import logoPEMD from '$lib/assets/pemd360.png';
 	import {
 		Menu,
@@ -16,7 +15,6 @@
 		Files,
 		Hammer
 	} from 'lucide-svelte';
-	import { slide } from 'svelte/transition';
 
 	let { children, data } = $props();
 
@@ -132,7 +130,7 @@
 			icon: Files,
 			subItems: [
 				{
-					href: '/app/admin/amiante',
+					href: '/app/admin/risques',
 					label: 'Inventaire risques',
 					icon: ClipboardList
 				},
@@ -238,11 +236,7 @@
 	{#if sidebarOpen}
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div
-			class="absolute inset-0 z-40 lg:hidden"
-			onclick={() => (sidebarOpen = false)}
-			transition:fade={{ duration: 200 }}
-		></div>
+		<div class="absolute inset-0 z-40 lg:hidden" onclick={() => (sidebarOpen = false)}></div>
 	{/if}
 
 	<!-- Sidebar -->
@@ -283,7 +277,7 @@
 						</button>
 
 						{#if expandedMenus[link.label]}
-							<div class="space-y-1 py-1" transition:slide={{ duration: 200 }}>
+							<div class="space-y-1 py-1">
 								{#each link.subItems as subLink (subLink.href)}
 									{#if !subLink.adminOnly || isAdmin}
 										<a

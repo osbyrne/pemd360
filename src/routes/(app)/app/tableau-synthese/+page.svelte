@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { fade, scale } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import { page as pageStore } from '$app/stores';
 	import { Trash2, QrCode, Download, Search, X } from 'lucide-svelte';
@@ -254,16 +253,12 @@
 	>
 		<div
 			class="fixed inset-0 backdrop-blur-sm transition-opacity"
-			transition:fade
 			onclick={closeModal}
 			onkeydown={(e) => e.key === 'Escape' && closeModal()}
 			role="button"
 			tabindex="-1"
 		></div>
-		<div
-			class="relative w-full max-w-md rounded-xl shadow-xl overflow-hidden"
-			transition:scale={{ start: 0.95 }}
-		>
+		<div class="relative w-full max-w-md rounded-xl shadow-xl overflow-hidden">
 			<div class="p-6">
 				<h3 class="text-lg font-semibold mb-2">Confirmer la suppression</h3>
 				<p class="text-sm mb-6">
@@ -290,16 +285,12 @@
 	>
 		<div
 			class="fixed inset-0 backdrop-blur-sm transition-opacity"
-			transition:fade
 			onclick={closeModal}
 			onkeydown={(e) => e.key === 'Escape' && closeModal()}
 			role="button"
 			tabindex="-1"
 		></div>
-		<div
-			class="relative w-full max-w-md rounded-xl shadow-xl overflow-hidden p-6"
-			transition:scale={{ start: 0.95 }}
-		>
+		<div class="relative w-full max-w-md rounded-xl shadow-xl overflow-hidden p-6">
 			<div class="flex justify-between items-center mb-4">
 				<h3 class="text-lg font-semibold">QR Code</h3>
 				<button onclick={closeModal} class="btn" aria-label="Fermer">

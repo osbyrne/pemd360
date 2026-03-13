@@ -6,11 +6,12 @@
 		isOpen: boolean;
 		itemLabel: string;
 		itemId: string | number | null;
+		riskType?: string | null;
 		onClose: () => void;
 		onSuccess?: () => void;
 	}
 
-	let { isOpen, itemLabel, itemId, onClose, onSuccess }: Props = $props();
+	let { isOpen, itemLabel, itemId, riskType = null, onClose, onSuccess }: Props = $props();
 
 	function handleFormResult() {
 		return async ({ result, update }: any) => {
@@ -54,6 +55,9 @@
 					class="w-full flex gap-3"
 				>
 					<input type="hidden" name="id" value={itemId} />
+					{#if riskType}
+						<input type="hidden" name="riskType" value={riskType} />
+					{/if}
 					<button type="button" onclick={onClose} class="btn"> Annuler </button>
 					<button type="submit" class="btn btn-warning"> Supprimer </button>
 				</form>
