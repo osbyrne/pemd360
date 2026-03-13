@@ -2,16 +2,7 @@
 	import type { PageData } from './$types';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
-	import {
-		Plus,
-		Download,
-		Search,
-		ChartNoAxesCombined,
-		MoreHorizontal,
-		Eye,
-		Pencil,
-		Trash2
-	} from 'lucide-svelte';
+	import { Plus, Download, Search, ChartNoAxesCombined, Eye, Pencil, Trash2 } from 'lucide-svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
 
 	let { data }: { data: PageData } = $props();
@@ -215,51 +206,32 @@
 									<span class="text-sm">{formatDate(proj.dateDemarrage)}</span>
 								</td>
 								<td class="px-6 py-4">
-									<div class="flex items-center justify-end">
-										<div class="relative">
-											<button
-												onclick={() => toggleDropdown(proj.id)}
-												class="rounded-lg p-2 transition-colors hover: hover:"
-												title="Actions"
-											>
-												<MoreHorizontal size={18} />
-											</button>
-											{#if openDropdownId === proj.id}
-												<div
-													class="absolute right-0 mt-2 w-48 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 z-10"
-												>
-													<div class="py-1">
-														<a
-															href="/app/admin/projets/{proj.id}"
-															class="flex items-center gap-3 px-4 py-2 text-sm hover: transition-colors"
-															onclick={closeDropdown}
-														>
-															<Eye size={16} />
-															Voir
-														</a>
-														<a
-															href="/app/admin/projets/{proj.id}/modifier"
-															class="flex items-center gap-3 px-4 py-2 text-sm hover: transition-colors"
-															onclick={closeDropdown}
-														>
-															<Pencil size={16} />
-															Modifier
-														</a>
-														<button
-															onclick={() => {
-																openDeleteModal(proj);
-																closeDropdown();
-															}}
-															class="flex w-full items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-														>
-															<Trash2 size={16} />
-															Supprimer
-														</button>
-													</div>
-												</div>
-											{/if}
-										</div>
-									</div>
+									<a
+										href="/app/admin/projets/{proj.id}"
+										class="btn btn-ghost"
+										onclick={closeDropdown}
+									>
+										<Eye size={16} />
+										Voir
+									</a>
+									<a
+										href="/app/admin/projets/{proj.id}/modifier"
+										class="btn btn-ghost"
+										onclick={closeDropdown}
+									>
+										<Pencil size={16} />
+										Modifier
+									</a>
+									<button
+										onclick={() => {
+											openDeleteModal(proj);
+											closeDropdown();
+										}}
+										class="btn btn-ghost"
+									>
+										<Trash2 size={16} />
+										Supprimer
+									</button>
 								</td>
 							</tr>
 						{/each}
@@ -282,49 +254,39 @@
 <!-- MODAL : Supprimer -->
 {#if isDeleteModalOpen && selectedProjet}
 	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 /60 backdrop-blur-sm transition-opacity"></div>
 		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-			<div class="flex min-h-full items-center justify-center p-4">
-				<div class="relative w-full max-w-md transform overflow-hidden rounded-2xl shadow-2xl">
-					<form
-						method="POST"
-						action="?/delete"
-						use:enhance={() => {
-							return async ({ result }) => {
-								if (result.type === 'success') {
-									closeDeleteModal();
-									showToast('Projet supprimé avec succès');
-									await invalidateAll();
-								} else {
-									showToast('Échec de la suppression', 'error');
-								}
-							};
-						}}
-					>
-						<input type="hidden" name="projetId" value={selectedProjet.id} />
-						<div class="px-6 py-5">
-							<div class="flex items-center gap-3 mb-6">
-								<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-									<Trash2 size={20} class="text-red-600" />
-								</div>
-								<div>
-									<h3 class="text-lg font-semibold">Supprimer le projet</h3>
-									<p class="text-sm">{selectedProjet.libelle}</p>
-								</div>
-							</div>
-							<div class="rounded-lg bg-red-50 border border-red-200 p-4">
-								<p class="text-sm text-red-800">
-									<strong>Attention :</strong> Cette action est irréversible. Toutes les données associées
-									à ce projet seront définitivement supprimées.
-								</p>
+			<div class="flex min-h-full items-center justify-center">
+				<form
+					method="POST"
+					action="?/delete"
+					use:enhance={() => {
+						return async ({ result }) => {
+							if (result.type === 'success') {
+								closeDeleteModal();
+								showToast('Projet supprimé avec succès');
+								await invalidateAll();
+							} else {
+								showToast('Échec de la suppression', 'error');
+							}
+						};
+					}}
+				>
+					<input type="hidden" name="projetId" value={selectedProjet.id} />
+					<div class="px-6 py-5">
+						<div class="flex items-center gap-3 mb-6">
+							<div>
+								<h3 class="text-lg font-semibold">Supprimer le projet</h3>
+								<p class="text-sm">{selectedProjet.libelle}</p>
 							</div>
 						</div>
-						<div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
-							<button type="button" class="btn" onclick={closeDeleteModal}> Annuler </button>
-							<button type="submit" class="btn btn-warning"> Supprimer définitivement </button>
-						</div>
-					</form>
-				</div>
+						<p class="text-sm text-red-800">
+							<strong>Attention :</strong> Cette action est irréversible. Toutes les données associées
+							à ce projet seront définitivement supprimées.
+						</p>
+					</div>
+					<button type="button" class="btn" onclick={closeDeleteModal}> Annuler </button>
+					<button type="submit" class="btn btn-warning"> Supprimer définitivement </button>
+				</form>
 			</div>
 		</div>
 	</div>
