@@ -135,7 +135,7 @@
 
 				<div class="space-y-4">
 					<!-- Section: Identification du matériau -->
-					<div class="border-b border-gray-200 pb-4">
+					<div class=" pb-4">
 						<h4 class="text-sm font-semibold mb-3 flex items-center gap-2">
 							<span class="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
 							Identification du matériau <span class="text-red-500">*</span>
@@ -247,7 +247,7 @@
 					</div>
 
 					<!-- Section: Informations complémentaires (optionnel) -->
-					<div class="border-b border-gray-200 pb-4">
+					<div class=" pb-4">
 						<h4 class="text-sm font-semibold mb-3 flex items-center gap-2">
 							<span class="w-1.5 h-1.5 rounded-full"></span>
 							Informations complémentaires
@@ -308,7 +308,7 @@
 					</div>
 
 					<!-- Section: Dimensions (optionnel) -->
-					<div class="border-b border-gray-200 pb-4">
+					<div class="pb-4">
 						<h4 class="text-sm font-semibold mb-3 flex items-center gap-2">
 							<span class="w-1.5 h-1.5 rounded-full"></span>
 							Dimensions <span class="text-xs font-normal">(optionnel)</span>

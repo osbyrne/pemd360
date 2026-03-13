@@ -174,10 +174,10 @@
 	</div>
 
 	<!-- Tableau des déchets (Simple & Clean) -->
-	<div class="border border-gray-200 shadow-sm rounded-lg overflow-hidden flex flex-col">
+	<div class="overflow-hidden flex flex-col">
 		<div class="overflow-x-auto">
 			<table class="table">
-				<thead class=" border-b border-gray-200">
+				<thead>
 					<tr>
 						<th class="px-4 py-3 font-semibold whitespace-nowrap min-w-75">Catégorie / Nature</th>
 						<th class="px-4 py-3 font-semibold whitespace-nowrap">Code</th>

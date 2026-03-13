@@ -194,7 +194,7 @@
 			class="relative w-full max-w-lg rounded-xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]"
 		>
 			<!-- Modal Header -->
-			<div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+			<div class="px-6 py-4 flex items-center justify-between">
 				<h2 class="text-lg font-semibold">
 					{isEditMode ? 'Modifier la catégorie' : 'Nouvelle catégorie'}
 				</h2>

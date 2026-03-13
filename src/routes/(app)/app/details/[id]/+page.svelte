@@ -131,7 +131,7 @@
 							</div>
 
 							<div class="space-y-3">
-								<div class="p-3 rounded-lg border border-blue-100">
+								<div class="p-3">
 									<p class="text-xs text-blue-600 mb-1 uppercase tracking-wide font-medium">
 										Démarrage
 									</p>
@@ -141,7 +141,7 @@
 								</div>
 
 								{#if data.projet.dateDeFin}
-									<div class="p-3 rounded-lg border border-purple-100">
+									<div class="p-3">
 										<p class="text-xs text-purple-600 mb-1 uppercase tracking-wide font-medium">
 											Fin prévue
 										</p>

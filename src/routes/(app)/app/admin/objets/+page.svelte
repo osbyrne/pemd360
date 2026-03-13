@@ -107,7 +107,7 @@
 <div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
 	<div class="overflow-x-auto">
 		<table class="table">
-			<thead class=" text-xs uppercase font-semibold border-b border-gray-200">
+			<thead class=" text-xs uppercase font-semibold">
 				<tr>
 					<th class="px-6 py-4 w-20">ID</th>
 					<th class="px-6 py-4">Objet</th>
@@ -115,21 +115,13 @@
 					<th class="px-6 py-4 text-center w-32">Actions</th>
 				</tr>
 			</thead>
-			<tbody class="divide-y divide-gray-100">
+			<tbody>
 				{#each displayedList as objet}
-					<tr class="hover: transition-colors">
+					<tr>
 						<td class="px-6 py-4 font-mono">#{objet.id}</td>
 						<td class="px-6 py-4 font-medium">{objet.objet}</td>
 						<td class="px-6 py-4">
-							{#if objet.categorieName}
-								<span
-									class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800"
-								>
-									{objet.categorieName}
-								</span>
-							{:else}
-								<span class="">-</span>
-							{/if}
+							{objet.categorieName}
 						</td>
 						<td class="px-6 py-4">
 							<div class="flex items-center justify-center gap-2">
@@ -178,7 +170,7 @@
 		aria-modal="true"
 	>
 		<div
-			class="fixed inset-0 backdrop-blur-sm transition-opacity"
+			class="fixed inset-0"
 			role="button"
 			tabindex="-1"
 			onclick={closeModal}
@@ -188,7 +180,7 @@
 			class="relative w-full max-w-lg rounded-xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]"
 		>
 			<!-- Modal Header -->
-			<div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+			<div class="px-6 py-4 flex items-center justify-between">
 				<h2 class="text-lg font-semibold">
 					{isEditMode ? "Modifier l'objet" : 'Nouvel objet'}
 				</h2>
@@ -246,7 +238,7 @@
 			</div>
 
 			<!-- Modal Footer -->
-			<div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
+			<div class="px-6 py-4 flex justify-end gap-3">
 				<button type="button" onclick={closeModal} class="btn"> Annuler </button>
 				<button type="submit" form="objetForm" class="btn">
 					<Save class="w-4 h-4" />

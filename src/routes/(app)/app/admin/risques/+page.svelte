@@ -95,7 +95,7 @@
 </div>
 
 <table class="table">
-	<thead class=" text-xs uppercase font-semibold border-b border-gray-200">
+	<thead class=" text-xs uppercase font-semibold">
 		<tr>
 			<th class="px-6 py-4">Nom du prélèvement</th>
 			<th class="px-6 py-4">Description</th>

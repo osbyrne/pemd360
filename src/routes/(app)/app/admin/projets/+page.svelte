@@ -153,7 +153,7 @@
 	<br />
 
 	<!-- Table -->
-	<div class="rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+	<div class="overflow-hidden">
 		{#if displayedProjets.length === 0}
 			<div class="flex flex-col items-center justify-center py-16 px-4">
 				<ChartNoAxesCombined size={48} strokeWidth={1.5} class=" mb-4" />
@@ -163,7 +163,7 @@
 		{:else}
 			<div class="overflow-x-auto">
 				<table class="table">
-					<thead class="border-b">
+					<thead>
 						<tr>
 							<th>ID Matterport</th>
 							<th>Référence</th>

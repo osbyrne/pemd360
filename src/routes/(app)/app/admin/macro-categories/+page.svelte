@@ -100,10 +100,10 @@
 	<br />
 
 	<!-- Table -->
-	<div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+	<div class="rounded-xl shadow-sm overflow-hidden">
 		<div class="overflow-x-auto">
 			<table class="table">
-				<thead class=" text-xs uppercase font-semibold border-b border-gray-200">
+				<thead class=" text-xs uppercase font-semibold">
 					<tr>
 						<th class="px-6 py-4 w-20">ID</th>
 						<th class="px-6 py-4">Groupe</th>
@@ -177,7 +177,7 @@
 			class="relative w-full max-w-lg rounded-xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]"
 		>
 			<!-- Modal Header -->
-			<div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+			<div class="px-6 py-4 flex items-center justify-between">
 				<h2 class="text-lg font-semibold">
 					{isEditMode ? 'Modifier la macro-catégorie' : 'Nouvelle macro-catégorie'}
 				</h2>

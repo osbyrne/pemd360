@@ -119,10 +119,10 @@
 	<br />
 
 	<!-- Table -->
-	<div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+	<div class="rounded-xl shadow-sm overflow-hidden">
 		<div class="overflow-x-auto">
 			<table class="table">
-				<thead class=" text-xs uppercase font-semibold border-b border-gray-200">
+				<thead class=" text-xs uppercase font-semibold">
 					<tr>
 						<th class="px-6 py-4">Nature</th>
 						<th class="px-6 py-4">Code Déchet</th>
@@ -133,18 +133,16 @@
 				</thead>
 				<tbody class="divide-y divide-gray-100">
 					{#each displayedList as nature}
-						<tr class="hover: transition-colors">
+						<tr>
 							<td class="px-6 py-4 font-medium">{nature.nature}</td>
 							<td class="px-6 py-4 font-mono">{nature.codeDechet || '-'}</td>
 							<td class="px-6 py-4">{nature.densite || '-'}</td>
 							<td class="px-6 py-4 text-center">
-								<div
-									class="inline-flex items-center justify-center w-6 h-6 rounded-full {nature.recyclable
-										? 'bg-green-100 text-green-600'
-										: ''}"
-								>
-									{#if nature.recyclable}✓{/if}
-								</div>
+								{#if nature.recyclable}
+									<input type="checkbox" class="checkbox" disabled checked={true} />
+								{:else}
+									<input type="checkbox" class="checkbox" disabled checked={false} />
+								{/if}
 							</td>
 							<td class="px-6 py-4">
 								<div class="flex items-center justify-center gap-2">
@@ -206,7 +204,7 @@
 		<div
 			class="relative w-full max-w-2xl rounded-xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]"
 		>
-			<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+			<div class="flex items-center justify-between px-6 py-4">
 				<h3 class="text-lg font-semibold">
 					{isEditMode ? 'Modifier la nature' : 'Ajouter une nature'}
 				</h3>

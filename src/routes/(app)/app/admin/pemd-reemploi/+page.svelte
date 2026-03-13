@@ -97,10 +97,10 @@
 		</label>
 	</div>
 
-	<div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+	<div class="overflow-hidden">
 		<div class="overflow-x-auto">
 			<table class="table">
-				<thead class=" text-xs uppercase font-semibold border-b border-gray-200">
+				<thead class=" text-xs uppercase font-semibold">
 					<tr>
 						<th class="px-6 py-4">PEMD</th>
 						<th class="px-6 py-4">Description</th>
@@ -252,7 +252,7 @@
 			tabindex="-1"
 		></div>
 		<div class="relative w-full max-w-2xl rounded-xl shadow-xl overflow-hidden">
-			<div class="flex justify-between items-center p-6 border-b border-gray-200">
+			<div class="flex justify-between items-center p-6">
 				<h3 class="text-xl font-semibold">Carte PEMD</h3>
 				<button onclick={closeModal} class=" hover: transition-colors" aria-label="Fermer">
 					<X class="w-6 h-6" />

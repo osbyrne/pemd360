@@ -32,7 +32,7 @@
 	}
 </script>
 
-<div class="border-b border-gray-200 mb-6 -mx-6 px-6 sticky top-0 z-10">
+<div class=" mb-6 -mx-6 px-6 sticky top-0 z-10">
 	<div class="flex justify-between items-center">
 		<nav class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
 			{#each tabs as tab}
@@ -40,10 +40,10 @@
 				<a
 					href={buildHref(tab.href)}
 					class="
-                    group inline-flex items-center py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap
+                    group inline-flex items-center py-4 px-1 font-medium text-sm whitespace-nowrap
                     {isActive
 						? 'border-emerald-500 text-emerald-600'
-						: 'border-transparent hover: hover:border-gray-300'}
+						: 'border-transparent hover: '}
                 "
 					aria-current={isActive ? 'page' : undefined}
 				>
