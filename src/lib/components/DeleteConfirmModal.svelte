@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { fade, scale } from 'svelte/transition';
 	import { Trash2 } from 'lucide-svelte';
 
 	interface Props {
@@ -31,17 +30,13 @@
 		aria-modal="true"
 	>
 		<div
-			class="fixed inset-0 backdrop-blur-sm transition-opacity"
-			transition:fade
+			class="modal fixed inset-0"
 			role="button"
 			tabindex="-1"
 			onclick={onClose}
 			onkeydown={(e) => e.key === 'Escape' && onClose()}
 		></div>
-		<div
-			class="relative w-full max-w-md rounded-xl shadow-xl overflow-hidden p-6"
-			transition:scale={{ start: 0.95 }}
-		>
+		<div class="relative w-full max-w-md overflow-hidden p-6">
 			<div class="flex flex-col items-center text-center">
 				<div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
 					<Trash2 class="w-6 h-6 " />

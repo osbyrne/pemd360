@@ -107,10 +107,10 @@
 <br />
 
 <!-- Table -->
-<div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+<div class="rounded-xl shadow-sm overflow-hidden">
 	<div class="overflow-x-auto">
 		<table class="table">
-			<thead class=" text-xs uppercase font-semibold border-b border-gray-200">
+			<thead class=" text-xs uppercase font-semibold">
 				<tr>
 					<th class="px-6 py-4 w-20">ID</th>
 					<th class="px-6 py-4">Catégorie</th>
@@ -118,7 +118,7 @@
 					<th class="px-6 py-4 text-center w-32">Actions</th>
 				</tr>
 			</thead>
-			<tbody class="divide-y divide-gray-100">
+			<tbody>
 				{#each displayedList as category}
 					<tr class="hover: transition-colors">
 						<td class="px-6 py-4 font-mono">#{category.id}</td>

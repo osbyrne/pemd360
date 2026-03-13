@@ -161,9 +161,9 @@
 				<p class="mt-1 text-sm">Essayez de modifier vos critères de recherche</p>
 			</div>
 		{:else}
-			<div class="divide-y divide-slate-100">
+			<ul class="list bg-base-100 rounded-box shadow-md">
 				{#each displayedEtabs as etab (etab.id)}
-					<div class="flex items-center gap-4 p-4 transition-colors hover:">
+					<li class="list-row flex">
 						<!-- Info -->
 						<div class="min-w-0 flex-1">
 							<div class="flex items-center gap-2">
@@ -210,9 +210,9 @@
 								<Trash2 size={18} />
 							</button>
 						</div>
-					</div>
+					</li>
 				{/each}
-			</div>
+			</ul>
 		{/if}
 
 		<!-- Pagination -->

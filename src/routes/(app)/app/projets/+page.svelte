@@ -124,54 +124,52 @@
 				</div>
 			{:else}
 				<!-- List View -->
-				<div class="rounded-2xl border overflow-hidden">
-					<div class="divide-y">
-						{#each filteredProjets as projet, i (projet.id)}
-							<div
-								class="group flex items-center gap-6 p-5 hover:/50 transition-colors"
-								in:fly={{ x: -20, duration: 300, delay: 300 + i * 30 }}
-								animate:flip={{ duration: 300 }}
-							>
-								<!-- Info -->
-								<div class="flex-1 min-w-0">
-									<h3 class="font-semibold truncate mb-1">
-										{projet.libelle}
-									</h3>
-									<div class="flex flex-wrap items-center gap-4 text-sm">
-										<span class="font-mono">{projet.reference}</span>
-										{#if projet.societeNom}
-											<span class="flex items-center gap-1 text-emerald-700 font-medium">
-												<Building2 class="h-3.5 w-3.5" />
-												{projet.societeNom}
-											</span>
-										{/if}
-										<span class="flex items-center gap-1">
-											<MapPin class="h-3.5 w-3.5" />
-											{projet.ville}
+				<ul class="list bg-base-100 rounded-box shadow-md">
+					{#each filteredProjets as projet, i (projet.id)}
+						<li
+							class="list-row flex"
+							in:fly={{ x: -20, duration: 300, delay: 300 + i * 30 }}
+							animate:flip={{ duration: 300 }}
+						>
+							<!-- Info -->
+							<div class="flex-1 min-w-0">
+								<h3 class="font-semibold truncate mb-1">
+									{projet.libelle}
+								</h3>
+								<div class="flex flex-wrap items-center gap-4 text-sm">
+									<span class="font-mono">{projet.reference}</span>
+									{#if projet.societeNom}
+										<span class="flex items-center gap-1 text-gray-500 font-medium">
+											<Building2 class="h-3.5 w-3.5" />
+											{projet.societeNom}
 										</span>
-										<span class="hidden md:flex items-center gap-1">
-											<Calendar class="h-3.5 w-3.5" />
-											{formatDate(projet.dateDemarrage)}
-										</span>
-									</div>
-								</div>
-
-								<!-- Actions -->
-								<div class="flex items-center gap-2">
-									<a href="/app/details/{projet.id}" class="btn btn-ghost" title="Voir les détails">
-										<Info class="h-5 w-5" />
-									</a>
-									<a href="/app/projets/{projet.id}" class="btn btn-ghost">
-										<span class="hidden sm:inline">Modèle 3D</span>
-									</a>
-									<a href="/app/cerfa/informations?projetId={projet.id}" class="btn btn-ghost"
-										>Cerfa</a
-									>
+									{/if}
+									<span class="flex items-center gap-1">
+										<MapPin class="h-3.5 w-3.5" />
+										{projet.ville}
+									</span>
+									<span class="hidden md:flex items-center gap-1">
+										<Calendar class="h-3.5 w-3.5" />
+										{formatDate(projet.dateDemarrage)}
+									</span>
 								</div>
 							</div>
-						{/each}
-					</div>
-				</div>
+
+							<!-- Actions -->
+							<div class="flex items-center gap-2">
+								<a href="/app/details/{projet.id}" class="btn btn-ghost" title="Voir les détails">
+									<Info class="h-5 w-5" />
+								</a>
+								<a href="/app/projets/{projet.id}" class="btn btn-ghost">
+									<span class="hidden sm:inline">Modèle 3D</span>
+								</a>
+								<a href="/app/cerfa/informations?projetId={projet.id}" class="btn btn-ghost"
+									>Cerfa</a
+								>
+							</div>
+						</li>
+					{/each}
+				</ul>
 			{/if}
 
 			<!-- Results count -->

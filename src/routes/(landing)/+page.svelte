@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import logoPEMD from '$lib/assets/pemd360.png';
-	import slideNumerisation from '$lib/assets/dépollution_8036_Copie.jpg';
-	import slideSuivi from '$lib/assets/suivi.jpg';
-	import slideDiagnostic from '$lib/assets/model_accueil.jpg';
+	import slideNumerisation from '$lib/assets/depollution.jpeg';
+	import slideSuivi from '$lib/assets/suivi.jpeg';
+	import slideDiagnostic from '$lib/assets/model_accueil.jpeg';
 	import { ChevronLeft, ChevronRight, Play } from 'lucide-svelte';
 
 	// Carousel state
