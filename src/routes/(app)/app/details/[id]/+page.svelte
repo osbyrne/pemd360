@@ -27,7 +27,7 @@
 	{#if mounted}
 		<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 			<!-- Header compact -->
-			<div class=" rounded-xl p-6 mb-6">
+			<div class="rounded-xl p-6 mb-6">
 				<h1 class="text-3xl font-bold">{data.projet.libelle}</h1>
 
 				<a href="/api/projects/{data.projet.id}/cerfa" download class="btn">
@@ -181,7 +181,7 @@
 
 					<!-- Type opération -->
 					{#if data.projet.typeOperation}
-						<div class=" rounded-xl p-5 text-white">
+						<div class="rounded-xl p-5 text-white">
 							<div class="flex items-center gap-2.5 mb-3">
 								<div class="p-2 backdrop-blur-sm rounded-lg">
 									<Target class="h-4 w-4" />

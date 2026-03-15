@@ -120,7 +120,7 @@
 </section>
 
 <!-- Diagnostic PEMD Section -->
-<section id="pemd" class=" py-16 lg:py-24">
+<section id="pemd" class="py-16 lg:py-24">
 	<div class="container mx-auto px-4 mb-6">
 		<div class="grid items-center gap-12 lg:grid-cols-2">
 			<!-- Content -->
@@ -239,7 +239,7 @@
 </section>
 
 <!-- Why Us Section -->
-<section id="services" class=" py-16 lg:py-24">
+<section id="services" class="py-16 lg:py-24">
 	<div class="container mx-auto px-4">
 		<div class="mx-auto max-w-4xl rounded-2xl p-8 shadow-xl lg:p-12">
 			<span class="mb-2 inline-block text-sm font-semibold tracking-wider text-emerald-600">

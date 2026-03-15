@@ -156,8 +156,8 @@
 	<div class="overflow-hidden">
 		{#if displayedProjets.length === 0}
 			<div class="flex flex-col items-center justify-center py-16 px-4">
-				<ChartNoAxesCombined size={48} strokeWidth={1.5} class=" mb-4" />
-				<p class=" font-medium">Aucun projet trouvé</p>
+				<ChartNoAxesCombined size={48} strokeWidth={1.5} class="mb-4" />
+				<p class="font-medium">Aucun projet trouvé</p>
 				<p class="text-sm mt-1">Créez un nouveau projet ou modifiez vos critères de recherche</p>
 			</div>
 		{:else}

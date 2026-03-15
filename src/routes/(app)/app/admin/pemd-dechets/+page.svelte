@@ -102,7 +102,7 @@
 	<div class="rounded-xlshadow-sm overflow-hidden">
 		<div class="overflow-x-auto">
 			<table class="table">
-				<thead class=" text-xs uppercase font-semibold">
+				<thead class="text-xs uppercase font-semibold">
 					<tr>
 						<th class="px-6 py-4">Nature</th>
 						<th class="px-6 py-4">Code déchet</th>

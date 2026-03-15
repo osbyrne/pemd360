@@ -46,7 +46,7 @@
 				<h5 class="mb-4 text-lg font-semibold">Liens utiles</h5>
 				<ul class="space-y-2 text-sm">
 					<li>
-						<a href="/" class=" transition-colors hover:text-emerald-500">Accueil</a>
+						<a href="/" class="transition-colors hover:text-emerald-500">Accueil</a>
 					</li>
 					<li>
 						<a href="/about" class="transition-colors hover:text-emerald-500">À propos</a>

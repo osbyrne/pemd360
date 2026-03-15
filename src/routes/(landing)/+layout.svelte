@@ -16,7 +16,7 @@
 	/>
 </svelte:head>
 
-<div class="flex min-h-screen flex-col font-[Poppins]">
+<div class="flex min-h-screen flex-col">
 	<Header user={data.user} />
 
 	<!-- Main Content -->

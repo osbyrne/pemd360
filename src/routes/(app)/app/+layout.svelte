@@ -231,7 +231,7 @@
 	/>
 </svelte:head>
 
-<div class="relative flex h-screen overflow-hidden font-[Poppins]">
+<div class="relative flex h-screen overflow-hidden">
 	<!-- Mobile Sidebar Overlay -->
 	{#if sidebarOpen}
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -282,11 +282,7 @@
 									{#if !subLink.adminOnly || isAdmin}
 										<a
 											href={subLink.href}
-											class="flex items-center gap-3 pl-11 pr-4 py-2 text-sm transition-colors {isActive(
-												subLink.href
-											)
-												? 'text-emerald-600 font-medium'
-												: 'hover:text-emerald-600'}"
+											class="btn btn-ghost flex"
 											onclick={() => {
 												if (window.innerWidth < 1024) sidebarOpen = false;
 											}}
@@ -329,9 +325,9 @@
 				</div>
 			{/if}
 
-			<button onclick={handleLogout} class="btn">
+			<button onclick={handleLogout} class="btn btn-ghost">
 				<LogOut class="h-5 w-5 shrink-0" />
-				<span class="font-medium">Déconnexion</span>
+				Déconnexion
 			</button>
 		</div>
 	</aside>

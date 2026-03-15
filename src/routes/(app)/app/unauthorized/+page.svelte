@@ -11,7 +11,7 @@
 	<title>Accès Non Autorisé - PEMD360</title>
 </svelte:head>
 
-<div class="flex min-h-screen items-center justify-center px-4 font-[Poppins]">
+<div class="flex min-h-screen items-center justify-center px-4">
 	<div class="w-full max-w-md text-center">
 		<div class="mb-6 flex justify-center">
 			<div class="rounded-full bg-red-100 p-6">

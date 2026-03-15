@@ -20,7 +20,7 @@
 	</div>
 
 	<div class="card bg-base-100 shadow-sm">
-		<div class=" px-6 py-4">
+		<div class="px-6 py-4">
 			<h1 class="text-xl font-semibold">Maître d'Ouvrage</h1>
 		</div>
 		<div class="p-6">

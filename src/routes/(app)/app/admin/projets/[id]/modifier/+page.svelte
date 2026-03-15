@@ -36,7 +36,7 @@
 	<title>Modifier · {projet.libelle}</title>
 </svelte:head>
 
-<div class="font-[Poppins] max-w-4xl mx-auto px-4 py-8">
+<div class="max-w-4xl mx-auto px-4 py-8">
 	<!-- Fil d'ariane / Retour -->
 	<div class="mb-8">
 		<a href="/app/admin/projets/{projet.id}" class="btn btn-ghost">

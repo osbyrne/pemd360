@@ -124,7 +124,7 @@
 	<div class="overflow-hidden">
 		<div class="overflow-x-auto">
 			<table class="table">
-				<thead class=" text-xs uppercase font-semibold">
+				<thead class="text-xs uppercase font-semibold">
 					<tr>
 						<th class="px-6 py-4">Description</th>
 						<th class="px-6 py-4">État</th>
@@ -302,7 +302,7 @@
 				<div class="p-4 rounded-lg border-2 border-gray-200">
 					<!-- Placeholder pour le QR Code - à remplacer par une vraie bibliothèque QR -->
 					<div class="w-48 h-48 flex items-center justify-center">
-						<span class=" text-sm text-center">QR Code<br />{qrItem?.id}</span>
+						<span class="text-sm text-center">QR Code<br />{qrItem?.id}</span>
 					</div>
 				</div>
 				<p class="text-sm mt-4 text-center font-medium">

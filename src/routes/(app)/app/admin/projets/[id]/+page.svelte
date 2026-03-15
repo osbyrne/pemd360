@@ -20,7 +20,7 @@
 	<title>Projet · {projet.libelle}</title>
 </svelte:head>
 
-<div class="font-[Poppins] max-w-4xl mx-auto px-4 py-8">
+<div class="max-w-4xl mx-auto px-4 py-8">
 	<!-- Fil d'ariane / Retour -->
 	<div class="mb-8">
 		<a href="/app/admin/projets" class="btn btn-ghost">
@@ -32,7 +32,7 @@
 	<!-- Header -->
 	<div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 		<div>
-			<h1 class="text-3xl font-bold ">{projet.libelle}</h1>
+			<h1 class="text-3xl font-bold">{projet.libelle}</h1>
 			<p class="text-sm mt-1">Référence: {projet.reference}</p>
 			<p
 				class="text-xs font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded mt-2 inline-block"
@@ -54,25 +54,25 @@
 			<div class="p-2 bg-blue-50 rounded-lg">
 				<FileText class="h-6 w-6 text-blue-600" />
 			</div>
-			<h2 class="text-xl font-semibold ">Informations générales</h2>
+			<h2 class="text-xl font-semibold">Informations générales</h2>
 		</div>
 
 		<dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
 			<div>
 				<dt class="text-sm font-medium">Référence</dt>
-				<dd class="mt-1 text-sm ">{projet.reference}</dd>
+				<dd class="mt-1 text-sm">{projet.reference}</dd>
 			</div>
 			<div>
 				<dt class="text-sm font-medium">Libellé</dt>
-				<dd class="mt-1 text-sm ">{projet.libelle}</dd>
+				<dd class="mt-1 text-sm">{projet.libelle}</dd>
 			</div>
 			<div>
 				<dt class="text-sm font-medium">Type d'opération</dt>
-				<dd class="mt-1 text-sm ">{projet.typeOperation || '-'}</dd>
+				<dd class="mt-1 text-sm">{projet.typeOperation || '-'}</dd>
 			</div>
 			<div>
 				<dt class="text-sm font-medium">Maître d'ouvrage</dt>
-				<dd class="mt-1 text-sm ">{projet.maitreDOuvrage || '-'}</dd>
+				<dd class="mt-1 text-sm">{projet.maitreDOuvrage || '-'}</dd>
 			</div>
 		</dl>
 	</div>
@@ -83,17 +83,17 @@
 			<div class="p-2 bg-purple-50 rounded-lg">
 				<Building2 class="h-6 w-6 text-purple-600" />
 			</div>
-			<h2 class="text-xl font-semibold ">Établissement & Société</h2>
+			<h2 class="text-xl font-semibold">Établissement & Société</h2>
 		</div>
 
 		<dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
 			<div>
 				<dt class="text-sm font-medium">Établissement</dt>
-				<dd class="mt-1 text-sm ">{projet.etablissementNom || '-'}</dd>
+				<dd class="mt-1 text-sm">{projet.etablissementNom || '-'}</dd>
 			</div>
 			<div>
 				<dt class="text-sm font-medium">Ville de l'établissement</dt>
-				<dd class="mt-1 text-sm ">{projet.etablissementVille || '-'}</dd>
+				<dd class="mt-1 text-sm">{projet.etablissementVille || '-'}</dd>
 			</div>
 			<div>
 				<dt class="text-sm font-medium">Société</dt>
@@ -105,7 +105,7 @@
 							{projet.societeNom}
 						</span>
 					{:else}
-						<span class="text-sm ">-</span>
+						<span class="text-sm">-</span>
 					{/if}
 				</dd>
 			</div>
@@ -118,33 +118,33 @@
 			<div class="p-2 bg-emerald-50 rounded-lg">
 				<MapPin class="h-6 w-6 text-emerald-600" />
 			</div>
-			<h2 class="text-xl font-semibold ">Localisation</h2>
+			<h2 class="text-xl font-semibold">Localisation</h2>
 		</div>
 
 		<dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
 			<div class="md:col-span-2">
 				<dt class="text-sm font-medium">Adresse</dt>
-				<dd class="mt-1 text-sm ">{projet.rue}</dd>
+				<dd class="mt-1 text-sm">{projet.rue}</dd>
 			</div>
 			<div>
 				<dt class="text-sm font-medium">Code Postal</dt>
-				<dd class="mt-1 text-sm ">{projet.cp}</dd>
+				<dd class="mt-1 text-sm">{projet.cp}</dd>
 			</div>
 			<div>
 				<dt class="text-sm font-medium">Ville</dt>
-				<dd class="mt-1 text-sm ">{projet.ville}</dd>
+				<dd class="mt-1 text-sm">{projet.ville}</dd>
 			</div>
 			<div>
 				<dt class="text-sm font-medium">Code INSEE</dt>
-				<dd class="mt-1 text-sm ">{projet.codeInsee || '-'}</dd>
+				<dd class="mt-1 text-sm">{projet.codeInsee || '-'}</dd>
 			</div>
 			<div>
 				<dt class="text-sm font-medium">Section cadastrale</dt>
-				<dd class="mt-1 text-sm ">{projet.section}</dd>
+				<dd class="mt-1 text-sm">{projet.section}</dd>
 			</div>
 			<div>
 				<dt class="text-sm font-medium">Parcelle</dt>
-				<dd class="mt-1 text-sm ">{projet.parcelle}</dd>
+				<dd class="mt-1 text-sm">{projet.parcelle}</dd>
 			</div>
 		</dl>
 	</div>
@@ -155,17 +155,17 @@
 			<div class="p-2 bg-amber-50 rounded-lg">
 				<Calendar class="h-6 w-6 text-amber-600" />
 			</div>
-			<h2 class="text-xl font-semibold ">Planning</h2>
+			<h2 class="text-xl font-semibold">Planning</h2>
 		</div>
 
 		<dl class="grid grid-cols-1 md:grid-cols-2 gap-6">
 			<div>
 				<dt class="text-sm font-medium">Date de démarrage</dt>
-				<dd class="mt-1 text-sm ">{formatDate(projet.dateDemarrage)}</dd>
+				<dd class="mt-1 text-sm">{formatDate(projet.dateDemarrage)}</dd>
 			</div>
 			<div>
 				<dt class="text-sm font-medium">Date de fin</dt>
-				<dd class="mt-1 text-sm ">{formatDate(projet.dateDeFin)}</dd>
+				<dd class="mt-1 text-sm">{formatDate(projet.dateDeFin)}</dd>
 			</div>
 		</dl>
 	</div>

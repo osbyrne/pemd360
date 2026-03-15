@@ -122,7 +122,7 @@
 	<div class="rounded-xl shadow-sm overflow-hidden">
 		<div class="overflow-x-auto">
 			<table class="table">
-				<thead class=" text-xs uppercase font-semibold">
+				<thead class="text-xs uppercase font-semibold">
 					<tr>
 						<th class="px-6 py-4">Nature</th>
 						<th class="px-6 py-4">Code Déchet</th>
@@ -208,7 +208,7 @@
 				<h3 class="text-lg font-semibold">
 					{isEditMode ? 'Modifier la nature' : 'Ajouter une nature'}
 				</h3>
-				<button onclick={closeModal} class=" hover: p-1 rounded-lg hover:">
+				<button onclick={closeModal} class="hover: p-1 rounded-lg hover:">
 					<X class="w-5 h-5" />
 				</button>
 			</div>

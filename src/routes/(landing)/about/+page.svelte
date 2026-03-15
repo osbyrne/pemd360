@@ -101,7 +101,7 @@
 </section>
 
 <!-- Innovation Section -->
-<section class=" py-16 lg:py-24">
+<section class="py-16 lg:py-24">
 	<div class="container mx-auto px-4">
 		<div class="mx-auto max-w-3xl text-center">
 			<span

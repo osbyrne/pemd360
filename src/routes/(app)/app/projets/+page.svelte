@@ -112,7 +112,7 @@
 					<h3 class="text-xl font-semibold mb-2">
 						{searchQuery ? 'Aucun résultat' : 'Aucun projet disponible'}
 					</h3>
-					<p class=" max-w-md">
+					<p class="max-w-md">
 						{searchQuery
 							? `Aucun projet ne correspond à "${searchQuery}". Essayez une autre recherche.`
 							: "Vous n'avez pas encore de projets assignés. Contactez votre administrateur."}

@@ -26,7 +26,7 @@
 	};
 </script>
 
-<div class="font-[Poppins] max-w-4xl mx-auto px-4 py-8">
+<div class="max-w-4xl mx-auto px-4 py-8">
 	<!-- Fil d'ariane / Retour -->
 	<div class="mb-8">
 		<a href="/app/admin/projets" class="btn btn-ghost btn-primary">

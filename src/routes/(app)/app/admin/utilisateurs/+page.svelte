@@ -214,7 +214,7 @@
 		{:else if displayedUsers.length === 0}
 			<div class="flex flex-col items-center justify-center py-16 px-4">
 				<Users />
-				<p class=" font-medium">Aucun utilisateur trouvé</p>
+				<p class="font-medium">Aucun utilisateur trouvé</p>
 				<p class="text-sm mt-1">Essayez de modifier vos critères de recherche</p>
 			</div>
 		{:else}

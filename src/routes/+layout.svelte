@@ -24,7 +24,7 @@
 	/>
 </svelte:head>
 
-<div class="flex min-h-screen flex-col font-[Poppins]">
+<div class="flex min-h-screen flex-col">
 	<!-- Main Content -->
 	<main class="flex-1">
 		{@render children()}

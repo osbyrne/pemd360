@@ -83,7 +83,7 @@
 						{:else}
 							<div class="text-center py-8">
 								<UserCircle class="w-12 h-12 mx-auto mb-3" />
-								<p class=" italic">Non renseigné</p>
+								<p class="italic">Non renseigné</p>
 								<p class="text-sm mt-1">Cliquez sur "Modifier" pour ajouter les informations</p>
 							</div>
 						{/if}
@@ -138,7 +138,7 @@
 						{:else}
 							<div class="text-center py-8">
 								<UserCircle class="w-12 h-12 mx-auto mb-3" />
-								<p class=" italic">Non renseigné</p>
+								<p class="italic">Non renseigné</p>
 								<p class="text-sm mt-1">Cliquez sur "Modifier" pour ajouter les informations</p>
 							</div>
 						{/if}
@@ -201,7 +201,7 @@
 						{:else}
 							<div class="text-center py-8">
 								<CalendarDays class="w-12 h-12 mx-auto mb-3" />
-								<p class=" italic">Non renseigné</p>
+								<p class="italic">Non renseigné</p>
 								<p class="text-sm mt-1">Cliquez sur "Modifier" pour ajouter les informations</p>
 							</div>
 						{/if}
@@ -289,7 +289,7 @@
 						{:else}
 							<div class="text-center py-8">
 								<MapPin class="w-12 h-12 mx-auto mb-3" />
-								<p class=" italic">Non renseigné</p>
+								<p class="italic">Non renseigné</p>
 								<p class="text-sm mt-1">Cliquez sur "Modifier" pour ajouter les informations</p>
 							</div>
 						{/if}

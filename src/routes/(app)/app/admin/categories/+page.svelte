@@ -109,7 +109,7 @@
 <div class="rounded-xl shadow-sm overflow-hidden">
 	<div class="overflow-x-auto">
 		<table class="table">
-			<thead class=" text-xs uppercase font-semibold">
+			<thead class="text-xs uppercase font-semibold">
 				<tr>
 					<th class="px-6 py-4 w-20">ID</th>
 					<th class="px-6 py-4">Catégorie</th>
@@ -198,7 +198,7 @@
 				<h2 class="text-lg font-semibold">
 					{isEditMode ? 'Modifier la catégorie' : 'Nouvelle catégorie'}
 				</h2>
-				<button onclick={closeModal} class=" hover: transition-colors">
+				<button onclick={closeModal} class="hover: transition-colors">
 					<X class="w-5 h-5" />
 				</button>
 			</div>

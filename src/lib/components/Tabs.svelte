@@ -32,7 +32,7 @@
 	}
 </script>
 
-<div class=" mb-6 -mx-6 px-6 sticky top-0 z-10">
+<div class="mb-6 -mx-6 px-6 sticky top-0 z-10">
 	<div class="flex justify-between items-center">
 		<nav class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
 			{#each tabs as tab}

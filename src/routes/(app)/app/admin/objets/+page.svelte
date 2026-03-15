@@ -104,10 +104,10 @@
 <br />
 
 <!-- Table -->
-<div class="rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+<div class="overflow-hidden">
 	<div class="overflow-x-auto">
 		<table class="table">
-			<thead class=" text-xs uppercase font-semibold">
+			<thead class="text-xs uppercase font-semibold">
 				<tr>
 					<th class="px-6 py-4 w-20">ID</th>
 					<th class="px-6 py-4">Objet</th>

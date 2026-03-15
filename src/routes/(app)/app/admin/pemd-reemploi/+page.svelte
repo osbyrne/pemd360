@@ -100,7 +100,7 @@
 	<div class="overflow-hidden">
 		<div class="overflow-x-auto">
 			<table class="table">
-				<thead class=" text-xs uppercase font-semibold">
+				<thead class="text-xs uppercase font-semibold">
 					<tr>
 						<th class="px-6 py-4">PEMD</th>
 						<th class="px-6 py-4">Description</th>
@@ -221,7 +221,7 @@
 		<div class="relative w-full max-w-md rounded-xl shadow-xl overflow-hidden p-6">
 			<div class="flex justify-between items-center mb-4">
 				<h3 class="text-lg font-semibold">QR Code</h3>
-				<button onclick={closeModal} class=" hover: transition-colors" aria-label="Fermer">
+				<button onclick={closeModal} class="hover: transition-colors" aria-label="Fermer">
 					<X class="w-6 h-6" />
 				</button>
 			</div>
@@ -229,7 +229,7 @@
 				<div class="p-4 rounded-lg border-2 border-gray-200">
 					<!-- Placeholder pour le QR Code - à remplacer par une vraie bibliothèque QR -->
 					<div class="w-48 h-48 flex items-center justify-center">
-						<span class=" text-sm text-center">QR Code<br />{qrItem?.id}</span>
+						<span class="text-sm text-center">QR Code<br />{qrItem?.id}</span>
 					</div>
 				</div>
 				<p class="text-sm mt-4 text-center">{qrItem?.objet}</p>
@@ -254,7 +254,7 @@
 		<div class="relative w-full max-w-2xl rounded-xl shadow-xl overflow-hidden">
 			<div class="flex justify-between items-center p-6">
 				<h3 class="text-xl font-semibold">Carte PEMD</h3>
-				<button onclick={closeModal} class=" hover: transition-colors" aria-label="Fermer">
+				<button onclick={closeModal} class="hover: transition-colors" aria-label="Fermer">
 					<X class="w-6 h-6" />
 				</button>
 			</div>
@@ -274,22 +274,22 @@
 				{/if}
 
 				<div class="grid grid-cols-2 gap-4">
-					<div class=" p-4 rounded-lg">
+					<div class="p-4 rounded-lg">
 						<p class="text-xs uppercase mb-1">Localisation</p>
 						<p class="text-sm font-medium">Étage {cardItem?.etage || 'N/A'}</p>
 					</div>
 
-					<div class=" p-4 rounded-lg">
+					<div class="p-4 rounded-lg">
 						<p class="text-xs uppercase mb-1">État</p>
 						<p class="text-sm font-medium">{cardItem?.etat || 'N/A'}</p>
 					</div>
 
-					<div class=" p-4 rounded-lg">
+					<div class="p-4 rounded-lg">
 						<p class="text-xs uppercase mb-1">Coefficient de réemploi</p>
 						<p class="text-sm font-medium">{cardItem?.reemploi ?? 'N/A'}</p>
 					</div>
 
-					<div class=" p-4 rounded-lg">
+					<div class="p-4 rounded-lg">
 						<p class="text-xs uppercase mb-1">Masse</p>
 						<p class="text-sm font-medium">
 							{cardItem?.masse ? `${cardItem.masse} Kg` : 'N/A'}
