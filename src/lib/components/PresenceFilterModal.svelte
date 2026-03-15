@@ -40,15 +40,15 @@
 	<div class="modal-box">
 		<h3 class="mb-3 text-lg font-semibold">{title}</h3>
 		<div class="mb-3 flex flex-col gap-2">
-			<label class="flex items-center gap-2">
+			<label>
 				<input type="checkbox" bind:checked={present} class="checkbox" />
 				<span>Présence</span>
 			</label>
-			<label class="flex items-center gap-2">
+			<label>
 				<input type="checkbox" bind:checked={absent} class="checkbox" />
 				<span>Absence</span>
 			</label>
-			<label class="flex items-center gap-2">
+			<label>
 				<input type="checkbox" bind:checked={enCours} class="checkbox" />
 				<span>En cours</span>
 			</label>
