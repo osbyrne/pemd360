@@ -11,14 +11,3 @@ node_modules
 # OS
 .DS_Store
 Thumbs.db
-
-# Vite
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
-
-#devbox
-devbox.lock
-/.devbox
-
-# Bun
-bun.lock
