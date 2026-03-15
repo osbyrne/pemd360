@@ -12,7 +12,7 @@
 	import PemdCreateModal from '$lib/components/PemdCreateModal.svelte';
 	import PemdFilterModal from '$lib/components/PemdFilterModal.svelte';
 	import { PemdEditMode } from '$lib/pemd-edit-mode.svelte';
-	import { connect as MatterportSDK_script } from '$lib/sdk.es6.js';
+	import { /* @vite-ignore */ connect as MatterportSDK_script } from '$lib/sdk.es6.js';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -28,14 +28,11 @@
 	let showTermite = $state(false);
 	let showPemd = $state(false);
 
-	// modal states and selected presence filters (defaults: both checked)
 	let showAmianteModal = $state(false);
 	let showPlombModal = $state(false);
 	let showTermiteModal = $state(false);
-	// Modal pour PEMD
 	let showPemdModal = $state(false);
 
-	// PEMD Edit Mode
 	let showPemdCreateModal = $state(false);
 	let pendingTagPosition: {
 		anchorPosition: { x: number; y: number; z: number };
@@ -395,7 +392,7 @@
 	});
 </script>
 
-<div class="h-screen w-full p-6 font-[Poppins] flex flex-col">
+<div class="h-screen w-full p-6 flex flex-col">
 	<PresenceFilterModal
 		title="Filtrer Amiante"
 		bind:show={showAmianteModal}
