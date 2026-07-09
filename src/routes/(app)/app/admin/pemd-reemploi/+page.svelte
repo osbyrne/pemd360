@@ -64,6 +64,10 @@
     qrItem = null;
     cardItem = null;
   }
+
+  function imageUrl(hash: string) {
+    return `/api/images/${encodeURIComponent(hash)}`;
+  }
 </script>
 
 <svelte:head>
@@ -142,10 +146,11 @@
                 </td>
                 <td class="px-6 py-4">{item.reemploi ?? "-"}</td>
                 <td class="px-6 py-4">
-                  {#if item.image}
+                  {#if item.imageHash}
                     <img
-                      src={item.image}
+                      src={imageUrl(item.imageHash)}
                       alt="Miniature"
+                      loading="lazy"
                       class="h-12 w-12 rounded object-cover shadow-sm"
                     />
                   {:else}
@@ -263,11 +268,12 @@
         <h4 class="mb-2 text-lg font-medium">{cardItem?.objet}</h4>
         <p class="mb-6 text-sm">{cardItem?.description || "Aucune description"}</p>
 
-        {#if cardItem?.image}
+        {#if cardItem?.imageHash}
           <div class="mb-6">
             <img
-              src={cardItem.image}
+              src={imageUrl(cardItem.imageHash)}
               alt={cardItem.objet}
+              loading="lazy"
               class="h-64 w-full rounded-lg object-cover shadow-sm"
             />
           </div>
