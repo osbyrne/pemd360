@@ -1,63 +1,11 @@
 import { db } from "$lib/server/db/client";
 import { tagsAmiante, tagsPlomb, tagsTermite, projet } from "$lib/server/db/schema";
 import { getUserProjects } from "$lib/server/db/queries";
-import { r2BucketName, s3Client } from "$lib/server/s3/client";
-import { GetObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { getSignedImageUrl } from "$lib/server/s3/image-urls";
 import { eq, and, inArray } from "drizzle-orm";
 import type { Actions, PageServerLoad } from "./$types";
 import { fail, redirect } from "@sveltejs/kit";
 import { auth } from "$lib/auth";
-
-const EMPTY_IMAGE_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
-const imageUrlCache = new Map<string, Promise<string | null>>();
-
-async function getSignedImageUrl(hash: string | null, extensions: string[]) {
-  if (!hash || hash === EMPTY_IMAGE_HASH) {
-    return null;
-  }
-
-  const cacheKey = `${hash}:${extensions.join(",")}`;
-  const cached = imageUrlCache.get(cacheKey);
-
-  if (cached) {
-    return cached;
-  }
-
-  const signedUrl = resolveSignedImageUrl(hash, extensions);
-  imageUrlCache.set(cacheKey, signedUrl);
-  return signedUrl;
-}
-
-async function resolveSignedImageUrl(hash: string, extensions: string[]) {
-  for (const extension of extensions) {
-    const key = `${hash}.${extension}`;
-
-    try {
-      await s3Client.send(
-        new HeadObjectCommand({
-          Bucket: r2BucketName,
-          Key: key,
-        }),
-      );
-
-      return getSignedUrl(
-        s3Client,
-        new GetObjectCommand({
-          Bucket: r2BucketName,
-          Key: key,
-        }),
-        {
-          expiresIn: 3600,
-        },
-      );
-    } catch {
-      // Try the next known image extension.
-    }
-  }
-
-  return null;
-}
 
 export const load: PageServerLoad = async ({ url, locals }) => {
   const user = locals.user;

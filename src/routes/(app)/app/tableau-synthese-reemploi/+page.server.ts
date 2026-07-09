@@ -3,6 +3,7 @@ import type { PageServerLoad, Actions } from "./$types";
 import { db } from "$lib/server/db/client";
 import { pemd, projet, objets } from "$lib/server/db/schema";
 import { getUserProjects } from "$lib/server/db/queries";
+import { getSignedImageUrl } from "$lib/server/s3/image-urls";
 import { eq, and, inArray } from "drizzle-orm";
 
 export const load: PageServerLoad = async ({ url, locals }) => {
@@ -60,9 +61,15 @@ export const load: PageServerLoad = async ({ url, locals }) => {
     (item) =>
       item.reemploi === 1 || (item.potentielReemploi && item.potentielReemploi.trim() !== ""),
   );
+  const listWithThumbnails = await Promise.all(
+    filteredList.map(async (item) => ({
+      ...item,
+      thumbnailUrl: await getSignedImageUrl(item.image, ["jpg", "jpeg", "png", "webp"]),
+    })),
+  );
 
   return {
-    list: filteredList,
+    list: listWithThumbnails,
     projects,
     selectedProjectId: projectId,
   };

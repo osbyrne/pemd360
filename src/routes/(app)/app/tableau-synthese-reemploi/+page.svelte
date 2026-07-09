@@ -180,9 +180,9 @@
                   </span>
                 </td>
                 <td class="px-6 py-4">
-                  {#if item.image}
+                  {#if item.thumbnailUrl}
                     <img
-                      src={item.image}
+                      src={item.thumbnailUrl}
                       alt="Miniature"
                       class="h-16 w-16 rounded object-cover shadow-sm"
                     />
