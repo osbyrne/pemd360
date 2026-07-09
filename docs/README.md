@@ -7,29 +7,53 @@ PEMD360 is a web application for building diagnostics and waste management (PEMD
 ## Pre-Requisite
 
 - [Node.js ^22](https://nodejs.org/en/download)
-- [Doppler](https://docs.doppler.com/docs/install-cli)
 
 ## Installation
 
 ```bash
 # Install project dependencies:
-npm install
+bun install
 
-# Login with Doppler to get the environment variables
-doppler login
-
-# Select project and config
-doppler setup
 ```
+
+Copy `.env.example` to `.env` and fill in the required values. Vite and SvelteKit load
+`.env` for the application; standalone database tooling loads it through `dotenv`.
+
+## Creating an administrator
+
+Administrator bootstrap is intentionally available only as a local CLI command. Public signup does
+not create accounts.
+
+The command uses `TURSO_CONNECTION_URL`, `TURSO_AUTH_TOKEN`, `BETTER_AUTH_SECRET`, and optionally
+`BETTER_AUTH_URL` from `.env`. It displays the target database before making changes, asks for an
+explicit confirmation, and prompts for the password without displaying or storing it.
+
+```bash
+bun run admin:create -- --email admin@example.com --name "Admin Name"
+```
+
+Type `create admin` when prompted, then enter and confirm a password of at least eight characters.
+The user and credential account are created atomically with the `admin` role.
+
+The command refuses to modify or promote an existing email address. To promote an existing user,
+sign in as an administrator and change the role from `/app/admin/utilisateurs`.
+
+Security notes:
+
+- Never put the administrator password in `.env` or command-line arguments.
+- Keep `.env` untracked and restrict local access with `chmod 600 .env`.
+- Check the displayed Turso database URL carefully before confirming.
+- In deployed environments, configure secrets through the hosting platform rather than shipping
+  `.env`.
 
 # Database Migration
 
 ```bash
 # Generate migration
-npm run drizzle-kit generate
+bunx drizzle-kit generate
 
 # Apply migration
-npm run drizzle-kit migrate
+bunx drizzle-kit migrate
 ```
 
 # Matterport SDK Usage
@@ -89,5 +113,5 @@ npm run drizzle-kit migrate
 
 ## notes
 
-Run `npm run check` and fix issues before committing
-Also run `npm run format`
+Run `bun run check` and fix issues before committing.
+Also run `bun run fmt`.
