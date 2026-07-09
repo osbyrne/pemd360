@@ -5,10 +5,10 @@
   import { Trash2, QrCode, Download, Search, X } from "lucide-svelte";
 
   let { data } = $props();
+
   // Pagination & Search
   let query = $state("");
-  let perPage = 25;
-  let page = $state(1);
+  let searchTimeout: ReturnType<typeof setTimeout> | undefined;
 
   let isDeleteModalOpen = $state(false);
   let isQrModalOpen = $state(false);
@@ -16,33 +16,55 @@
   let qrItem = $state<any>(null);
 
   // Derived
-  const filteredList = $derived(
-    (data?.list || []).filter((item: any) => {
-      if (!query) return true;
-      const q = query.toLowerCase();
-      return (
-        item.objet?.toLowerCase().includes(q) ||
-        item.description?.toLowerCase().includes(q) ||
-        item.etat?.toLowerCase().includes(q) ||
-        item.etage?.toLowerCase().includes(q) ||
-        item.potentielReemploi?.toLowerCase().includes(q)
-      );
-    }),
-  );
+  const displayedList = $derived(data?.list || []);
+  const pagination = $derived(data.pagination);
 
-  const totalPages = $derived(Math.ceil(filteredList.length / perPage));
-  const displayedList = $derived(filteredList.slice((page - 1) * perPage, page * perPage));
+  $effect(() => {
+    query = data.q || "";
+  });
+
+  function updateUrl(params: Record<string, string | null>) {
+    const url = new URL($pageStore.url);
+
+    for (const [key, value] of Object.entries(params)) {
+      if (value) {
+        url.searchParams.set(key, value);
+      } else {
+        url.searchParams.delete(key);
+      }
+    }
+
+    goto(url, { keepFocus: true, noScroll: true });
+  }
 
   function handleProjectChange(event: Event) {
     const select = event.target as HTMLSelectElement;
     const value = select.value;
-    const url = new URL($pageStore.url);
-    if (value) {
-      url.searchParams.set("projectId", value);
-    } else {
-      url.searchParams.delete("projectId");
+    updateUrl({
+      projectId: value || null,
+      page: null,
+    });
+  }
+
+  function handleSearchInput(event: Event) {
+    query = (event.target as HTMLInputElement).value;
+
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
     }
-    goto(url);
+
+    searchTimeout = setTimeout(() => {
+      updateUrl({
+        q: query.trim() || null,
+        page: null,
+      });
+    }, 300);
+  }
+
+  function goToPage(nextPage: number) {
+    updateUrl({
+      page: String(nextPage),
+    });
   }
 
   function openDeleteModal(item: any) {
@@ -118,7 +140,7 @@
     <!-- Search Bar -->
     <label class="input relative">
       <Search />
-      <input type="search" bind:value={query} placeholder="Rechercher..." />
+      <input type="search" value={query} oninput={handleSearchInput} placeholder="Rechercher..." />
     </label>
   </div>
 
@@ -223,22 +245,29 @@
     </div>
 
     <!-- Pagination -->
-    {#if filteredList.length > 0 && totalPages > 1}
+    {#if pagination.total > 0 && pagination.totalPages > 1}
       <div class="flex items-center justify-between border-t border-gray-200 px-4 py-3">
         <p class="text-sm">
           Affichage de <span class="font-semibold"
-            >{Math.min(filteredList.length, (page - 1) * perPage + 1)}</span
+            >{Math.min(pagination.total, (pagination.page - 1) * pagination.perPage + 1)}</span
           >
-          à <span class="font-semibold">{Math.min(filteredList.length, page * perPage)}</span>
-          sur <span class="font-semibold">{filteredList.length}</span> résultats
+          à
+          <span class="font-semibold"
+            >{Math.min(pagination.total, pagination.page * pagination.perPage)}</span
+          >
+          sur <span class="font-semibold">{pagination.total}</span> résultats
         </p>
         <div class="flex gap-2">
-          <button onclick={() => (page = Math.max(1, page - 1))} disabled={page === 1} class="btn">
+          <button
+            onclick={() => goToPage(Math.max(1, pagination.page - 1))}
+            disabled={pagination.page === 1}
+            class="btn"
+          >
             Précédent
           </button>
           <button
-            onclick={() => (page = Math.min(totalPages, page + 1))}
-            disabled={page === totalPages}
+            onclick={() => goToPage(Math.min(pagination.totalPages, pagination.page + 1))}
+            disabled={pagination.page === pagination.totalPages}
             class="btn"
           >
             Suivant
