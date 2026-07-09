@@ -8,9 +8,20 @@ import {
 
 export const r2BucketName = R2_BUCKET_NAME;
 
+function normalizeR2Endpoint(endpoint: string, bucketName: string) {
+  const url = new URL(endpoint);
+  const bucketPath = `/${bucketName}`;
+
+  if (url.pathname === bucketPath || url.pathname === `${bucketPath}/`) {
+    url.pathname = "/";
+  }
+
+  return url.toString().replace(/\/$/, "");
+}
+
 export const s3Client = new S3Client({
   region: "auto",
-  endpoint: S3_API_URL,
+  endpoint: normalizeR2Endpoint(S3_API_URL, r2BucketName),
   credentials: {
     accessKeyId: R2_ACCESS_KEY_ID,
     secretAccessKey: R2_SECRET_ACCESS_KEY,

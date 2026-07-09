@@ -14,6 +14,9 @@
       </figure>
       <div class="card-body">
         <h2 class="card-title">Image chargée avec succès</h2>
+        {#if data.imageKey}
+          <p class="text-sm break-all">Objet: {data.imageKey}</p>
+        {/if}
         <p class="text-sm break-all">{data.imageUrl}</p>
       </div>
     </div>
