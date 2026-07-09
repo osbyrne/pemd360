@@ -47,6 +47,10 @@
     isDeleteModalOpen = false;
     currentItem = null;
   }
+
+  function imageUrl(hash: string) {
+    return `/api/images/${encodeURIComponent(hash)}`;
+  }
 </script>
 
 <svelte:head>
@@ -134,10 +138,11 @@
                 <td class="px-6 py-4">{item.masse || "-"}</td>
                 <td class="px-6 py-4">{item.constitution || "-"}</td>
                 <td class="px-6 py-4">
-                  {#if item.image}
+                  {#if item.imageHash}
                     <img
-                      src={item.image}
+                      src={imageUrl(item.imageHash)}
                       alt="Miniature"
+                      loading="lazy"
                       class="h-12 w-12 rounded object-cover shadow-sm"
                     />
                   {:else}

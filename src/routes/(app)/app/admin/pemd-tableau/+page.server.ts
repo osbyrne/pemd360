@@ -4,7 +4,9 @@ import { db } from "$lib/server/db/client";
 import { pemd, projet, objets, categorieV2, groupe, natureV2 } from "$lib/server/db/schema";
 import { getUserProjects } from "$lib/server/db/queries";
 import { createDeleteAction } from "$lib/server/db/actions";
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and, inArray, sql } from "drizzle-orm";
+
+const EMPTY_IMAGE_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
 
 export const load: PageServerLoad = async ({ url, locals }) => {
   const user = locals.user;
@@ -32,7 +34,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
       densite: natureV2.densite,
       masse: pemd.masse,
       constitution: pemd.constitution,
-      image: pemd.image,
+      imageHash: sql<string | null>`nullif(${pemd.image}, ${EMPTY_IMAGE_HASH})`,
       etage: pemd.etage,
       typologieAppart: pemd.typologieAppart,
       projetId: pemd.sidId,

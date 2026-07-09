@@ -71,6 +71,10 @@
     };
   }
 
+  function imageUrl(hash: string) {
+    return `/api/images/${encodeURIComponent(hash)}`;
+  }
+
   // Calcul du coefficient de réemploi (pourcentage)
   function getCoefficientReemploi(item: any): string {
     if (item.reemploi) {
@@ -179,10 +183,11 @@
                   </span>
                 </td>
                 <td class="px-6 py-4">
-                  {#if item.image}
+                  {#if item.imageHash}
                     <img
-                      src={item.image}
+                      src={imageUrl(item.imageHash)}
                       alt="Miniature"
+                      loading="lazy"
                       class="h-16 w-16 rounded object-cover shadow-sm"
                     />
                   {:else}
