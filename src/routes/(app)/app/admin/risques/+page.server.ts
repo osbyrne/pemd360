@@ -1,10 +1,63 @@
 import { db } from "$lib/server/db/client";
 import { tagsAmiante, tagsPlomb, tagsTermite, projet } from "$lib/server/db/schema";
 import { getUserProjects } from "$lib/server/db/queries";
+import { r2BucketName, s3Client } from "$lib/server/s3/client";
+import { GetObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { eq, and, inArray } from "drizzle-orm";
 import type { Actions, PageServerLoad } from "./$types";
 import { fail, redirect } from "@sveltejs/kit";
 import { auth } from "$lib/auth";
+
+const EMPTY_IMAGE_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+const imageUrlCache = new Map<string, Promise<string | null>>();
+
+async function getSignedImageUrl(hash: string | null, extensions: string[]) {
+  if (!hash || hash === EMPTY_IMAGE_HASH) {
+    return null;
+  }
+
+  const cacheKey = `${hash}:${extensions.join(",")}`;
+  const cached = imageUrlCache.get(cacheKey);
+
+  if (cached) {
+    return cached;
+  }
+
+  const signedUrl = resolveSignedImageUrl(hash, extensions);
+  imageUrlCache.set(cacheKey, signedUrl);
+  return signedUrl;
+}
+
+async function resolveSignedImageUrl(hash: string, extensions: string[]) {
+  for (const extension of extensions) {
+    const key = `${hash}.${extension}`;
+
+    try {
+      await s3Client.send(
+        new HeadObjectCommand({
+          Bucket: r2BucketName,
+          Key: key,
+        }),
+      );
+
+      return getSignedUrl(
+        s3Client,
+        new GetObjectCommand({
+          Bucket: r2BucketName,
+          Key: key,
+        }),
+        {
+          expiresIn: 3600,
+        },
+      );
+    } catch {
+      // Try the next known image extension.
+    }
+  }
+
+  return null;
+}
 
 export const load: PageServerLoad = async ({ url, locals }) => {
   const user = locals.user;
@@ -23,6 +76,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
       description: tagsAmiante.description,
       etage: tagsAmiante.etage,
       type: tagsAmiante.type,
+      image: tagsAmiante.image,
       customImage: tagsAmiante.customImage,
       presenceAmiante: tagsAmiante.presenceAmiante,
       projetId: tagsAmiante.sidId,
@@ -37,6 +91,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
       label: tagsPlomb.label,
       description: tagsPlomb.description,
       etage: tagsPlomb.etage,
+      image: tagsPlomb.image,
       customImage: tagsPlomb.customImage,
       projetId: tagsPlomb.sidId,
       projetNom: projet.libelle,
@@ -50,6 +105,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
       label: tagsTermite.label,
       description: tagsTermite.description,
       etage: tagsTermite.etage,
+      image: tagsTermite.image,
       customImage: tagsTermite.customImage,
       projetId: tagsTermite.sidId,
       projetNom: projet.libelle,
@@ -100,28 +156,39 @@ export const load: PageServerLoad = async ({ url, locals }) => {
     termiteQuery.all(),
   ]);
 
-  const list = [
-    ...amianteList.map((item) => ({
-      ...item,
-      riskType: "amiante" as const,
-      riskLabel: "Amiante",
-      uid: `amiante:${item.id}`,
-    })),
-    ...plombList.map((item) => ({
-      ...item,
-      type: "Plomb",
-      riskType: "plomb" as const,
-      riskLabel: "Plomb",
-      uid: `plomb:${item.id}`,
-    })),
-    ...termiteList.map((item) => ({
-      ...item,
-      type: "Termites",
-      riskType: "termites" as const,
-      riskLabel: "Termites",
-      uid: `termites:${item.id}`,
-    })),
-  ];
+  const list = await Promise.all(
+    [
+      ...amianteList.map((item) => ({
+        ...item,
+        riskType: "amiante" as const,
+        riskLabel: "Amiante",
+        uid: `amiante:${item.id}`,
+      })),
+      ...plombList.map((item) => ({
+        ...item,
+        type: "Plomb",
+        riskType: "plomb" as const,
+        riskLabel: "Plomb",
+        uid: `plomb:${item.id}`,
+      })),
+      ...termiteList.map((item) => ({
+        ...item,
+        type: "Termites",
+        riskType: "termites" as const,
+        riskLabel: "Termites",
+        uid: `termites:${item.id}`,
+      })),
+    ].map(async (item) => {
+      const thumbnailUrl =
+        (await getSignedImageUrl(item.customImage, ["png", "jpg", "jpeg", "webp"])) ??
+        (await getSignedImageUrl(item.image, ["jpg", "jpeg", "png", "webp"]));
+
+      return {
+        ...item,
+        thumbnailUrl,
+      };
+    }),
+  );
 
   return {
     list,

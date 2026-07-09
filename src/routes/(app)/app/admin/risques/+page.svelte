@@ -124,9 +124,9 @@
           <td class="px-6 py-4"> {item.etage || "-"} </td>
           <td class="px-6 py-4"> {item.riskLabel || item.type || "-"} </td>
           <td class="px-6 py-4">
-            {#if item.customImage}
+            {#if item.thumbnailUrl}
               <img
-                src={item.customImage}
+                src={item.thumbnailUrl}
                 alt={item.label}
                 class="h-12 w-12 rounded object-cover shadow-sm"
               />
