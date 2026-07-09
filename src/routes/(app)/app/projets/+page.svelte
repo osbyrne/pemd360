@@ -2,6 +2,7 @@
   import { Info, Search, MapPin, Calendar, Building2, ChevronRight, Box } from "lucide-svelte";
   import type { PageData } from "./$types";
   import { flip } from "svelte/animate";
+  import { fly } from "svelte/transition";
   import { onMount } from "svelte";
 
   let { data }: { data: PageData } = $props();

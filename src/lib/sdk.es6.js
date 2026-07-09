@@ -1,3 +1,4 @@
+// @ts-nocheck
 var e = {
     d: (t, s) => {
       for (var n in s)
