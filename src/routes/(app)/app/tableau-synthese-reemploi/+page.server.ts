@@ -3,8 +3,16 @@ import type { PageServerLoad, Actions } from "./$types";
 import { db } from "$lib/server/db/client";
 import { pemd, projet, objets } from "$lib/server/db/schema";
 import { getUserProjects } from "$lib/server/db/queries";
-import { getSignedImageUrl } from "$lib/server/s3/image-urls";
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and, inArray, count, or, like, sql, asc, type SQL } from "drizzle-orm";
+
+const DEFAULT_PER_PAGE = 25;
+const MAX_PER_PAGE = 100;
+const EMPTY_IMAGE_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+
+function parsePositiveInt(value: string | null, fallback: number) {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
 
 export const load: PageServerLoad = async ({ url, locals }) => {
   const user = locals.user;
@@ -14,26 +22,20 @@ export const load: PageServerLoad = async ({ url, locals }) => {
   }
 
   const projectId = url.searchParams.get("projectId");
+  const q = url.searchParams.get("q")?.trim() ?? "";
+  const requestedPage = parsePositiveInt(url.searchParams.get("page"), 1);
+  const perPage = Math.min(
+    parsePositiveInt(url.searchParams.get("perPage"), DEFAULT_PER_PAGE),
+    MAX_PER_PAGE,
+  );
   const projects = await getUserProjects(user);
 
-  const baseQuery = db
-    .select({
-      id: pemd.id,
-      objet: objets.objet,
-      description: pemd.description,
-      etat: pemd.etat,
-      etage: pemd.etage,
-      potentielReemploi: pemd.potentielReemploi,
-      reemploi: pemd.reemploi,
-      image: pemd.image,
-      projetId: pemd.sidId,
-      projetNom: projet.libelle,
-    })
-    .from(pemd)
-    .leftJoin(objets, eq(pemd.objetId, objets.id))
-    .leftJoin(projet, eq(pemd.sidId, projet.id));
-
-  const conditions = [];
+  const conditions: SQL[] = [
+    or(
+      eq(pemd.reemploi, 1),
+      and(sql`${pemd.potentielReemploi} IS NOT NULL`, sql`length(trim(${pemd.potentielReemploi})) > 0`),
+    )!,
+  ];
 
   if (user.role !== "admin") {
     const allowedids = projects.map((p) => p.id);
@@ -44,6 +46,13 @@ export const load: PageServerLoad = async ({ url, locals }) => {
         list: [],
         projects: [],
         selectedProjectId: projectId,
+        q,
+        pagination: {
+          page: 1,
+          perPage,
+          total: 0,
+          totalPages: 1,
+        },
       };
     }
   }
@@ -52,26 +61,64 @@ export const load: PageServerLoad = async ({ url, locals }) => {
     conditions.push(eq(pemd.sidId, projectId));
   }
 
-  const query = conditions.length > 0 ? baseQuery.where(and(...conditions)) : baseQuery;
+  if (q) {
+    const search = `%${q}%`;
+    conditions.push(
+      or(
+        like(objets.objet, search),
+        like(pemd.description, search),
+        like(pemd.etat, search),
+        like(pemd.etage, search),
+        like(pemd.potentielReemploi, search),
+      )!,
+    );
+  }
 
-  const list = await query;
+  const where = and(...conditions);
+  const [{ total }] = await db
+    .select({
+      total: count(),
+    })
+    .from(pemd)
+    .leftJoin(objets, eq(pemd.objetId, objets.id))
+    .where(where);
 
-  // Filtrer côté serveur les éléments avec potentiel de réemploi
-  const filteredList = list.filter(
-    (item) =>
-      item.reemploi === 1 || (item.potentielReemploi && item.potentielReemploi.trim() !== ""),
-  );
-  const listWithThumbnails = await Promise.all(
-    filteredList.map(async (item) => ({
-      ...item,
-      thumbnailUrl: await getSignedImageUrl(item.image, ["jpg", "jpeg", "png", "webp"]),
-    })),
-  );
+  const totalPages = Math.max(1, Math.ceil(total / perPage));
+  const page = Math.min(requestedPage, totalPages);
+  const offset = (page - 1) * perPage;
+
+  const list = await db
+    .select({
+      id: pemd.id,
+      objet: objets.objet,
+      description: pemd.description,
+      etat: pemd.etat,
+      etage: pemd.etage,
+      potentielReemploi: pemd.potentielReemploi,
+      reemploi: pemd.reemploi,
+      imageHash: sql<string | null>`nullif(${pemd.image}, ${EMPTY_IMAGE_HASH})`,
+      projetId: pemd.sidId,
+      projetNom: projet.libelle,
+    })
+    .from(pemd)
+    .leftJoin(objets, eq(pemd.objetId, objets.id))
+    .leftJoin(projet, eq(pemd.sidId, projet.id))
+    .where(where)
+    .orderBy(asc(pemd.id))
+    .limit(perPage)
+    .offset(offset);
 
   return {
-    list: listWithThumbnails,
+    list,
     projects,
     selectedProjectId: projectId,
+    q,
+    pagination: {
+      page,
+      perPage,
+      total,
+      totalPages,
+    },
   };
 };
 
