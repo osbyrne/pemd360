@@ -23,7 +23,8 @@
     } else {
       url.searchParams.delete("projectId");
     }
-    goto(url);
+    url.searchParams.delete("page");
+    goto(url, { keepFocus: true, noScroll: true });
   }
 </script>
 

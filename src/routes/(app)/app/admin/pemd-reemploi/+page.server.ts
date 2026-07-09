@@ -4,9 +4,16 @@ import { db } from "$lib/server/db/client";
 import { pemd, projet, objets, categorieV2, groupe } from "$lib/server/db/schema";
 import { getUserProjects } from "$lib/server/db/queries";
 import { createDeleteAction } from "$lib/server/db/actions";
-import { eq, and, inArray, sql } from "drizzle-orm";
+import { eq, and, inArray, count, or, like, sql, asc, type SQL } from "drizzle-orm";
 
+const DEFAULT_PER_PAGE = 25;
+const MAX_PER_PAGE = 100;
 const EMPTY_IMAGE_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+
+function parsePositiveInt(value: string | null, fallback: number) {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
 
 export const load: PageServerLoad = async ({ url, locals }) => {
   const user = locals.user;
@@ -16,9 +23,71 @@ export const load: PageServerLoad = async ({ url, locals }) => {
   }
 
   const projectId = url.searchParams.get("projectId");
+  const q = url.searchParams.get("q")?.trim() ?? "";
+  const requestedPage = parsePositiveInt(url.searchParams.get("page"), 1);
+  const perPage = Math.min(
+    parsePositiveInt(url.searchParams.get("perPage"), DEFAULT_PER_PAGE),
+    MAX_PER_PAGE,
+  );
   const projects = await getUserProjects(user);
 
-  const query = db
+  const conditions: SQL[] = [];
+
+  if (user.role !== "admin") {
+    const allowedids = projects.map((p) => p.id);
+    if (allowedids.length > 0) {
+      conditions.push(inArray(pemd.sidId, allowedids));
+    } else {
+      return {
+        list: [],
+        projects: [],
+        selectedProjectId: projectId,
+        q,
+        pagination: {
+          page: 1,
+          perPage,
+          total: 0,
+          totalPages: 1,
+        },
+      };
+    }
+  }
+
+  if (projectId) {
+    conditions.push(eq(pemd.sidId, projectId));
+  }
+
+  if (q) {
+    const search = `%${q}%`;
+    conditions.push(
+      or(
+        like(groupe.groupe, search),
+        like(categorieV2.categoriev2, search),
+        like(objets.objet, search),
+        like(pemd.description, search),
+        like(pemd.etat, search),
+        like(pemd.etage, search),
+        like(pemd.potentielReemploi, search),
+      )!,
+    );
+  }
+
+  const where = conditions.length > 0 ? and(...conditions) : undefined;
+  const [{ total }] = await db
+    .select({
+      total: count(),
+    })
+    .from(pemd)
+    .leftJoin(objets, eq(pemd.objetId, objets.id))
+    .leftJoin(categorieV2, eq(objets.categorieId, categorieV2.id))
+    .leftJoin(groupe, eq(categorieV2.groupeId, groupe.id))
+    .where(where);
+
+  const totalPages = Math.max(1, Math.ceil(total / perPage));
+  const page = Math.min(requestedPage, totalPages);
+  const offset = (page - 1) * perPage;
+
+  const list = await db
     .select({
       id: pemd.id,
       objet: objets.objet,
@@ -36,37 +105,23 @@ export const load: PageServerLoad = async ({ url, locals }) => {
     .leftJoin(objets, eq(pemd.objetId, objets.id))
     .leftJoin(categorieV2, eq(objets.categorieId, categorieV2.id))
     .leftJoin(groupe, eq(categorieV2.groupeId, groupe.id))
-    .leftJoin(projet, eq(pemd.sidId, projet.id));
-
-  const conditions = [];
-
-  if (user.role !== "admin") {
-    const allowedids = projects.map((p) => p.id);
-    if (allowedids.length > 0) {
-      conditions.push(inArray(pemd.sidId, allowedids));
-    } else {
-      return {
-        list: [],
-        projects: [],
-        selectedProjectId: projectId,
-      };
-    }
-  }
-
-  if (projectId) {
-    conditions.push(eq(pemd.sidId, projectId));
-  }
-
-  if (conditions.length > 0) {
-    query.where(and(...conditions));
-  }
-
-  const list = await query.all();
+    .leftJoin(projet, eq(pemd.sidId, projet.id))
+    .where(where)
+    .orderBy(asc(pemd.id))
+    .limit(perPage)
+    .offset(offset);
 
   return {
     list,
     projects,
     selectedProjectId: projectId,
+    q,
+    pagination: {
+      page,
+      perPage,
+      total,
+      totalPages,
+    },
   };
 };
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { page as pageStore } from "$app/stores";
   import { Trash2, Download, Search } from "lucide-svelte";
   import PemdTabs from "$lib/components/PemdTabs.svelte";
@@ -10,33 +11,47 @@
 
   // Pagination & Search
   let query = $state("");
-  let perPage = 25;
-  let page = $state(1);
+  let searchTimeout: ReturnType<typeof setTimeout> | undefined;
 
   let isDeleteModalOpen = $state(false);
   let currentItem = $state<any>(null);
 
   // Derived
-  const filteredList = $derived(
-    (data?.list || []).filter((item: any) => {
-      if (!query) return true;
-      const q = query.toLowerCase();
-      return (
-        item.groupe?.toLowerCase().includes(q) ||
-        item.categorie?.toLowerCase().includes(q) ||
-        item.objet?.toLowerCase().includes(q) ||
-        item.description?.toLowerCase().includes(q) ||
-        item.nature?.toLowerCase().includes(q) ||
-        item.etat?.toLowerCase().includes(q) ||
-        item.constitution?.toLowerCase().includes(q) ||
-        item.etage?.toLowerCase().includes(q) ||
-        item.typologieAppart?.toLowerCase().includes(q)
-      );
-    }),
-  );
+  const displayedList = $derived(data?.list || []);
+  const pagination = $derived(data.pagination);
 
-  const totalPages = $derived(Math.ceil(filteredList.length / perPage));
-  const displayedList = $derived(filteredList.slice((page - 1) * perPage, page * perPage));
+  $effect(() => {
+    query = data.q || "";
+  });
+
+  function updateUrl(params: Record<string, string | null>) {
+    const url = new URL($pageStore.url);
+
+    for (const [key, value] of Object.entries(params)) {
+      if (value) {
+        url.searchParams.set(key, value);
+      } else {
+        url.searchParams.delete(key);
+      }
+    }
+
+    goto(url, { keepFocus: true, noScroll: true });
+  }
+
+  function handleSearchInput(event: Event) {
+    query = (event.target as HTMLInputElement).value;
+
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+
+    searchTimeout = setTimeout(() => {
+      updateUrl({
+        q: query.trim() || null,
+        page: null,
+      });
+    }, 300);
+  }
 
   function openDeleteModal(item: any) {
     currentItem = item;
@@ -80,7 +95,8 @@
       <Search />
       <input
         type="search"
-        bind:value={query}
+        value={query}
+        oninput={handleSearchInput}
         placeholder="Rechercher par macro-catégorie, catégorie, objet ou projet..."
       />
     </label>
@@ -170,11 +186,11 @@
     </div>
 
     <Pagination
-      {page}
-      {totalPages}
-      totalItems={filteredList.length}
-      {perPage}
-      onPageChange={(p) => (page = p)}
+      page={pagination.page}
+      totalPages={pagination.totalPages}
+      totalItems={pagination.total}
+      perPage={pagination.perPage}
+      onPageChange={(page) => updateUrl({ page: String(page) })}
     />
   </div>
 </div>
