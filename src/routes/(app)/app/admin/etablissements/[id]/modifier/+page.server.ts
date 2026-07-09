@@ -1,74 +1,74 @@
-import { error, fail, redirect } from '@sveltejs/kit';
-import type { PageServerLoad, Actions } from './$types';
-import { db } from '$lib/server/db/client';
+import { error, fail, redirect } from "@sveltejs/kit";
+import type { PageServerLoad, Actions } from "./$types";
+import { db } from "$lib/server/db/client";
 import {
-	etablissement as etablissementTable,
-	societe as societeTable
-} from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
-import { requireAdmin } from '$lib/server/admin';
+  etablissement as etablissementTable,
+  societe as societeTable,
+} from "$lib/server/db/schema";
+import { eq } from "drizzle-orm";
+import { requireAdmin } from "$lib/server/admin";
 
 export const load: PageServerLoad = async ({ params, parent }) => {
-	await requireAdmin(parent);
+  await requireAdmin(parent);
 
-	const id = parseInt(params.id);
-	if (isNaN(id)) {
-		throw error(400, 'ID invalide');
-	}
+  const id = parseInt(params.id);
+  if (isNaN(id)) {
+    throw error(400, "ID invalide");
+  }
 
-	const results = await db
-		.select()
-		.from(etablissementTable)
-		.where(eq(etablissementTable.id, id))
-		.limit(1);
+  const results = await db
+    .select()
+    .from(etablissementTable)
+    .where(eq(etablissementTable.id, id))
+    .limit(1);
 
-	if (results.length === 0) {
-		throw error(404, 'Établissement non trouvé');
-	}
+  if (results.length === 0) {
+    throw error(404, "Établissement non trouvé");
+  }
 
-	const etab = results[0];
+  const etab = results[0];
 
-	const societes = await db.select().from(societeTable);
+  const societes = await db.select().from(societeTable);
 
-	return {
-		etablissement: etab,
-		societes
-	};
+  return {
+    etablissement: etab,
+    societes,
+  };
 };
 
 export const actions: Actions = {
-	default: async ({ request, params, locals }) => {
-		const formData = await request.formData();
-		const id = parseInt(params.id);
+  default: async ({ request, params, locals }) => {
+    const formData = await request.formData();
+    const id = parseInt(params.id);
 
-		const data = {
-			nom: formData.get('nom') as string,
-			societeId: parseInt(formData.get('societeId') as string),
-			raisonSocial: formData.get('raisonSocial') as string,
-			rue: formData.get('rue') as string,
-			cp: formData.get('cp') as string,
-			ville: formData.get('ville') as string,
-			tel: formData.get('tel') as string,
-			fax: formData.get('fax') as string,
-			email: formData.get('email') as string,
-			siret: formData.get('siret') as string
-		};
+    const data = {
+      nom: formData.get("nom") as string,
+      societeId: parseInt(formData.get("societeId") as string),
+      raisonSocial: formData.get("raisonSocial") as string,
+      rue: formData.get("rue") as string,
+      cp: formData.get("cp") as string,
+      ville: formData.get("ville") as string,
+      tel: formData.get("tel") as string,
+      fax: formData.get("fax") as string,
+      email: formData.get("email") as string,
+      siret: formData.get("siret") as string,
+    };
 
-		if (!data.nom || !data.societeId || !data.siret) {
-			return fail(400, {
-				data,
-				message: 'Veuillez remplir les champs obligatoires',
-				success: false
-			});
-		}
+    if (!data.nom || !data.societeId || !data.siret) {
+      return fail(400, {
+        data,
+        message: "Veuillez remplir les champs obligatoires",
+        success: false,
+      });
+    }
 
-		try {
-			await db.update(etablissementTable).set(data).where(eq(etablissementTable.id, id));
-		} catch (e) {
-			console.error(e);
-			return fail(500, { data, message: 'Erreur lors de la mise à jour', success: false });
-		}
+    try {
+      await db.update(etablissementTable).set(data).where(eq(etablissementTable.id, id));
+    } catch (e) {
+      console.error(e);
+      return fail(500, { data, message: "Erreur lors de la mise à jour", success: false });
+    }
 
-		throw redirect(303, `/app/admin/etablissements/${id}`);
-	}
+    throw redirect(303, `/app/admin/etablissements/${id}`);
+  },
 };

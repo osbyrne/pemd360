@@ -1,89 +1,113 @@
 <script lang="ts">
-	import logoDC from '$lib/assets/depollution_conseil.png';
-	import logoPEMD from '$lib/assets/pemd360.png';
-	import { Menu, X } from 'lucide-svelte';
+    import logoDC from "$lib/assets/depollution_conseil.png";
+    import logoPEMD from "$lib/assets/pemd360.png";
+    import { Menu, X } from "lucide-svelte";
 
-	let { user = null } = $props<{ user: any }>();
-	let mobileMenuOpen = $state(false);
+    let { user = null } = $props<{ user: any }>();
+    let mobileMenuOpen = $state(false);
 </script>
 
 <header class="sticky top-0 z-50 shadow-md">
-	<nav class="container mx-auto px-4 py-3">
-		<div class="flex items-center justify-between">
-			<!-- Logos -->
-			<div class="flex items-center gap-4">
-				<a href="/">
-					<img src={logoPEMD} alt="PEMD 360" class="h-16 w-auto object-contain" />
-				</a>
-				<a href="https://depollution-conseil.fr" target="_blank" rel="noopener noreferrer">
-					<img src={logoDC} alt="Dépollution Conseil" class="h-14 w-auto object-contain" />
-				</a>
-			</div>
+    <nav class="container mx-auto px-4 py-3">
+        <div class="flex items-center justify-between">
+            <!-- Logos -->
+            <div class="flex items-center gap-4">
+                <a href="/">
+                    <img
+                        src={logoPEMD}
+                        alt="PEMD 360"
+                        class="h-16 w-auto object-contain"
+                    />
+                </a>
+                <a
+                    href="https://depollution-conseil.fr"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <img
+                        src={logoDC}
+                        alt="Dépollution Conseil"
+                        class="h-14 w-auto object-contain"
+                    />
+                </a>
+            </div>
 
-			<!-- Desktop Navigation -->
-			<div class="hidden items-center gap-6 md:flex">
-				<a href="/" class="font-medium transition-colors hover:text-emerald-600">Accueil</a>
-				<a href="/about" class="font-medium transition-colors hover:text-emerald-600">À propos</a>
-				<a href="/contact" class="font-medium transition-colors hover:text-emerald-600">Contact</a>
-				{#if user}
-					<a href="/app/projets" class="btn"> Tableau de bord </a>
-				{:else}
-					<a href="/login" class="btn"> Se connecter </a>
-				{/if}
-			</div>
+            <!-- Desktop Navigation -->
+            <div class="hidden items-center gap-6 md:flex">
+                <a
+                    href="/"
+                    class="font-medium transition-colors hover:text-emerald-600"
+                    >Accueil</a
+                >
+                <a
+                    href="/about"
+                    class="font-medium transition-colors hover:text-emerald-600"
+                    >À propos</a
+                >
+                <a
+                    href="/contact"
+                    class="font-medium transition-colors hover:text-emerald-600"
+                    >Contact</a
+                >
+                {#if user}
+                    <a href="/app/projets" class="btn">Tableau de bord</a>
+                {:else}
+                    <a href="/login" class="btn">Se connecter</a>
+                {/if}
+            </div>
 
-			<!-- Mobile menu button -->
-			<button
-				class="rounded-md p-2 hover: md:hidden"
-				onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
-				aria-label="Toggle menu"
-			>
-				{#if mobileMenuOpen}
-					<X class="h-6 w-6" />
-				{:else}
-					<Menu class="h-6 w-6" />
-				{/if}
-			</button>
-		</div>
+            <!-- Mobile menu button -->
+            <button
+                class="hover: rounded-md p-2 md:hidden"
+                onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
+                aria-label="Toggle menu"
+            >
+                {#if mobileMenuOpen}
+                    <X class="h-6 w-6" />
+                {:else}
+                    <Menu class="h-6 w-6" />
+                {/if}
+            </button>
+        </div>
 
-		<!-- Mobile Navigation -->
-		{#if mobileMenuOpen}
-			<div class="mt-4 border-t pt-4 md:hidden">
-				<div class="flex flex-col gap-3">
-					<a
-						href="/"
-						class="font-medium transition-colors hover:text-emerald-600"
-						onclick={() => (mobileMenuOpen = false)}>Accueil</a
-					>
-					<a
-						href="/about"
-						class="font-medium transition-colors hover:text-emerald-600"
-						onclick={() => (mobileMenuOpen = false)}>À propos</a
-					>
-					<a
-						href="/contact"
-						class="font-medium transition-colors hover:text-emerald-600"
-						onclick={() => (mobileMenuOpen = false)}>Contact</a
-					>
-					{#if user}
-						<a
-							href="/app/projets"
-							class="w-fit rounded-md border-2 border-emerald-600 bg-emerald-600 px-4 py-2 font-medium text-white transition-colors hover:bg-emerald-700"
-							onclick={() => (mobileMenuOpen = false)}
-						>
-							Tableau de bord
-						</a>
-					{:else}
-						<a
-							href="/login"
-							class="btn btn-outline btn-success w-fit"
-							onclick={() => (mobileMenuOpen = false)}
-						>
-							Se connecter
-						</a>
-					{/if}
-				</div>
-			</div>
-		{/if}
-	</nav>
+        <!-- Mobile Navigation -->
+        {#if mobileMenuOpen}
+            <div class="mt-4 border-t pt-4 md:hidden">
+                <div class="flex flex-col gap-3">
+                    <a
+                        href="/"
+                        class="font-medium transition-colors hover:text-emerald-600"
+                        onclick={() => (mobileMenuOpen = false)}>Accueil</a
+                    >
+                    <a
+                        href="/about"
+                        class="font-medium transition-colors hover:text-emerald-600"
+                        onclick={() => (mobileMenuOpen = false)}>À propos</a
+                    >
+                    <a
+                        href="/contact"
+                        class="font-medium transition-colors hover:text-emerald-600"
+                        onclick={() => (mobileMenuOpen = false)}>Contact</a
+                    >
+                    {#if user}
+                        <a
+                            href="/app/projets"
+                            class="w-fit rounded-md border-2 border-emerald-600 bg-emerald-600 px-4 py-2 font-medium text-white transition-colors hover:bg-emerald-700"
+                            onclick={() => (mobileMenuOpen = false)}
+                        >
+                            Tableau de bord
+                        </a>
+                    {:else}
+                        <a
+                            href="/login"
+                            class="btn w-fit btn-outline btn-success"
+                            onclick={() => (mobileMenuOpen = false)}
+                        >
+                            Se connecter
+                        </a>
+                    {/if}
+                </div>
+            </div>
+        {/if}
+    </nav>
 </header>

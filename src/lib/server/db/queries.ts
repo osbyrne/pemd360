@@ -1,11 +1,11 @@
-import { db } from './client';
-import { projet, userProjet } from './schema';
-import { eq, inArray, type SQL } from 'drizzle-orm';
-import type { SQLiteColumn } from 'drizzle-orm/sqlite-core';
+import { db } from "./client";
+import { projet, userProjet } from "./schema";
+import { eq, inArray, type SQL } from "drizzle-orm";
+import type { SQLiteColumn } from "drizzle-orm/sqlite-core";
 
 type User = {
-	id: string;
-	role?: string | null;
+  id: string;
+  role?: string | null;
 };
 
 /**
@@ -13,23 +13,23 @@ type User = {
  * Admins get all projects, other users get only projects linked to them via userProjet.
  */
 export async function getUserProjects(user: User) {
-	if (user.role === 'admin') {
-		return await db
-			.select({
-				id: projet.id,
-				libelle: projet.libelle
-			})
-			.from(projet);
-	}
+  if (user.role === "admin") {
+    return await db
+      .select({
+        id: projet.id,
+        libelle: projet.libelle,
+      })
+      .from(projet);
+  }
 
-	return await db
-		.select({
-			id: projet.id,
-			libelle: projet.libelle
-		})
-		.from(projet)
-		.innerJoin(userProjet, eq(projet.id, userProjet.projetId))
-		.where(eq(userProjet.userId, user.id));
+  return await db
+    .select({
+      id: projet.id,
+      libelle: projet.libelle,
+    })
+    .from(projet)
+    .innerJoin(userProjet, eq(projet.id, userProjet.projetId))
+    .where(eq(userProjet.userId, user.id));
 }
 
 /**
@@ -37,26 +37,26 @@ export async function getUserProjects(user: User) {
  * Useful for filtering data in export routes.
  */
 export async function getAllowedProjectIds(user: User): Promise<string[]> {
-	if (user.role === 'admin') {
-		const allProjects = await db.select({ id: projet.id }).from(projet);
-		return allProjects.map((p) => p.id);
-	}
+  if (user.role === "admin") {
+    const allProjects = await db.select({ id: projet.id }).from(projet);
+    return allProjects.map((p) => p.id);
+  }
 
-	const userProjects = await db
-		.select({ id: projet.id })
-		.from(projet)
-		.innerJoin(userProjet, eq(projet.id, userProjet.projetId))
-		.where(eq(userProjet.userId, user.id));
+  const userProjects = await db
+    .select({ id: projet.id })
+    .from(projet)
+    .innerJoin(userProjet, eq(projet.id, userProjet.projetId))
+    .where(eq(userProjet.userId, user.id));
 
-	return userProjects.map((p) => p.id);
+  return userProjects.map((p) => p.id);
 }
 
 /**
  * Result of export authorization check
  */
 export type ExportAuthResult =
-	| { authorized: true; allowedProjectIds: string[]; projectId: string | null }
-	| { authorized: false; error: Response };
+  | { authorized: true; allowedProjectIds: string[]; projectId: string | null }
+  | { authorized: false; error: Response };
 
 /**
  * Validates user authorization for export endpoints.
@@ -67,37 +67,37 @@ export type ExportAuthResult =
  * @returns Authorization result with either allowed project IDs or an error Response
  */
 export async function validateExportAuth(
-	user: User | null | undefined,
-	projectId: string | null
+  user: User | null | undefined,
+  projectId: string | null,
 ): Promise<ExportAuthResult> {
-	if (!user) {
-		return {
-			authorized: false,
-			error: new Response('Unauthorized', { status: 401 })
-		};
-	}
+  if (!user) {
+    return {
+      authorized: false,
+      error: new Response("Unauthorized", { status: 401 }),
+    };
+  }
 
-	const allowedProjectIds = await getAllowedProjectIds(user);
+  const allowedProjectIds = await getAllowedProjectIds(user);
 
-	if (allowedProjectIds.length === 0) {
-		return {
-			authorized: false,
-			error: new Response('No access to any project', { status: 403 })
-		};
-	}
+  if (allowedProjectIds.length === 0) {
+    return {
+      authorized: false,
+      error: new Response("No access to any project", { status: 403 }),
+    };
+  }
 
-	if (projectId && !allowedProjectIds.includes(projectId)) {
-		return {
-			authorized: false,
-			error: new Response('Unauthorized for this project', { status: 403 })
-		};
-	}
+  if (projectId && !allowedProjectIds.includes(projectId)) {
+    return {
+      authorized: false,
+      error: new Response("Unauthorized for this project", { status: 403 }),
+    };
+  }
 
-	return {
-		authorized: true,
-		allowedProjectIds,
-		projectId
-	};
+  return {
+    authorized: true,
+    allowedProjectIds,
+    projectId,
+  };
 }
 
 /**
@@ -110,17 +110,17 @@ export async function validateExportAuth(
  * @returns Array of SQL conditions to use in .where()
  */
 export function buildProjectConditions(
-	sidIdColumn: SQLiteColumn,
-	allowedProjectIds: string[],
-	projectId: string | null
+  sidIdColumn: SQLiteColumn,
+  allowedProjectIds: string[],
+  projectId: string | null,
 ): SQL[] {
-	const conditions: SQL[] = [];
+  const conditions: SQL[] = [];
 
-	if (projectId) {
-		conditions.push(eq(sidIdColumn, projectId));
-	} else {
-		conditions.push(inArray(sidIdColumn, allowedProjectIds));
-	}
+  if (projectId) {
+    conditions.push(eq(sidIdColumn, projectId));
+  } else {
+    conditions.push(inArray(sidIdColumn, allowedProjectIds));
+  }
 
-	return conditions;
+  return conditions;
 }

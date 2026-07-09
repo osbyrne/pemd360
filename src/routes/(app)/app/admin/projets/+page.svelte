@@ -1,301 +1,301 @@
 <script lang="ts">
-	import type { PageData } from './$types';
-	import { enhance } from '$app/forms';
-	import { invalidateAll } from '$app/navigation';
-	import { Plus, Download, Search, ChartNoAxesCombined, Eye, Pencil, Trash2 } from 'lucide-svelte';
-	import Pagination from '$lib/components/Pagination.svelte';
+  import type { PageData } from "./$types";
+  import { enhance } from "$app/forms";
+  import { invalidateAll } from "$app/navigation";
+  import { Plus, Download, Search, ChartNoAxesCombined, Eye, Pencil, Trash2 } from "lucide-svelte";
+  import Pagination from "$lib/components/Pagination.svelte";
 
-	let { data }: { data: PageData } = $props();
+  let { data }: { data: PageData } = $props();
 
-	// State
-	let projets = $derived(data.projets);
-	let loading = $state(false);
+  // State
+  let projets = $derived(data.projets);
+  let loading = $state(false);
 
-	// Pagination & Search
-	let query = $state('');
-	let perPage = 25;
-	let page = $state(1);
+  // Pagination & Search
+  let query = $state("");
+  let perPage = 25;
+  let page = $state(1);
 
-	// Modals State
-	let isDeleteModalOpen = $state(false);
+  // Modals State
+  let isDeleteModalOpen = $state(false);
 
-	// Toast
-	let toast: { message: string; type: 'success' | 'error' } | null = $state(null);
+  // Toast
+  let toast: { message: string; type: "success" | "error" } | null = $state(null);
 
-	// Active item
-	let selectedProjet: (typeof projets)[0] | null = $state(null);
+  // Active item
+  let selectedProjet: (typeof projets)[0] | null = $state(null);
 
-	// Dropdown menu state
-	let openDropdownId: string | null = $state(null);
+  // Dropdown menu state
+  let openDropdownId: string | null = $state(null);
 
-	function toggleDropdown(projetId: string) {
-		openDropdownId = openDropdownId === projetId ? null : projetId;
-	}
+  function toggleDropdown(projetId: string) {
+    openDropdownId = openDropdownId === projetId ? null : projetId;
+  }
 
-	function closeDropdown() {
-		openDropdownId = null;
-	}
+  function closeDropdown() {
+    openDropdownId = null;
+  }
 
-	function showToast(message: string, type: 'success' | 'error' = 'success') {
-		toast = { message, type };
-		setTimeout(() => (toast = null), 3000);
-	}
+  function showToast(message: string, type: "success" | "error" = "success") {
+    toast = { message, type };
+    setTimeout(() => (toast = null), 3000);
+  }
 
-	// Derived
-	const filteredProjets = $derived(
-		projets.filter((p) => {
-			if (!query) return true;
-			const q = query.toLowerCase();
-			return (
-				p.id?.toLowerCase().includes(q) ||
-				p.libelle?.toLowerCase().includes(q) ||
-				p.reference?.toLowerCase().includes(q) ||
-				p.ville?.toLowerCase().includes(q) ||
-				p.etablissementNom?.toLowerCase().includes(q) ||
-				p.societeNom?.toLowerCase().includes(q)
-			);
-		})
-	);
+  // Derived
+  const filteredProjets = $derived(
+    projets.filter((p) => {
+      if (!query) return true;
+      const q = query.toLowerCase();
+      return (
+        p.id?.toLowerCase().includes(q) ||
+        p.libelle?.toLowerCase().includes(q) ||
+        p.reference?.toLowerCase().includes(q) ||
+        p.ville?.toLowerCase().includes(q) ||
+        p.etablissementNom?.toLowerCase().includes(q) ||
+        p.societeNom?.toLowerCase().includes(q)
+      );
+    }),
+  );
 
-	const totalPages = $derived(Math.ceil(filteredProjets.length / perPage));
-	const displayedProjets = $derived(filteredProjets.slice((page - 1) * perPage, page * perPage));
+  const totalPages = $derived(Math.ceil(filteredProjets.length / perPage));
+  const displayedProjets = $derived(filteredProjets.slice((page - 1) * perPage, page * perPage));
 
-	// Actions
-	function openDeleteModal(proj: (typeof projets)[0]) {
-		selectedProjet = proj;
-		isDeleteModalOpen = true;
-	}
+  // Actions
+  function openDeleteModal(proj: (typeof projets)[0]) {
+    selectedProjet = proj;
+    isDeleteModalOpen = true;
+  }
 
-	function closeDeleteModal() {
-		isDeleteModalOpen = false;
-		selectedProjet = null;
-	}
+  function closeDeleteModal() {
+    isDeleteModalOpen = false;
+    selectedProjet = null;
+  }
 
-	function formatDate(date: Date | number | null): string {
-		if (!date) return '-';
-		return new Date(date).toLocaleDateString('fr-FR');
-	}
+  function formatDate(date: Date | number | null): string {
+    if (!date) return "-";
+    return new Date(date).toLocaleDateString("fr-FR");
+  }
 
-	// CSV Export
-	function downloadCSV() {
-		if (!projets.length) return;
-		const cols = [
-			'id',
-			'reference',
-			'libelle',
-			'ville',
-			'etablissement',
-			'societe',
-			'date_demarrage'
-		];
-		const lines = [cols.join(',')];
+  // CSV Export
+  function downloadCSV() {
+    if (!projets.length) return;
+    const cols = [
+      "id",
+      "reference",
+      "libelle",
+      "ville",
+      "etablissement",
+      "societe",
+      "date_demarrage",
+    ];
+    const lines = [cols.join(",")];
 
-		for (const p of filteredProjets) {
-			const row = [
-				`"${(p.id || '').replace(/"/g, '""')}"`,
-				`"${(p.reference || '').replace(/"/g, '""')}"`,
-				`"${(p.libelle || '').replace(/"/g, '""')}"`,
-				`"${(p.ville || '').replace(/"/g, '""')}"`,
-				`"${(p.etablissementNom || '').replace(/"/g, '""')}"`,
-				`"${(p.societeNom || '').replace(/"/g, '""')}"`,
-				p.dateDemarrage ? formatDate(p.dateDemarrage) : ''
-			];
-			lines.push(row.join(','));
-		}
+    for (const p of filteredProjets) {
+      const row = [
+        `"${(p.id || "").replace(/"/g, '""')}"`,
+        `"${(p.reference || "").replace(/"/g, '""')}"`,
+        `"${(p.libelle || "").replace(/"/g, '""')}"`,
+        `"${(p.ville || "").replace(/"/g, '""')}"`,
+        `"${(p.etablissementNom || "").replace(/"/g, '""')}"`,
+        `"${(p.societeNom || "").replace(/"/g, '""')}"`,
+        p.dateDemarrage ? formatDate(p.dateDemarrage) : "",
+      ];
+      lines.push(row.join(","));
+    }
 
-		const csv = lines.join('\n');
-		const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = 'projets_export.csv';
-		document.body.appendChild(a);
-		a.click();
-		document.body.removeChild(a);
-	}
+    const csv = lines.join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "projets_export.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
 </script>
 
 <svelte:head>
-	<title>Admin · Projets</title>
+  <title>Admin · Projets</title>
 </svelte:head>
 
 <main class="mx-auto max-w-7xl">
-	<!-- Header -->
-	<div class="mb-8">
-		<div class="sm:flex sm:items-center sm:justify-between">
-			<div>
-				<h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Gestion des projets</h1>
-				<p class="mt-2 text-sm">Gérez tous les projets de la plateforme.</p>
-			</div>
-			<div class="mt-4 flex flex-wrap gap-3 sm:mt-0">
-				<a href="/app/admin/projets/nouveau" class="btn">
-					<Plus size={18} />
-					Nouveau projet
-				</a>
-				<button onclick={downloadCSV} class="btn">
-					<Download size={16} />
-					Export CSV
-				</button>
-			</div>
-		</div>
-	</div>
+  <!-- Header -->
+  <div class="mb-8">
+    <div class="sm:flex sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Gestion des projets</h1>
+        <p class="mt-2 text-sm">Gérez tous les projets de la plateforme.</p>
+      </div>
+      <div class="mt-4 flex flex-wrap gap-3 sm:mt-0">
+        <a href="/app/admin/projets/nouveau" class="btn">
+          <Plus size={18} />
+          Nouveau projet
+        </a>
+        <button onclick={downloadCSV} class="btn">
+          <Download size={16} />
+          Export CSV
+        </button>
+      </div>
+    </div>
+  </div>
 
-	<!-- Search Bar -->
-	<label class="mb-6 input relative">
-		<Search />
-		<input
-			type="search"
-			bind:value={query}
-			placeholder="Rechercher par ID Matterport, référence, libellé, ville, établissement..."
-		/>
-	</label>
-	<br />
-	<br />
+  <!-- Search Bar -->
+  <label class="input relative mb-6">
+    <Search />
+    <input
+      type="search"
+      bind:value={query}
+      placeholder="Rechercher par ID Matterport, référence, libellé, ville, établissement..."
+    />
+  </label>
+  <br />
+  <br />
 
-	<!-- Table -->
-	<div class="overflow-hidden">
-		{#if displayedProjets.length === 0}
-			<div class="flex flex-col items-center justify-center py-16 px-4">
-				<ChartNoAxesCombined size={48} strokeWidth={1.5} class="mb-4" />
-				<p class="font-medium">Aucun projet trouvé</p>
-				<p class="text-sm mt-1">Créez un nouveau projet ou modifiez vos critères de recherche</p>
-			</div>
-		{:else}
-			<div class="overflow-x-auto">
-				<table class="table">
-					<thead>
-						<tr>
-							<th>ID Matterport</th>
-							<th>Référence</th>
-							<th>Libellé</th>
-							<th>Ville</th>
-							<th>Établissement</th>
-							<th>Société</th>
-							<th>Démarrage</th>
-							<th>Actions</th>
-						</tr>
-					</thead>
-					<tbody class="divide-y divide-slate-100">
-						{#each displayedProjets as proj (proj.id)}
-							<tr class="hover: transition-colors">
-								<td class="px-6 py-4">
-									<span class="text-xs font-mono text-emerald-600 bg-emerald-50 px-2 py-1 rounded"
-										>{proj.id}</span
-									>
-								</td>
-								<td class="px-6 py-4">
-									<span class="text-sm font-medium">{proj.reference}</span>
-								</td>
-								<td class="px-6 py-4">
-									<span class="text-sm">{proj.libelle}</span>
-								</td>
-								<td class="px-6 py-4">
-									<span class="text-sm">{proj.ville}</span>
-								</td>
-								<td class="px-6 py-4">
-									<span class="text-sm">{proj.etablissementNom || '-'}</span>
-								</td>
-								<td class="px-6 py-4">
-									<span
-										class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700"
-									>
-										{proj.societeNom || '-'}
-									</span>
-								</td>
-								<td class="px-6 py-4">
-									<span class="text-sm">{formatDate(proj.dateDemarrage)}</span>
-								</td>
-								<td class="px-6 py-4">
-									<a
-										href="/app/admin/projets/{proj.id}"
-										class="btn btn-ghost"
-										onclick={closeDropdown}
-									>
-										<Eye size={16} />
-										Voir
-									</a>
-									<a
-										href="/app/admin/projets/{proj.id}/modifier"
-										class="btn btn-ghost"
-										onclick={closeDropdown}
-									>
-										<Pencil size={16} />
-										Modifier
-									</a>
-									<button
-										onclick={() => {
-											openDeleteModal(proj);
-											closeDropdown();
-										}}
-										class="btn btn-ghost"
-									>
-										<Trash2 size={16} />
-										Supprimer
-									</button>
-								</td>
-							</tr>
-						{/each}
-					</tbody>
-				</table>
-			</div>
-		{/if}
+  <!-- Table -->
+  <div class="overflow-hidden">
+    {#if displayedProjets.length === 0}
+      <div class="flex flex-col items-center justify-center px-4 py-16">
+        <ChartNoAxesCombined size={48} strokeWidth={1.5} class="mb-4" />
+        <p class="font-medium">Aucun projet trouvé</p>
+        <p class="mt-1 text-sm">Créez un nouveau projet ou modifiez vos critères de recherche</p>
+      </div>
+    {:else}
+      <div class="overflow-x-auto">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID Matterport</th>
+              <th>Référence</th>
+              <th>Libellé</th>
+              <th>Ville</th>
+              <th>Établissement</th>
+              <th>Société</th>
+              <th>Démarrage</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            {#each displayedProjets as proj (proj.id)}
+              <tr class="hover: transition-colors">
+                <td class="px-6 py-4">
+                  <span class="rounded bg-emerald-50 px-2 py-1 font-mono text-xs text-emerald-600"
+                    >{proj.id}</span
+                  >
+                </td>
+                <td class="px-6 py-4">
+                  <span class="text-sm font-medium">{proj.reference}</span>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="text-sm">{proj.libelle}</span>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="text-sm">{proj.ville}</span>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="text-sm">{proj.etablissementNom || "-"}</span>
+                </td>
+                <td class="px-6 py-4">
+                  <span
+                    class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700"
+                  >
+                    {proj.societeNom || "-"}
+                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="text-sm">{formatDate(proj.dateDemarrage)}</span>
+                </td>
+                <td class="px-6 py-4">
+                  <a
+                    href="/app/admin/projets/{proj.id}"
+                    class="btn btn-ghost"
+                    onclick={closeDropdown}
+                  >
+                    <Eye size={16} />
+                    Voir
+                  </a>
+                  <a
+                    href="/app/admin/projets/{proj.id}/modifier"
+                    class="btn btn-ghost"
+                    onclick={closeDropdown}
+                  >
+                    <Pencil size={16} />
+                    Modifier
+                  </a>
+                  <button
+                    onclick={() => {
+                      openDeleteModal(proj);
+                      closeDropdown();
+                    }}
+                    class="btn btn-ghost"
+                  >
+                    <Trash2 size={16} />
+                    Supprimer
+                  </button>
+                </td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </div>
+    {/if}
 
-		<!-- Pagination -->
-		<Pagination
-			{page}
-			{totalPages}
-			totalItems={filteredProjets.length}
-			{perPage}
-			onPageChange={(p) => (page = p)}
-		/>
-	</div>
+    <!-- Pagination -->
+    <Pagination
+      {page}
+      {totalPages}
+      totalItems={filteredProjets.length}
+      {perPage}
+      onPageChange={(p) => (page = p)}
+    />
+  </div>
 </main>
 
 <!-- MODAL : Supprimer -->
 {#if isDeleteModalOpen && selectedProjet}
-	<div class="relative z-50" role="dialog" aria-modal="true">
-		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-			<div class="flex min-h-full items-center justify-center">
-				<form
-					method="POST"
-					action="?/delete"
-					use:enhance={() => {
-						return async ({ result }) => {
-							if (result.type === 'success') {
-								closeDeleteModal();
-								showToast('Projet supprimé avec succès');
-								await invalidateAll();
-							} else {
-								showToast('Échec de la suppression', 'error');
-							}
-						};
-					}}
-				>
-					<input type="hidden" name="projetId" value={selectedProjet.id} />
-					<div class="px-6 py-5">
-						<div class="flex items-center gap-3 mb-6">
-							<div>
-								<h3 class="text-lg font-semibold">Supprimer le projet</h3>
-								<p class="text-sm">{selectedProjet.libelle}</p>
-							</div>
-						</div>
-						<p class="text-sm text-red-800">
-							<strong>Attention :</strong> Cette action est irréversible. Toutes les données associées
-							à ce projet seront définitivement supprimées.
-						</p>
-					</div>
-					<button type="button" class="btn" onclick={closeDeleteModal}> Annuler </button>
-					<button type="submit" class="btn btn-warning"> Supprimer définitivement </button>
-				</form>
-			</div>
-		</div>
-	</div>
+  <div class="relative z-50" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+      <div class="flex min-h-full items-center justify-center">
+        <form
+          method="POST"
+          action="?/delete"
+          use:enhance={() => {
+            return async ({ result }) => {
+              if (result.type === "success") {
+                closeDeleteModal();
+                showToast("Projet supprimé avec succès");
+                await invalidateAll();
+              } else {
+                showToast("Échec de la suppression", "error");
+              }
+            };
+          }}
+        >
+          <input type="hidden" name="projetId" value={selectedProjet.id} />
+          <div class="px-6 py-5">
+            <div class="mb-6 flex items-center gap-3">
+              <div>
+                <h3 class="text-lg font-semibold">Supprimer le projet</h3>
+                <p class="text-sm">{selectedProjet.libelle}</p>
+              </div>
+            </div>
+            <p class="text-sm text-red-800">
+              <strong>Attention :</strong> Cette action est irréversible. Toutes les données associées
+              à ce projet seront définitivement supprimées.
+            </p>
+          </div>
+          <button type="button" class="btn" onclick={closeDeleteModal}> Annuler </button>
+          <button type="submit" class="btn btn-warning"> Supprimer définitivement </button>
+        </form>
+      </div>
+    </div>
+  </div>
 {/if}
 
 {#if toast}
-	<div class="toast">
-		<div class="alert alert-info">
-			<span class="text-sm font-medium">{toast.message}</span>
-		</div>
-	</div>
+  <div class="toast">
+    <div class="alert alert-info">
+      <span class="text-sm font-medium">{toast.message}</span>
+    </div>
+  </div>
 {/if}
