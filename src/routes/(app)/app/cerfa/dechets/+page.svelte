@@ -1,5 +1,6 @@
 <script lang="ts">
   import CerfaTabs from "$lib/components/CerfaTabs.svelte";
+  import Pagination from "$lib/components/Pagination.svelte";
   import { Search, X, Download } from "lucide-svelte";
   import { page } from "$app/stores";
   import type { PageData } from "./$types";
@@ -276,36 +277,13 @@
     </div>
 
     <!-- Pagination Controls -->
-    {#if filteredDechets.length > 0 && totalPages > 1}
-      <div class="flex items-center justify-between border-t border-gray-200 px-4 py-3">
-        <p class="text-sm">
-          Affichage de <span class="font-semibold"
-            >{Math.min(filteredDechets.length, (currentPage - 1) * itemsPerPage + 1)}</span
-          >
-          à
-          <span class="font-semibold"
-            >{Math.min(filteredDechets.length, currentPage * itemsPerPage)}</span
-          >
-          sur <span class="font-semibold">{filteredDechets.length}</span> résultats
-        </p>
-        <div class="flex gap-2">
-          <button
-            onclick={() => (currentPage = Math.max(1, currentPage - 1))}
-            disabled={currentPage === 1}
-            class="btn"
-          >
-            Précédent
-          </button>
-          <button
-            onclick={() => (currentPage = Math.min(totalPages, currentPage + 1))}
-            disabled={currentPage === totalPages}
-            class="btn"
-          >
-            Suivant
-          </button>
-        </div>
-      </div>
-    {/if}
+    <Pagination
+      page={currentPage}
+      {totalPages}
+      totalItems={filteredDechets.length}
+      perPage={itemsPerPage}
+      onPageChange={(page) => (currentPage = page)}
+    />
   </div>
 
   <div class="mt-4 flex gap-4 text-xs">

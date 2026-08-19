@@ -5,6 +5,7 @@ import { getRequestEvent } from "$app/server";
 import { env } from "$env/dynamic/private";
 import { db } from "./server/db/client";
 import * as schema from "./server/db/schema";
+import { sendPasswordResetEmail } from "./server/email/resend";
 import { admin } from "better-auth/plugins";
 
 import { ac, admin as adminRole, user, collaborator } from "./auth/permissions";
@@ -20,6 +21,14 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     disableSignUp: true,
+    resetPasswordTokenExpiresIn: 60 * 60,
+    sendResetPassword: async ({ user, url }) => {
+      await sendPasswordResetEmail({
+        to: user.email,
+        recipientName: user.name,
+        resetUrl: url,
+      });
+    },
   },
   plugins: [
     sveltekitCookies(getRequestEvent),

@@ -6,54 +6,45 @@ PEMD360 is a web application for building diagnostics and waste management (PEMD
 
 ## Pre-Requisite
 
-- [Node.js ^22](https://nodejs.org/en/download)
+- Deno
 
 ## Installation
 
 ```bash
-# Install project dependencies:
-bun install
-
+deno install
 ```
 
-Copy `.env.example` to `.env` and fill in the required values. Vite and SvelteKit load
-`.env` for the application; standalone database tooling loads it through `dotenv`.
+Copy `.env.example` to `.env` and fill in the required values. 
 
 ## Creating an administrator
 
-Administrator bootstrap is intentionally available only as a local CLI command. Public signup does
-not create accounts.
+Administrator bootstrap is intentionally available only as a local CLI command. Public signup does not create accounts.
 
-The command uses `TURSO_CONNECTION_URL`, `TURSO_AUTH_TOKEN`, `BETTER_AUTH_SECRET`, and optionally
-`BETTER_AUTH_URL` from `.env`. It displays the target database before making changes, asks for an
-explicit confirmation, and prompts for the password without displaying or storing it.
+The command uses `TURSO_CONNECTION_URL`, `TURSO_AUTH_TOKEN`, `BETTER_AUTH_SECRET`, and optionally `BETTER_AUTH_URL` from `.env`. It displays the target database before making changes, asks for an explicit confirmation, and prompts for the password without displaying or storing it.
 
 ```bash
-bun run admin:create -- --email admin@example.com --name "Admin Name"
+deno run admin:create -- --email admin@example.com --name "Admin Name"
 ```
 
-Type `create admin` when prompted, then enter and confirm a password of at least eight characters.
-The user and credential account are created atomically with the `admin` role.
+Type `create admin` when prompted, then enter and confirm a password of at least eight characters. The user and credential account are created atomically with the `admin` role.
 
-The command refuses to modify or promote an existing email address. To promote an existing user,
-sign in as an administrator and change the role from `/app/admin/utilisateurs`.
+The command refuses to modify or promote an existing email address. To promote an existing user, sign in as an administrator and change the role from `/app/admin/utilisateurs`.
 
 Security notes:
 
 - Never put the administrator password in `.env` or command-line arguments.
 - Keep `.env` untracked and restrict local access with `chmod 600 .env`.
 - Check the displayed Turso database URL carefully before confirming.
-- In deployed environments, configure secrets through the hosting platform rather than shipping
-  `.env`.
+- In deployed environments, configure secrets through the hosting platform rather than shipping `.env`.
 
 # Database Migration
 
 ```bash
 # Generate migration
-bunx drizzle-kit generate
+dx drizzle-kit generate
 
 # Apply migration
-bunx drizzle-kit migrate
+dx drizzle-kit migrate
 ```
 
 # Matterport SDK Usage
@@ -113,5 +104,5 @@ bunx drizzle-kit migrate
 
 ## notes
 
-Run `bun run check` and fix issues before committing.
-Also run `bun run fmt`.
+Run `deno run check` and fix issues before committing.
+Also run `deno run fmt`.

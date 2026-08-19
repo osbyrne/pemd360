@@ -9,8 +9,8 @@ import { admin as adminPlugin } from "better-auth/plugins";
 import { createInterface } from "node:readline/promises";
 import { stdin, stdout } from "node:process";
 
-import { ac, admin, collaborator, user as userRole } from "../src/lib/auth/permissions";
-import * as schema from "../src/lib/server/db/schema";
+import { ac, admin, collaborator, user as userRole } from "../src/lib/auth/permissions.ts";
+import * as schema from "../src/lib/server/db/schema.ts";
 
 type Arguments = {
   email?: string;

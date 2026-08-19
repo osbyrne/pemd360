@@ -2,6 +2,7 @@
   import { enhance } from "$app/forms";
   import { goto } from "$app/navigation";
   import { page as pageStore } from "$app/stores";
+  import Pagination from "$lib/components/Pagination.svelte";
   import { Trash2, QrCode, Download, Search, X } from "lucide-svelte";
 
   let { data } = $props();
@@ -245,36 +246,13 @@
     </div>
 
     <!-- Pagination -->
-    {#if pagination.total > 0 && pagination.totalPages > 1}
-      <div class="flex items-center justify-between border-t border-gray-200 px-4 py-3">
-        <p class="text-sm">
-          Affichage de <span class="font-semibold"
-            >{Math.min(pagination.total, (pagination.page - 1) * pagination.perPage + 1)}</span
-          >
-          à
-          <span class="font-semibold"
-            >{Math.min(pagination.total, pagination.page * pagination.perPage)}</span
-          >
-          sur <span class="font-semibold">{pagination.total}</span> résultats
-        </p>
-        <div class="flex gap-2">
-          <button
-            onclick={() => goToPage(Math.max(1, pagination.page - 1))}
-            disabled={pagination.page === 1}
-            class="btn"
-          >
-            Précédent
-          </button>
-          <button
-            onclick={() => goToPage(Math.min(pagination.totalPages, pagination.page + 1))}
-            disabled={pagination.page === pagination.totalPages}
-            class="btn"
-          >
-            Suivant
-          </button>
-        </div>
-      </div>
-    {/if}
+    <Pagination
+      page={pagination.page}
+      totalPages={pagination.totalPages}
+      totalItems={pagination.total}
+      perPage={pagination.perPage}
+      onPageChange={goToPage}
+    />
   </div>
 </div>
 
