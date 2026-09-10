@@ -1,4 +1,6 @@
 <script lang="ts">
+  import * as stylex from "@stylexjs/stylex";
+  import { ui } from "$lib/styles/ui.stylex";
   import type { PageData } from "./$types";
   import { enhance } from "$app/forms";
   import { invalidateAll } from "$app/navigation";
@@ -113,26 +115,195 @@
     a.click();
     document.body.removeChild(a);
   }
+
+  const styles = stylex.create({
+    main: {
+      marginInlineStart: "auto",
+      marginInlineEnd: "auto",
+      maxWidth: "80rem",
+    },
+    div: {
+      marginBottom: "2rem",
+    },
+    div2: {
+      display: {
+        "@media (min-width: 640px)": "flex",
+      },
+      alignItems: {
+        "@media (min-width: 640px)": "center",
+      },
+      justifyContent: {
+        "@media (min-width: 640px)": "space-between",
+      },
+    },
+    h1: {
+      fontSize: {
+        default: "1.5rem",
+        "@media (min-width: 640px)": "1.875rem",
+      },
+      lineHeight: {
+        default: "2rem",
+        "@media (min-width: 640px)": "2.25rem",
+      },
+      fontWeight: 700,
+      letterSpacing: "-.025em",
+    },
+    p: {
+      marginTop: "0.5rem",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+    div3: {
+      marginTop: {
+        default: "1rem",
+        "@media (min-width: 640px)": "0rem",
+      },
+      display: "flex",
+      flexWrap: "wrap",
+      gap: "0.75rem",
+    },
+    label: {
+      position: "relative",
+      marginBottom: "1.5rem",
+    },
+    div4: {
+      overflow: "hidden",
+    },
+    div5: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingInlineStart: "1rem",
+      paddingInlineEnd: "1rem",
+      paddingTop: "4rem",
+      paddingBottom: "4rem",
+    },
+    ChartNoAxesCombined: {
+      marginBottom: "1rem",
+    },
+    p2: {
+      fontWeight: 500,
+    },
+    p3: {
+      marginTop: "0.25rem",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+    div6: {
+      overflowX: "auto",
+    },
+    tbody: {
+      "--divider-width": "1px",
+      "--divider-color": "oklch(96.8% 0.007 247.896)",
+    },
+    tr: {
+      transitionProperty:
+        "color, background-color, border-color, text-decoration-color, fill, stroke",
+      transitionDuration: "150ms",
+      transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+    },
+    td: {
+      paddingInlineStart: "1.5rem",
+      paddingInlineEnd: "1.5rem",
+      paddingTop: "1rem",
+      paddingBottom: "1rem",
+    },
+    span: {
+      borderRadius: ".25rem",
+      backgroundColor: "oklch(97.9% 0.021 166.113)",
+      paddingInlineStart: "0.5rem",
+      paddingInlineEnd: "0.5rem",
+      paddingTop: "0.25rem",
+      paddingBottom: "0.25rem",
+      fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+      fontSize: ".75rem",
+      lineHeight: "1rem",
+      color: "oklch(59.6% 0.145 163.225)",
+    },
+    span2: {
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      fontWeight: 500,
+    },
+    span3: {
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+    span4: {
+      display: "inline-flex",
+      alignItems: "center",
+      borderRadius: "9999px",
+      backgroundColor: "oklch(97% 0.014 254.604)",
+      paddingInlineStart: "0.625rem",
+      paddingInlineEnd: "0.625rem",
+      paddingTop: "0.125rem",
+      paddingBottom: "0.125rem",
+      fontSize: ".75rem",
+      lineHeight: "1rem",
+      fontWeight: 500,
+      color: "oklch(48.8% 0.243 264.376)",
+    },
+    div7: {
+      position: "relative",
+      zIndex: 50,
+    },
+    div8: {
+      position: "fixed",
+      inset: 0,
+      zIndex: 10,
+      width: "100vw",
+      overflowY: "auto",
+    },
+    div9: {
+      display: "flex",
+      minHeight: "100%",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    div10: {
+      paddingInlineStart: "1.5rem",
+      paddingInlineEnd: "1.5rem",
+      paddingTop: "1.25rem",
+      paddingBottom: "1.25rem",
+    },
+    div11: {
+      marginBottom: "1.5rem",
+      display: "flex",
+      alignItems: "center",
+      gap: "0.75rem",
+    },
+    h3: {
+      fontSize: "1.125rem",
+      lineHeight: "1.75rem",
+      fontWeight: 600,
+    },
+    p4: {
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      color: "oklch(44.4% 0.177 26.899)",
+    },
+  });
 </script>
 
 <svelte:head>
   <title>Admin · Projets</title>
 </svelte:head>
 
-<main class="mx-auto max-w-7xl">
+<main class={stylex.attrs(styles.main).class}>
   <!-- Header -->
-  <div class="mb-8">
-    <div class="sm:flex sm:items-center sm:justify-between">
+  <div class={stylex.attrs(styles.div).class}>
+    <div class={stylex.attrs(styles.div2).class}>
       <div>
-        <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Gestion des projets</h1>
-        <p class="mt-2 text-sm">Gérez tous les projets de la plateforme.</p>
+        <h1 class={stylex.attrs(styles.h1).class}>Gestion des projets</h1>
+        <p class={stylex.attrs(styles.p).class}>Gérez tous les projets de la plateforme.</p>
       </div>
-      <div class="mt-4 flex flex-wrap gap-3 sm:mt-0">
-        <a href="/app/admin/projets/nouveau" class="btn">
+      <div class={stylex.attrs(styles.div3).class}>
+        <a href="/app/admin/projets/nouveau" class={stylex.attrs(ui.button).class}>
           <Plus size={18} />
           Nouveau projet
         </a>
-        <button onclick={downloadCSV} class="btn">
+        <button onclick={downloadCSV} class={stylex.attrs(ui.button).class}>
           <Download size={16} />
           Export CSV
         </button>
@@ -141,7 +312,7 @@
   </div>
 
   <!-- Search Bar -->
-  <label class="input relative mb-6">
+  <label class={stylex.attrs(ui.input, styles.label).class}>
     <Search />
     <input
       type="search"
@@ -153,62 +324,82 @@
   <br />
 
   <!-- Table -->
-  <div class="overflow-hidden">
+  <div class={stylex.attrs(styles.div4).class}>
     {#if displayedProjets.length === 0}
-      <div class="flex flex-col items-center justify-center px-4 py-16">
-        <ChartNoAxesCombined size={48} strokeWidth={1.5} class="mb-4" />
-        <p class="font-medium">Aucun projet trouvé</p>
-        <p class="mt-1 text-sm">Créez un nouveau projet ou modifiez vos critères de recherche</p>
+      <div class={stylex.attrs(styles.div5).class}>
+        <ChartNoAxesCombined
+          size={48}
+          strokeWidth={1.5}
+          class={stylex.attrs(styles.ChartNoAxesCombined).class}
+        />
+        <p class={stylex.attrs(styles.p2).class}>Aucun projet trouvé</p>
+        <p class={stylex.attrs(styles.p3).class}>
+          Créez un nouveau projet ou modifiez vos critères de recherche
+        </p>
       </div>
     {:else}
-      <div class="overflow-x-auto">
-        <table class="table">
+      <div class={stylex.attrs(styles.div6).class}>
+        <table class={stylex.attrs(ui.table).class}>
           <thead>
             <tr>
-              <th>ID Matterport</th>
-              <th>Référence</th>
-              <th>Libellé</th>
-              <th>Ville</th>
-              <th>Établissement</th>
-              <th>Société</th>
-              <th>Démarrage</th>
-              <th>Actions</th>
+              <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
+                >ID Matterport</th
+              >
+              <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
+                >Référence</th
+              >
+              <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
+                >Libellé</th
+              >
+              <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}>Ville</th>
+              <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
+                >Établissement</th
+              >
+              <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
+                >Société</th
+              >
+              <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
+                >Démarrage</th
+              >
+              <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
+                >Actions</th
+              >
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-100">
+          <tbody class={stylex.attrs(styles.tbody).class}>
             {#each displayedProjets as proj (proj.id)}
-              <tr class="hover: transition-colors">
-                <td class="px-6 py-4">
-                  <span class="rounded bg-emerald-50 px-2 py-1 font-mono text-xs text-emerald-600"
-                    >{proj.id}</span
+              <tr class={stylex.attrs(ui.divideChild, styles.tr).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+                  <span class={stylex.attrs(styles.span).class}>{proj.id}</span>
+                </td>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+                  <span class={stylex.attrs(styles.span2).class}>{proj.reference}</span>
+                </td>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+                  <span class={stylex.attrs(styles.span3).class}>{proj.libelle}</span>
+                </td>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+                  <span class={stylex.attrs(styles.span3).class}>{proj.ville}</span>
+                </td>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+                  <span class={stylex.attrs(styles.span3).class}
+                    >{proj.etablissementNom || "-"}</span
                   >
                 </td>
-                <td class="px-6 py-4">
-                  <span class="text-sm font-medium">{proj.reference}</span>
-                </td>
-                <td class="px-6 py-4">
-                  <span class="text-sm">{proj.libelle}</span>
-                </td>
-                <td class="px-6 py-4">
-                  <span class="text-sm">{proj.ville}</span>
-                </td>
-                <td class="px-6 py-4">
-                  <span class="text-sm">{proj.etablissementNom || "-"}</span>
-                </td>
-                <td class="px-6 py-4">
-                  <span
-                    class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700"
-                  >
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+                  <span class={stylex.attrs(styles.span4).class}>
                     {proj.societeNom || "-"}
                   </span>
                 </td>
-                <td class="px-6 py-4">
-                  <span class="text-sm">{formatDate(proj.dateDemarrage)}</span>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+                  <span class={stylex.attrs(styles.span3).class}
+                    >{formatDate(proj.dateDemarrage)}</span
+                  >
                 </td>
-                <td class="px-6 py-4">
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
                   <a
                     href="/app/admin/projets/{proj.id}"
-                    class="btn btn-ghost"
+                    class={stylex.attrs(ui.button, ui.buttonGhost).class}
                     onclick={closeDropdown}
                   >
                     <Eye size={16} />
@@ -216,7 +407,7 @@
                   </a>
                   <a
                     href="/app/admin/projets/{proj.id}/modifier"
-                    class="btn btn-ghost"
+                    class={stylex.attrs(ui.button, ui.buttonGhost).class}
                     onclick={closeDropdown}
                   >
                     <Pencil size={16} />
@@ -227,7 +418,7 @@
                       openDeleteModal(proj);
                       closeDropdown();
                     }}
-                    class="btn btn-ghost"
+                    class={stylex.attrs(ui.button, ui.buttonGhost).class}
                   >
                     <Trash2 size={16} />
                     Supprimer
@@ -253,9 +444,9 @@
 
 <!-- MODAL : Supprimer -->
 {#if isDeleteModalOpen && selectedProjet}
-  <div class="relative z-50" role="dialog" aria-modal="true">
-    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-      <div class="flex min-h-full items-center justify-center">
+  <div class={stylex.attrs(styles.div7).class} role="dialog" aria-modal="true">
+    <div class={stylex.attrs(styles.div8).class}>
+      <div class={stylex.attrs(styles.div9).class}>
         <form
           method="POST"
           action="?/delete"
@@ -272,20 +463,24 @@
           }}
         >
           <input type="hidden" name="projetId" value={selectedProjet.id} />
-          <div class="px-6 py-5">
-            <div class="mb-6 flex items-center gap-3">
+          <div class={stylex.attrs(styles.div10).class}>
+            <div class={stylex.attrs(styles.div11).class}>
               <div>
-                <h3 class="text-lg font-semibold">Supprimer le projet</h3>
-                <p class="text-sm">{selectedProjet.libelle}</p>
+                <h3 class={stylex.attrs(styles.h3).class}>Supprimer le projet</h3>
+                <p class={stylex.attrs(styles.span3).class}>{selectedProjet.libelle}</p>
               </div>
             </div>
-            <p class="text-sm text-red-800">
+            <p class={stylex.attrs(styles.p4).class}>
               <strong>Attention :</strong> Cette action est irréversible. Toutes les données associées
               à ce projet seront définitivement supprimées.
             </p>
           </div>
-          <button type="button" class="btn" onclick={closeDeleteModal}> Annuler </button>
-          <button type="submit" class="btn btn-warning"> Supprimer définitivement </button>
+          <button type="button" class={stylex.attrs(ui.button).class} onclick={closeDeleteModal}>
+            Annuler
+          </button>
+          <button type="submit" class={stylex.attrs(ui.button, ui.buttonWarning).class}>
+            Supprimer définitivement
+          </button>
         </form>
       </div>
     </div>
@@ -293,9 +488,9 @@
 {/if}
 
 {#if toast}
-  <div class="toast">
-    <div class="alert alert-info">
-      <span class="text-sm font-medium">{toast.message}</span>
+  <div class={stylex.attrs(ui.toast).class}>
+    <div class={stylex.attrs(ui.alert, ui.alertInfo).class}>
+      <span class={stylex.attrs(styles.span2).class}>{toast.message}</span>
     </div>
   </div>
 {/if}

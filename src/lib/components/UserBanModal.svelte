@@ -1,4 +1,6 @@
 <script lang="ts">
+  import * as stylex from "@stylexjs/stylex";
+  import { ui } from "$lib/styles/ui.stylex";
   import { createEventDispatcher } from "svelte";
   import { authClient } from "$lib/auth-client";
   import { Ban, X } from "lucide-svelte";
@@ -65,42 +67,82 @@
       });
     }
   }
+
+  const styles = stylex.create({
+    button: {
+      transitionProperty:
+        "color, background-color, border-color, text-decoration-color, fill, stroke",
+      transitionDuration: "150ms",
+      transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+    },
+    div: {
+      marginBottom: "1.5rem",
+      display: "flex",
+      alignItems: "center",
+      gap: "0.75rem",
+    },
+    div2: {
+      display: "flex",
+      height: "2.5rem",
+      width: "2.5rem",
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: "9999px",
+    },
+    h3: {
+      fontSize: "1.125rem",
+      lineHeight: "1.75rem",
+      fontWeight: 600,
+    },
+    p: {
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+    label: {
+      marginBottom: "0.375rem",
+      display: "block",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      fontWeight: 500,
+    },
+  });
 </script>
 
 <button
   on:click={openModal}
-  class="btn btn-ghost transition-colors {user.banned
-    ? 'text-green-500 hover:bg-green-50 hover:text-green-700'
-    : ' hover:bg-amber-50 hover:text-amber-600'}"
+  class={stylex.attrs(
+    ui.button,
+    ui.buttonGhost,
+    styles.button,
+    user.banned
+      ? [ui.textGreen500, ui.hoverBgGreen50, ui.hoverTextGreen700]
+      : [ui.hoverBgAmber50, ui.hoverTextAmber600],
+  ).class}
   title={user.banned ? "Reactiver le compte" : "Cloturer le compte"}
 >
   <Ban />
 </button>
 
-<dialog bind:this={modal} class="modal">
-  <div class="modal-box">
-    <div class="mb-6 flex items-center gap-3">
-      <div
-        class="flex h-10 w-10 items-center justify-center rounded-full {user.banned
-          ? 'bg-green-100'
-          : 'bg-amber-100'}"
-      >
+<dialog bind:this={modal} class={stylex.attrs(ui.dialog).class}>
+  <div class={stylex.attrs(ui.dialogPanel).class}>
+    <div class={stylex.attrs(styles.div).class}>
+      <div class={stylex.attrs(styles.div2, user.banned ? ui.bgGreen100 : ui.bgAmber100).class}>
         <X />
       </div>
       <div>
-        <h3 class="text-lg font-semibold">
+        <h3 class={stylex.attrs(styles.h3).class}>
           {user.banned ? "Reactiver le compte" : "Cloturer le compte"}
         </h3>
-        <p class="text-sm">{user.name}</p>
+        <p class={stylex.attrs(styles.p).class}>{user.name}</p>
       </div>
     </div>
     {#if user.banned}
-      <p class="text-sm">
+      <p class={stylex.attrs(styles.p).class}>
         Etes-vous sur de vouloir reactiver ce compte ? Il pourra a nouveau acceder a la plateforme.
       </p>
     {:else}
       <div>
-        <label for="ban-reason-{user.id}" class="mb-1.5 block text-sm font-medium"
+        <label for="ban-reason-{user.id}" class={stylex.attrs(styles.label).class}
           >Raison de la cloture (optionnel)</label
         >
         <textarea
@@ -108,16 +150,20 @@
           bind:value={banReason}
           rows="3"
           placeholder="Ex: Violation des conditions d'utilisation..."
-          class="input"></textarea>
+          class={stylex.attrs(ui.input).class}></textarea>
       </div>
     {/if}
-    <div class="modal-action">
-      <button type="button" class="btn" on:click={closeModal}>Annuler</button>
+    <div class={stylex.attrs(ui.dialogActions).class}>
+      <button type="button" class={stylex.attrs(ui.button).class} on:click={closeModal}
+        >Annuler</button
+      >
       <button
         type="button"
-        class="btn transition-colors {user.banned
-          ? 'bg-green-600 hover:bg-green-700'
-          : 'bg-amber-600 hover:bg-amber-700'}"
+        class={stylex.attrs(
+          ui.button,
+          styles.button,
+          user.banned ? [ui.bgGreen600, ui.hoverBgGreen700] : [ui.bgAmber600, ui.hoverBgAmber700],
+        ).class}
         on:click={confirmBan}
       >
         {user.banned ? "Reactiver" : "Cloturer"}

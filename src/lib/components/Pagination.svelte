@@ -1,4 +1,6 @@
 <script lang="ts">
+  import * as stylex from "@stylexjs/stylex";
+  import { ui } from "$lib/styles/ui.stylex";
   import { ChevronLeft, ChevronRight } from "lucide-svelte";
 
   interface Props {
@@ -13,23 +15,48 @@
 
   const startItem = $derived(Math.min(totalItems, (page - 1) * perPage + 1));
   const endItem = $derived(Math.min(totalItems, page * perPage));
+
+  const styles = stylex.create({
+    div: {
+      display: "flex",
+      flexDirection: {
+        default: "column",
+        "@media (min-width: 640px)": "row",
+      },
+      alignItems: {
+        default: "flex-start",
+        "@media (min-width: 640px)": "center",
+      },
+      justifyContent: "space-between",
+      gap: "0.75rem",
+      paddingInlineStart: "1rem",
+      paddingInlineEnd: "1rem",
+      paddingTop: "0.75rem",
+      paddingBottom: "0.75rem",
+    },
+    p: {
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+    span: {
+      fontWeight: 600,
+    },
+  });
 </script>
 
 {#if totalItems > 0 && totalPages > 1}
-  <div
-    class="flex flex-col items-start justify-between gap-3 px-4 py-3 sm:flex-row sm:items-center"
-  >
-    <p class="text-sm">
-      Affichage de <span class="font-semibold">{startItem}</span>
-      à <span class="font-semibold">{endItem}</span>
-      sur <span class="font-semibold">{totalItems}</span> résultats
+  <div class={stylex.attrs(styles.div).class}>
+    <p class={stylex.attrs(styles.p).class}>
+      Affichage de <span class={stylex.attrs(styles.span).class}>{startItem}</span>
+      à <span class={stylex.attrs(styles.span).class}>{endItem}</span>
+      sur <span class={stylex.attrs(styles.span).class}>{totalItems}</span> résultats
     </p>
-    <div class="join" aria-label="Pagination">
+    <div class={stylex.attrs(ui.buttonGroup).class} aria-label="Pagination">
       <button
         type="button"
         onclick={() => onPageChange(Math.max(1, page - 1))}
         disabled={page === 1}
-        class="btn join-item btn-sm"
+        class={stylex.attrs(ui.button, ui.buttonGroupItem, ui.buttonSmall).class}
         aria-label="Page précédente"
       >
         <ChevronLeft size={16} />
@@ -39,7 +66,7 @@
         type="button"
         onclick={() => onPageChange(Math.min(totalPages, page + 1))}
         disabled={page === totalPages}
-        class="btn join-item btn-sm"
+        class={stylex.attrs(ui.button, ui.buttonGroupItem, ui.buttonSmall).class}
         aria-label="Page suivante"
       >
         Suivant

@@ -1,2 +1,157 @@
-@import "tailwindcss";
-@plugin 'daisyui';
+/* Global document defaults. Component styles are compiled from StyleX. */
+@layer reset {
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+    border: 0 solid;
+  }
+  html {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    -webkit-tap-highlight-color: transparent;
+    color-scheme: light dark;
+    background: #fff;
+    color: oklch(21% 0.006 285.885);
+  }
+  body {
+    margin: 0;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  figure,
+  blockquote,
+  dl,
+  dd {
+    margin: 0;
+  }
+  a {
+    color: inherit;
+    text-decoration: inherit;
+  }
+  b,
+  strong {
+    font-weight: bolder;
+  }
+  small {
+    font-size: 80%;
+  }
+  sub,
+  sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+  sub {
+    bottom: -0.25em;
+  }
+  sup {
+    top: -0.5em;
+  }
+  table {
+    border-collapse: collapse;
+    border-color: inherit;
+    text-indent: 0;
+  }
+  button,
+  input,
+  select,
+  optgroup,
+  textarea {
+    font: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    border-radius: 0;
+    background-color: transparent;
+    opacity: 1;
+  }
+  button,
+  input:where([type="button"], [type="reset"], [type="submit"]) {
+    appearance: button;
+  }
+  button,
+  select {
+    text-transform: none;
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+  textarea {
+    resize: vertical;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    opacity: 1;
+    color: color-mix(in oklab, currentColor 50%, transparent);
+  }
+  img,
+  svg,
+  video,
+  canvas,
+  audio,
+  iframe,
+  embed,
+  object {
+    display: block;
+    vertical-align: middle;
+  }
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+  ol,
+  ul,
+  menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  fieldset {
+    margin: 0;
+    padding: 0;
+  }
+  legend {
+    padding: 0;
+  }
+  summary {
+    display: list-item;
+  }
+  [hidden]:not([hidden="until-found"]) {
+    display: none !important;
+  }
+  :root:has(dialog[open]) {
+    overflow: hidden;
+  }
+  @media (prefers-color-scheme: dark) {
+    html {
+      background: oklch(25.33% 0.016 252.42);
+      color: oklch(97.807% 0.029 256.847);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      scroll-behavior: auto !important;
+    }
+  }
+}

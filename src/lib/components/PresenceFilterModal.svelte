@@ -1,4 +1,6 @@
 <script lang="ts">
+  import * as stylex from "@stylexjs/stylex";
+  import { ui } from "$lib/styles/ui.stylex";
   interface Props {
     title: string;
     show: boolean;
@@ -34,31 +36,46 @@
     show = false;
     onApply(selected);
   }
+
+  const styles = stylex.create({
+    h3: {
+      marginBottom: "0.75rem",
+      fontSize: "1.125rem",
+      lineHeight: "1.75rem",
+      fontWeight: 600,
+    },
+    div: {
+      marginBottom: "0.75rem",
+      display: "flex",
+      flexDirection: "column",
+      gap: "0.5rem",
+    },
+  });
 </script>
 
-<dialog bind:this={dialog} class="modal" onclose={() => (show = false)}>
-  <div class="modal-box">
-    <h3 class="mb-3 text-lg font-semibold">{title}</h3>
-    <div class="mb-3 flex flex-col gap-2">
+<dialog bind:this={dialog} class={stylex.attrs(ui.dialog).class} onclose={() => (show = false)}>
+  <div class={stylex.attrs(ui.dialogPanel).class}>
+    <h3 class={stylex.attrs(styles.h3).class}>{title}</h3>
+    <div class={stylex.attrs(styles.div).class}>
       <label>
-        <input type="checkbox" bind:checked={present} class="checkbox" />
+        <input type="checkbox" bind:checked={present} class={stylex.attrs(ui.checkbox).class} />
         <span>Présence</span>
       </label>
       <label>
-        <input type="checkbox" bind:checked={absent} class="checkbox" />
+        <input type="checkbox" bind:checked={absent} class={stylex.attrs(ui.checkbox).class} />
         <span>Absence</span>
       </label>
       <label>
-        <input type="checkbox" bind:checked={enCours} class="checkbox" />
+        <input type="checkbox" bind:checked={enCours} class={stylex.attrs(ui.checkbox).class} />
         <span>En cours</span>
       </label>
     </div>
-    <div class="modal-action">
-      <button class="btn" onclick={close}>Annuler</button>
-      <button class="btn" onclick={apply}>Appliquer</button>
+    <div class={stylex.attrs(ui.dialogActions).class}>
+      <button class={stylex.attrs(ui.button).class} onclick={close}>Annuler</button>
+      <button class={stylex.attrs(ui.button).class} onclick={apply}>Appliquer</button>
     </div>
   </div>
-  <form method="dialog" class="modal-backdrop">
+  <form method="dialog" class={stylex.attrs(ui.dialogBackdrop).class}>
     <button onclick={close}>close</button>
   </form>
 </dialog>

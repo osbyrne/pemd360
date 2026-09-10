@@ -1,4 +1,6 @@
 <script lang="ts">
+  import * as stylex from "@stylexjs/stylex";
+  import { ui } from "$lib/styles/ui.stylex";
   import { goto } from "$app/navigation";
   import { page as pageStore } from "$app/stores";
 
@@ -26,10 +28,23 @@
     url.searchParams.delete("page");
     goto(url, { keepFocus: true, noScroll: true });
   }
+
+  const styles = stylex.create({
+    div: {
+      width: {
+        default: "100%",
+        "@media (min-width: 640px)": "16rem",
+      },
+    },
+  });
 </script>
 
-<div class="w-full sm:w-64">
-  <select class="select" value={selectedProjectId || ""} onchange={handleProjectChange}>
+<div class={stylex.attrs(styles.div).class}>
+  <select
+    class={stylex.attrs(ui.select).class}
+    value={selectedProjectId || ""}
+    onchange={handleProjectChange}
+  >
     <option value="">Tous les projets</option>
     {#each projects as project}
       <option value={project.id}>{project.libelle}</option>

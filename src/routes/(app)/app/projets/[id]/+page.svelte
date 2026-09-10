@@ -1,4 +1,6 @@
 <script lang="ts">
+  import * as stylex from "@stylexjs/stylex";
+  import { ui } from "$lib/styles/ui.stylex";
   import { onMount } from "svelte";
   import type { PageData, ActionData } from "./$types";
   import type { MpSdk } from "@matterport/sdk";
@@ -390,9 +392,108 @@
       invalidateAll();
     }
   });
+
+  const styles = stylex.create({
+    div: {
+      display: "flex",
+      height: "100vh",
+      width: "100%",
+      flexDirection: "column",
+      paddingTop: "1.5rem",
+      paddingRight: "1.5rem",
+      paddingBottom: "1.5rem",
+      paddingLeft: "1.5rem",
+    },
+    div2: {
+      marginBottom: "1.5rem",
+      display: "grid",
+      width: "100%",
+      gridTemplateColumns: "repeat(7, minmax(0, 1fr))",
+    },
+    select: {
+      appearance: "none",
+    },
+    div3: {
+      position: "relative",
+      flex: "1 1 0%",
+      overflow: "hidden",
+      borderRadius: ".75rem",
+      borderWidth: "1px",
+      borderStyle: "solid",
+      borderColor: "oklch(92.8% 0.006 264.531)",
+      boxShadow: "0 1px 3px #0000001a, 0 1px 2px -1px #0000001a",
+    },
+    iframe: {
+      height: "100%",
+      width: "100%",
+    },
+    div4: {
+      position: "absolute",
+      inset: 0,
+      zIndex: 10,
+      cursor: "crosshair",
+    },
+    div5: {
+      position: "absolute",
+      bottom: "1rem",
+      left: "1rem",
+      borderRadius: ".5rem",
+      borderWidth: "1px",
+      borderStyle: "solid",
+      borderColor: "oklch(90.2% 0.063 306.703)",
+      backgroundColor: "color-mix(in oklab, #fff 90%, transparent)",
+      paddingInlineStart: "1rem",
+      paddingInlineEnd: "1rem",
+      paddingTop: "0.5rem",
+      paddingBottom: "0.5rem",
+      boxShadow: "0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a",
+      backdropFilter: "blur(8px)",
+    },
+    div6: {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.5rem",
+      color: "oklch(49.6% 0.265 301.924)",
+    },
+    span: {
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      fontWeight: 500,
+    },
+    div7: {
+      marginTop: "0.25rem",
+      fontSize: ".75rem",
+      lineHeight: "1rem",
+    },
+    div8: {
+      position: "absolute",
+      bottom: "1rem",
+      left: "1rem",
+      borderRadius: ".5rem",
+      borderWidth: "1px",
+      borderStyle: "solid",
+      borderColor: "oklch(92.8% 0.006 264.531)",
+      backgroundColor: "color-mix(in oklab, #fff 90%, transparent)",
+      paddingInlineStart: "1rem",
+      paddingInlineEnd: "1rem",
+      paddingTop: "0.5rem",
+      paddingBottom: "0.5rem",
+      boxShadow: "0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a",
+      backdropFilter: "blur(8px)",
+    },
+    div9: {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.5rem",
+    },
+    span2: {
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+  });
 </script>
 
-<div class="flex h-screen w-full flex-col p-6">
+<div class={stylex.attrs(styles.div).class}>
   <PresenceFilterModal
     title="Filtrer Amiante"
     bind:show={showAmianteModal}
@@ -442,7 +543,7 @@
     onClose={closePemdCreateModal}
   />
 
-  <div class="join mb-6 grid w-full grid-cols-7">
+  <div class={stylex.attrs(ui.buttonGroup, styles.div2).class}>
     <button
       type="button"
       title="Afficher les mail tags"
@@ -451,9 +552,12 @@
         showMail = !showMail;
         toggleMail();
       }}
-      class={`btn join-item ${showMail ? "bg-gray-500" : ""}`}
+      class={stylex.attrs([ui.button, ui.buttonGroupItem, showMail ? ui.bgGray500 : false]).class}
     >
-      <Mail size={32} class={`transition-transform ${showMail ? "text-blue-700" : ""}`} />
+      <Mail
+        size={32}
+        class={stylex.attrs([ui.transitionTransform, showMail ? ui.textBlue700 : false]).class}
+      />
     </button>
 
     <button
@@ -468,12 +572,18 @@
           showAmianteModal = true;
         }
       }}
-      class={`btn join-item ${showAmiante ? "bg-gray-500" : ""}`}
+      class={stylex.attrs([ui.button, ui.buttonGroupItem, showAmiante ? ui.bgGray500 : false])
+        .class}
     >
       <img
         src={tagAmianteImg}
         alt="amiante"
-        class={`h-10 w-10 transition-transform ${showAmiante ? "scale-110" : ""}`}
+        class={stylex.attrs([
+          ui.h10,
+          ui.w10,
+          ui.transitionTransform,
+          showAmiante ? ui.scale110 : false,
+        ]).class}
       />
     </button>
 
@@ -489,12 +599,17 @@
           showPlombModal = true;
         }
       }}
-      class={`btn join-item ${showPlomb ? "bg-gray-500" : ""}`}
+      class={stylex.attrs([ui.button, ui.buttonGroupItem, showPlomb ? ui.bgGray500 : false]).class}
     >
       <img
         src={tagPlombImg}
         alt="plomb"
-        class={`h-10 w-10 transition-transform ${showPlomb ? "scale-110" : ""}`}
+        class={stylex.attrs([
+          ui.h10,
+          ui.w10,
+          ui.transitionTransform,
+          showPlomb ? ui.scale110 : false,
+        ]).class}
       />
     </button>
 
@@ -510,12 +625,18 @@
           showTermiteModal = true;
         }
       }}
-      class={`btn join-item ${showTermite ? "bg-gray-500" : ""}`}
+      class={stylex.attrs([ui.button, ui.buttonGroupItem, showTermite ? ui.bgGray500 : false])
+        .class}
     >
       <img
         src={tagTermiteImg}
         alt="termite"
-        class={`h-10 w-10 transition-transform ${showTermite ? "scale-110" : ""}`}
+        class={stylex.attrs([
+          ui.h10,
+          ui.w10,
+          ui.transitionTransform,
+          showTermite ? ui.scale110 : false,
+        ]).class}
       />
     </button>
 
@@ -526,12 +647,18 @@
       onclick={() => {
         showPemdModal = true;
       }}
-      class={`btn join-item ${showPemd ? "bg-gray-500" : ""}`}
+      class={stylex.attrs([ui.button, ui.buttonGroupItem, showPemd ? ui.bgGray500 : false]).class}
     >
       <img
         src={tagPemdImg}
         alt="pemd"
-        class={`h-24 w-24 object-contain transition-transform ${showPemd ? "scale-140" : ""}`}
+        class={stylex.attrs([
+          ui.h24,
+          ui.w24,
+          ui.objectContain,
+          ui.transitionTransform,
+          showPemd ? ui.scale140 : false,
+        ]).class}
       />
     </button>
 
@@ -540,23 +667,26 @@
       title={editMode.enabled ? "Désactiver le mode édition PEMD" : "Activer le mode édition PEMD"}
       aria-pressed={editMode.enabled}
       onclick={() => editMode.toggle()}
-      class="btn"
+      class={stylex.attrs(ui.button).class}
     >
       <Pencil size={20} />
       Édition
     </button>
 
-    <select bind:value={SDK_choice} class="select join-item appearance-none">
+    <select
+      bind:value={SDK_choice}
+      class={stylex.attrs(ui.select, ui.buttonGroupItem, styles.select).class}
+    >
       <option selected>NPM</option>
       <option>Script</option>
     </select>
   </div>
 
-  <div class="relative flex-1 overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+  <div class={stylex.attrs(styles.div3).class}>
     <iframe
       bind:this={iframe}
       title="Matterport Showcase"
-      class="h-full w-full"
+      class={stylex.attrs(styles.iframe).class}
       src="https://my.matterport.com/show?m={data.projet
         .id}&play=1&applicationKey={data.matterportSdkKey}"
       frameborder="0"
@@ -571,7 +701,7 @@
         role="button"
         tabindex="0"
         aria-label="Cliquez pour ajouter un tag PEMD"
-        class="absolute inset-0 z-10 cursor-crosshair"
+        class={stylex.attrs(styles.div4).class}
         style="background: rgba(147, 51, 234, 0.05);"
         onclick={(e) => editMode.handleOverlayClick(e)}
         onmousemove={(e) => editMode.handleOverlayMouseMove(e)}
@@ -579,25 +709,23 @@
       >
         <!-- Visual indicator showing where the tag will be placed -->
         {#if editMode.lastIntersection}
-          <div
-            class="absolute bottom-4 left-4 rounded-lg border border-purple-200 bg-white/90 px-4 py-2 shadow-lg backdrop-blur-sm"
-          >
-            <div class="flex items-center gap-2 text-purple-700">
+          <div class={stylex.attrs(styles.div5).class}>
+            <div class={stylex.attrs(styles.div6).class}>
               <Plus size={16} />
-              <span class="text-sm font-medium">Cliquez pour placer le tag</span>
+              <span class={stylex.attrs(styles.span).class}>Cliquez pour placer le tag</span>
             </div>
-            <div class="mt-1 text-xs">
+            <div class={stylex.attrs(styles.div7).class}>
               Position: X={editMode.lastIntersection!.position.x.toFixed(2)}, Y={editMode.lastIntersection!.position.y.toFixed(
                 2,
               )}, Z={editMode.lastIntersection!.position.z.toFixed(2)}
             </div>
           </div>
         {:else}
-          <div
-            class="absolute bottom-4 left-4 rounded-lg border border-gray-200 bg-white/90 px-4 py-2 shadow-lg backdrop-blur-sm"
-          >
-            <div class="flex items-center gap-2">
-              <span class="text-sm">Déplacez le curseur sur le modèle...</span>
+          <div class={stylex.attrs(styles.div8).class}>
+            <div class={stylex.attrs(styles.div9).class}>
+              <span class={stylex.attrs(styles.span2).class}
+                >Déplacez le curseur sur le modèle...</span
+              >
             </div>
           </div>
         {/if}

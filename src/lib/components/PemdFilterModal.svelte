@@ -1,4 +1,6 @@
 <script lang="ts">
+  import * as stylex from "@stylexjs/stylex";
+  import { ui } from "$lib/styles/ui.stylex";
   interface Props {
     show: boolean;
     groups: { id: number | null; name: string | null }[];
@@ -114,33 +116,64 @@
     }
     return Array.from(allowed);
   }
+
+  const styles = stylex.create({
+    h3: {
+      marginBottom: "0.75rem",
+      fontSize: "1.125rem",
+      lineHeight: "1.75rem",
+      fontWeight: 600,
+    },
+    div: {
+      marginBottom: "0.75rem",
+      display: "flex",
+      flexDirection: "column",
+      gap: "0.5rem",
+    },
+    label: {
+      display: "flex",
+      flexDirection: "column",
+    },
+    span: {
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+  });
 </script>
 
-<dialog bind:this={dialog} class="modal" onclose={() => (show = false)}>
-  <div class="modal-box">
-    <h3 class="mb-3 text-lg font-semibold">Filtrer PEMD</h3>
-    <div class="mb-3 flex flex-col gap-2">
-      <label class="flex flex-col">
-        <span class="text-sm">Groupe</span>
-        <select bind:value={selectedGroup} onchange={handleGroupChange} class="select">
+<dialog bind:this={dialog} class={stylex.attrs(ui.dialog).class} onclose={() => (show = false)}>
+  <div class={stylex.attrs(ui.dialogPanel).class}>
+    <h3 class={stylex.attrs(styles.h3).class}>Filtrer PEMD</h3>
+    <div class={stylex.attrs(styles.div).class}>
+      <label class={stylex.attrs(styles.label).class}>
+        <span class={stylex.attrs(styles.span).class}>Groupe</span>
+        <select
+          bind:value={selectedGroup}
+          onchange={handleGroupChange}
+          class={stylex.attrs(ui.select).class}
+        >
           <option value="">Tous groupes</option>
           {#each groups as group (group.id)}
             <option value={group.name}>{group.name}</option>
           {/each}
         </select>
       </label>
-      <label class="flex flex-col">
-        <span class="text-sm">Catégorie</span>
-        <select bind:value={selectedCategory} onchange={handleCategoryChange} class="select">
+      <label class={stylex.attrs(styles.label).class}>
+        <span class={stylex.attrs(styles.span).class}>Catégorie</span>
+        <select
+          bind:value={selectedCategory}
+          onchange={handleCategoryChange}
+          class={stylex.attrs(ui.select).class}
+        >
           <option value="">Toutes catégories</option>
           {#each categoriesFiltered as category (category.id)}
             <option value={category.name}>{category.name}</option>
           {/each}
         </select>
       </label>
-      <label class="flex flex-col">
-        <span class="text-sm">Objet</span>
-        <select bind:value={selectedObject} class="select">
+      <label class={stylex.attrs(styles.label).class}>
+        <span class={stylex.attrs(styles.span).class}>Objet</span>
+        <select bind:value={selectedObject} class={stylex.attrs(ui.select).class}>
           <option value="">Tous objets</option>
           {#each objectsFiltered as object (object.id)}
             <option value={object.name}>{object.name}</option>
@@ -148,17 +181,21 @@
         </select>
       </label>
     </div>
-    <div class="modal-action">
-      <button class="btn" onclick={() => (show = false)}>Fermer</button>
-      <button class="btn btn-warning" onclick={onRemove} disabled={!hasTags}>
+    <div class={stylex.attrs(ui.dialogActions).class}>
+      <button class={stylex.attrs(ui.button).class} onclick={() => (show = false)}>Fermer</button>
+      <button
+        class={stylex.attrs(ui.button, ui.buttonWarning).class}
+        onclick={onRemove}
+        disabled={!hasTags}
+      >
         Supprimer les tags PEMD
       </button>
-      <button class="btn" onclick={() => onApply(getAllowedObjetIds())}>
+      <button class={stylex.attrs(ui.button).class} onclick={() => onApply(getAllowedObjetIds())}>
         Ajouter dans le modèle
       </button>
     </div>
   </div>
-  <form method="dialog" class="modal-backdrop">
+  <form method="dialog" class={stylex.attrs(ui.dialogBackdrop).class}>
     <button onclick={() => (show = false)}>close</button>
   </form>
 </dialog>

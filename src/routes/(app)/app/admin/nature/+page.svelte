@@ -1,4 +1,6 @@
 <script lang="ts">
+  import * as stylex from "@stylexjs/stylex";
+  import { ui } from "$lib/styles/ui.stylex";
   import { enhance } from "$app/forms";
   import { Pencil, Trash2, Plus, X, Search } from "lucide-svelte";
   import Pagination from "$lib/components/Pagination.svelte";
@@ -91,27 +93,285 @@
       }
     };
   }
+
+  const styles = stylex.create({
+    div: {
+      marginInlineStart: "auto",
+      marginInlineEnd: "auto",
+      maxWidth: "80rem",
+      paddingTop: "1.5rem",
+      paddingRight: "1.5rem",
+      paddingBottom: "1.5rem",
+      paddingLeft: "1.5rem",
+    },
+    div2: {
+      marginBottom: "2rem",
+      display: "flex",
+      flexDirection: {
+        default: "column",
+        "@media (min-width: 640px)": "row",
+      },
+      alignItems: {
+        default: "flex-start",
+        "@media (min-width: 640px)": "center",
+      },
+      justifyContent: "space-between",
+      gap: "1rem",
+    },
+    h1: {
+      fontSize: "1.5rem",
+      lineHeight: "2rem",
+      fontWeight: 700,
+    },
+    p: {
+      marginTop: "0.25rem",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+    Plus: {
+      height: "1rem",
+      width: "1rem",
+    },
+    label: {
+      position: "relative",
+      marginBottom: "1.5rem",
+    },
+    div3: {
+      overflow: "hidden",
+      borderRadius: ".75rem",
+      boxShadow: "0 1px 3px #0000001a, 0 1px 2px -1px #0000001a",
+    },
+    div4: {
+      overflowX: "auto",
+    },
+    thead: {
+      fontSize: ".75rem",
+      lineHeight: "1rem",
+      fontWeight: 600,
+      textTransform: "uppercase",
+    },
+    th: {
+      paddingInlineStart: "1.5rem",
+      paddingInlineEnd: "1.5rem",
+      paddingTop: "1rem",
+      paddingBottom: "1rem",
+    },
+    th2: {
+      paddingInlineStart: "1.5rem",
+      paddingInlineEnd: "1.5rem",
+      paddingTop: "1rem",
+      paddingBottom: "1rem",
+      textAlign: "center",
+    },
+    tbody: {
+      "--divider-width": "1px",
+      "--divider-color": "oklch(96.7% 0.003 264.542)",
+    },
+    td: {
+      paddingInlineStart: "1.5rem",
+      paddingInlineEnd: "1.5rem",
+      paddingTop: "1rem",
+      paddingBottom: "1rem",
+      fontWeight: 500,
+    },
+    td2: {
+      paddingInlineStart: "1.5rem",
+      paddingInlineEnd: "1.5rem",
+      paddingTop: "1rem",
+      paddingBottom: "1rem",
+      fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+    },
+    div5: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "0.5rem",
+    },
+    td3: {
+      paddingInlineStart: "1.5rem",
+      paddingInlineEnd: "1.5rem",
+      paddingTop: "3rem",
+      paddingBottom: "3rem",
+      textAlign: "center",
+    },
+    div6: {
+      position: "fixed",
+      inset: 0,
+      zIndex: 50,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingTop: {
+        default: "1rem",
+        "@media (min-width: 640px)": "1.5rem",
+      },
+      paddingRight: {
+        default: "1rem",
+        "@media (min-width: 640px)": "1.5rem",
+      },
+      paddingBottom: {
+        default: "1rem",
+        "@media (min-width: 640px)": "1.5rem",
+      },
+      paddingLeft: {
+        default: "1rem",
+        "@media (min-width: 640px)": "1.5rem",
+      },
+    },
+    button: {
+      position: "fixed",
+      inset: 0,
+      height: "100%",
+      width: "100%",
+      cursor: "default",
+      borderWidth: "0px",
+      borderStyle: "solid",
+      backdropFilter: "blur(8px)",
+      transitionProperty: "opacity",
+      transitionDuration: "150ms",
+      transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+    },
+    div7: {
+      position: "relative",
+      display: "flex",
+      maxHeight: "90vh",
+      width: "100%",
+      maxWidth: "42rem",
+      flexDirection: "column",
+      overflow: "hidden",
+      borderRadius: ".75rem",
+      boxShadow: "0 20px 25px -5px #0000001a, 0 8px 10px -6px #0000001a",
+    },
+    div8: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingInlineStart: "1.5rem",
+      paddingInlineEnd: "1.5rem",
+      paddingTop: "1rem",
+      paddingBottom: "1rem",
+    },
+    h3: {
+      fontSize: "1.125rem",
+      lineHeight: "1.75rem",
+      fontWeight: 600,
+    },
+    button2: {
+      borderRadius: ".5rem",
+      paddingTop: "0.25rem",
+      paddingRight: "0.25rem",
+      paddingBottom: "0.25rem",
+      paddingLeft: "0.25rem",
+    },
+    X: {
+      height: "1.25rem",
+      width: "1.25rem",
+    },
+    div9: {
+      overflowY: "auto",
+      paddingTop: "1.5rem",
+      paddingRight: "1.5rem",
+      paddingBottom: "1.5rem",
+      paddingLeft: "1.5rem",
+    },
+    form: {
+      "--stack-gap": "1.5rem",
+    },
+    div10: {
+      display: "grid",
+      gridTemplateColumns: {
+        default: "repeat(1, minmax(0, 1fr))",
+        "@media (min-width: 640px)": "repeat(2, minmax(0, 1fr))",
+      },
+      gap: "1.5rem",
+    },
+    div11: {
+      gridColumn: {
+        "@media (min-width: 640px)": "span 2 / span 2",
+      },
+    },
+    label2: {
+      marginBottom: "0.25rem",
+      display: "block",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      fontWeight: 500,
+    },
+    div12: {
+      borderTopWidth: "1px",
+      borderTopStyle: "solid",
+      borderColor: "oklch(96.7% 0.003 264.542)",
+      paddingTop: "1.5rem",
+    },
+    h4: {
+      marginBottom: "1rem",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      fontWeight: 500,
+    },
+    div13: {
+      display: "grid",
+      gridTemplateColumns: {
+        default: "repeat(1, minmax(0, 1fr))",
+        "@media (min-width: 640px)": "repeat(2, minmax(0, 1fr))",
+      },
+      gap: "1rem",
+    },
+    div14: {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.75rem",
+      borderRadius: ".5rem",
+      paddingTop: "0.75rem",
+      paddingRight: "0.75rem",
+      paddingBottom: "0.75rem",
+      paddingLeft: "0.75rem",
+    },
+    label3: {
+      flex: "1 1 0%",
+      cursor: "pointer",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      userSelect: "none",
+    },
+    div15: {
+      display: "flex",
+      flexShrink: 0,
+      justifyContent: "flex-end",
+      gap: "0.75rem",
+      borderTopWidth: "1px",
+      borderTopStyle: "solid",
+      borderColor: "oklch(96.7% 0.003 264.542)",
+      paddingInlineStart: "1.5rem",
+      paddingInlineEnd: "1.5rem",
+      paddingTop: "1rem",
+      paddingBottom: "1rem",
+    },
+    stackSpacing15: { marginBlockEnd: { default: "1.5rem", ":last-child": 0 } },
+  });
 </script>
 
 <svelte:head>
   <title>Admin · Nature</title>
 </svelte:head>
 
-<div class="mx-auto max-w-7xl p-6">
+<div class={stylex.attrs(styles.div).class}>
   <!-- Header -->
-  <div class="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+  <div class={stylex.attrs(styles.div2).class}>
     <div>
-      <h1 class="text-2xl font-bold">Gestion des Natures</h1>
-      <p class="mt-1 text-sm">Gérez la liste des natures de déchets et leurs propriétés.</p>
+      <h1 class={stylex.attrs(styles.h1).class}>Gestion des Natures</h1>
+      <p class={stylex.attrs(styles.p).class}>
+        Gérez la liste des natures de déchets et leurs propriétés.
+      </p>
     </div>
-    <button onclick={openCreateModal} class="btn">
-      <Plus class="h-4 w-4" />
+    <button onclick={openCreateModal} class={stylex.attrs(ui.button).class}>
+      <Plus class={stylex.attrs(styles.Plus).class} />
       Ajouter
     </button>
   </div>
 
   <!-- Search Bar -->
-  <label class="input relative mb-6">
+  <label class={stylex.attrs(ui.input, styles.label).class}>
     <Search />
     <input type="search" bind:value={query} placeholder="Rechercher par nature..." />
   </label>
@@ -119,53 +379,79 @@
   <br />
 
   <!-- Table -->
-  <div class="overflow-hidden rounded-xl shadow-sm">
-    <div class="overflow-x-auto">
-      <table class="table">
-        <thead class="text-xs font-semibold uppercase">
+  <div class={stylex.attrs(styles.div3).class}>
+    <div class={stylex.attrs(styles.div4).class}>
+      <table class={stylex.attrs(ui.table).class}>
+        <thead class={stylex.attrs(styles.thead).class}>
           <tr>
-            <th class="px-6 py-4">Nature</th>
-            <th class="px-6 py-4">Code Déchet</th>
-            <th class="px-6 py-4">Densité</th>
-            <th class="px-6 py-4 text-center">Recyclable</th>
-            <th class="px-6 py-4 text-center">Actions</th>
+            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+              >Nature</th
+            >
+            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+              >Code Déchet</th
+            >
+            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+              >Densité</th
+            >
+            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th2).class}
+              >Recyclable</th
+            >
+            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th2).class}
+              >Actions</th
+            >
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-100">
+        <tbody class={stylex.attrs(styles.tbody).class}>
           {#each displayedList as nature}
-            <tr>
-              <td class="px-6 py-4 font-medium">{nature.nature}</td>
-              <td class="px-6 py-4 font-mono">{nature.codeDechet || "-"}</td>
-              <td class="px-6 py-4">{nature.densite || "-"}</td>
-              <td class="px-6 py-4 text-center">
+            <tr class={stylex.attrs(ui.divideChild).class}>
+              <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}
+                >{nature.nature}</td
+              >
+              <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td2).class}
+                >{nature.codeDechet || "-"}</td
+              >
+              <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
+                >{nature.densite || "-"}</td
+              >
+              <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th2).class}>
                 {#if nature.recyclable}
-                  <input type="checkbox" class="checkbox" disabled checked={true} />
+                  <input
+                    type="checkbox"
+                    class={stylex.attrs(ui.checkbox).class}
+                    disabled
+                    checked={true}
+                  />
                 {:else}
-                  <input type="checkbox" class="checkbox" disabled checked={false} />
+                  <input
+                    type="checkbox"
+                    class={stylex.attrs(ui.checkbox).class}
+                    disabled
+                    checked={false}
+                  />
                 {/if}
               </td>
-              <td class="px-6 py-4">
-                <div class="flex items-center justify-center gap-2">
+              <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
+                <div class={stylex.attrs(styles.div5).class}>
                   <button
                     onclick={() => openEditModal(nature)}
-                    class="btn btn-ghost"
+                    class={stylex.attrs(ui.button, ui.buttonGhost).class}
                     title="Modifier"
                   >
-                    <Pencil class="h-4 w-4" />
+                    <Pencil class={stylex.attrs(styles.Plus).class} />
                   </button>
                   <button
                     onclick={() => openDeleteModal(nature)}
-                    class="btn btn-ghost btn-warning"
+                    class={stylex.attrs(ui.button, ui.buttonGhost, ui.buttonWarning).class}
                     title="Supprimer"
                   >
-                    <Trash2 class="h-4 w-4" />
+                    <Trash2 class={stylex.attrs(styles.Plus).class} />
                   </button>
                 </div>
               </td>
             </tr>
           {:else}
-            <tr>
-              <td colspan="5" class="px-6 py-12 text-center">
+            <tr class={stylex.attrs(ui.divideChild).class}>
+              <td colspan="5" class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td3).class}>
                 {#if query}
                   Aucun résultat pour "{query}".
                 {:else}
@@ -190,91 +476,90 @@
 
 <!-- Create/Edit Modal -->
 {#if isModalOpen}
-  <div
-    class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
-    role="dialog"
-    aria-modal="true"
-  >
+  <div class={stylex.attrs(styles.div6).class} role="dialog" aria-modal="true">
     <button
       type="button"
-      class="fixed inset-0 h-full w-full cursor-default border-0 backdrop-blur-sm transition-opacity"
+      class={stylex.attrs(styles.button).class}
       onclick={closeModal}
       aria-label="Fermer la modal"
     ></button>
-    <div
-      class="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl shadow-xl"
-    >
-      <div class="flex items-center justify-between px-6 py-4">
-        <h3 class="text-lg font-semibold">
+    <div class={stylex.attrs(styles.div7).class}>
+      <div class={stylex.attrs(styles.div8).class}>
+        <h3 class={stylex.attrs(styles.h3).class}>
           {isEditMode ? "Modifier la nature" : "Ajouter une nature"}
         </h3>
-        <button onclick={closeModal} class="hover: hover: rounded-lg p-1">
-          <X class="h-5 w-5" />
+        <button onclick={closeModal} class={stylex.attrs(styles.button2).class}>
+          <X class={stylex.attrs(styles.X).class} />
         </button>
       </div>
 
-      <div class="overflow-y-auto p-6">
+      <div class={stylex.attrs(styles.div9).class}>
         <form
           action={isEditMode ? "?/update" : "?/create"}
           method="POST"
           use:enhance={handleFormResult}
           id="natureForm"
-          class="space-y-6"
+          class={stylex.attrs(styles.form).class}
         >
           {#if isEditMode}
-            <input type="hidden" name="id" value={form.id} />
+            <input
+              class={stylex.attrs(styles.stackSpacing15).class}
+              type="hidden"
+              name="id"
+              value={form.id}
+            />
           {/if}
 
-          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <div class="sm:col-span-2">
-              <label for="nature" class="mb-1 block text-sm font-medium">Nature</label>
+          <div class={stylex.attrs(styles.stackSpacing15, styles.div10).class}>
+            <div class={stylex.attrs(styles.div11).class}>
+              <label for="nature" class={stylex.attrs(styles.label2).class}>Nature</label>
               <input
                 id="nature"
                 type="text"
                 name="nature"
                 required
                 bind:value={form.nature}
-                class="input"
+                class={stylex.attrs(ui.input).class}
                 placeholder="Ex: Béton"
               />
             </div>
 
             <div>
-              <label for="codeDechet" class="mb-1 block text-sm font-medium">Code Déchet</label>
+              <label for="codeDechet" class={stylex.attrs(styles.label2).class}>Code Déchet</label>
               <input
                 id="codeDechet"
                 type="number"
                 name="codeDechet"
                 bind:value={form.codeDechet}
-                class="input"
+                class={stylex.attrs(ui.input).class}
               />
             </div>
 
             <div>
-              <label for="densite" class="mb-1 block text-sm font-medium">Densité</label>
+              <label for="densite" class={stylex.attrs(styles.label2).class}>Densité</label>
               <input
                 id="densite"
                 type="number"
                 step="0.01"
                 name="densite"
                 bind:value={form.densite}
-                class="input"
+                class={stylex.attrs(ui.input).class}
               />
             </div>
 
             <div>
-              <label for="stockage" class="mb-1 block text-sm font-medium">Stockage</label>
+              <label for="stockage" class={stylex.attrs(styles.label2).class}>Stockage</label>
               <input
                 id="stockage"
                 type="text"
                 name="stockage"
                 bind:value={form.stockage}
-                class="input"
+                class={stylex.attrs(ui.input).class}
               />
             </div>
 
             <div>
-              <label for="ecoOrganismeRep" class="mb-1 block text-sm font-medium"
+              <label for="ecoOrganismeRep" class={stylex.attrs(styles.label2).class}
                 >Eco Organisme REP</label
               >
               <input
@@ -282,16 +567,16 @@
                 type="text"
                 name="ecoOrganismeRep"
                 bind:value={form.ecoOrganismeRep}
-                class="input"
+                class={stylex.attrs(ui.input).class}
               />
             </div>
           </div>
 
-          <div class="border-t border-gray-100 pt-6">
-            <h4 class="mb-4 text-sm font-medium">Propriétés (0 ou 1)</h4>
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div class={stylex.attrs(styles.stackSpacing15, styles.div12).class}>
+            <h4 class={stylex.attrs(styles.h4).class}>Propriétés (0 ou 1)</h4>
+            <div class={stylex.attrs(styles.div13).class}>
               {#each booleanFields as item}
-                <div class="flex items-center gap-3 rounded-lg p-3">
+                <div class={stylex.attrs(styles.div14).class}>
                   <input
                     type="checkbox"
                     id={item.key}
@@ -299,10 +584,10 @@
                     onchange={(e) => {
                       (form as any)[item.key] = e.currentTarget.checked ? 1 : 0;
                     }}
-                    class="checkbox"
+                    class={stylex.attrs(ui.checkbox).class}
                   />
                   <input type="hidden" name={item.key} value={form[item.key]} />
-                  <label for={item.key} class="flex-1 cursor-pointer text-sm select-none">
+                  <label for={item.key} class={stylex.attrs(styles.label3).class}>
                     {item.label}
                   </label>
                 </div>
@@ -312,9 +597,11 @@
         </form>
       </div>
 
-      <div class="flex shrink-0 justify-end gap-3 border-t border-gray-100 px-6 py-4">
-        <button type="button" onclick={closeModal} class="btn"> Annuler </button>
-        <button type="submit" form="natureForm" class="btn">
+      <div class={stylex.attrs(styles.div15).class}>
+        <button type="button" onclick={closeModal} class={stylex.attrs(ui.button).class}>
+          Annuler
+        </button>
+        <button type="submit" form="natureForm" class={stylex.attrs(ui.button).class}>
           {isEditMode ? "Enregistrer" : "Créer"}
         </button>
       </div>

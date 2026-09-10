@@ -1,4 +1,6 @@
 <script lang="ts">
+  import * as stylex from "@stylexjs/stylex";
+  import { ui } from "$lib/styles/ui.stylex";
   import { enhance } from "$app/forms";
   import { Plus, Save, MapPin } from "lucide-svelte";
 
@@ -97,16 +99,172 @@
       objetId = "";
     }
   }
+
+  const styles = stylex.create({
+    div: {
+      maxHeight: "90vh",
+      maxWidth: "32rem",
+      overflowY: "auto",
+    },
+    div2: {
+      marginBottom: "1rem",
+      display: "flex",
+      alignItems: "center",
+      gap: "0.75rem",
+    },
+    div3: {
+      display: "flex",
+      height: "2.5rem",
+      width: "2.5rem",
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: "9999px",
+      backgroundColor: "oklch(94.6% 0.033 307.174)",
+    },
+    Plus: {
+      color: "oklch(49.6% 0.265 301.924)",
+    },
+    h3: {
+      fontSize: "1.125rem",
+      lineHeight: "1.75rem",
+      fontWeight: 600,
+    },
+    p: {
+      marginBottom: "1rem",
+      fontSize: ".75rem",
+      lineHeight: "1rem",
+    },
+    span: {
+      fontWeight: 500,
+      color: "oklch(63.7% 0.237 25.331)",
+    },
+    div4: {
+      "--stack-gap": "1rem",
+    },
+    div5: {
+      paddingBottom: "1rem",
+    },
+    h4: {
+      marginBottom: "0.75rem",
+      display: "flex",
+      alignItems: "center",
+      gap: "0.5rem",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      fontWeight: 600,
+    },
+    span2: {
+      height: "0.375rem",
+      width: "0.375rem",
+      borderRadius: "9999px",
+      backgroundColor: "oklch(62.7% 0.265 303.9)",
+    },
+    span3: {
+      color: "oklch(63.7% 0.237 25.331)",
+    },
+    div6: {
+      marginBottom: "0.75rem",
+    },
+    label: {
+      marginBottom: "0.25rem",
+      display: "block",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      fontWeight: 500,
+    },
+    span4: {
+      marginRight: "0.25rem",
+      display: "inline-flex",
+      height: "1.25rem",
+      width: "1.25rem",
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: "9999px",
+      backgroundColor: "oklch(94.6% 0.033 307.174)",
+      fontSize: ".75rem",
+      lineHeight: "1rem",
+      fontWeight: 700,
+      color: "oklch(49.6% 0.265 301.924)",
+    },
+    p2: {
+      marginTop: "0.25rem",
+      fontSize: ".75rem",
+      lineHeight: "1rem",
+    },
+    span5: {
+      display: "inline-flex",
+      height: "1.25rem",
+      width: "1.25rem",
+      alignItems: "center",
+      justifyContent: "center",
+      marginRight: "0.25rem",
+      borderRadius: "9999px",
+      fontSize: ".75rem",
+      lineHeight: "1rem",
+      fontWeight: 700,
+    },
+    p3: {
+      marginTop: "0.25rem",
+      fontSize: ".75rem",
+      lineHeight: "1rem",
+      color: "oklch(66.6% 0.179 58.318)",
+    },
+    span6: {
+      height: "0.375rem",
+      width: "0.375rem",
+      borderRadius: "9999px",
+    },
+    span7: {
+      fontSize: ".75rem",
+      lineHeight: "1rem",
+      fontWeight: 400,
+    },
+    div7: {
+      display: "grid",
+      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+      gap: "0.75rem",
+    },
+    div8: {
+      borderRadius: ".5rem",
+      borderWidth: "1px",
+      borderStyle: "solid",
+      borderColor: "oklch(90.2% 0.063 306.703)",
+      backgroundColor: "oklch(97.7% 0.014 308.299)",
+      paddingTop: "0.75rem",
+      paddingRight: "0.75rem",
+      paddingBottom: "0.75rem",
+      paddingLeft: "0.75rem",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+    p4: {
+      marginBottom: "0.25rem",
+      display: "flex",
+      alignItems: "center",
+      gap: "0.5rem",
+      fontWeight: 500,
+    },
+    MapPin: {
+      height: "1rem",
+      width: "1rem",
+    },
+    p5: {
+      fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+      fontSize: ".75rem",
+      lineHeight: "1rem",
+    },
+    stackSpacing1: { marginBlockEnd: { default: "1rem", ":last-child": 0 } },
+  });
 </script>
 
-<dialog bind:this={dialog} class="modal" onclose={onClose}>
-  <div class="modal-box max-h-[90vh] max-w-lg overflow-y-auto">
+<dialog bind:this={dialog} class={stylex.attrs(ui.dialog).class} onclose={onClose}>
+  <div class={stylex.attrs(ui.dialogPanel, styles.div).class}>
     {#if pendingPosition}
-      <div class="mb-4 flex items-center gap-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100">
-          <Plus size={20} class="text-purple-700" />
+      <div class={stylex.attrs(styles.div2).class}>
+        <div class={stylex.attrs(styles.div3).class}>
+          <Plus size={20} class={stylex.attrs(styles.Plus).class} />
         </div>
-        <h3 class="text-lg font-semibold">Nouveau tag PEMD</h3>
+        <h3 class={stylex.attrs(styles.h3).class}>Nouveau tag PEMD</h3>
       </div>
 
       <form
@@ -129,32 +287,29 @@
         <input type="hidden" name="stemVector" value={JSON.stringify(pendingPosition.normal)} />
 
         <!-- Legend for required fields -->
-        <p class="mb-4 text-xs">
-          Les champs marqués d'un <span class="font-medium text-red-500">*</span> sont obligatoires
+        <p class={stylex.attrs(styles.p).class}>
+          Les champs marqués d'un <span class={stylex.attrs(styles.span).class}>*</span> sont obligatoires
         </p>
 
-        <div class="space-y-4">
+        <div class={stylex.attrs(styles.div4).class}>
           <!-- Section: Identification du matériau -->
-          <div class="pb-4">
-            <h4 class="mb-3 flex items-center gap-2 text-sm font-semibold">
-              <span class="h-1.5 w-1.5 rounded-full bg-purple-500"></span>
-              Identification du matériau <span class="text-red-500">*</span>
+          <div class={stylex.attrs(styles.stackSpacing1, styles.div5).class}>
+            <h4 class={stylex.attrs(styles.h4).class}>
+              <span class={stylex.attrs(styles.span2).class}></span>
+              Identification du matériau <span class={stylex.attrs(styles.span3).class}>*</span>
             </h4>
 
             <!-- Étape 1: Groupe -->
-            <div class="mb-3">
-              <label for="pemd-groupe" class="mb-1 block text-sm font-medium">
-                <span
-                  class="mr-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-purple-100 text-xs font-bold text-purple-700"
-                  >1</span
-                >
+            <div class={stylex.attrs(styles.div6).class}>
+              <label for="pemd-groupe" class={stylex.attrs(styles.label).class}>
+                <span class={stylex.attrs(styles.span4).class}>1</span>
                 Groupe
               </label>
               <select
                 id="pemd-groupe"
                 bind:value={groupId}
                 onchange={handleGroupChange}
-                class="select"
+                class={stylex.attrs(ui.select).class}
               >
                 <option value="">-- Sélectionner un groupe --</option>
                 {#each groups as group (group.id)}
@@ -162,17 +317,15 @@
                 {/each}
               </select>
               {#if !groupId}
-                <p class="mt-1 text-xs">Commencez par sélectionner un groupe</p>
+                <p class={stylex.attrs(styles.p2).class}>Commencez par sélectionner un groupe</p>
               {/if}
             </div>
 
             <!-- Étape 2: Catégorie -->
-            <div class="mb-3">
-              <label for="pemd-categorie" class="mb-1 block text-sm font-medium">
-                <span
-                  class="inline-flex h-5 w-5 items-center justify-center {groupId
-                    ? 'bg-purple-100'
-                    : ''} mr-1 rounded-full text-xs font-bold">2</span
+            <div class={stylex.attrs(styles.div6).class}>
+              <label for="pemd-categorie" class={stylex.attrs(styles.label).class}>
+                <span class={stylex.attrs(styles.span5, groupId ? ui.bgPurple100 : false).class}
+                  >2</span
                 >
                 Catégorie
               </label>
@@ -181,7 +334,10 @@
                 bind:value={categoryId}
                 onchange={handleCategoryChange}
                 disabled={!groupId || categoriesFiltered.length === 0}
-                class="select {groupId && !categoryId ? 'border-purple-300' : 'border-gray-300'}"
+                class={stylex.attrs(
+                  ui.select,
+                  groupId && !categoryId ? ui.borderPurple300 : ui.borderGray300,
+                ).class}
               >
                 <option value="">-- Sélectionner une catégorie --</option>
                 {#each categoriesFiltered as categorie (categorie.id)}
@@ -189,13 +345,13 @@
                 {/each}
               </select>
               {#if !groupId}
-                <p class="mt-1 text-xs">Sélectionnez d'abord un groupe</p>
+                <p class={stylex.attrs(styles.p2).class}>Sélectionnez d'abord un groupe</p>
               {:else if categoriesFiltered.length === 0}
-                <p class="mt-1 text-xs text-amber-600">
+                <p class={stylex.attrs(styles.p3).class}>
                   Aucune catégorie disponible pour ce groupe
                 </p>
               {:else if !categoryId}
-                <p class="mt-1 text-xs">
+                <p class={stylex.attrs(styles.p2).class}>
                   Sélectionnez une catégorie ({categoriesFiltered.length} disponible{categoriesFiltered.length >
                   1
                     ? "s"
@@ -206,13 +362,11 @@
 
             <!-- Étape 3: Objet (OBLIGATOIRE) -->
             <div>
-              <label for="pemd-objet" class="mb-1 block text-sm font-medium">
-                <span
-                  class="inline-flex h-5 w-5 items-center justify-center {categoryId
-                    ? 'bg-purple-100'
-                    : ''} mr-1 rounded-full text-xs font-bold">3</span
+              <label for="pemd-objet" class={stylex.attrs(styles.label).class}>
+                <span class={stylex.attrs(styles.span5, categoryId ? ui.bgPurple100 : false).class}
+                  >3</span
                 >
-                Objet <span class="text-red-500">*</span>
+                Objet <span class={stylex.attrs(styles.span3).class}>*</span>
               </label>
               <select
                 id="pemd-objet"
@@ -220,7 +374,10 @@
                 name="objetId"
                 required
                 disabled={!categoryId || objectsFiltered.length === 0}
-                class="select {categoryId && !objetId ? 'border-red-300' : 'border-gray-300'}"
+                class={stylex.attrs(
+                  ui.select,
+                  categoryId && !objetId ? ui.borderRed300 : ui.borderGray300,
+                ).class}
               >
                 <option value="">-- Sélectionner un objet --</option>
                 {#each objectsFiltered as object (object.id)}
@@ -228,35 +385,35 @@
                 {/each}
               </select>
               {#if !categoryId}
-                <p class="mt-1 text-xs">Sélectionnez d'abord une catégorie</p>
+                <p class={stylex.attrs(styles.p2).class}>Sélectionnez d'abord une catégorie</p>
               {:else if objectsFiltered.length === 0}
-                <p class="mt-1 text-xs text-amber-600">
+                <p class={stylex.attrs(styles.p3).class}>
                   Aucun objet disponible pour cette catégorie
                 </p>
               {:else if !objetId}
-                <p class="mt-1 text-xs">
+                <p class={stylex.attrs(styles.p2).class}>
                   Sélectionnez un objet ({objectsFiltered.length} disponible{objectsFiltered.length >
                   1
                     ? "s"
                     : ""})
                 </p>
               {:else}
-                <p class="mt-1 text-xs">Objet sélectionné</p>
+                <p class={stylex.attrs(styles.p2).class}>Objet sélectionné</p>
               {/if}
             </div>
           </div>
 
           <!-- Section: Informations complémentaires (optionnel) -->
-          <div class="pb-4">
-            <h4 class="mb-3 flex items-center gap-2 text-sm font-semibold">
-              <span class="h-1.5 w-1.5 rounded-full"></span>
+          <div class={stylex.attrs(styles.stackSpacing1, styles.div5).class}>
+            <h4 class={stylex.attrs(styles.h4).class}>
+              <span class={stylex.attrs(styles.span6).class}></span>
               Informations complémentaires
-              <span class="text-xs font-normal">(optionnel)</span>
+              <span class={stylex.attrs(styles.span7).class}>(optionnel)</span>
             </h4>
 
             <!-- Description -->
-            <div class="mb-3">
-              <label for="pemd-description" class="mb-1 block text-sm font-medium"
+            <div class={stylex.attrs(styles.div6).class}>
+              <label for="pemd-description" class={stylex.attrs(styles.label).class}
                 >Description</label
               >
               <textarea
@@ -264,14 +421,14 @@
                 bind:value={description}
                 name="description"
                 rows="2"
-                class="input"
+                class={stylex.attrs(ui.input).class}
                 placeholder="Description du matériau..."></textarea>
             </div>
 
             <!-- Row: Quantité, Étage, État -->
-            <div class="grid grid-cols-3 gap-3">
+            <div class={stylex.attrs(styles.div7).class}>
               <div>
-                <label for="pemd-quantite" class="mb-1 block text-sm font-medium">Quantité</label>
+                <label for="pemd-quantite" class={stylex.attrs(styles.label).class}>Quantité</label>
                 <input
                   id="pemd-quantite"
                   type="number"
@@ -279,24 +436,29 @@
                   min="0"
                   bind:value={quantite}
                   name="quantite"
-                  class="input"
+                  class={stylex.attrs(ui.input).class}
                   placeholder="0"
                 />
               </div>
               <div>
-                <label for="pemd-etage" class="mb-1 block text-sm font-medium">Étage</label>
+                <label for="pemd-etage" class={stylex.attrs(styles.label).class}>Étage</label>
                 <input
                   id="pemd-etage"
                   type="text"
                   bind:value={etage}
                   name="etage"
-                  class="input"
+                  class={stylex.attrs(ui.input).class}
                   placeholder="RDC, 1, 2..."
                 />
               </div>
               <div>
-                <label for="pemd-etat" class="mb-1 block text-sm font-medium">État</label>
-                <select id="pemd-etat" bind:value={etat} name="etat" class="select">
+                <label for="pemd-etat" class={stylex.attrs(styles.label).class}>État</label>
+                <select
+                  id="pemd-etat"
+                  bind:value={etat}
+                  name="etat"
+                  class={stylex.attrs(ui.select).class}
+                >
                   <option value="">--</option>
                   <option value="Bon">Bon</option>
                   <option value="Moyen">Moyen</option>
@@ -307,15 +469,15 @@
           </div>
 
           <!-- Section: Dimensions (optionnel) -->
-          <div class="pb-4">
-            <h4 class="mb-3 flex items-center gap-2 text-sm font-semibold">
-              <span class="h-1.5 w-1.5 rounded-full"></span>
-              Dimensions <span class="text-xs font-normal">(optionnel)</span>
+          <div class={stylex.attrs(styles.stackSpacing1, styles.div5).class}>
+            <h4 class={stylex.attrs(styles.h4).class}>
+              <span class={stylex.attrs(styles.span6).class}></span>
+              Dimensions <span class={stylex.attrs(styles.span7).class}>(optionnel)</span>
             </h4>
 
-            <div class="grid grid-cols-3 gap-3">
+            <div class={stylex.attrs(styles.div7).class}>
               <div>
-                <label for="pemd-longueur" class="mb-1 block text-sm font-medium"
+                <label for="pemd-longueur" class={stylex.attrs(styles.label).class}
                   >Longueur (m)</label
                 >
                 <input
@@ -325,12 +487,14 @@
                   min="0"
                   bind:value={longueur}
                   name="longueur"
-                  class="input"
+                  class={stylex.attrs(ui.input).class}
                   placeholder="0.00"
                 />
               </div>
               <div>
-                <label for="pemd-largeur" class="mb-1 block text-sm font-medium">Largeur (m)</label>
+                <label for="pemd-largeur" class={stylex.attrs(styles.label).class}
+                  >Largeur (m)</label
+                >
                 <input
                   id="pemd-largeur"
                   type="number"
@@ -338,12 +502,12 @@
                   min="0"
                   bind:value={largeur}
                   name="largeur"
-                  class="input"
+                  class={stylex.attrs(ui.input).class}
                   placeholder="0.00"
                 />
               </div>
               <div>
-                <label for="pemd-epaisseur" class="mb-1 block text-sm font-medium"
+                <label for="pemd-epaisseur" class={stylex.attrs(styles.label).class}
                   >Épaisseur (m)</label
                 >
                 <input
@@ -353,7 +517,7 @@
                   min="0"
                   bind:value={epaisseur}
                   name="epaisseur"
-                  class="input"
+                  class={stylex.attrs(ui.input).class}
                   placeholder="0.00"
                 />
               </div>
@@ -361,15 +525,16 @@
           </div>
 
           <!-- Section: Potentiel Réemploi (optionnel) -->
-          <div>
-            <label for="pemd-potentiel" class="mb-1 block text-sm font-medium">
-              Potentiel de réemploi <span class="text-xs font-normal">(optionnel)</span>
+          <div class={stylex.attrs(styles.stackSpacing1).class}>
+            <label for="pemd-potentiel" class={stylex.attrs(styles.label).class}>
+              Potentiel de réemploi <span class={stylex.attrs(styles.span7).class}>(optionnel)</span
+              >
             </label>
             <select
               id="pemd-potentiel"
               bind:value={potentielReemploi}
               name="potentielReemploi"
-              class="select"
+              class={stylex.attrs(ui.select).class}
             >
               <option value="">-- Non défini --</option>
               <option value="Fort">Fort</option>
@@ -380,12 +545,12 @@
           </div>
 
           <!-- Position info (readonly) -->
-          <div class="rounded-lg border border-purple-200 bg-purple-50 p-3 text-sm">
-            <p class="mb-1 flex items-center gap-2 font-medium">
-              <MapPin class="h-4 w-4" />
+          <div class={stylex.attrs(styles.stackSpacing1, styles.div8).class}>
+            <p class={stylex.attrs(styles.p4).class}>
+              <MapPin class={stylex.attrs(styles.MapPin).class} />
               Position sur le modèle 3D
             </p>
-            <p class="font-mono text-xs">
+            <p class={stylex.attrs(styles.p5).class}>
               X: {pendingPosition.anchorPosition.x.toFixed(3)} | Y: {pendingPosition.anchorPosition.y.toFixed(
                 3,
               )} | Z: {pendingPosition.anchorPosition.z.toFixed(3)}
@@ -393,9 +558,15 @@
           </div>
         </div>
 
-        <div class="modal-action">
-          <button type="button" onclick={onClose} class="btn">Annuler</button>
-          <button type="submit" disabled={isSaving || !objetId} class="btn btn-primary">
+        <div class={stylex.attrs(ui.dialogActions).class}>
+          <button type="button" onclick={onClose} class={stylex.attrs(ui.button).class}
+            >Annuler</button
+          >
+          <button
+            type="submit"
+            disabled={isSaving || !objetId}
+            class={stylex.attrs(ui.button, ui.buttonPrimary).class}
+          >
             <Save size={16} />
             {isSaving ? "Enregistrement..." : "Enregistrer le tag"}
           </button>
@@ -403,7 +574,7 @@
       </form>
     {/if}
   </div>
-  <form method="dialog" class="modal-backdrop">
+  <form method="dialog" class={stylex.attrs(ui.dialogBackdrop).class}>
     <button onclick={onClose}>close</button>
   </form>
 </dialog>

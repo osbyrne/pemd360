@@ -1,4 +1,6 @@
 <script lang="ts">
+  import * as stylex from "@stylexjs/stylex";
+  import { ui } from "$lib/styles/ui.stylex";
   import { createEventDispatcher } from "svelte";
   import { enhance } from "$app/forms";
   import { invalidateAll } from "$app/navigation";
@@ -43,14 +45,103 @@
   function closeModal() {
     modal?.close();
   }
+
+  const styles = stylex.create({
+    div: {
+      maxWidth: "32rem",
+    },
+    div2: {
+      marginBottom: "1.5rem",
+      display: "flex",
+      alignItems: "center",
+      gap: "0.75rem",
+    },
+    div3: {
+      display: "flex",
+      height: "2.5rem",
+      width: "2.5rem",
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: "9999px",
+      backgroundColor: "oklch(93% 0.034 272.788)",
+    },
+    h3: {
+      fontSize: "1.125rem",
+      lineHeight: "1.75rem",
+      fontWeight: 600,
+    },
+    p: {
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+    div4: {
+      marginBottom: "0.375rem",
+      display: "block",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      fontWeight: 500,
+    },
+    div5: {
+      maxHeight: "16rem",
+      overflowY: "auto",
+      borderRadius: ".5rem",
+    },
+    p2: {
+      paddingTop: "1rem",
+      paddingRight: "1rem",
+      paddingBottom: "1rem",
+      paddingLeft: "1rem",
+      textAlign: "center",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+    label: {
+      display: "flex",
+      cursor: "pointer",
+      alignItems: "center",
+      gap: "0.75rem",
+      paddingTop: "0.75rem",
+      paddingRight: "0.75rem",
+      paddingBottom: "0.75rem",
+      paddingLeft: "0.75rem",
+    },
+    div6: {
+      minWidth: "0rem",
+      flex: "1 1 0%",
+    },
+    p3: {
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      fontWeight: 500,
+    },
+    p4: {
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      fontSize: ".75rem",
+      lineHeight: "1rem",
+    },
+    p5: {
+      marginTop: "0.5rem",
+      fontSize: ".75rem",
+      lineHeight: "1rem",
+    },
+  });
 </script>
 
-<button on:click={openModal} class="btn btn-ghost" title="Gérer les projets">
+<button
+  on:click={openModal}
+  class={stylex.attrs(ui.button, ui.buttonGhost).class}
+  title="Gérer les projets"
+>
   <Folder size={18} />
 </button>
 
-<dialog bind:this={modal} class="modal">
-  <div class="modal-box max-w-lg">
+<dialog bind:this={modal} class={stylex.attrs(ui.dialog).class}>
+  <div class={stylex.attrs(ui.dialogPanel, styles.div).class}>
     <form
       method="POST"
       action="?/setProjets"
@@ -68,18 +159,18 @@
       }}
     >
       <input type="hidden" name="userId" value={user.id} />
-      <div class="mb-6 flex items-center gap-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100">
+      <div class={stylex.attrs(styles.div2).class}>
+        <div class={stylex.attrs(styles.div3).class}>
           <Folder />
         </div>
         <div>
-          <h3 class="text-lg font-semibold">Gerer les projets</h3>
-          <p class="text-sm">{user.name}</p>
+          <h3 class={stylex.attrs(styles.h3).class}>Gerer les projets</h3>
+          <p class={stylex.attrs(styles.p).class}>{user.name}</p>
         </div>
       </div>
       <div>
-        <div class="mb-1.5 block text-sm font-medium">Projets assignes</div>
-        <label class="input">
+        <div class={stylex.attrs(styles.div4).class}>Projets assignes</div>
+        <label class={stylex.attrs(ui.input).class}>
           <Search />
           <input
             type="search"
@@ -88,14 +179,14 @@
           />
         </label>
 
-        <div class="max-h-64 overflow-y-auto rounded-lg">
+        <div class={stylex.attrs(styles.div5).class}>
           {#if projets.length === 0}
-            <p class="p-4 text-center text-sm">Aucun projet disponible</p>
+            <p class={stylex.attrs(styles.p2).class}>Aucun projet disponible</p>
           {:else if filteredModalProjets.length === 0}
-            <p class="p-4 text-center text-sm">Aucun projet trouve</p>
+            <p class={stylex.attrs(styles.p2).class}>Aucun projet trouve</p>
           {:else}
             {#each filteredModalProjets as p, i (i)}
-              <label class="hover: flex cursor-pointer items-center gap-3 p-3">
+              <label class={stylex.attrs(styles.label).class}>
                 <input
                   type="checkbox"
                   name="projetIds"
@@ -108,26 +199,28 @@
                       projetIds = projetIds.filter((id) => id !== p.id);
                     }
                   }}
-                  class="checkbox"
+                  class={stylex.attrs(ui.checkbox).class}
                 />
-                <div class="min-w-0 flex-1">
-                  <p class="truncate text-sm font-medium">{p.libelle}</p>
-                  <p class="truncate text-xs">Ref: {p.reference}</p>
+                <div class={stylex.attrs(styles.div6).class}>
+                  <p class={stylex.attrs(styles.p3).class}>{p.libelle}</p>
+                  <p class={stylex.attrs(styles.p4).class}>Ref: {p.reference}</p>
                 </div>
               </label>
             {/each}
           {/if}
         </div>
-        <p class="mt-2 text-xs">
+        <p class={stylex.attrs(styles.p5).class}>
           {projetIds.length} projet{projetIds.length > 1 ? "s" : ""} selectionne{projetIds.length >
           1
             ? "s"
             : ""}
         </p>
       </div>
-      <div class="modal-action">
-        <button type="button" class="btn" on:click={closeModal}>Annuler</button>
-        <button type="submit" class="btn">Enregistrer</button>
+      <div class={stylex.attrs(ui.dialogActions).class}>
+        <button type="button" class={stylex.attrs(ui.button).class} on:click={closeModal}
+          >Annuler</button
+        >
+        <button type="submit" class={stylex.attrs(ui.button).class}>Enregistrer</button>
       </div>
     </form>
   </div>

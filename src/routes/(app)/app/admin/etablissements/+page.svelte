@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { theme } from "../../../../../lib/styles/tokens.stylex";
+  import * as stylex from "@stylexjs/stylex";
+  import { ui } from "$lib/styles/ui.stylex";
   import type { PageData, ActionData } from "./$types";
   import { enhance } from "$app/forms";
   import {
@@ -103,26 +106,361 @@
     a.click();
     document.body.removeChild(a);
   }
+  const spin = stylex.keyframes({ to: { transform: "rotate(360deg)" } });
+  const pulse = stylex.keyframes({ "50%": { opacity: 0.5 } });
+
+  const styles = stylex.create({
+    main: {
+      marginInlineStart: "auto",
+      marginInlineEnd: "auto",
+      maxWidth: "80rem",
+    },
+    div: {
+      marginBottom: "2rem",
+    },
+    div2: {
+      display: {
+        "@media (min-width: 640px)": "flex",
+      },
+      alignItems: {
+        "@media (min-width: 640px)": "center",
+      },
+      justifyContent: {
+        "@media (min-width: 640px)": "space-between",
+      },
+    },
+    h1: {
+      fontSize: {
+        default: "1.5rem",
+        "@media (min-width: 640px)": "1.875rem",
+      },
+      lineHeight: {
+        default: "2rem",
+        "@media (min-width: 640px)": "2.25rem",
+      },
+      fontWeight: 700,
+      letterSpacing: "-.025em",
+    },
+    p: {
+      marginTop: "0.5rem",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+    div3: {
+      marginTop: {
+        default: "1rem",
+        "@media (min-width: 640px)": "0rem",
+      },
+      display: "flex",
+      flexWrap: "wrap",
+      gap: "0.75rem",
+    },
+    label: {
+      position: "relative",
+      marginBottom: "1.5rem",
+    },
+    div4: {
+      borderRadius: ".5rem",
+      backgroundColor: theme.base100,
+      boxShadow: "0 4px 6px -1px #0000001a, 0 2px 4px -2px #0000001a",
+    },
+    div5: {
+      "--divider-width": "1px",
+      "--divider-color": "oklch(96.8% 0.007 247.896)",
+    },
+    div6: {
+      display: "flex",
+      alignItems: "center",
+      gap: "1rem",
+      paddingTop: "1rem",
+      paddingRight: "1rem",
+      paddingBottom: "1rem",
+      paddingLeft: "1rem",
+    },
+    div7: {
+      height: "3rem",
+      width: "3rem",
+      animationName: pulse,
+      animationDuration: "2s",
+      animationTimingFunction: "cubic-bezier(0.4, 0, 0.6, 1)",
+      animationIterationCount: "infinite",
+      "@media (prefers-reduced-motion: reduce)": {
+        animationName: "none",
+      },
+      borderRadius: "9999px",
+    },
+    div8: {
+      flex: "1 1 0%",
+      "--stack-gap": "0.5rem",
+    },
+    div9: {
+      height: "1rem",
+      width: "8rem",
+      animationName: pulse,
+      animationDuration: "2s",
+      animationTimingFunction: "cubic-bezier(0.4, 0, 0.6, 1)",
+      animationIterationCount: "infinite",
+      "@media (prefers-reduced-motion: reduce)": {
+        animationName: "none",
+      },
+      borderRadius: ".25rem",
+    },
+    div10: {
+      height: "0.75rem",
+      width: "12rem",
+      animationName: pulse,
+      animationDuration: "2s",
+      animationTimingFunction: "cubic-bezier(0.4, 0, 0.6, 1)",
+      animationIterationCount: "infinite",
+      "@media (prefers-reduced-motion: reduce)": {
+        animationName: "none",
+      },
+      borderRadius: ".25rem",
+    },
+    div11: {
+      height: "1.5rem",
+      width: "4rem",
+      animationName: pulse,
+      animationDuration: "2s",
+      animationTimingFunction: "cubic-bezier(0.4, 0, 0.6, 1)",
+      animationIterationCount: "infinite",
+      "@media (prefers-reduced-motion: reduce)": {
+        animationName: "none",
+      },
+      borderRadius: "9999px",
+    },
+    div12: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingInlineStart: "1rem",
+      paddingInlineEnd: "1rem",
+      paddingTop: "4rem",
+      paddingBottom: "4rem",
+    },
+    Building2: {
+      marginBottom: "1rem",
+    },
+    p2: {
+      fontWeight: 500,
+    },
+    p3: {
+      marginTop: "0.25rem",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+    li: {
+      display: "flex",
+    },
+    div13: {
+      minWidth: "0rem",
+      flex: "1 1 0%",
+    },
+    div14: {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.5rem",
+    },
+    p4: {
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      fontWeight: 600,
+    },
+    p5: {
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+    div15: {
+      display: {
+        default: "none",
+        "@media (min-width: 640px)": "flex",
+      },
+      width: "8rem",
+      flexDirection: {
+        "@media (min-width: 640px)": "column",
+      },
+      alignItems: {
+        "@media (min-width: 640px)": "flex-start",
+      },
+    },
+    p6: {
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      fontWeight: 500,
+    },
+    p7: {
+      fontSize: ".75rem",
+      lineHeight: "1rem",
+    },
+    div16: {
+      marginRight: "1rem",
+      display: {
+        default: "none",
+        "@media (min-width: 768px)": "flex",
+      },
+      width: "9rem",
+      flexDirection: {
+        "@media (min-width: 768px)": "column",
+      },
+      alignItems: {
+        "@media (min-width: 768px)": "flex-end",
+      },
+    },
+    p8: {
+      fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      fontWeight: 500,
+    },
+    div17: {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.25rem",
+      borderLeftWidth: "1px",
+      borderLeftStyle: "solid",
+      borderColor: "oklch(92.9% 0.013 255.508)",
+      paddingLeft: "0.5rem",
+    },
+    div18: {
+      position: "relative",
+      zIndex: 50,
+    },
+    div19: {
+      position: "fixed",
+      inset: 0,
+      backdropFilter: "blur(8px)",
+      transitionProperty: "opacity",
+      transitionDuration: "150ms",
+      transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+    },
+    div20: {
+      position: "fixed",
+      inset: 0,
+      zIndex: 10,
+      width: "100vw",
+      overflowY: "auto",
+    },
+    div21: {
+      display: "flex",
+      minHeight: "100%",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingTop: "1rem",
+      paddingRight: "1rem",
+      paddingBottom: "1rem",
+      paddingLeft: "1rem",
+    },
+    div22: {
+      position: "relative",
+      width: "100%",
+      maxWidth: "28rem",
+      transform: "none",
+      overflow: "hidden",
+      borderRadius: "1rem",
+      boxShadow: "0 25px 50px -12px #0004",
+      transitionProperty: "all",
+      transitionDuration: "150ms",
+      transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+    },
+    div23: {
+      paddingInlineStart: "1.5rem",
+      paddingInlineEnd: "1.5rem",
+      paddingTop: "1.25rem",
+      paddingBottom: "1.25rem",
+    },
+    div24: {
+      marginBottom: "1.5rem",
+      display: "flex",
+      alignItems: "center",
+      gap: "0.75rem",
+    },
+    div25: {
+      display: "flex",
+      height: "2.5rem",
+      width: "2.5rem",
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: "9999px",
+      backgroundColor: "oklch(93.6% 0.032 17.717)",
+    },
+    Trash2: {
+      color: "oklch(57.7% 0.245 27.325)",
+    },
+    h3: {
+      fontSize: "1.125rem",
+      lineHeight: "1.75rem",
+      fontWeight: 600,
+    },
+    p9: {
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+    div26: {
+      borderRadius: ".5rem",
+      borderWidth: "1px",
+      borderStyle: "solid",
+      borderColor: "oklch(88.5% 0.062 18.334)",
+      backgroundColor: "oklch(97.1% 0.013 17.38)",
+      paddingTop: "1rem",
+      paddingRight: "1rem",
+      paddingBottom: "1rem",
+      paddingLeft: "1rem",
+    },
+    p10: {
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      color: "oklch(44.4% 0.177 26.899)",
+    },
+    div27: {
+      display: "flex",
+      justifyContent: "flex-end",
+      gap: "0.75rem",
+      borderTopWidth: "1px",
+      borderTopStyle: "solid",
+      borderColor: "oklch(96.8% 0.007 247.896)",
+      paddingInlineStart: "1.5rem",
+      paddingInlineEnd: "1.5rem",
+      paddingTop: "1rem",
+      paddingBottom: "1rem",
+    },
+    LoaderCircle: {
+      height: "1rem",
+      width: "1rem",
+      animationName: spin,
+      animationDuration: "1s",
+      animationTimingFunction: "linear",
+      animationIterationCount: "infinite",
+      "@media (prefers-reduced-motion: reduce)": {
+        animationName: "none",
+      },
+    },
+    stackSpacing05: { marginBlockEnd: { default: "0.5rem", ":last-child": 0 } },
+  });
 </script>
 
 <svelte:head>
   <title>Admin · Établissements</title>
 </svelte:head>
 
-<main class="mx-auto max-w-7xl">
+<main class={stylex.attrs(styles.main).class}>
   <!-- Header -->
-  <div class="mb-8">
-    <div class="sm:flex sm:items-center sm:justify-between">
+  <div class={stylex.attrs(styles.div).class}>
+    <div class={stylex.attrs(styles.div2).class}>
       <div>
-        <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Gestion des établissements</h1>
-        <p class="mt-2 text-sm">Gérez les établissements de votre organisation.</p>
+        <h1 class={stylex.attrs(styles.h1).class}>Gestion des établissements</h1>
+        <p class={stylex.attrs(styles.p).class}>Gérez les établissements de votre organisation.</p>
       </div>
-      <div class="mt-4 flex flex-wrap gap-3 sm:mt-0">
-        <a href="/app/admin/etablissements/nouveau" class="btn">
+      <div class={stylex.attrs(styles.div3).class}>
+        <a href="/app/admin/etablissements/nouveau" class={stylex.attrs(ui.button).class}>
           <Plus size={18} />
           Nouvel établissement
         </a>
-        <button onclick={downloadCSV} class="btn">
+        <button onclick={downloadCSV} class={stylex.attrs(ui.button).class}>
           <Download size={16} />
           Exporter CSV
         </button>
@@ -131,7 +469,7 @@
   </div>
 
   <!-- Search Bar -->
-  <label class="input relative mb-6">
+  <label class={stylex.attrs(ui.input, styles.label).class}>
     <Search />
     <input type="search" bind:value={query} placeholder="Rechercher par nom, ville ou SIRET..." />
   </label>
@@ -139,54 +477,54 @@
   <br />
 
   <!-- List -->
-  <div class="list rounded-box bg-base-100 shadow-md">
+  <div class={stylex.attrs(ui.list, styles.div4).class}>
     {#if loading}
-      <div class="divide-y divide-slate-100">
+      <div class={stylex.attrs(styles.div5).class}>
         {#each Array(5) as _}
-          <div class="flex items-center gap-4 p-4">
-            <div class="h-12 w-12 animate-pulse rounded-full"></div>
-            <div class="flex-1 space-y-2">
-              <div class="h-4 w-32 animate-pulse rounded"></div>
-              <div class="h-3 w-48 animate-pulse rounded"></div>
+          <div class={stylex.attrs(ui.divideChild, styles.div6).class}>
+            <div class={stylex.attrs(styles.div7).class}></div>
+            <div class={stylex.attrs(styles.div8).class}>
+              <div class={stylex.attrs(styles.stackSpacing05, styles.div9).class}></div>
+              <div class={stylex.attrs(styles.stackSpacing05, styles.div10).class}></div>
             </div>
-            <div class="h-6 w-16 animate-pulse rounded-full"></div>
+            <div class={stylex.attrs(styles.div11).class}></div>
           </div>
         {/each}
       </div>
     {:else if displayedEtabs.length === 0}
-      <div class="flex flex-col items-center justify-center px-4 py-16">
-        <Building2 size={48} strokeWidth={1.5} class="mb-4 " />
-        <p class="font-medium">Aucun établissement trouvé</p>
-        <p class="mt-1 text-sm">Essayez de modifier vos critères de recherche</p>
+      <div class={stylex.attrs(styles.div12).class}>
+        <Building2 size={48} strokeWidth={1.5} class={stylex.attrs(styles.Building2).class} />
+        <p class={stylex.attrs(styles.p2).class}>Aucun établissement trouvé</p>
+        <p class={stylex.attrs(styles.p3).class}>Essayez de modifier vos critères de recherche</p>
       </div>
     {:else}
       {#each displayedEtabs as etab (etab.id)}
-        <li class="list-row flex">
+        <li class={stylex.attrs(ui.listRow, styles.li).class}>
           <!-- Info -->
-          <div class="min-w-0 flex-1">
-            <div class="flex items-center gap-2">
-              <p class="truncate font-semibold">{etab.nom}</p>
+          <div class={stylex.attrs(styles.div13).class}>
+            <div class={stylex.attrs(styles.div14).class}>
+              <p class={stylex.attrs(styles.p4).class}>{etab.nom}</p>
             </div>
-            <p class="truncate text-sm">{etab.email || "Pas d'email"}</p>
+            <p class={stylex.attrs(styles.p5).class}>{etab.email || "Pas d'email"}</p>
           </div>
 
           <!-- Location -->
-          <div class="hidden w-32 sm:flex sm:flex-col sm:items-start">
-            <p class="text-sm font-medium">{etab.ville || "-"}</p>
-            <p class="text-xs">{etab.cp || "-"}</p>
+          <div class={stylex.attrs(styles.div15).class}>
+            <p class={stylex.attrs(styles.p6).class}>{etab.ville || "-"}</p>
+            <p class={stylex.attrs(styles.p7).class}>{etab.cp || "-"}</p>
           </div>
 
           <!-- SIRET -->
-          <div class="mr-4 hidden w-36 md:flex md:flex-col md:items-end">
-            <p class="text-xs">SIRET</p>
-            <p class="font-mono text-sm font-medium">{etab.siret || "-"}</p>
+          <div class={stylex.attrs(styles.div16).class}>
+            <p class={stylex.attrs(styles.p7).class}>SIRET</p>
+            <p class={stylex.attrs(styles.p8).class}>{etab.siret || "-"}</p>
           </div>
 
           <!-- Actions -->
-          <div class="flex items-center gap-1 border-l border-slate-200 pl-2">
+          <div class={stylex.attrs(styles.div17).class}>
             <a
               href="/app/admin/etablissements/{etab.id}"
-              class="btn btn-ghost"
+              class={stylex.attrs(ui.button, ui.buttonGhost).class}
               title="Voir les détails"
             >
               <Eye size={18} />
@@ -194,13 +532,17 @@
 
             <a
               href="/app/admin/etablissements/{etab.id}/modifier"
-              class="btn btn-ghost"
+              class={stylex.attrs(ui.button, ui.buttonGhost).class}
               title="Modifier"
             >
               <Pencil size={18} />
             </a>
 
-            <button onclick={() => openDeleteModal(etab)} class="btn btn-ghost" title="Supprimer">
+            <button
+              onclick={() => openDeleteModal(etab)}
+              class={stylex.attrs(ui.button, ui.buttonGhost).class}
+              title="Supprimer"
+            >
               <Trash2 size={18} />
             </button>
           </div>
@@ -223,32 +565,35 @@
 
 <!-- MODAL : Supprimer -->
 {#if isDeleteModalOpen && selectedEtab}
-  <div class="relative z-50" role="dialog" aria-modal="true">
-    <div class="/60 fixed inset-0 backdrop-blur-sm transition-opacity"></div>
-    <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-      <div class="flex min-h-full items-center justify-center p-4">
-        <div
-          class="relative w-full max-w-md transform overflow-hidden rounded-2xl shadow-2xl transition-all"
-        >
-          <div class="px-6 py-5">
-            <div class="mb-6 flex items-center gap-3">
-              <div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-                <Trash2 size={20} class="text-red-600" />
+  <div class={stylex.attrs(styles.div18).class} role="dialog" aria-modal="true">
+    <div class={stylex.attrs(styles.div19).class}></div>
+    <div class={stylex.attrs(styles.div20).class}>
+      <div class={stylex.attrs(styles.div21).class}>
+        <div class={stylex.attrs(styles.div22).class}>
+          <div class={stylex.attrs(styles.div23).class}>
+            <div class={stylex.attrs(styles.div24).class}>
+              <div class={stylex.attrs(styles.div25).class}>
+                <Trash2 size={20} class={stylex.attrs(styles.Trash2).class} />
               </div>
               <div>
-                <h3 class="text-lg font-semibold">Supprimer l'établissement</h3>
-                <p class="text-sm">{selectedEtab.nom}</p>
+                <h3 class={stylex.attrs(styles.h3).class}>Supprimer l'établissement</h3>
+                <p class={stylex.attrs(styles.p9).class}>{selectedEtab.nom}</p>
               </div>
             </div>
-            <div class="rounded-lg border border-red-200 bg-red-50 p-4">
-              <p class="text-sm text-red-800">
+            <div class={stylex.attrs(styles.div26).class}>
+              <p class={stylex.attrs(styles.p10).class}>
                 <strong>Attention :</strong> Cette action est irréversible. Toutes les données associées
                 à cet établissement seront définitivement supprimées.
               </p>
             </div>
           </div>
-          <div class="flex justify-end gap-3 border-t border-slate-100 px-6 py-4">
-            <button type="button" class="btn" onclick={closeDeleteModal} disabled={deleteLoading}>
+          <div class={stylex.attrs(styles.div27).class}>
+            <button
+              type="button"
+              class={stylex.attrs(ui.button).class}
+              onclick={closeDeleteModal}
+              disabled={deleteLoading}
+            >
               Annuler
             </button>
             <form
@@ -272,10 +617,14 @@
               }}
             >
               <input type="hidden" name="id" value={selectedEtab.id} />
-              <button type="submit" class="btn btn-warning" disabled={deleteLoading}>
+              <button
+                type="submit"
+                class={stylex.attrs(ui.button, ui.buttonWarning).class}
+                disabled={deleteLoading}
+              >
                 {#if deleteLoading}
-                  <span class="flex items-center gap-2">
-                    <LoaderCircle class="h-4 w-4 animate-spin" />
+                  <span class={stylex.attrs(styles.div14).class}>
+                    <LoaderCircle class={stylex.attrs(styles.LoaderCircle).class} />
                     Suppression...
                   </span>
                 {:else}
@@ -291,9 +640,9 @@
 {/if}
 
 {#if toast}
-  <div class="toast">
-    <div class="alert alert-info">
-      <span class="text-sm font-medium">{toast.message}</span>
+  <div class={stylex.attrs(ui.toast).class}>
+    <div class={stylex.attrs(ui.alert, ui.alertInfo).class}>
+      <span class={stylex.attrs(styles.p6).class}>{toast.message}</span>
     </div>
   </div>
 {/if}

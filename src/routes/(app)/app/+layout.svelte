@@ -1,4 +1,6 @@
 <script lang="ts">
+  import * as stylex from "@stylexjs/stylex";
+  import { ui } from "$lib/styles/ui.stylex";
   import { authClient } from "$lib/auth-client";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
@@ -217,6 +219,187 @@
     console.log("signing out");
     goto("/login");
   }
+
+  const styles = stylex.create({
+    div: {
+      position: "relative",
+      display: "flex",
+      height: "100vh",
+      overflow: "hidden",
+    },
+    div2: {
+      position: "absolute",
+      inset: 0,
+      zIndex: 40,
+      display: {
+        "@media (min-width: 1024px)": "none",
+      },
+    },
+    aside: {
+      position: {
+        default: "absolute",
+        "@media (min-width: 1024px)": "static",
+      },
+      top: 0,
+      bottom: 0,
+      left: "0rem",
+      zIndex: 50,
+      display: "flex",
+      width: "16rem",
+      flexDirection: "column",
+      transitionProperty: "transform, translate, scale, rotate",
+      transitionDuration: "300ms",
+      transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+      "--translate-x": {
+        "@media (min-width: 1024px)": "0rem",
+      },
+      translate: {
+        "@media (min-width: 1024px)": "var(--translate-x, 0px) var(--translate-y, 0px)",
+      },
+    },
+    div3: {
+      display: "flex",
+      height: "5rem",
+      flexShrink: 0,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingInlineStart: "1rem",
+      paddingInlineEnd: "1rem",
+    },
+    img: {
+      height: "4rem",
+      width: "auto",
+      objectFit: "contain",
+    },
+    nav: {
+      flex: "1 1 0%",
+      "--stack-gap": "0.25rem",
+      overflowY: "auto",
+      paddingTop: "1rem",
+      paddingRight: "1rem",
+      paddingBottom: "1rem",
+      paddingLeft: "1rem",
+    },
+    div4: {
+      overflow: "hidden",
+      borderRadius: ".5rem",
+    },
+    div5: {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.75rem",
+    },
+    IconComponent: {
+      height: "1.25rem",
+      width: "1.25rem",
+    },
+    span: {
+      fontWeight: 500,
+    },
+    ChevronDown: {
+      height: "1rem",
+      width: "1rem",
+    },
+    div6: {
+      "--stack-gap": "0.25rem",
+      paddingTop: "0.25rem",
+      paddingBottom: "0.25rem",
+    },
+    a: {
+      display: "flex",
+    },
+    div7: {
+      flexShrink: 0,
+      paddingTop: "1rem",
+      paddingRight: "1rem",
+      paddingBottom: "1rem",
+      paddingLeft: "1rem",
+    },
+    div8: {
+      marginBottom: "1rem",
+      borderRadius: ".5rem",
+      paddingTop: "0.75rem",
+      paddingRight: "0.75rem",
+      paddingBottom: "0.75rem",
+      paddingLeft: "0.75rem",
+    },
+    div9: {
+      marginBottom: "0.5rem",
+      display: "flex",
+      alignItems: "center",
+      gap: "0.75rem",
+    },
+    div10: {
+      flex: "1 1 0%",
+      overflow: "hidden",
+    },
+    p: {
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      fontWeight: 600,
+    },
+    p2: {
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      fontSize: ".75rem",
+      lineHeight: "1rem",
+    },
+    LogOut: {
+      height: "1.25rem",
+      width: "1.25rem",
+      flexShrink: 0,
+    },
+    main: {
+      position: "relative",
+      width: "100%",
+      minWidth: "0rem",
+      flex: "1 1 0%",
+      overflowY: "auto",
+    },
+    div11: {
+      position: "sticky",
+      top: "0rem",
+      zIndex: 30,
+      display: {
+        default: "flex",
+        "@media (min-width: 1024px)": "none",
+      },
+      alignItems: "center",
+      paddingInlineStart: "1rem",
+      paddingInlineEnd: "1rem",
+      paddingTop: "0.5rem",
+      paddingBottom: "0.5rem",
+    },
+    Menu: {
+      height: "1.5rem",
+      width: "1.5rem",
+    },
+    span2: {
+      marginLeft: "0.75rem",
+      fontWeight: 600,
+    },
+    div12: {
+      paddingTop: {
+        default: "1rem",
+        "@media (min-width: 1024px)": "1.5rem",
+      },
+      paddingRight: {
+        default: "1rem",
+        "@media (min-width: 1024px)": "1.5rem",
+      },
+      paddingBottom: {
+        default: "1rem",
+        "@media (min-width: 1024px)": "1.5rem",
+      },
+      paddingLeft: {
+        default: "1rem",
+        "@media (min-width: 1024px)": "1.5rem",
+      },
+    },
+    stackSpacing025: { marginBlockEnd: { default: "0.25rem", ":last-child": 0 } },
+  });
 </script>
 
 <svelte:head>
@@ -231,58 +414,65 @@
   />
 </svelte:head>
 
-<div class="relative flex h-screen overflow-hidden">
+<div class={stylex.attrs(styles.div).class}>
   <!-- Mobile Sidebar Overlay -->
   {#if sidebarOpen}
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="absolute inset-0 z-40 lg:hidden" onclick={() => (sidebarOpen = false)}></div>
+    <div class={stylex.attrs(styles.div2).class} onclick={() => (sidebarOpen = false)}></div>
   {/if}
 
   <!-- Sidebar -->
   <aside
-    class="absolute inset-y-0 left-0 z-50 flex w-64 flex-col transition-transform duration-300 lg:static lg:translate-x-0 {sidebarOpen
-      ? 'translate-x-0'
-      : '-translate-x-full'}"
+    class={stylex.attrs(styles.aside, sidebarOpen ? ui.translateX0 : ui.negativeTranslateXFull)
+      .class}
   >
     <!-- Logo -->
-    <div class="flex h-20 shrink-0 items-center justify-center px-4">
+    <div class={stylex.attrs(styles.div3).class}>
       <a
         href="/"
         onclick={() => {
           if (window.innerWidth < 1024) sidebarOpen = false;
         }}
       >
-        <img src={logoPEMD} alt="PEMD 360" class="h-16 w-auto object-contain" />
+        <img src={logoPEMD} alt="PEMD 360" class={stylex.attrs(styles.img).class} />
       </a>
     </div>
 
     <!-- Navigation - scrollable -->
-    <nav class="custom-scrollbar flex-1 space-y-1 overflow-y-auto p-4">
+    <nav class={stylex.attrs(styles.nav).class}>
       {#each navLinks as link (link.label)}
         {@const IconComponent = link.icon}
 
         {#if link.subItems && link.subItems.length > 0}
-          <div class="overflow-hidden rounded-lg">
-            <button class="btn btn-ghost" onclick={() => toggleMenu(link.label)}>
-              <div class="flex items-center gap-3">
-                <IconComponent class="h-5 w-5" />
-                <span class="font-medium">{link.label}</span>
+          <div class={stylex.attrs(styles.stackSpacing025, styles.div4).class}>
+            <button
+              class={stylex.attrs(ui.button, ui.buttonGhost).class}
+              onclick={() => toggleMenu(link.label)}
+            >
+              <div class={stylex.attrs(styles.div5).class}>
+                <IconComponent class={stylex.attrs(styles.IconComponent).class} />
+                <span class={stylex.attrs(styles.span).class}>{link.label}</span>
               </div>
               {#if expandedMenus[link.label]}
-                <ChevronDown class="h-4 w-4" />
+                <ChevronDown class={stylex.attrs(styles.ChevronDown).class} />
               {:else}
-                <ChevronRight class="h-4 w-4" />
+                <ChevronRight class={stylex.attrs(styles.ChevronDown).class} />
               {/if}
             </button>
 
             {#if expandedMenus[link.label]}
-              <div class="space-y-1 py-1">
+              <div class={stylex.attrs(styles.div6).class}>
                 {#each link.subItems as subLink (subLink.href)}
                   {#if !subLink.adminOnly || isAdmin}
                     <a
                       href={subLink.href}
-                      class="btn flex btn-ghost"
+                      class={stylex.attrs(
+                        styles.stackSpacing025,
+                        ui.button,
+                        ui.buttonGhost,
+                        styles.a,
+                      ).class}
                       onclick={() => {
                         if (window.innerWidth < 1024) sidebarOpen = false;
                       }}
@@ -297,53 +487,53 @@
         {:else}
           <a
             href={link.href}
-            class="btn btn-ghost"
+            class={stylex.attrs(styles.stackSpacing025, ui.button, ui.buttonGhost).class}
             onclick={() => {
               if (window.innerWidth < 1024) sidebarOpen = false;
             }}
           >
-            <IconComponent class="h-5 w-5" />
-            <span class="font-medium">{link.label}</span>
+            <IconComponent class={stylex.attrs(styles.IconComponent).class} />
+            <span class={stylex.attrs(styles.span).class}>{link.label}</span>
           </a>
         {/if}
       {/each}
     </nav>
 
     <!-- User Profile Section - Fixed at bottom -->
-    <div class="shrink-0 p-4">
+    <div class={stylex.attrs(styles.div7).class}>
       {#if data.user}
-        <div class="mb-4 rounded-lg p-3">
-          <div class="mb-2 flex items-center gap-3">
-            <div class="flex-1 overflow-hidden">
-              <p class="truncate font-semibold">{data.user.name}</p>
-              <p class="truncate text-xs">
+        <div class={stylex.attrs(styles.div8).class}>
+          <div class={stylex.attrs(styles.div9).class}>
+            <div class={stylex.attrs(styles.div10).class}>
+              <p class={stylex.attrs(styles.p).class}>{data.user.name}</p>
+              <p class={stylex.attrs(styles.p2).class}>
                 {data.user.role || "Utilisateur"}
               </p>
             </div>
           </div>
-          <p class="truncate text-xs">{data.user.email}</p>
+          <p class={stylex.attrs(styles.p2).class}>{data.user.email}</p>
         </div>
       {/if}
 
-      <button onclick={handleLogout} class="btn btn-ghost">
-        <LogOut class="h-5 w-5 shrink-0" />
+      <button onclick={handleLogout} class={stylex.attrs(ui.button, ui.buttonGhost).class}>
+        <LogOut class={stylex.attrs(styles.LogOut).class} />
         Déconnexion
       </button>
     </div>
   </aside>
 
   <!-- Main Content -->
-  <main class="relative w-full min-w-0 flex-1 overflow-y-auto">
+  <main class={stylex.attrs(styles.main).class}>
     <!-- Mobile Header for Hamburger -->
-    <div class="sticky top-0 z-30 flex items-center px-4 py-2 lg:hidden">
-      <button class="btn" onclick={() => (sidebarOpen = !sidebarOpen)}>
-        <Menu class="h-6 w-6" />
+    <div class={stylex.attrs(styles.div11).class}>
+      <button class={stylex.attrs(ui.button).class} onclick={() => (sidebarOpen = !sidebarOpen)}>
+        <Menu class={stylex.attrs(styles.Menu).class} />
       </button>
-      <span class="ml-3 font-semibold">Menu</span>
+      <span class={stylex.attrs(styles.span2).class}>Menu</span>
     </div>
 
     <!-- Page Content -->
-    <div class="p-4 lg:p-6">
+    <div class={stylex.attrs(styles.div12).class}>
       {@render children()}
     </div>
   </main>

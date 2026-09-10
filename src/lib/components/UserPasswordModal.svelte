@@ -1,4 +1,6 @@
 <script lang="ts">
+  import * as stylex from "@stylexjs/stylex";
+  import { ui } from "$lib/styles/ui.stylex";
   import { createEventDispatcher } from "svelte";
   import { authClient } from "$lib/auth-client";
   import { KeyRound, Pencil } from "lucide-svelte";
@@ -45,25 +47,68 @@
       dispatch("toast", { message: "Echec de la mise a jour du mot de passe", type: "error" });
     }
   }
+
+  const styles = stylex.create({
+    div: {
+      marginBottom: "1.5rem",
+      display: "flex",
+      alignItems: "center",
+      gap: "0.75rem",
+    },
+    div2: {
+      display: "flex",
+      height: "2.5rem",
+      width: "2.5rem",
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: "9999px",
+      backgroundColor: "oklch(96.2% 0.059 95.617)",
+    },
+    h3: {
+      fontSize: "1.125rem",
+      lineHeight: "1.75rem",
+      fontWeight: 600,
+    },
+    p: {
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+    label: {
+      marginBottom: "0.375rem",
+      display: "block",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      fontWeight: 500,
+    },
+    p2: {
+      marginTop: "0.5rem",
+      fontSize: ".75rem",
+      lineHeight: "1rem",
+    },
+  });
 </script>
 
-<button on:click={openModal} class="btn btn-ghost" title="Changer le mot de passe">
+<button
+  on:click={openModal}
+  class={stylex.attrs(ui.button, ui.buttonGhost).class}
+  title="Changer le mot de passe"
+>
   <KeyRound size={18} />
 </button>
 
-<dialog bind:this={modal} class="modal">
-  <div class="modal-box">
-    <div class="mb-6 flex items-center gap-3">
-      <div class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100">
+<dialog bind:this={modal} class={stylex.attrs(ui.dialog).class}>
+  <div class={stylex.attrs(ui.dialogPanel).class}>
+    <div class={stylex.attrs(styles.div).class}>
+      <div class={stylex.attrs(styles.div2).class}>
         <Pencil />
       </div>
       <div>
-        <h3 class="text-lg font-semibold">Changer le mot de passe</h3>
-        <p class="text-sm">{user.name}</p>
+        <h3 class={stylex.attrs(styles.h3).class}>Changer le mot de passe</h3>
+        <p class={stylex.attrs(styles.p).class}>{user.name}</p>
       </div>
     </div>
     <div>
-      <label for="new-password-{user.id}" class="mb-1.5 block text-sm font-medium"
+      <label for="new-password-{user.id}" class={stylex.attrs(styles.label).class}
         >Nouveau mot de passe</label
       >
       <input
@@ -72,13 +117,19 @@
         type="password"
         autocomplete="new-password"
         placeholder="Entrez le nouveau mot de passe"
-        class="input"
+        class={stylex.attrs(ui.input).class}
       />
-      <p class="mt-2 text-xs">Le mot de passe doit contenir au moins 8 caracteres.</p>
+      <p class={stylex.attrs(styles.p2).class}>
+        Le mot de passe doit contenir au moins 8 caracteres.
+      </p>
     </div>
-    <div class="modal-action">
-      <button type="button" class="btn" on:click={closeModal}>Annuler</button>
-      <button type="button" class="btn" on:click={setPassword}>Mettre a jour</button>
+    <div class={stylex.attrs(ui.dialogActions).class}>
+      <button type="button" class={stylex.attrs(ui.button).class} on:click={closeModal}
+        >Annuler</button
+      >
+      <button type="button" class={stylex.attrs(ui.button).class} on:click={setPassword}
+        >Mettre a jour</button
+      >
     </div>
   </div>
 </dialog>

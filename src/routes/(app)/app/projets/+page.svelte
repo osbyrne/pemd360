@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { theme } from "../../../../lib/styles/tokens.stylex";
+  import * as stylex from "@stylexjs/stylex";
+  import { ui } from "$lib/styles/ui.stylex";
   import { Info, Search, MapPin, Calendar, Building2, ChevronRight, Box } from "lucide-svelte";
   import type { PageData } from "./$types";
   import { flip } from "svelte/animate";
@@ -56,20 +59,176 @@
       sortOrder = "desc";
     }
   }
+
+  const styles = stylex.create({
+    div: {
+      minHeight: "100vh",
+    },
+    div2: {
+      position: "relative",
+      zIndex: 10,
+      marginInlineStart: "auto",
+      marginInlineEnd: "auto",
+      marginTop: "1.5rem",
+      maxWidth: "80rem",
+      paddingInlineStart: {
+        default: "1rem",
+        "@media (min-width: 640px)": "1.5rem",
+        "@media (min-width: 1024px)": "2rem",
+      },
+      paddingInlineEnd: {
+        default: "1rem",
+        "@media (min-width: 640px)": "1.5rem",
+        "@media (min-width: 1024px)": "2rem",
+      },
+    },
+    div3: {
+      borderRadius: "1rem",
+      borderWidth: "1px",
+      borderStyle: "solid",
+      borderColor: "oklch(92.9% 0.013 255.508)",
+      paddingTop: "1rem",
+      paddingRight: "1rem",
+      paddingBottom: "1rem",
+      paddingLeft: "1rem",
+    },
+    div4: {
+      display: "flex",
+      flexDirection: {
+        default: "column",
+        "@media (min-width: 640px)": "row",
+      },
+      gap: "1rem",
+    },
+    label: {
+      position: "relative",
+      flex: "1 1 0%",
+    },
+    div5: {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.5rem",
+    },
+    div6: {
+      marginInlineStart: "auto",
+      marginInlineEnd: "auto",
+      maxWidth: "80rem",
+      paddingInlineStart: {
+        default: "1rem",
+        "@media (min-width: 640px)": "1.5rem",
+        "@media (min-width: 1024px)": "2rem",
+      },
+      paddingInlineEnd: {
+        default: "1rem",
+        "@media (min-width: 640px)": "1.5rem",
+        "@media (min-width: 1024px)": "2rem",
+      },
+      paddingTop: "2rem",
+      paddingBottom: "2rem",
+    },
+    div7: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingTop: "5rem",
+      paddingBottom: "5rem",
+      textAlign: "center",
+    },
+    h3: {
+      marginBottom: "0.5rem",
+      fontSize: "1.25rem",
+      lineHeight: "1.75rem",
+      fontWeight: 600,
+    },
+    p: {
+      maxWidth: "28rem",
+    },
+    ul: {
+      borderRadius: ".5rem",
+      backgroundColor: theme.base100,
+      boxShadow: "0 4px 6px -1px #0000001a, 0 2px 4px -2px #0000001a",
+    },
+    li: {
+      display: "flex",
+    },
+    div8: {
+      minWidth: "0rem",
+      flex: "1 1 0%",
+    },
+    h32: {
+      marginBottom: "0.25rem",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      fontWeight: 600,
+    },
+    div9: {
+      display: "flex",
+      flexWrap: "wrap",
+      alignItems: "center",
+      gap: "1rem",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+    span: {
+      fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+    },
+    span2: {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.25rem",
+      fontWeight: 500,
+      color: "oklch(55.1% 0.027 264.364)",
+    },
+    Building2: {
+      height: "0.875rem",
+      width: "0.875rem",
+    },
+    span3: {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.25rem",
+    },
+    span4: {
+      display: {
+        default: "none",
+        "@media (min-width: 768px)": "flex",
+      },
+      alignItems: "center",
+      gap: "0.25rem",
+    },
+    Info: {
+      height: "1.25rem",
+      width: "1.25rem",
+    },
+    span5: {
+      display: {
+        default: "none",
+        "@media (min-width: 640px)": "inline",
+      },
+    },
+    p2: {
+      marginTop: "1.5rem",
+      textAlign: "center",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+  });
 </script>
 
 <svelte:head>
   <title>Projets</title>
 </svelte:head>
 
-<div class="min-h-screen">
+<div class={stylex.attrs(styles.div).class}>
   {#if mounted}
     <!-- Search & Filters Bar -->
-    <div class="relative z-10 mx-auto mt-6 max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="rounded-2xl border border-slate-200 p-4">
-        <div class="flex flex-col gap-4 sm:flex-row">
+    <div class={stylex.attrs(styles.div2).class}>
+      <div class={stylex.attrs(styles.div3).class}>
+        <div class={stylex.attrs(styles.div4).class}>
           <!-- Search -->
-          <label class="input relative flex-1">
+          <label class={stylex.attrs(ui.input, styles.label).class}>
             <Search />
             <input
               type="search"
@@ -80,23 +239,23 @@
           <br />
 
           <!-- View Toggle & Sort -->
-          <div class="flex items-center gap-2">
+          <div class={stylex.attrs(styles.div5).class}>
             <!-- Sort Buttons -->
             <button
               onclick={() => toggleSort("date")}
-              class="btn {sortBy === 'date' ? ' text-emerald-600' : ''}"
+              class={stylex.attrs(ui.button, sortBy === "date" ? ui.textEmerald600 : false).class}
             >
               Date
             </button>
             <button
               onclick={() => toggleSort("name")}
-              class="btn {sortBy === 'name' ? ' text-emerald-600' : ''}"
+              class={stylex.attrs(ui.button, sortBy === "name" ? ui.textEmerald600 : false).class}
             >
               Nom
             </button>
             <button
               onclick={() => toggleSort("ville")}
-              class="btn {sortBy === 'ville' ? ' text-emerald-600' : ''}"
+              class={stylex.attrs(ui.button, sortBy === "ville" ? ui.textEmerald600 : false).class}
             >
               Ville
             </button>
@@ -106,14 +265,14 @@
     </div>
 
     <!-- Projects Content -->
-    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div class={stylex.attrs(styles.div6).class}>
       {#if filteredProjets.length === 0}
         <!-- Empty State -->
-        <div class="flex flex-col items-center justify-center py-20 text-center">
-          <h3 class="mb-2 text-xl font-semibold">
+        <div class={stylex.attrs(styles.div7).class}>
+          <h3 class={stylex.attrs(styles.h3).class}>
             {searchQuery ? "Aucun résultat" : "Aucun projet disponible"}
           </h3>
-          <p class="max-w-md">
+          <p class={stylex.attrs(styles.p).class}>
             {searchQuery
               ? `Aucun projet ne correspond à "${searchQuery}". Essayez une autre recherche.`
               : "Vous n'avez pas encore de projets assignés. Contactez votre administrateur."}
@@ -121,47 +280,55 @@
         </div>
       {:else}
         <!-- List View -->
-        <ul class="list rounded-box bg-base-100 shadow-md">
+        <ul class={stylex.attrs(ui.list, styles.ul).class}>
           {#each filteredProjets as projet, i (projet.id)}
             <li
-              class="list-row flex"
+              class={stylex.attrs(ui.listRow, styles.li).class}
               in:fly={{ x: -20, duration: 300, delay: 300 + i * 30 }}
               animate:flip={{ duration: 300 }}
             >
               <!-- Info -->
-              <div class="min-w-0 flex-1">
-                <h3 class="mb-1 truncate font-semibold">
+              <div class={stylex.attrs(styles.div8).class}>
+                <h3 class={stylex.attrs(styles.h32).class}>
                   {projet.libelle}
                 </h3>
-                <div class="flex flex-wrap items-center gap-4 text-sm">
-                  <span class="font-mono">{projet.reference}</span>
+                <div class={stylex.attrs(styles.div9).class}>
+                  <span class={stylex.attrs(styles.span).class}>{projet.reference}</span>
                   {#if projet.societeNom}
-                    <span class="flex items-center gap-1 font-medium text-gray-500">
-                      <Building2 class="h-3.5 w-3.5" />
+                    <span class={stylex.attrs(styles.span2).class}>
+                      <Building2 class={stylex.attrs(styles.Building2).class} />
                       {projet.societeNom}
                     </span>
                   {/if}
-                  <span class="flex items-center gap-1">
-                    <MapPin class="h-3.5 w-3.5" />
+                  <span class={stylex.attrs(styles.span3).class}>
+                    <MapPin class={stylex.attrs(styles.Building2).class} />
                     {projet.ville}
                   </span>
-                  <span class="hidden items-center gap-1 md:flex">
-                    <Calendar class="h-3.5 w-3.5" />
+                  <span class={stylex.attrs(styles.span4).class}>
+                    <Calendar class={stylex.attrs(styles.Building2).class} />
                     {formatDate(projet.dateDemarrage)}
                   </span>
                 </div>
               </div>
 
               <!-- Actions -->
-              <div class="flex items-center gap-2">
-                <a href="/app/details/{projet.id}" class="btn btn-ghost" title="Voir les détails">
-                  <Info class="h-5 w-5" />
+              <div class={stylex.attrs(styles.div5).class}>
+                <a
+                  href="/app/details/{projet.id}"
+                  class={stylex.attrs(ui.button, ui.buttonGhost).class}
+                  title="Voir les détails"
+                >
+                  <Info class={stylex.attrs(styles.Info).class} />
                 </a>
-                <a href="/app/projets/{projet.id}" class="btn btn-ghost">
-                  <span class="hidden sm:inline">Modèle 3D</span>
+                <a
+                  href="/app/projets/{projet.id}"
+                  class={stylex.attrs(ui.button, ui.buttonGhost).class}
+                >
+                  <span class={stylex.attrs(styles.span5).class}>Modèle 3D</span>
                 </a>
-                <a href="/app/cerfa/informations?projetId={projet.id}" class="btn btn-ghost"
-                  >Cerfa</a
+                <a
+                  href="/app/cerfa/informations?projetId={projet.id}"
+                  class={stylex.attrs(ui.button, ui.buttonGhost).class}>Cerfa</a
                 >
               </div>
             </li>
@@ -171,7 +338,7 @@
 
       <!-- Results count -->
       {#if filteredProjets.length > 0 && searchQuery}
-        <p class="mt-6 text-center text-sm">
+        <p class={stylex.attrs(styles.p2).class}>
           {filteredProjets.length} résultat{filteredProjets.length > 1 ? "s" : ""} pour "{searchQuery}"
         </p>
       {/if}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { ui } from "$lib/styles/ui.stylex";
   import { ClipboardList, Recycle, Trash2 } from "lucide-svelte";
   import Tabs from "./Tabs.svelte";
 
@@ -7,19 +8,19 @@
       href: "/app/admin/pemd-tableau",
       label: "Tableau PEMD",
       icon: ClipboardList,
-      color: "text-blue-600",
+      color: ui.textBlue600,
     },
     {
       href: "/app/admin/pemd-reemploi",
       label: "Tableau Réemploi",
       icon: Recycle,
-      color: "text-green-600",
+      color: ui.textGreen600,
     },
     {
       href: "/app/admin/pemd-dechets",
       label: "Tableau Déchets",
       icon: Trash2,
-      color: "",
+      color: undefined,
     },
   ];
 </script>

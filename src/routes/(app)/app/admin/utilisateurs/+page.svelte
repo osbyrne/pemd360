@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { theme } from "../../../../../lib/styles/tokens.stylex";
+  import * as stylex from "@stylexjs/stylex";
+  import { ui } from "$lib/styles/ui.stylex";
   import { onMount } from "svelte";
   import { authClient } from "$lib/auth-client";
   import Pagination from "$lib/components/Pagination.svelte";
@@ -153,21 +156,284 @@
       year: "numeric",
     });
   }
+  const pulse = stylex.keyframes({ "50%": { opacity: 0.5 } });
+
+  const styles = stylex.create({
+    main: {
+      marginInlineStart: "auto",
+      marginInlineEnd: "auto",
+      maxWidth: "80rem",
+    },
+    div: {
+      marginBottom: "2rem",
+    },
+    div2: {
+      display: {
+        "@media (min-width: 640px)": "flex",
+      },
+      alignItems: {
+        "@media (min-width: 640px)": "center",
+      },
+      justifyContent: {
+        "@media (min-width: 640px)": "space-between",
+      },
+    },
+    h1: {
+      fontSize: {
+        default: "1.5rem",
+        "@media (min-width: 640px)": "1.875rem",
+      },
+      lineHeight: {
+        default: "2rem",
+        "@media (min-width: 640px)": "2.25rem",
+      },
+      fontWeight: 700,
+      letterSpacing: "-.025em",
+    },
+    p: {
+      marginTop: "0.5rem",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+    div3: {
+      marginTop: {
+        default: "1rem",
+        "@media (min-width: 640px)": "0rem",
+      },
+      display: "flex",
+      flexWrap: "wrap",
+      gap: "0.75rem",
+    },
+    label: {
+      position: "relative",
+      marginBottom: "1.5rem",
+    },
+    div4: {
+      marginBottom: "1.5rem",
+      borderRadius: ".75rem",
+      borderWidth: "1px",
+      borderStyle: "solid",
+      borderColor: "oklch(88.5% 0.062 18.334)",
+      backgroundColor: "oklch(97.1% 0.013 17.38)",
+      paddingTop: "1rem",
+      paddingRight: "1rem",
+      paddingBottom: "1rem",
+      paddingLeft: "1rem",
+    },
+    div5: {
+      display: "flex",
+      alignItems: "flex-start",
+      gap: "0.75rem",
+    },
+    h3: {
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      fontWeight: 600,
+      color: "oklch(44.4% 0.177 26.899)",
+    },
+    p2: {
+      marginTop: "0.25rem",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      color: "oklch(50.5% 0.213 27.518)",
+    },
+    ul: {
+      borderRadius: ".5rem",
+      backgroundColor: theme.base100,
+      boxShadow: "0 4px 6px -1px #0000001a, 0 2px 4px -2px #0000001a",
+    },
+    div6: {
+      "--divider-width": "1px",
+      "--divider-color": "oklch(96.8% 0.007 247.896)",
+    },
+    div7: {
+      display: "flex",
+      alignItems: "center",
+      gap: "1rem",
+      paddingTop: "1rem",
+      paddingRight: "1rem",
+      paddingBottom: "1rem",
+      paddingLeft: "1rem",
+    },
+    div8: {
+      height: "3rem",
+      width: "3rem",
+      animationName: pulse,
+      animationDuration: "2s",
+      animationTimingFunction: "cubic-bezier(0.4, 0, 0.6, 1)",
+      animationIterationCount: "infinite",
+      "@media (prefers-reduced-motion: reduce)": {
+        animationName: "none",
+      },
+      borderRadius: "9999px",
+    },
+    div9: {
+      flex: "1 1 0%",
+      "--stack-gap": "0.5rem",
+    },
+    div10: {
+      height: "1rem",
+      width: "8rem",
+      animationName: pulse,
+      animationDuration: "2s",
+      animationTimingFunction: "cubic-bezier(0.4, 0, 0.6, 1)",
+      animationIterationCount: "infinite",
+      "@media (prefers-reduced-motion: reduce)": {
+        animationName: "none",
+      },
+      borderRadius: ".25rem",
+    },
+    div11: {
+      height: "0.75rem",
+      width: "12rem",
+      animationName: pulse,
+      animationDuration: "2s",
+      animationTimingFunction: "cubic-bezier(0.4, 0, 0.6, 1)",
+      animationIterationCount: "infinite",
+      "@media (prefers-reduced-motion: reduce)": {
+        animationName: "none",
+      },
+      borderRadius: ".25rem",
+    },
+    div12: {
+      height: "1.5rem",
+      width: "4rem",
+      animationName: pulse,
+      animationDuration: "2s",
+      animationTimingFunction: "cubic-bezier(0.4, 0, 0.6, 1)",
+      animationIterationCount: "infinite",
+      "@media (prefers-reduced-motion: reduce)": {
+        animationName: "none",
+      },
+      borderRadius: "9999px",
+    },
+    div13: {
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingInlineStart: "1rem",
+      paddingInlineEnd: "1rem",
+      paddingTop: "4rem",
+      paddingBottom: "4rem",
+    },
+    p3: {
+      fontWeight: 500,
+    },
+    p4: {
+      marginTop: "0.25rem",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+    div14: {
+      minWidth: "0rem",
+      flex: "1 1 0%",
+    },
+    div15: {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.5rem",
+    },
+    p5: {
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      fontWeight: 600,
+    },
+    span: {
+      borderRadius: "9999px",
+      paddingInlineStart: "0.5rem",
+      paddingInlineEnd: "0.5rem",
+      paddingTop: "0.125rem",
+      paddingBottom: "0.125rem",
+      fontSize: ".75rem",
+      lineHeight: "1rem",
+    },
+    p6: {
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+    },
+    div16: {
+      display: {
+        default: "none",
+        "@media (min-width: 768px)": "flex",
+      },
+      flexDirection: {
+        "@media (min-width: 768px)": "column",
+      },
+      alignItems: {
+        "@media (min-width: 768px)": "flex-end",
+      },
+    },
+    p7: {
+      fontSize: ".75rem",
+      lineHeight: "1rem",
+    },
+    p8: {
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      fontWeight: 500,
+      whiteSpace: "nowrap",
+    },
+    div17: {
+      marginRight: "1rem",
+      display: {
+        default: "none",
+        "@media (min-width: 1024px)": "flex",
+      },
+      width: "8rem",
+      flexDirection: {
+        "@media (min-width: 1024px)": "column",
+      },
+      alignItems: {
+        "@media (min-width: 1024px)": "flex-end",
+      },
+    },
+    p9: {
+      maxWidth: "7.5rem",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      fontWeight: 500,
+    },
+    div18: {
+      display: "flex",
+      alignItems: "center",
+      gap: "0.25rem",
+      borderLeftWidth: "1px",
+      borderLeftStyle: "solid",
+      borderColor: "oklch(92.9% 0.013 255.508)",
+      paddingLeft: "0.5rem",
+    },
+    span2: {
+      fontSize: ".875rem",
+      lineHeight: "1.25rem",
+      fontWeight: 500,
+    },
+    stackSpacing05: { marginBlockEnd: { default: "0.5rem", ":last-child": 0 } },
+  });
 </script>
 
 <svelte:head>
   <title>Admin · Utilisateurs</title>
 </svelte:head>
 
-<main class="mx-auto max-w-7xl">
+<main class={stylex.attrs(styles.main).class}>
   <!-- Header -->
-  <div class="mb-8">
-    <div class="sm:flex sm:items-center sm:justify-between">
+  <div class={stylex.attrs(styles.div).class}>
+    <div class={stylex.attrs(styles.div2).class}>
       <div>
-        <h1 class="text-2xl font-bold tracking-tight sm:text-3xl">Gestion des utilisateurs</h1>
-        <p class="mt-2 text-sm">Gérez les utilisateurs, leurs rôles et leurs accès.</p>
+        <h1 class={stylex.attrs(styles.h1).class}>Gestion des utilisateurs</h1>
+        <p class={stylex.attrs(styles.p).class}>
+          Gérez les utilisateurs, leurs rôles et leurs accès.
+        </p>
       </div>
-      <div class="mt-4 flex flex-wrap gap-3 sm:mt-0">
+      <div class={stylex.attrs(styles.div3).class}>
         <CreateUserModal
           {projets}
           on:created={loadUsers}
@@ -178,79 +444,79 @@
   </div>
 
   <!-- Search Bar -->
-  <label class="input relative mb-6">
+  <label class={stylex.attrs(ui.input, styles.label).class}>
     <Search />
     <input type="search" bind:value={query} placeholder="Rechercher par nom ou email..." />
   </label>
 
   <!-- Error State -->
   {#if error}
-    <div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4">
-      <div class="flex items-start gap-3">
+    <div class={stylex.attrs(styles.div4).class}>
+      <div class={stylex.attrs(styles.div5).class}>
         <Bug size={24} />
         <div>
-          <h3 class="text-sm font-semibold text-red-800">Erreur de chargement</h3>
-          <p class="mt-1 text-sm text-red-700">{error}</p>
+          <h3 class={stylex.attrs(styles.h3).class}>Erreur de chargement</h3>
+          <p class={stylex.attrs(styles.p2).class}>{error}</p>
         </div>
       </div>
     </div>
   {/if}
 
   <!-- Users Grid -->
-  <ul class="list rounded-box bg-base-100 shadow-md">
+  <ul class={stylex.attrs(ui.list, styles.ul).class}>
     {#if loading}
-      <div class="divide-y divide-slate-100">
+      <div class={stylex.attrs(styles.div6).class}>
         {#each [...Array(5).keys()] as i (i)}
-          <div class="flex items-center gap-4 p-4">
-            <div class="h-12 w-12 animate-pulse rounded-full"></div>
-            <div class="flex-1 space-y-2">
-              <div class="h-4 w-32 animate-pulse rounded"></div>
-              <div class="h-3 w-48 animate-pulse rounded"></div>
+          <div class={stylex.attrs(ui.divideChild, styles.div7).class}>
+            <div class={stylex.attrs(styles.div8).class}></div>
+            <div class={stylex.attrs(styles.div9).class}>
+              <div class={stylex.attrs(styles.stackSpacing05, styles.div10).class}></div>
+              <div class={stylex.attrs(styles.stackSpacing05, styles.div11).class}></div>
             </div>
-            <div class="h-6 w-16 animate-pulse rounded-full"></div>
+            <div class={stylex.attrs(styles.div12).class}></div>
           </div>
         {/each}
       </div>
     {:else if displayedUsers.length === 0}
-      <div class="flex flex-col items-center justify-center px-4 py-16">
+      <div class={stylex.attrs(styles.div13).class}>
         <Users />
-        <p class="font-medium">Aucun utilisateur trouvé</p>
-        <p class="mt-1 text-sm">Essayez de modifier vos critères de recherche</p>
+        <p class={stylex.attrs(styles.p3).class}>Aucun utilisateur trouvé</p>
+        <p class={stylex.attrs(styles.p4).class}>Essayez de modifier vos critères de recherche</p>
       </div>
     {:else}
       <div>
         {#each displayedUsers as user (user.id)}
-          <li class="list-row">
-            <div class="min-w-0 flex-1">
-              <div class="flex items-center gap-2">
-                <p class="truncate font-semibold">{user.name}</p>
+          <li class={stylex.attrs(ui.listRow).class}>
+            <div class={stylex.attrs(styles.div14).class}>
+              <div class={stylex.attrs(styles.div15).class}>
+                <p class={stylex.attrs(styles.p5).class}>{user.name}</p>
                 {#if user.role === "admin"}
-                  <span class="rounded-full px-2 py-0.5 text-xs"> Administrateur </span>
+                  <span class={stylex.attrs(styles.span).class}> Administrateur </span>
                 {:else if user.role === "collaborator"}
-                  <span class="rounded-full px-2 py-0.5 text-xs"> Collaborateur </span>
+                  <span class={stylex.attrs(styles.span).class}> Collaborateur </span>
                 {:else}
-                  <span class="rounded-full px-2 py-0.5 text-xs"> Utilisateur </span>
+                  <span class={stylex.attrs(styles.span).class}> Utilisateur </span>
                 {/if}
               </div>
-              <p class="truncate text-sm">{user.email}</p>
+              <p class={stylex.attrs(styles.p6).class}>{user.email}</p>
             </div>
 
             <!-- Date -->
-            <div class="hidden md:flex md:flex-col md:items-end">
-              <p class="text-xs">Inscrit le</p>
-              <p class="text-sm font-medium whitespace-nowrap">
+            <div class={stylex.attrs(styles.div16).class}>
+              <p class={stylex.attrs(styles.p7).class}>Inscrit le</p>
+              <p class={stylex.attrs(styles.p8).class}>
                 {formatDate(user.createdAt)}
               </p>
             </div>
 
             <!-- Projets -->
-            <div class="mr-4 hidden w-32 lg:flex lg:flex-col lg:items-end">
-              <p class="text-xs">Projets</p>
+            <div class={stylex.attrs(styles.div17).class}>
+              <p class={stylex.attrs(styles.p7).class}>Projets</p>
               {#if user.role === "admin"}
-                <p class="max-w-30 truncate text-sm font-medium whitespace-nowrap">tous</p>
+                <p class={stylex.attrs(styles.p9).class}>tous</p>
               {:else}
                 <p
-                  class="max-w-30 truncate text-sm font-medium whitespace-nowrap"
+                  class={stylex.attrs(styles.p9).class}
                   title={getProjetsNames(getUserProjets(user.id))}
                 >
                   {getProjetsCount(user.id)} projet{getProjetsCount(user.id) > 1 ? "s" : ""}
@@ -259,7 +525,7 @@
             </div>
 
             <!-- Actions -->
-            <div class="flex items-center gap-1 border-l border-slate-200 pl-2">
+            <div class={stylex.attrs(styles.div18).class}>
               <UserProjetsModal
                 {user}
                 {projets}
@@ -306,9 +572,9 @@
 </main>
 
 {#if toast}
-  <div class="toast">
-    <div class="alert alert-info">
-      <span class="text-sm font-medium">{toast.message}</span>
+  <div class={stylex.attrs(ui.toast).class}>
+    <div class={stylex.attrs(ui.alert, ui.alertInfo).class}>
+      <span class={stylex.attrs(styles.span2).class}>{toast.message}</span>
     </div>
   </div>
 {/if}

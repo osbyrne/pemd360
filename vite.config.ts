@@ -1,13 +1,13 @@
 import devtoolsJson from "vite-plugin-devtools-json";
-import tailwindcss from "@tailwindcss/vite";
+import stylex from "@stylexjs/unplugin";
 import { sveltekit } from "@sveltejs/kit/vite";
 import { SvelteKitPWA } from "@vite-pwa/sveltekit";
 import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
-    tailwindcss(),
     sveltekit(),
+    { ...stylex.vite({ useCSSLayers: true }), enforce: undefined },
     SvelteKitPWA({
       registerType: "autoUpdate",
       manifest: {

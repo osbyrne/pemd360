@@ -31,7 +31,6 @@ export const auth = betterAuth({
     },
   },
   plugins: [
-    sveltekitCookies(getRequestEvent),
     admin({
       ac,
       roles: {
@@ -40,5 +39,6 @@ export const auth = betterAuth({
         collaborator,
       },
     }),
+    sveltekitCookies(getRequestEvent),
   ],
 });
