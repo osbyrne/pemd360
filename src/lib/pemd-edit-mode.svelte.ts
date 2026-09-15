@@ -1,4 +1,5 @@
-import type { MpSdk } from "@matterport/sdk";
+import { runClientBoundaryEffect } from "$lib/client/effect/runtime";
+import type { MatterportConnection } from "$lib/client/services/matterport";
 
 type Vec3 = { x: number; y: number; z: number };
 
@@ -7,17 +8,20 @@ export class PemdEditMode {
   lastIntersection: { position: Vec3; normal: Vec3 } | null = $state(null);
   overlay: HTMLDivElement | undefined = $state();
 
-  #mpSdk: MpSdk | undefined;
+  #connection: MatterportConnection | undefined;
   #onPlaceTag: (position: Vec3, normal: Vec3) => void;
-  #subscription: { cancel: () => void } | null = null;
+  #cancelPointerSubscription: (() => void) | null = null;
+  #subscriptionGeneration = 0;
   #timeout: ReturnType<typeof setTimeout> | null = null;
 
   constructor(onPlaceTag: (position: Vec3, normal: Vec3) => void) {
     this.#onPlaceTag = onPlaceTag;
   }
 
-  setMpSdk(sdk: MpSdk) {
-    this.#mpSdk = sdk;
+  setConnection(connection: MatterportConnection | undefined) {
+    this.#stop();
+    this.#connection = connection;
+    if (this.enabled) this.#start();
   }
 
   toggle() {
@@ -30,21 +34,28 @@ export class PemdEditMode {
   }
 
   #start() {
-    if (!this.#mpSdk) return;
-    this.#subscription = this.#mpSdk.Pointer.intersection.subscribe(
-      (data: { position: Vec3; normal: Vec3 }) => {
-        if (data && data.position && data.normal) {
+    if (!this.#connection) return;
+    const generation = ++this.#subscriptionGeneration;
+    void runClientBoundaryEffect(
+      this.#connection.subscribePointer((data) => {
+        if (data?.position && data.normal) {
           this.lastIntersection = { position: data.position, normal: data.normal };
         }
-      },
-    );
+      }),
+    ).then((result) => {
+      if (result._tag !== "success") return;
+      if (generation !== this.#subscriptionGeneration || !this.enabled || !this.#connection) {
+        result.value();
+        return;
+      }
+      this.#cancelPointerSubscription = result.value;
+    });
   }
 
   #stop() {
-    if (this.#subscription) {
-      this.#subscription.cancel();
-      this.#subscription = null;
-    }
+    this.#subscriptionGeneration += 1;
+    this.#cancelPointerSubscription?.();
+    this.#cancelPointerSubscription = null;
     this.lastIntersection = null;
   }
 

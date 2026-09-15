@@ -1,30 +1,10 @@
-import { db } from "$lib/server/db/client";
-import { objets, categorieV2, groupe } from "$lib/server/db/schema";
-import { eq, isNotNull } from "drizzle-orm";
 import type { PageServerLoad } from "./$types";
+import { errorFailure, isBoundarySuccess } from "$lib/server/effect/sveltekit";
+import { runServerEffect } from "$lib/server/effect/runtime";
+import { loadCerfaPem } from "$lib/server/workflows/cerfa";
 
 export const load: PageServerLoad = async () => {
-  // Caractérisation PEM : Objets qui ne sont PAS des déchets (ou spécifiquement marqués comme PEM/Réemploi)
-  // Ici nous prenons par défaut tout ce qui est marqué comme réemploi
-  // Ou si vous préférez, tout ce qui n'est pas "deposeDechet" (à adapter selon logique métier)
-  // Pour l'instant, on se base sur deposeReemlpoi existant
-  const items = await db
-    .select({
-      id: objets.id,
-      objet: objets.objet,
-      categorie: categorieV2.categoriev2,
-      groupe: groupe.groupe,
-      unite: objets.unite,
-      masseUnitaire: objets.masseUnitaire,
-      etat: objets.deposeReemlpoi, // Utilise le champ de réemploi comme état pour l'instant
-    })
-    .from(objets)
-    .leftJoin(categorieV2, eq(objets.categorieId, categorieV2.id))
-    .leftJoin(groupe, eq(categorieV2.groupeId, groupe.id))
-    .where(isNotNull(objets.deposeReemlpoi)) // Filtrage simple: si une info réemploi existe
-    .all();
-
-  return {
-    items,
-  };
+  const result = await runServerEffect(loadCerfaPem());
+  if (!isBoundarySuccess(result)) return errorFailure(result);
+  return result.value;
 };

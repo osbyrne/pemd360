@@ -3,7 +3,15 @@
   import { ui } from "$lib/styles/ui.stylex";
   import { createEventDispatcher } from "svelte";
   import { invalidateAll } from "$app/navigation";
-  import { authClient } from "$lib/auth-client";
+  import { onDestroy } from "svelte";
+  import {
+    createOperation,
+    isOperationSuccess,
+    operationErrorMessage,
+  } from "$lib/client/effect/operation.svelte";
+  import { submitUserProjects } from "$lib/client/services/sveltekit";
+  import type { ClientRole } from "$lib/client/services/authentication";
+  import { createUserWithAssignments } from "$lib/client/workflows/auth";
   import { UserPlus, UserPen, Search } from "lucide-svelte";
 
   type Projet = {
@@ -25,11 +33,24 @@
     email: "",
     password: "",
     name: "",
-    role: "user",
+    role: "user" as ClientRole,
     projetIds: [] as string[],
   };
 
   let projectSearch = "";
+  const createOperationState = createOperation<
+    {
+      readonly userId: string;
+      readonly assignment: "not-requested" | "succeeded" | "partial";
+      readonly assignmentError?: unknown;
+    },
+    unknown
+  >();
+  const assignmentOperation = createOperation<void, unknown>();
+  let createdUserId: string | null = null;
+  let assignmentProjectIds: string[] = [];
+  let isCreating = false;
+  let isAssigning = false;
 
   $: filteredProjets = projets.filter((p) => {
     if (!projectSearch) return true;
@@ -40,6 +61,8 @@
   function open() {
     form = { email: "", password: "", name: "", role: "user", projetIds: [] };
     projectSearch = "";
+    createdUserId = null;
+    assignmentProjectIds = [];
     modal?.showModal();
   }
 
@@ -48,47 +71,77 @@
   }
 
   async function createUser() {
-    try {
-      const res = await authClient.admin.createUser({
+    if (isCreating || isAssigning) return;
+    isCreating = true;
+    const projectIds = [...form.projetIds];
+    const result = await createOperationState.execute(
+      createUserWithAssignments({
         email: form.email,
         password: form.password,
         name: form.name,
-        role: form.role as any,
-      });
+        role: form.role,
+        projectIds,
+        assignProjects: submitUserProjects,
+      }),
+    );
+    isCreating = false;
 
-      if (res.data) {
-        const newUserId = res.data.user.id;
-
-        if (form.projetIds.length > 0) {
-          const formData = new FormData();
-          formData.append("userId", newUserId);
-          form.projetIds.forEach((id) => formData.append("projetIds", id));
-
-          await fetch("?/setProjets", {
-            method: "POST",
-            body: formData,
-          });
-        }
-
-        await invalidateAll();
-        close();
-        dispatch("created");
-        dispatch("toast", { message: "Utilisateur créé avec succès", type: "success" });
-      } else if (res.error) {
-        dispatch("toast", {
-          message: "Échec de la création : " + res.error.message,
-          type: "error",
-        });
-      }
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        console.log(e.message || "Échec de la création");
-      } else {
-        console.log(String(e));
-      }
+    if (!isOperationSuccess(result)) {
       dispatch("toast", { message: "Échec de la création de l'utilisateur", type: "error" });
+      return;
+    }
+
+    if (result.value.assignment === "partial") {
+      createdUserId = result.value.userId;
+      assignmentProjectIds = projectIds;
+      dispatch("toast", {
+        message:
+          "Utilisateur créé, mais l'affectation des projets a échoué. Réessayez l'affectation.",
+        type: "error",
+      });
+      return;
+    }
+
+    await finishCreation();
+  }
+
+  async function retryAssignment() {
+    if (!createdUserId || isAssigning || isCreating) return;
+    isAssigning = true;
+    const userId = createdUserId;
+    const result = await assignmentOperation.execute(
+      submitUserProjects(userId, assignmentProjectIds),
+    );
+    isAssigning = false;
+    if (!isOperationSuccess(result)) {
+      dispatch("toast", {
+        message: operationErrorMessage(result, "Échec de l'affectation des projets"),
+        type: "error",
+      });
+      return;
+    }
+    await finishCreation();
+  }
+
+  async function finishCreation() {
+    close();
+    dispatch("created");
+    try {
+      await invalidateAll();
+      dispatch("toast", { message: "Utilisateur créé avec succès", type: "success" });
+    } catch (cause) {
+      console.error("User creation succeeded but refreshing the user list failed", cause);
+      dispatch("toast", {
+        message: "Utilisateur créé, mais la liste n'a pas pu être actualisée",
+        type: "error",
+      });
     }
   }
+
+  onDestroy(() => {
+    createOperationState.dispose();
+    assignmentOperation.dispose();
+  });
 
   const styles = stylex.create({
     div: {
@@ -261,13 +314,27 @@
             {form.projetIds.length} projet(s) sélectionné(s)
           </p>
         {/if}
+        {#if createdUserId}
+          <p class={stylex.attrs(styles.p2).class}>
+            Utilisateur créé. Les projets n'ont pas encore été affectés.
+          </p>
+        {/if}
       </div>
     </div>
     <div class={stylex.attrs(ui.dialogActions).class}>
       <button type="button" class={stylex.attrs(ui.button).class} on:click={close}>Annuler</button>
-      <button type="button" class={stylex.attrs(ui.button).class} on:click={createUser}
-        >Créer</button
-      >
+      {#if createdUserId}
+        <button type="button" class={stylex.attrs(ui.button).class} on:click={retryAssignment}>
+          {isAssigning ? "Affectation..." : "Réessayer l'affectation"}
+        </button>
+      {:else}
+        <button
+          type="button"
+          class={stylex.attrs(ui.button).class}
+          disabled={isCreating}
+          on:click={createUser}>{isCreating ? "Création..." : "Créer"}</button
+        >
+      {/if}
     </div>
   </div>
 </dialog>

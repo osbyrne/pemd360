@@ -1,4 +1,7 @@
-import { getSignedImageUrl } from "$lib/server/s3/image-urls";
+import { isBoundarySuccess, responseFailure } from "$lib/server/effect/sveltekit";
+import { runServerEffect } from "$lib/server/effect/runtime";
+import { Storage } from "$lib/server/services/storage";
+import { Effect } from "effect";
 import type { RequestHandler } from "./$types";
 
 export const GET: RequestHandler = async ({ params, locals }) => {
@@ -6,7 +9,16 @@ export const GET: RequestHandler = async ({ params, locals }) => {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const signedUrl = await getSignedImageUrl(params.hash, ["jpg", "jpeg", "png", "webp"]);
+  const result = await runServerEffect(
+    Effect.gen(function* () {
+      const storage = yield* Storage;
+      return yield* storage.signedImageUrl(params.hash, ["jpg", "jpeg", "png", "webp"]);
+    }),
+  );
+
+  if (!isBoundarySuccess(result)) return responseFailure(result, "Image unavailable");
+
+  const signedUrl = result.value;
 
   if (!signedUrl) {
     return new Response("Image not found", { status: 404 });

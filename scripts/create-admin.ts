@@ -1,16 +1,20 @@
 import "dotenv/config";
 
-import { createClient } from "@libsql/client";
-import { drizzle } from "drizzle-orm/libsql";
-import { eq } from "drizzle-orm";
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { admin as adminPlugin } from "better-auth/plugins";
+import { Layer } from "effect";
 import { createInterface } from "node:readline/promises";
 import { stdin, stdout } from "node:process";
 
-import { ac, admin, collaborator, user as userRole } from "../src/lib/auth/permissions.ts";
-import * as schema from "../src/lib/server/db/schema.ts";
+import { makeCliRuntime, runCliEffect } from "../src/lib/cli/effect/runtime.ts";
+import {
+  AdminDatabase,
+  createCliDatabase,
+  makeAdminDatabaseService,
+} from "../src/lib/cli/services/database.ts";
+import {
+  AdminAuthentication,
+  makeAdminAuthenticationService,
+} from "../src/lib/cli/services/authentication.ts";
+import { createAdmin } from "../src/lib/cli/workflows/admin.ts";
 
 type Arguments = {
   email?: string;
@@ -145,8 +149,12 @@ async function main() {
   console.log(`Administrator: ${name} <${email}>`);
 
   const prompt = createInterface({ input: stdin, output: stdout });
-  const confirmation = await prompt.question('Type "create admin" to continue: ');
-  prompt.close();
+  let confirmation: string;
+  try {
+    confirmation = await prompt.question('Type "create admin" to continue: ');
+  } finally {
+    prompt.close();
+  }
   if (confirmation !== "create admin") throw new Error("Cancelled");
 
   const password = await readHidden("Password: ");
@@ -154,45 +162,28 @@ async function main() {
   if (password.length < 8) throw new Error("Password must contain at least 8 characters");
   if (password !== passwordConfirmation) throw new Error("Passwords do not match");
 
-  const client = createClient({ url: databaseUrl, authToken });
-  const db = drizzle(client, { schema });
+  const resources = createCliDatabase({ url: databaseUrl, authToken });
+  const runtime = makeCliRuntime(
+    Layer.merge(
+      Layer.succeed(AdminDatabase, makeAdminDatabaseService(resources.database)),
+      Layer.succeed(
+        AdminAuthentication,
+        makeAdminAuthenticationService({
+          secret: authSecret,
+          baseURL: process.env.BETTER_AUTH_URL,
+        }),
+      ),
+    ),
+  );
 
   try {
-    const created = await db.transaction(async (transaction) => {
-      const existing = await transaction
-        .select({ id: schema.user.id })
-        .from(schema.user)
-        .where(eq(schema.user.email, email))
-        .limit(1);
-
-      if (existing.length > 0) {
-        throw new Error(`An account already exists for ${email}; it was not modified`);
-      }
-
-      const auth = betterAuth({
-        secret: authSecret,
-        baseURL: process.env.BETTER_AUTH_URL,
-        database: drizzleAdapter(transaction, {
-          provider: "sqlite",
-          schema,
-        }),
-        emailAndPassword: { enabled: true, disableSignUp: true },
-        plugins: [
-          adminPlugin({
-            ac,
-            roles: { admin, user: userRole, collaborator },
-          }),
-        ],
-      });
-
-      return await auth.api.createUser({
-        body: { email, name, password, role: "admin" },
-      });
-    });
-
-    console.log(`Created administrator ${created.user.email}`);
+    const result = await runCliEffect(runtime, createAdmin({ email, name, password }));
+    if (result._tag === "failure") throw result.error;
+    if (result._tag === "defect") throw result.cause;
+    console.log(`Created administrator ${result.value.email}`);
   } finally {
-    client.close();
+    await runtime.dispose();
+    resources.close();
   }
 }
 

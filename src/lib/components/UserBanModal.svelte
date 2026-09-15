@@ -2,7 +2,13 @@
   import * as stylex from "@stylexjs/stylex";
   import { ui } from "$lib/styles/ui.stylex";
   import { createEventDispatcher } from "svelte";
-  import { authClient } from "$lib/auth-client";
+  import { onDestroy } from "svelte";
+  import {
+    createOperation,
+    isOperationSuccess,
+    operationErrorMessage,
+  } from "$lib/client/effect/operation.svelte";
+  import { banUser, unbanUser } from "$lib/client/workflows/auth";
   import { Ban, X } from "lucide-svelte";
 
   type User = {
@@ -19,6 +25,7 @@
   }>();
 
   let modal: HTMLDialogElement;
+  const operation = createOperation<void, unknown>();
   let banReason = "";
 
   function openModal() {
@@ -32,41 +39,35 @@
 
   async function confirmBan() {
     const wasBanned = user.banned;
-    try {
-      if (wasBanned) {
-        const res = await authClient.admin.unbanUser({ userId: user.id });
-        if (res.error) {
-          dispatch("toast", {
-            message: "Echec de la reactivation : " + res.error.message,
-            type: "error",
-          });
-          return;
-        }
-        dispatch("statusChanged", { userId: user.id, banned: false });
-        dispatch("toast", { message: "Compte reactive avec succes", type: "success" });
-      } else {
-        const res = await authClient.admin.banUser({
-          userId: user.id,
-          banReason: banReason || "Action administrative",
-        });
-        if (res.error) {
-          dispatch("toast", {
-            message: "Echec de la cloture : " + res.error.message,
-            type: "error",
-          });
-          return;
-        }
-        dispatch("statusChanged", { userId: user.id, banned: true });
-        dispatch("toast", { message: "Compte cloture avec succes", type: "success" });
-      }
-      closeModal();
-    } catch {
+    if (operation.state.pending) return;
+    const result = await operation.execute(
+      wasBanned
+        ? unbanUser({ userId: user.id })
+        : banUser({ userId: user.id, banReason: banReason || "Action administrative" }),
+    );
+    if (!isOperationSuccess(result)) {
       dispatch("toast", {
-        message: wasBanned ? "Echec de la reactivation du compte" : "Echec de la cloture du compte",
+        message:
+          (wasBanned ? "Echec de la reactivation : " : "Echec de la cloture : ") +
+          operationErrorMessage(
+            result,
+            wasBanned ? "Echec de la reactivation" : "Echec de la cloture",
+          ),
         type: "error",
       });
+      return;
     }
+    if (wasBanned) {
+      dispatch("statusChanged", { userId: user.id, banned: false });
+      dispatch("toast", { message: "Compte reactive avec succes", type: "success" });
+    } else {
+      dispatch("statusChanged", { userId: user.id, banned: true });
+      dispatch("toast", { message: "Compte cloture avec succes", type: "success" });
+    }
+    closeModal();
   }
+
+  onDestroy(() => operation.dispose());
 
   const styles = stylex.create({
     button: {

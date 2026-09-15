@@ -2,7 +2,13 @@
   import * as stylex from "@stylexjs/stylex";
   import { ui } from "$lib/styles/ui.stylex";
   import { createEventDispatcher } from "svelte";
-  import { authClient } from "$lib/auth-client";
+  import { onDestroy } from "svelte";
+  import {
+    createOperation,
+    isOperationSuccess,
+    operationErrorMessage,
+  } from "$lib/client/effect/operation.svelte";
+  import { setUserPassword } from "$lib/client/workflows/auth";
   import { KeyRound, Pencil } from "lucide-svelte";
 
   type User = {
@@ -17,6 +23,7 @@
   }>();
 
   let modal: HTMLDialogElement;
+  const operation = createOperation<void, unknown>();
   let newPassword = "";
 
   function openModal() {
@@ -29,24 +36,22 @@
   }
 
   async function setPassword() {
-    try {
-      const res = await authClient.admin.setUserPassword({
-        userId: user.id,
-        newPassword,
+    if (operation.state.pending) return;
+    const result = await operation.execute(setUserPassword({ userId: user.id, newPassword }));
+    if (!isOperationSuccess(result)) {
+      dispatch("toast", {
+        message:
+          "Echec de la mise a jour du mot de passe : " +
+          operationErrorMessage(result, "Echec de la mise a jour du mot de passe"),
+        type: "error",
       });
-      if (res.error) {
-        dispatch("toast", {
-          message: "Echec de la mise a jour du mot de passe : " + res.error.message,
-          type: "error",
-        });
-        return;
-      }
-      closeModal();
-      dispatch("toast", { message: "Mot de passe mis a jour avec succes", type: "success" });
-    } catch {
-      dispatch("toast", { message: "Echec de la mise a jour du mot de passe", type: "error" });
+      return;
     }
+    closeModal();
+    dispatch("toast", { message: "Mot de passe mis a jour avec succes", type: "success" });
   }
+
+  onDestroy(() => operation.dispose());
 
   const styles = stylex.create({
     div: {

@@ -3,6 +3,9 @@
   import { ui } from "$lib/styles/ui.stylex";
   import { authClient } from "$lib/auth-client";
   import { goto } from "$app/navigation";
+  import { onDestroy } from "svelte";
+  import { createOperation, isOperationSuccess } from "$lib/client/effect/operation.svelte";
+  import { signOut } from "$lib/client/workflows/auth";
   import { page } from "$app/stores";
   import logoPEMD from "$lib/assets/pemd360.png";
   import {
@@ -22,6 +25,7 @@
 
   // Récupérer les données de session
   const session = authClient.useSession();
+  const logoutOperation = createOperation<void, unknown>();
 
   // Récupérer isAdmin depuis les données du serveur avec $derived
   const isAdmin = $derived(data.isAdmin);
@@ -215,10 +219,16 @@
   );
 
   async function handleLogout() {
-    await authClient.signOut();
+    if (logoutOperation.state.pending) return;
+    const result = await logoutOperation.execute(signOut());
+    if (!isOperationSuccess(result)) {
+      console.error("Sign-out failed", logoutOperation.state.error);
+    }
     console.log("signing out");
     goto("/login");
   }
+
+  onDestroy(() => logoutOperation.dispose());
 
   const styles = stylex.create({
     div: {

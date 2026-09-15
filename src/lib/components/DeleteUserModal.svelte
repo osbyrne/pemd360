@@ -2,7 +2,13 @@
   import * as stylex from "@stylexjs/stylex";
   import { ui } from "$lib/styles/ui.stylex";
   import { createEventDispatcher } from "svelte";
-  import { authClient } from "$lib/auth-client";
+  import { onDestroy } from "svelte";
+  import {
+    createOperation,
+    isOperationSuccess,
+    operationErrorMessage,
+  } from "$lib/client/effect/operation.svelte";
+  import { removeUser } from "$lib/client/workflows/auth";
   import { X } from "lucide-svelte";
 
   type User = {
@@ -18,6 +24,7 @@
   }>();
 
   let modal: HTMLDialogElement;
+  const operation = createOperation<void, unknown>();
 
   function openModal() {
     modal?.showModal();
@@ -28,25 +35,22 @@
   }
 
   async function confirmDelete() {
-    try {
-      const res = await authClient.admin.removeUser({
-        userId: user.id,
+    if (operation.state.pending) return;
+    const result = await operation.execute(removeUser({ userId: user.id }));
+    if (!isOperationSuccess(result)) {
+      dispatch("toast", {
+        message:
+          "Echec de la suppression : " + operationErrorMessage(result, "Echec de la suppression"),
+        type: "error",
       });
-      if (res.error) {
-        dispatch("toast", {
-          message: "Echec de la suppression : " + res.error.message,
-          type: "error",
-        });
-        return;
-      }
-      dispatch("deleted", { userId: user.id });
-      closeModal();
-      dispatch("toast", { message: "Utilisateur supprime avec succes", type: "success" });
-    } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Echec de la suppression";
-      dispatch("toast", { message, type: "error" });
+      return;
     }
+    dispatch("deleted", { userId: user.id });
+    closeModal();
+    dispatch("toast", { message: "Utilisateur supprime avec succes", type: "success" });
   }
+
+  onDestroy(() => operation.dispose());
 
   const styles = stylex.create({
     button: {

@@ -1,54 +1,29 @@
-import type { PageServerLoad, Actions } from "./$types";
-import { db } from "$lib/server/db/client";
-import { projet, etablissement, societe } from "$lib/server/db/schema";
-import { eq } from "drizzle-orm";
-import { fail } from "@sveltejs/kit";
+import type { Actions, PageServerLoad } from "./$types";
+import { formDataForFailure } from "$lib/effect/schemas/forms";
+import { actionFailure, errorFailure, isBoundarySuccess } from "$lib/server/effect/sveltekit";
+import { runServerEffect } from "$lib/server/effect/runtime";
 import { requireAdmin } from "$lib/server/admin";
+import { deleteAdminProject, loadAdminProjects } from "$lib/server/workflows/administration";
 
 export const load: PageServerLoad = async ({ parent }) => {
   await requireAdmin(parent);
-
-  // Récupérer tous les projets avec leurs établissements et sociétés
-  const projets = await db
-    .select({
-      id: projet.id,
-      libelle: projet.libelle,
-      reference: projet.reference,
-      rue: projet.rue,
-      cp: projet.cp,
-      ville: projet.ville,
-      dateDemarrage: projet.dateDemarrage,
-      dateDeFin: projet.dateDeFin,
-      typeOperation: projet.typeOperation,
-      maitreDOuvrage: projet.maitreDOuvrage,
-      etablissementId: projet.etablissementId,
-      etablissementNom: etablissement.nom,
-      societeNom: societe.nom,
-    })
-    .from(projet)
-    .leftJoin(etablissement, eq(projet.etablissementId, etablissement.id))
-    .leftJoin(societe, eq(etablissement.societeId, societe.id));
-
-  return {
-    projets,
-  };
+  const result = await runServerEffect(loadAdminProjects());
+  if (!isBoundarySuccess(result)) return errorFailure(result);
+  return { projets: result.value };
 };
 
 export const actions: Actions = {
   delete: async ({ request, locals }) => {
     const formData = await request.formData();
-    const projetId = formData.get("projetId") as string;
-
-    if (!projetId) {
-      return fail(400, { error: "ID du projet requis" });
+    const result = await runServerEffect(deleteAdminProject({ formData, user: locals.user }));
+    if (!isBoundarySuccess(result)) {
+      return actionFailure(
+        result,
+        "error",
+        "Erreur lors de la suppression",
+        formDataForFailure(formData),
+      );
     }
-
-    try {
-      await db.delete(projet).where(eq(projet.id, projetId));
-      return { success: true };
-    } catch (e) {
-      console.error("Erreur suppression projet:", e);
-      return fail(500, { error: "Erreur lors de la suppression" });
-    }
+    return result.value;
   },
 };

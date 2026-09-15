@@ -3,7 +3,6 @@
   import { ui } from "$lib/styles/ui.stylex";
   import { onMount } from "svelte";
   import type { PageData, ActionData } from "./$types";
-  import type { MpSdk } from "@matterport/sdk";
   import tagAmianteImg from "$lib/assets/tagamiante.png";
   import tagPlombImg from "$lib/assets/tagplomb.png";
   import tagTermiteImg from "$lib/assets/tagtermite.png";
@@ -14,15 +13,34 @@
   import PemdCreateModal from "$lib/components/PemdCreateModal.svelte";
   import PemdFilterModal from "$lib/components/PemdFilterModal.svelte";
   import { PemdEditMode } from "$lib/pemd-edit-mode.svelte";
-  import { /* @vite-ignore */ connect as MatterportSDK_script } from "$lib/sdk.es6.js";
+  import {
+    makeMatterportService,
+    type MatterportConnection,
+    type MatterportMode,
+    type MatterportTagDescriptor,
+    waitForIframeLoad,
+  } from "$lib/client/services/matterport";
+  import {
+    connectMatterport,
+    makeSerializedTagReconciler,
+    provideMatterportService,
+  } from "$lib/client/workflows/matterport";
+  import { runClientBoundaryEffect } from "$lib/client/effect/runtime";
 
   let { data, form }: { data: PageData; form: ActionData } = $props();
 
   let iframe: HTMLIFrameElement;
 
-  let SDK_choice = $state("NPM");
-
-  let MatterportSDK: MpSdk | undefined = $state();
+  let SDK_choice = $state<"NPM" | "Script">("NPM");
+  let matterportConnection: MatterportConnection | undefined = $state();
+  const matterportService = makeMatterportService();
+  let connectionGeneration = 0;
+  let reconcilerConnection: MatterportConnection | undefined;
+  let mailReconciler: ReturnType<typeof makeSerializedTagReconciler> | undefined;
+  let amianteReconciler: ReturnType<typeof makeSerializedTagReconciler> | undefined;
+  let plombReconciler: ReturnType<typeof makeSerializedTagReconciler> | undefined;
+  let termiteReconciler: ReturnType<typeof makeSerializedTagReconciler> | undefined;
+  let pemdReconciler: ReturnType<typeof makeSerializedTagReconciler> | undefined;
 
   let showMail = $state(false);
   let showAmiante = $state(false);
@@ -45,24 +63,106 @@
   let plombPresenceSelected: number[] = [0, 1, 2];
   let termitePresenceSelected: number[] = [0, 1, 2];
 
-  let mailSids: string[] = [];
-  let amianteSids: string[] = [];
-  let plombSids: string[] = [];
-  let termiteSids: string[] = [];
+  let mailSids = $state<string[]>([]);
+  let amianteSids = $state<string[]>([]);
+  let plombSids = $state<string[]>([]);
+  let termiteSids = $state<string[]>([]);
   let pemdSids = $state([] as string[]);
 
-  // Generic helper shared by toggleAmiante, togglePlomb, toggleTermite.
-  // Always removes the current SIDs first, then adds filtered tags if `show` is true.
-  // Returns the new SIDs array so callers can reassign their variable.
   interface PresenceTag {
     id: unknown;
     anchorPosition: string;
     stemVector: string;
   }
 
-  async function togglePresenceTags<T extends PresenceTag>(
+  type Vec3 = { x: number; y: number; z: number };
+  type TagReconciler = ReturnType<typeof makeSerializedTagReconciler>;
+
+  function parseVec3(value: string): Vec3 | null {
+    try {
+      const parsed: unknown = JSON.parse(value);
+      if (
+        typeof parsed !== "object" ||
+        parsed === null ||
+        !("x" in parsed) ||
+        !("y" in parsed) ||
+        !("z" in parsed) ||
+        typeof parsed.x !== "number" ||
+        typeof parsed.y !== "number" ||
+        typeof parsed.z !== "number" ||
+        !Number.isFinite(parsed.x) ||
+        !Number.isFinite(parsed.y) ||
+        !Number.isFinite(parsed.z)
+      ) {
+        return null;
+      }
+      return { x: parsed.x, y: parsed.y, z: parsed.z };
+    } catch {
+      return null;
+    }
+  }
+
+  function makeTagDescriptor(
+    tag: { anchorPosition: string; stemVector: string },
+    fields: Omit<MatterportTagDescriptor, "anchorPosition" | "stemVector">,
+  ): MatterportTagDescriptor | null {
+    const anchorPosition = parseVec3(tag.anchorPosition);
+    const stemVector = parseVec3(tag.stemVector);
+    if (!anchorPosition || !stemVector) return null;
+    return { ...fields, anchorPosition, stemVector };
+  }
+
+  function disposeReconcilers() {
+    mailReconciler?.dispose();
+    amianteReconciler?.dispose();
+    plombReconciler?.dispose();
+    termiteReconciler?.dispose();
+    pemdReconciler?.dispose();
+    mailReconciler = undefined;
+    amianteReconciler = undefined;
+    plombReconciler = undefined;
+    termiteReconciler = undefined;
+    pemdReconciler = undefined;
+    reconcilerConnection = undefined;
+    mailSids = [];
+    amianteSids = [];
+    plombSids = [];
+    termiteSids = [];
+    pemdSids = [];
+  }
+
+  function ensureReconcilers(connection: MatterportConnection) {
+    if (reconcilerConnection === connection) return;
+    disposeReconcilers();
+    reconcilerConnection = connection;
+    mailReconciler = makeSerializedTagReconciler(connection);
+    amianteReconciler = makeSerializedTagReconciler(connection);
+    plombReconciler = makeSerializedTagReconciler(connection);
+    termiteReconciler = makeSerializedTagReconciler(connection);
+    pemdReconciler = makeSerializedTagReconciler(connection);
+  }
+
+  function scheduleTagSet(
+    reconciler: TagReconciler | undefined,
+    desired: readonly MatterportTagDescriptor[],
+    assign: (ids: string[]) => void,
+    typeName: string,
+  ) {
+    if (!reconciler) return;
+    void reconciler
+      .schedule(desired)
+      .then((outcome) => {
+        if (!outcome) return;
+        assign([...outcome.ids]);
+        if (outcome.errors.length > 0) {
+          console.error(`Some ${typeName} Matterport tags could not be reconciled`, outcome.errors);
+        }
+      })
+      .catch((cause) => console.error(`Failed to reconcile ${typeName} Matterport tags`, cause));
+  }
+
+  function togglePresenceTags<T extends PresenceTag>(
     show: boolean,
-    currentSids: string[],
     tags: T[] | undefined,
     presenceSelected: number[],
     getPresence: (tag: T) => number,
@@ -70,82 +170,45 @@
     buildDescription: (tag: T) => string,
     getColor: (tag: T) => { r: number; g: number; b: number },
     typeName: string,
-  ): Promise<string[]> {
-    if (!MatterportSDK) return currentSids;
-
-    for (const sid of currentSids) {
-      try {
-        await MatterportSDK.Tag.remove(sid);
-      } catch (e) {
-        console.error(`Failed to remove ${typeName} sid`, sid, e);
-      }
-    }
-
-    if (!show || !tags || tags.length === 0) return [];
-
-    const newSids: string[] = [];
-    const filtered = tags.filter((tag) => presenceSelected.includes(getPresence(tag)));
-    console.log(`Adding ${filtered.length} ${typeName} tags`);
-
-    for (const tag of filtered) {
-      try {
-        const anchorPosition = JSON.parse(tag.anchorPosition);
-        const stemVector = JSON.parse(tag.stemVector);
-        const [sid] = await MatterportSDK.Tag.add({
+    reconciler: TagReconciler | undefined,
+    assign: (ids: string[]) => void,
+  ) {
+    const desired: MatterportTagDescriptor[] = [];
+    if (show && tags) {
+      const filtered = tags.filter((tag) => presenceSelected.includes(getPresence(tag)));
+      console.log(`Adding ${filtered.length} ${typeName} tags`);
+      for (const tag of filtered) {
+        const descriptor = makeTagDescriptor(tag, {
           label: buildLabel(tag),
           description: buildDescription(tag),
-          anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
-          stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
           color: getColor(tag),
         });
-        newSids.push(sid);
-      } catch (tagError) {
-        console.error(`Failed to add ${typeName} tag ${tag.id}:`, tagError);
+        if (descriptor) desired.push(descriptor);
+        else console.error(`Invalid ${typeName} tag position`, tag.id);
       }
     }
-
-    return newSids;
+    scheduleTagSet(reconciler, desired, assign, typeName);
   }
 
-  async function toggleMail() {
-    if (!MatterportSDK) return;
+  function toggleMail() {
+    const desired: MatterportTagDescriptor[] = [];
     if (showMail) {
-      if (data.tags && data.tags.length > 0) {
-        console.log(`Adding ${data.tags.length} tags to the model`);
-        for (const tag of data.tags) {
-          try {
-            const anchorPosition = JSON.parse(tag.anchorPosition);
-            const stemVector = JSON.parse(tag.stemVector);
-            const tagDate = tag.date ? new Date(tag.date).toLocaleDateString() : "";
-            const tagDescriptor = {
-              label: `Mail - ${tagDate}`,
-              description: tag.content,
-              anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
-              stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
-            };
-            const [sid] = await MatterportSDK.Tag.add(tagDescriptor);
-            mailSids.push(sid);
-          } catch (tagError) {
-            console.error(`Failed to add tag ${tag.id}:`, tagError);
-          }
-        }
+      for (const tag of data.tags ?? []) {
+        const tagDate = tag.date ? new Date(tag.date).toLocaleDateString() : "";
+        const descriptor = makeTagDescriptor(tag, {
+          label: `Mail - ${tagDate}`,
+          description: tag.content,
+        });
+        if (descriptor) desired.push(descriptor);
+        else console.error("Invalid mail tag position", tag.id);
       }
-    } else {
-      for (const sid of mailSids) {
-        try {
-          await MatterportSDK.Tag.remove(sid);
-        } catch (e) {
-          console.error(e);
-        }
-      }
-      mailSids = [];
     }
+    scheduleTagSet(mailReconciler, desired, (ids) => (mailSids = ids), "mail");
   }
 
-  async function toggleAmiante() {
-    amianteSids = await togglePresenceTags(
+  function toggleAmiante() {
+    togglePresenceTags(
       showAmiante,
-      amianteSids,
       data.amianteTags,
       amiantePresenceSelected,
       (tag: App.TagsAmiante) => Number(tag.presenceAmiante),
@@ -153,13 +216,14 @@
       (tag) => `${tag.description}\nType: ${tag.type}\nÉtage: ${tag.etage}`,
       (tag) => (tag.presenceAmiante ? { r: 1, g: 0, b: 0 } : { r: 0, g: 1, b: 0 }),
       "amiante",
+      amianteReconciler,
+      (ids) => (amianteSids = ids),
     );
   }
 
-  async function togglePlomb() {
-    plombSids = await togglePresenceTags(
+  function togglePlomb() {
+    togglePresenceTags(
       showPlomb,
-      plombSids,
       data.plombTags,
       plombPresenceSelected,
       (tag: App.PlombTags) => Number(tag.presencePlomb),
@@ -172,13 +236,14 @@
       },
       (tag) => (tag.presencePlomb ? { r: 1, g: 0.5, b: 0 } : { r: 0, g: 0.7, b: 1 }),
       "plomb",
+      plombReconciler,
+      (ids) => (plombSids = ids),
     );
   }
 
-  async function toggleTermite() {
-    termiteSids = await togglePresenceTags(
+  function toggleTermite() {
+    togglePresenceTags(
       showTermite,
-      termiteSids,
       data.termiteTags,
       termitePresenceSelected,
       (tag: App.TermiteTags) => Number(tag.presenceTermite),
@@ -186,57 +251,42 @@
       (tag) => `${tag.description}\nÉtage: ${tag.etage}`,
       (tag) => (tag.presenceTermite ? { r: 0.6, g: 0.3, b: 0 } : { r: 0.5, g: 1, b: 0.5 }),
       "termite",
+      termiteReconciler,
+      (ids) => (termiteSids = ids),
     );
   }
 
-  async function addFilteredPemdTags(allowedIds: number[]) {
-    if (!MatterportSDK) return;
+  function addFilteredPemdTags(allowedIds: number[]) {
     if (!data.pemdTags || data.pemdTags.length === 0) return;
-    // remove existing PEMD tags before adding the new filtered set
-    await removePemdTags();
     const filtered = data.pemdTags.filter(
       (pemdTag: App.Pemds) =>
         pemdTag.objetId != null && allowedIds.includes(Number(pemdTag.objetId)),
     );
     console.log(`Adding ${filtered.length} pemd tags (filtered)`);
+    const desired: MatterportTagDescriptor[] = [];
     for (const tag of filtered) {
-      try {
-        if (!tag.anchorPosition || !tag.stemVector) continue;
-        const anchorPosition = JSON.parse(tag.anchorPosition);
-        const stemVector = JSON.parse(tag.stemVector);
-        let description = tag.description || "";
-        if (tag.quantite) description += `\nQuantité: ${tag.quantite}`;
-        if (tag.etage) description += `\nÉtage: ${tag.etage}`;
-        if (tag.etat) description += `\nÉtat: ${tag.etat}`;
+      if (!tag.anchorPosition || !tag.stemVector) continue;
+      let description = tag.description || "";
+      if (tag.quantite) description += `\nQuantité: ${tag.quantite}`;
+      if (tag.etage) description += `\nÉtage: ${tag.etage}`;
+      if (tag.etat) description += `\nÉtat: ${tag.etat}`;
 
-        const tagDescriptor = {
-          label: "PEMD",
-          description: description,
-          anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
-          stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
-          color: { r: 0.6, g: 0.2, b: 0.8 },
-        };
-        const [sid] = await MatterportSDK.Tag.add(tagDescriptor);
-        pemdSids.push(sid);
-      } catch (tagError) {
-        console.error(`Failed to add pemd tag ${tag.id}:`, tagError);
-      }
+      const descriptor = makeTagDescriptor(tag, {
+        label: "PEMD",
+        description,
+        color: { r: 0.6, g: 0.2, b: 0.8 },
+      });
+      if (descriptor) desired.push(descriptor);
+      else console.error("Invalid pemd tag position", tag.id);
     }
+    scheduleTagSet(pemdReconciler, desired, (ids) => (pemdSids = ids), "pemd");
     // keep the UI toggle state true (user wants to display PEMD tags)
     showPemd = true;
     showPemdModal = false;
   }
 
-  async function removePemdTags() {
-    if (!MatterportSDK) return;
-    for (const sid of pemdSids) {
-      try {
-        await MatterportSDK.Tag.remove(sid);
-      } catch (e) {
-        console.error("Failed to remove pemd sid", sid, e);
-      }
-    }
-    pemdSids = [];
+  function removePemdTags() {
+    scheduleTagSet(pemdReconciler, [], (ids) => (pemdSids = ids), "pemd");
     showPemd = false;
   }
 
@@ -264,100 +314,115 @@
     pendingTagPosition = null;
   }
 
-  async function addNewPemdTagToModel(tagData: App.Tag): Promise<App.TagResponse | void> {
-    if (!MatterportSDK) return;
+  async function addNewPemdTagToModel(tagData: App.Tag) {
+    const descriptor = makeTagDescriptor(tagData, {
+      label: "PEMD",
+      description: [
+        tagData.description || "",
+        tagData.quantite ? `Quantité: ${tagData.quantite}` : "",
+        tagData.etage ? `Étage: ${tagData.etage}` : "",
+        tagData.etat ? `État: ${tagData.etat}` : "",
+      ]
+        .filter(Boolean)
+        .join("\n"),
+      color: { r: 0.6, g: 0.2, b: 0.8 },
+    });
+    const connection = matterportConnection;
+    const generation = connectionGeneration;
+    if (!descriptor || !connection) return;
 
-    try {
-      const anchorPosition = JSON.parse(tagData.anchorPosition);
-      const stemVector = JSON.parse(tagData.stemVector);
-
-      let description = tagData.description || "";
-      if (tagData.quantite) description += `\nQuantité: ${tagData.quantite}`;
-      if (tagData.etage) description += `\nÉtage: ${tagData.etage}`;
-      if (tagData.etat) description += `\nÉtat: ${tagData.etat}`;
-
-      const tagDescriptor = {
-        label: "PEMD",
-        description: description,
-        anchorPosition: { x: anchorPosition.x, y: anchorPosition.y, z: anchorPosition.z },
-        stemVector: { x: stemVector.x, y: stemVector.y, z: stemVector.z },
-        color: { r: 0.6, g: 0.2, b: 0.8 },
-      };
-
-      const [sid] = await MatterportSDK.Tag.add(tagDescriptor);
-      pemdSids.push(sid);
+    const result = await runClientBoundaryEffect(connection.addTag(descriptor));
+    if (result._tag === "success") {
+      if (generation !== connectionGeneration || matterportConnection !== connection) {
+        const cleanup = await runClientBoundaryEffect(connection.removeTag(result.value));
+        if (cleanup._tag !== "success") {
+          console.error("Late PEMD tag could not be removed from the obsolete viewer", cleanup);
+        }
+        return;
+      }
+      pemdSids = [...pemdSids, result.value];
+      pemdReconciler?.registerId(result.value);
       showPemd = true;
-    } catch (e) {
-      console.error("Failed to add new PEMD tag to model:", e);
-    }
-  }
-
-  async function connectSdk(choice: string) {
-    if (choice === "NPM") {
-      const { setupSdk } = await import("@matterport/sdk");
-      MatterportSDK = await setupSdk(data.matterportSdkKey, { iframe });
     } else {
-      MatterportSDK = (await MatterportSDK_script(iframe, {
-        applicationKey: data.matterportSdkKey,
-      })) as unknown as MpSdk;
+      console.error("Failed to add new PEMD tag to model:", result);
     }
-    editMode.setMpSdk(MatterportSDK);
-    console.log("Matterport SDK connected via", choice, MatterportSDK);
   }
 
-  function disconnectSdk() {
-    try {
-      if (MatterportSDK && MatterportSDK.disconnect) MatterportSDK.disconnect();
-    } catch (err) {
-      console.error("Matterport SDK disconnect failed:", err);
+  async function connectSdk(choice: MatterportMode) {
+    const generation = ++connectionGeneration;
+    const result = await runClientBoundaryEffect(
+      provideMatterportService(
+        connectMatterport({ mode: choice, sdkKey: data.matterportSdkKey, iframe }),
+        matterportService,
+      ),
+    );
+
+    if (generation !== connectionGeneration) {
+      if (result._tag === "success") await runClientBoundaryEffect(result.value.disconnect());
+      return;
     }
-    MatterportSDK = undefined;
+
+    if (result._tag !== "success") {
+      console.error("Matterport SDK connection failed:", result);
+      return;
+    }
+
+    matterportConnection = result.value;
+    ensureReconcilers(result.value);
+    editMode.setConnection(result.value);
+    console.log("Matterport SDK connected via", choice);
+  }
+
+  async function disconnectSdk() {
+    connectionGeneration += 1;
+    const connection = matterportConnection;
+    matterportConnection = undefined;
+    editMode.setConnection(undefined);
+    disposeReconcilers();
+    if (connection) {
+      const result = await runClientBoundaryEffect(connection.disconnect());
+      if (result._tag !== "success") console.error("Matterport SDK disconnect failed:", result);
+    }
   }
 
   function reloadIframe() {
     if (iframe) {
-      iframe.src = iframe.src;
+      const source = iframe.getAttribute("src");
+      if (source) iframe.src = source;
     }
   }
 
   let mounted = false;
 
   onMount(() => {
-    let handleUnhandledRejection: (ev: PromiseRejectionEvent) => void;
-    (async () => {
+    mounted = true;
+    // Suppress noisy analytics/network errors coming from the Matterport SDK (often caused by ad-blockers).
+    const handleUnhandledRejection = (ev: PromiseRejectionEvent) => {
       try {
-        await connectSdk(SDK_choice);
-
-        // Suppress noisy analytics/network errors coming from the Matterport SDK (often caused by ad-blockers)
-        handleUnhandledRejection = (ev: PromiseRejectionEvent) => {
-          try {
-            const reason: PromiseRejectionEvent["reason"] = ev.reason;
-            const msg =
-              typeof reason === "string"
-                ? reason
-                : reason &&
-                  (reason.message || (reason.error && reason.error.message) || reason.url || "");
-            if (msg && String(msg).includes("events.matterport.com")) {
-              ev.preventDefault();
-              console.debug("Ignored blocked Matterport analytics request:", reason);
-            }
-          } catch (ignored) {
-            console.debug("Unhandled rejection handler failed:", ignored);
-          }
-        };
-        window.addEventListener("unhandledrejection", handleUnhandledRejection);
-        mounted = true;
-      } catch (e) {
-        console.error("Matterport SDK connection failed:", e);
+        const reason: PromiseRejectionEvent["reason"] = ev.reason;
+        const msg =
+          typeof reason === "string"
+            ? reason
+            : reason &&
+              (reason.message || (reason.error && reason.error.message) || reason.url || "");
+        if (msg && String(msg).includes("events.matterport.com")) {
+          ev.preventDefault();
+          console.debug("Ignored blocked Matterport analytics request:", reason);
+        }
+      } catch (ignored) {
+        console.debug("Unhandled rejection handler failed:", ignored);
       }
-    })();
+    };
+    window.addEventListener("unhandledrejection", handleUnhandledRejection);
+    void connectSdk(SDK_choice).catch((cause) => {
+      if (mounted) console.error("Matterport SDK connection failed:", cause);
+    });
 
     return () => {
       mounted = false;
-      if (handleUnhandledRejection)
-        window.removeEventListener("unhandledrejection", handleUnhandledRejection);
+      window.removeEventListener("unhandledrejection", handleUnhandledRejection);
       editMode.cleanup();
-      disconnectSdk();
+      void disconnectSdk().catch((cause) => console.error("Matterport SDK cleanup failed:", cause));
     };
   });
 
@@ -365,31 +430,35 @@
   $effect(() => {
     const choice = SDK_choice;
     if (!mounted) return;
-
-    // Run async reconnection
-    (async () => {
-      disconnectSdk();
-      reloadIframe();
-      // Wait for iframe to reload before reconnecting
-      await new Promise<void>((resolve) => {
-        iframe.addEventListener("load", () => resolve(), { once: true });
-      });
+    let cancelled = false;
+    void (async () => {
       try {
-        await connectSdk(choice);
-      } catch (e) {
-        console.error("Matterport SDK reconnection failed:", e);
+        await disconnectSdk();
+        if (cancelled) return;
+        reloadIframe();
+        await waitForIframeLoad(iframe);
+        if (!cancelled) await connectSdk(choice);
+      } catch (cause) {
+        if (!cancelled) console.error("Matterport SDK reconnection failed:", cause);
       }
     })();
+    return () => {
+      cancelled = true;
+      connectionGeneration += 1;
+    };
   });
 
   // Effect to handle form submission result
+  let lastAddedTagId: string | number | undefined;
   $effect(() => {
-    if (form?.success && form?.tag) {
+    if (form?.success && form?.tag && form.tag.id !== lastAddedTagId) {
+      lastAddedTagId = form.tag.id;
       // Add the new tag to the model
-      addNewPemdTagToModel(form.tag);
-      closePemdCreateModal();
+      void addNewPemdTagToModel(form.tag)
+        .then(() => closePemdCreateModal())
+        .catch((cause) => console.error("Failed to display the new PEMD tag:", cause));
       // Refresh the data
-      invalidateAll();
+      void invalidateAll().catch((cause) => console.error("Failed to refresh PEMD data:", cause));
     }
   });
 

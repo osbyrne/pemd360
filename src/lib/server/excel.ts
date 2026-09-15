@@ -14,6 +14,66 @@ interface ExcelOptions {
   autoFilter?: boolean;
 }
 
+export interface RiskExcelRow {
+  readonly label: string;
+  readonly description: string;
+  readonly etage: string | null;
+  readonly projetNom: string | null;
+}
+
+export interface WasteExcelRow {
+  readonly categorie: string | null;
+  readonly objet: string | null;
+  readonly nature: string | null;
+  readonly codeDechet: number | null;
+  readonly masse: number | null;
+  readonly volume: number | null;
+  readonly ecoOrganisme: string | null;
+  readonly reutilisation: number | null;
+  readonly recyclable: number | null;
+  readonly valorisationMatiere: number | null;
+  readonly valorisationEnergetique: number | null;
+  readonly incinerationSansValo: number | null;
+  readonly nonValorisation: number | null;
+  readonly stockage: string | null;
+  readonly description?: string | null;
+}
+
+export interface PemExcelRow {
+  readonly groupe: string | null;
+  readonly categorie: string | null;
+  readonly objet: string | null;
+  readonly nature: string | null;
+  readonly etat: string | null;
+  readonly quantite: number | null;
+  readonly masse: number | null;
+  readonly estimationAge: string | null;
+  readonly description: string | null;
+  readonly etage: string | null;
+  readonly projetNom: string | null;
+}
+
+export interface ReemploiExcelRow {
+  readonly objet: string | null;
+  readonly description: string | null;
+  readonly etat: string | null;
+  readonly etage: string | null;
+  readonly potentielReemploi: string | null;
+  readonly reemploi: number | null;
+  readonly masse: number | null;
+  readonly projetNom: string | null;
+}
+
+export interface SynthesisExcelRow {
+  readonly objet: string | null;
+  readonly description: string | null;
+  readonly etat: string | null;
+  readonly etage: string | null;
+  readonly potentielReemploi: string | null;
+  readonly reemploi: number | null;
+  readonly projetNom: string | null;
+}
+
 /**
  * Creates a worksheet with standard configuration
  */
@@ -58,7 +118,9 @@ async function finalizeWorkbook(workbook: ExcelJS.Workbook): Promise<ExcelJS.Buf
 /**
  * Calculates coefficient reemploi display value
  */
-function calculateCoefficientReemploi(item: any): string {
+function calculateCoefficientReemploi(
+  item: Pick<SynthesisExcelRow, "reemploi" | "potentielReemploi">,
+): string {
   if (item.reemploi) return "100%";
   if (item.potentielReemploi) return item.potentielReemploi;
   return "0%";
@@ -68,7 +130,7 @@ function calculateCoefficientReemploi(item: any): string {
 // Excel Generation Functions
 // ============================================================================
 
-export async function generateRiskExcel(data: any[], type: string) {
+export async function generateRiskExcel(data: readonly RiskExcelRow[], type: string) {
   const { workbook, worksheet } = createWorksheet({
     sheetName: "Inventaire",
     columns: [
@@ -94,7 +156,7 @@ export async function generateRiskExcel(data: any[], type: string) {
   return finalizeWorkbook(workbook);
 }
 
-export async function generateDechetsExcel(data: any[]) {
+export async function generateDechetsExcel(data: readonly WasteExcelRow[]) {
   const { workbook, worksheet } = createWorksheet({
     sheetName: "Caractérisation Déchets",
     columns: [
@@ -137,7 +199,7 @@ export async function generateDechetsExcel(data: any[]) {
   return finalizeWorkbook(workbook);
 }
 
-export async function generatePemExcel(data: any[]) {
+export async function generatePemExcel(data: readonly PemExcelRow[]) {
   const { workbook, worksheet } = createWorksheet({
     sheetName: "Inventaire PEMD",
     columns: [
@@ -174,7 +236,7 @@ export async function generatePemExcel(data: any[]) {
   return finalizeWorkbook(workbook);
 }
 
-export async function generateReemploiExcel(data: any[]) {
+export async function generateReemploiExcel(data: readonly ReemploiExcelRow[]) {
   const { workbook, worksheet } = createWorksheet({
     sheetName: "Inventaire Réemploi",
     columns: [
@@ -205,7 +267,7 @@ export async function generateReemploiExcel(data: any[]) {
   return finalizeWorkbook(workbook);
 }
 
-export async function generateTableauSyntheseExcel(data: any[]) {
+export async function generateTableauSyntheseExcel(data: readonly SynthesisExcelRow[]) {
   const { workbook, worksheet } = createWorksheet({
     sheetName: "Tableaux Synthèse PEMD",
     columns: [
@@ -235,7 +297,7 @@ export async function generateTableauSyntheseExcel(data: any[]) {
   return finalizeWorkbook(workbook);
 }
 
-export async function generateTableauSyntheseReemploiExcel(data: any[]) {
+export async function generateTableauSyntheseReemploiExcel(data: readonly SynthesisExcelRow[]) {
   const { workbook, worksheet } = createWorksheet({
     sheetName: "Tableau Synthèse Réemploi",
     columns: [

@@ -1,25 +1,39 @@
-import { PDFDocument, rgb, StandardFonts, type PDFPage, type PDFFont, type PDFForm } from "pdf-lib";
-import { db } from "$lib/server/db/client";
-import {
+import { PDFDocument, rgb, StandardFonts, type PDFPage, type PDFForm } from "pdf-lib";
+import type { InferSelectModel } from "drizzle-orm";
+import type {
   cerfaDiagnostic,
   cerfaDiagnostiqueur,
   cerfaMtrOuvrage,
   cerfaOperation,
-  projet,
   pemd,
-  categorieV2,
-  groupe,
 } from "$lib/server/db/schema";
-import { eq } from "drizzle-orm";
 
-/**
- * Helper to format a date in French format
- */
-function formatDateFr(date: Date | number | null | undefined): string {
-  if (!date) return "";
-  const d = new Date(date);
-  return d.toLocaleDateString("fr-FR");
-}
+export type CerfaPdfData = {
+  readonly diagnostic: InferSelectModel<typeof cerfaDiagnostic> | null;
+  readonly diagnostiqueur: InferSelectModel<typeof cerfaDiagnostiqueur> | null;
+  readonly ouvrage: InferSelectModel<typeof cerfaMtrOuvrage> | null;
+  readonly operation: InferSelectModel<typeof cerfaOperation> | null;
+  readonly pemdList: readonly CerfaPdfPemdRow[];
+};
+
+export type CerfaPdfPemdRow = Pick<
+  InferSelectModel<typeof pemd>,
+  | "id"
+  | "description"
+  | "quantite"
+  | "masse"
+  | "volume"
+  | "surface"
+  | "etat"
+  | "amiante"
+  | "plombifere"
+  | "termite"
+  | "reemploi"
+  | "potentielReemploi"
+> & {
+  readonly categorie: string | null;
+  readonly famille: string | null;
+};
 
 /**
  * Helper to format a date as DD/MM/YYYY components
@@ -38,56 +52,11 @@ function getDateComponents(date: Date | number | null | undefined): {
   };
 }
 
-export async function generateCerfaPdf(
-  projetId: string,
+export async function renderCerfaPdf(
+  data: CerfaPdfData,
   templateBuffer: ArrayBuffer | Uint8Array,
 ): Promise<Uint8Array> {
-  // Fetch all necessary data
-  const [projectData] = await db.select().from(projet).where(eq(projet.id, projetId));
-  const [diagnostic] = await db
-    .select()
-    .from(cerfaDiagnostic)
-    .where(eq(cerfaDiagnostic.projetId, projetId));
-  const [diagnostiqueur] = await db
-    .select()
-    .from(cerfaDiagnostiqueur)
-    .where(eq(cerfaDiagnostiqueur.projetId, projetId));
-  const [ouvrage] = await db
-    .select()
-    .from(cerfaMtrOuvrage)
-    .where(eq(cerfaMtrOuvrage.projetId, projetId));
-  const [operation] = await db
-    .select()
-    .from(cerfaOperation)
-    .where(eq(cerfaOperation.projetId, projetId));
-
-  const pemdList = await db
-    .select({
-      // Select all pemd fields
-      id: pemd.id,
-      description: pemd.description,
-      quantite: pemd.quantite,
-      masse: pemd.masse,
-      volume: pemd.volume,
-      surface: pemd.surface,
-      etat: pemd.etat,
-      amiante: pemd.amiante,
-      plombifere: pemd.plombifere,
-      termite: pemd.termite,
-      reemploi: pemd.reemploi,
-      potentielReemploi: pemd.potentielReemploi,
-      // Joined fields
-      categorie: categorieV2.categoriev2,
-      famille: groupe.groupe,
-    })
-    .from(pemd)
-    .leftJoin(categorieV2, eq(pemd.natureId, categorieV2.id))
-    .leftJoin(groupe, eq(categorieV2.groupeId, groupe.id))
-    .where(eq(pemd.sidId, projetId));
-
-  if (!projectData) {
-    throw new Error("Project not found");
-  }
+  const { diagnostic, diagnostiqueur, ouvrage, operation, pemdList } = data;
 
   // Load the template PDF
   const pdfDoc = await PDFDocument.load(templateBuffer);
@@ -110,7 +79,7 @@ export async function generateCerfaPdf(
         fields.map((f) => `${f.getName()} (${f.constructor.name})`),
       );
     }
-  } catch (e) {
+  } catch {
     console.log("No AcroForm found in PDF, using text overlay method");
   }
 

@@ -1,145 +1,55 @@
 import { redirect } from "@sveltejs/kit";
-import type { PageServerLoad, Actions } from "./$types";
-import { db } from "$lib/server/db/client";
-import { pemd, projet, objets, categorieV2, groupe, natureV2 } from "$lib/server/db/schema";
-import { getUserProjects } from "$lib/server/db/queries";
-import { createDeleteAction } from "$lib/server/db/actions";
-import { eq, and, inArray, count, or, like, sql, asc, type SQL } from "drizzle-orm";
-
-const DEFAULT_PER_PAGE = 25;
-const MAX_PER_PAGE = 100;
-const EMPTY_IMAGE_HASH = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
-
-function parsePositiveInt(value: string | null, fallback: number) {
-  const parsed = Number.parseInt(value ?? "", 10);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
-}
+import type { Actions, PageServerLoad } from "./$types";
+import { actionFailure, errorFailure, isBoundarySuccess } from "$lib/server/effect/sveltekit";
+import { runServerEffect } from "$lib/server/effect/runtime";
+import { formDataForFailure } from "$lib/effect/schemas/forms";
+import {
+  deletePemdRecord,
+  loadPemdInventory,
+  parsePositiveInt,
+  DEFAULT_PER_PAGE,
+  MAX_PER_PAGE,
+} from "$lib/server/workflows/inventory";
 
 export const load: PageServerLoad = async ({ url, locals }) => {
   const user = locals.user;
+  if (!user) throw redirect(302, "/login");
 
-  if (!user) {
-    throw redirect(302, "/login");
-  }
-
-  const projectId = url.searchParams.get("projectId");
-  const q = url.searchParams.get("q")?.trim() ?? "";
-  const requestedPage = parsePositiveInt(url.searchParams.get("page"), 1);
-  const perPage = Math.min(
-    parsePositiveInt(url.searchParams.get("perPage"), DEFAULT_PER_PAGE),
-    MAX_PER_PAGE,
+  const result = await runServerEffect(
+    loadPemdInventory({
+      user,
+      projectId: url.searchParams.get("projectId"),
+      q: url.searchParams.get("q")?.trim() ?? "",
+      requestedPage: parsePositiveInt(url.searchParams.get("page"), 1),
+      perPage: Math.min(
+        parsePositiveInt(url.searchParams.get("perPage"), DEFAULT_PER_PAGE),
+        MAX_PER_PAGE,
+      ),
+    }),
   );
-  const projects = await getUserProjects(user);
-
-  const conditions: SQL[] = [];
-
-  if (user.role !== "admin") {
-    const allowedids = projects.map((p) => p.id);
-    if (allowedids.length > 0) {
-      conditions.push(inArray(pemd.sidId, allowedids));
-    } else {
-      return {
-        list: [],
-        projects: [],
-        selectedProjectId: projectId,
-        q,
-        pagination: {
-          page: 1,
-          perPage,
-          total: 0,
-          totalPages: 1,
-        },
-      };
-    }
-  }
-
-  if (projectId) {
-    conditions.push(eq(pemd.sidId, projectId));
-  }
-
-  if (q) {
-    const search = `%${q}%`;
-    conditions.push(
-      or(
-        like(groupe.groupe, search),
-        like(categorieV2.categoriev2, search),
-        like(objets.objet, search),
-        like(pemd.description, search),
-        like(natureV2.nature, search),
-        like(pemd.etat, search),
-        like(pemd.constitution, search),
-        like(pemd.etage, search),
-        like(pemd.typologieAppart, search),
-      )!,
-    );
-  }
-
-  const where = conditions.length > 0 ? and(...conditions) : undefined;
-  const [{ total }] = await db
-    .select({
-      total: count(),
-    })
-    .from(pemd)
-    .leftJoin(objets, eq(pemd.objetId, objets.id))
-    .leftJoin(categorieV2, eq(objets.categorieId, categorieV2.id))
-    .leftJoin(groupe, eq(categorieV2.groupeId, groupe.id))
-    .leftJoin(natureV2, eq(pemd.natureId, natureV2.id))
-    .where(where);
-
-  const totalPages = Math.max(1, Math.ceil(total / perPage));
-  const page = Math.min(requestedPage, totalPages);
-  const offset = (page - 1) * perPage;
-
-  const list = await db
-    .select({
-      id: pemd.id,
-      groupe: groupe.groupe,
-      categorie: categorieV2.categoriev2,
-      objet: objets.objet,
-      estimationAge: pemd.estimationAge,
-      quantite: pemd.quantite,
-      description: pemd.description,
-      etat: pemd.etat,
-      nature: natureV2.nature,
-      surface: pemd.surface,
-      epaisseur: pemd.epaisseur,
-      densite: natureV2.densite,
-      masse: pemd.masse,
-      constitution: pemd.constitution,
-      imageHash: sql<string | null>`nullif(${pemd.image}, ${EMPTY_IMAGE_HASH})`,
-      etage: pemd.etage,
-      typologieAppart: pemd.typologieAppart,
-      projetId: pemd.sidId,
-      projetNom: projet.libelle,
-    })
-    .from(pemd)
-    .leftJoin(objets, eq(pemd.objetId, objets.id))
-    .leftJoin(categorieV2, eq(objets.categorieId, categorieV2.id))
-    .leftJoin(groupe, eq(categorieV2.groupeId, groupe.id))
-    .leftJoin(natureV2, eq(pemd.natureId, natureV2.id))
-    .leftJoin(projet, eq(pemd.sidId, projet.id))
-    .where(where)
-    .orderBy(asc(pemd.id))
-    .limit(perPage)
-    .offset(offset);
-
-  return {
-    list,
-    projects,
-    selectedProjectId: projectId,
-    q,
-    pagination: {
-      page,
-      perPage,
-      total,
-      totalPages,
-    },
-  };
+  if (!isBoundarySuccess(result)) return errorFailure(result);
+  return result.value;
 };
 
 export const actions: Actions = {
-  delete: createDeleteAction(pemd, pemd.id, "pemd", "string", {
-    resource: "tags",
-    action: "delete",
-  }),
+  delete: async ({ request, locals }) => {
+    const formData = await request.formData();
+    const result = await runServerEffect(
+      deletePemdRecord({
+        formData,
+        user: locals.user,
+        permission: { resource: "tags", action: "delete" },
+        operation: "inventory.pemd",
+      }),
+    );
+    if (!isBoundarySuccess(result)) {
+      return actionFailure(
+        result,
+        "message",
+        "Erreur lors de la suppression",
+        formDataForFailure(formData),
+      );
+    }
+    return result.value;
+  },
 };

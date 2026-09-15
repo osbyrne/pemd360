@@ -1,78 +1,37 @@
-import { db } from "$lib/server/db/client";
-import { objets, categorieV2 } from "$lib/server/db/schema";
-import { createDeleteAction } from "$lib/server/db/actions";
-import { eq } from "drizzle-orm";
 import type { Actions, PageServerLoad } from "./$types";
-import { fail } from "@sveltejs/kit";
+import {
+  createObject,
+  deleteObject,
+  loadObjectAdminData,
+  updateObject,
+} from "$lib/server/workflows/admin";
+import { actionFailure, errorFailure } from "$lib/server/effect/sveltekit";
+import { isBoundarySuccess, runServerEffect } from "$lib/server/effect/runtime";
 
 export const load: PageServerLoad = async () => {
-  const objetsList = await db
-    .select({
-      id: objets.id,
-      objet: objets.objet,
-      categorieId: objets.categorieId,
-      categorieName: categorieV2.categoriev2,
-    })
-    .from(objets)
-    .leftJoin(categorieV2, eq(objets.categorieId, categorieV2.id))
-    .all();
+  const result = await runServerEffect(loadObjectAdminData());
 
-  const categories = await db.select().from(categorieV2).all();
-
-  return {
-    objets: objetsList,
-    categories,
-  };
+  if (!isBoundarySuccess(result)) return errorFailure(result);
+  const [objetsList, categories] = result.value;
+  return { objets: objetsList, categories };
 };
 
 export const actions: Actions = {
   create: async ({ request }) => {
-    const formData = await request.formData();
-    const objetName = formData.get("objet") as string;
-    const categorieId = Number(formData.get("categorieId"));
-
-    if (!objetName || !categorieId) {
-      return fail(400, { message: "Le nom de l'objet et la catégorie sont requis" });
-    }
-
-    try {
-      await db.insert(objets).values({
-        objet: objetName,
-        categorieId: categorieId,
-      });
-
-      return { success: true };
-    } catch (e: any) {
-      console.error("Error creating objet:", e);
-      return fail(500, { message: "Erreur lors de la création" });
-    }
+    const result = await runServerEffect(createObject(await request.formData()));
+    if (isBoundarySuccess(result)) return result.value;
+    return actionFailure(result, "message", "Erreur lors de la création");
   },
 
   update: async ({ request }) => {
-    const formData = await request.formData();
-    const id = Number(formData.get("id"));
-    const objetName = formData.get("objet") as string;
-    const categorieId = Number(formData.get("categorieId"));
-
-    if (!id || !objetName || !categorieId) {
-      return fail(400, { message: "ID, nom de l'objet et catégorie requis" });
-    }
-
-    try {
-      await db
-        .update(objets)
-        .set({
-          objet: objetName,
-          categorieId: categorieId,
-        })
-        .where(eq(objets.id, id));
-
-      return { success: true };
-    } catch (e: any) {
-      console.error("Error updating objet:", e);
-      return fail(500, { message: "Erreur lors de la mise à jour" });
-    }
+    const result = await runServerEffect(updateObject(await request.formData()));
+    if (isBoundarySuccess(result)) return result.value;
+    return actionFailure(result, "message", "Erreur lors de la mise à jour");
   },
 
-  delete: createDeleteAction(objets, objets.id, "objet"),
+  delete: async ({ request, locals }) => {
+    const result = await runServerEffect(deleteObject(await request.formData(), locals.user));
+    if (isBoundarySuccess(result)) return result.value;
+    return actionFailure(result, "message", "Erreur lors de la suppression");
+  },
 };

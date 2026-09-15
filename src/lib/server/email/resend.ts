@@ -1,7 +1,7 @@
 import { env } from "$env/dynamic/private";
 import { Resend } from "resend";
 
-interface PasswordResetEmail {
+export interface PasswordResetEmail {
   to: string;
   resetUrl: string;
   recipientName?: string | null;
@@ -31,7 +31,8 @@ function escapeHtml(value: string): string {
   );
 }
 
-export async function sendPasswordResetEmail({
+/** Low-level Resend adapter. The email service converts its failures to EmailError. */
+export async function sendPasswordResetEmailRequest({
   to,
   resetUrl,
   recipientName,
@@ -66,3 +67,6 @@ export async function sendPasswordResetEmail({
     throw new Error(`Resend could not send the password reset email: ${error.message}`);
   }
 }
+
+/** Compatibility adapter for SDK callbacks that still expect a rejected Promise. */
+export const sendPasswordResetEmail = sendPasswordResetEmailRequest;

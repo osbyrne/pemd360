@@ -1,46 +1,43 @@
 <script lang="ts">
   import * as stylex from "@stylexjs/stylex";
   import { ui } from "$lib/styles/ui.stylex";
-  import { authClient } from "$lib/auth-client";
   import { goto } from "$app/navigation";
+  import { onDestroy } from "svelte";
+  import {
+    createOperation,
+    isOperationSuccess,
+    operationErrorMessage,
+  } from "$lib/client/effect/operation.svelte";
+  import { signIn } from "$lib/client/workflows/auth";
   import { AlertError } from "$lib/components";
   import { AtSign, Lock, Eye, EyeOff, Loader } from "lucide-svelte";
 
   let email = $state("");
   let password = $state("");
   let error = $state("");
-  let loading = $state(false);
+  const operation = createOperation<void, unknown>();
+  const loading = $derived(operation.state.pending);
   let showPassword = $state(false);
 
   async function handleLogin() {
     error = "";
 
-    if (!email || !password) {
-      error = "Tous les champs sont requis";
-      return;
-    }
-
-    loading = true;
-
-    try {
-      const response = await authClient.signIn.email({
+    if (operation.state.pending) return;
+    const result = await operation.execute(
+      signIn({
         email,
         password,
-      });
+      }),
+    );
 
-      if (response.error) {
-        error = response.error.message || "Email ou mot de passe incorrect";
-      } else {
-        // Connexion réussie, rediriger vers le tableau de bord
-        goto("/app/projets");
-      }
-    } catch (e) {
-      error = "Une erreur est survenue. Veuillez réessayer.";
-      console.error(e);
-    } finally {
-      loading = false;
+    if (isOperationSuccess(result)) {
+      goto("/app/projets");
+    } else {
+      error = operationErrorMessage(result, "Email ou mot de passe incorrect");
     }
   }
+
+  onDestroy(() => operation.dispose());
   const spin = stylex.keyframes({ to: { transform: "rotate(360deg)" } });
 
   const styles = stylex.create({

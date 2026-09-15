@@ -2,7 +2,14 @@
   import * as stylex from "@stylexjs/stylex";
   import { ui } from "$lib/styles/ui.stylex";
   import { createEventDispatcher } from "svelte";
-  import { authClient } from "$lib/auth-client";
+  import { onDestroy } from "svelte";
+  import {
+    createOperation,
+    isOperationSuccess,
+    operationErrorMessage,
+  } from "$lib/client/effect/operation.svelte";
+  import { setUserRole } from "$lib/client/workflows/auth";
+  import type { ClientRole } from "$lib/client/services/authentication";
   import { Pencil } from "lucide-svelte";
 
   type User = {
@@ -20,16 +27,17 @@
   }>();
 
   let modal: HTMLDialogElement;
+  const operation = createOperation<void, unknown>();
   let editForm = {
     name: "",
     email: "",
-    role: "user",
+    role: "user" as ClientRole,
   };
 
   function openModal() {
     editForm.name = user.name || "";
     editForm.email = user.email || "";
-    editForm.role = user.role || "user";
+    editForm.role = isClientRole(user.role) ? user.role : "user";
     modal?.showModal();
   }
 
@@ -38,30 +46,30 @@
   }
 
   async function saveUserInfo() {
-    try {
-      const res = await authClient.admin.setRole({
-        userId: user.id,
-        role: editForm.role as any,
+    if (operation.state.pending) return;
+    const result = await operation.execute(setUserRole({ userId: user.id, role: editForm.role }));
+    if (!isOperationSuccess(result)) {
+      dispatch("toast", {
+        message:
+          "Echec de la mise a jour : " + operationErrorMessage(result, "Echec de la mise a jour"),
+        type: "error",
       });
-      if (res.error) {
-        dispatch("toast", {
-          message: "Echec de la mise a jour : " + res.error.message,
-          type: "error",
-        });
-        return;
-      }
-      dispatch("updated", {
-        userId: user.id,
-        name: editForm.name,
-        email: editForm.email,
-        role: editForm.role,
-      });
-      closeModal();
-      dispatch("toast", { message: "Utilisateur mis a jour avec succes", type: "success" });
-    } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "Echec de la mise a jour";
-      dispatch("toast", { message, type: "error" });
+      return;
     }
+    dispatch("updated", {
+      userId: user.id,
+      name: editForm.name,
+      email: editForm.email,
+      role: editForm.role,
+    });
+    closeModal();
+    dispatch("toast", { message: "Utilisateur mis a jour avec succes", type: "success" });
+  }
+
+  onDestroy(() => operation.dispose());
+
+  function isClientRole(value: string | undefined): value is ClientRole {
+    return value === "user" || value === "collaborator" || value === "admin";
   }
 
   const styles = stylex.create({

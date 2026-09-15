@@ -2,8 +2,14 @@
   import { theme } from "../../../../../lib/styles/tokens.stylex";
   import * as stylex from "@stylexjs/stylex";
   import { ui } from "$lib/styles/ui.stylex";
-  import { onMount } from "svelte";
-  import { authClient } from "$lib/auth-client";
+  import { onDestroy, onMount } from "svelte";
+  import {
+    createOperation,
+    isOperationSuccess,
+    operationErrorMessage,
+  } from "$lib/client/effect/operation.svelte";
+  import type { ClientUserPage } from "$lib/client/services/authentication";
+  import { listUsers } from "$lib/client/workflows/auth";
   import Pagination from "$lib/components/Pagination.svelte";
   import { Users, Bug, RefreshCcw, Search } from "lucide-svelte";
   import CreateUserModal from "$lib/components/CreateUserModal.svelte";
@@ -35,6 +41,7 @@
 
   // State
   let users: User[] = [];
+  const loadOperation = createOperation<ClientUserPage, unknown>();
   let loading = true;
   let error: string | null = null;
 
@@ -78,39 +85,35 @@
   }
 
   async function loadUsers() {
+    if (loadOperation.state.pending) return;
     loading = true;
     error = null;
-    try {
-      const res = await authClient.admin.listUsers({
-        query: {
-          limit: 100,
-          sortBy: "createdAt",
-          sortDirection: "desc",
-        },
-      });
+    const result = await loadOperation.execute(
+      listUsers({
+        limit: 100,
+        sortBy: "createdAt",
+        sortDirection: "desc",
+      }),
+      { mode: "latest" },
+    );
 
-      if (res.data) {
-        users = (res.data.users as unknown as User[]).map((user) => ({
-          ...user,
-          projetIds: getUserProjets(user.id),
-        }));
-      } else {
-        if (res.error) error = res.error.message || "Une erreur est survenue";
-      }
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        console.log(e.message || "Échec du chargement des utilisateurs");
-      } else {
-        console.log(String(e));
-      }
-    } finally {
-      loading = false;
+    if (isOperationSuccess(result)) {
+      users = result.value.users.map((user) => ({
+        ...user,
+        image: user.image ?? undefined,
+        projetIds: getUserProjets(user.id),
+      }));
+    } else {
+      error = operationErrorMessage(result, "Une erreur est survenue");
     }
+    loading = loadOperation.state.pending;
   }
 
   onMount(() => {
-    loadUsers();
+    void loadUsers();
   });
+
+  onDestroy(() => loadOperation.dispose());
 
   // Derived
   $: filteredUsers = users.filter((u) => {

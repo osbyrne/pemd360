@@ -1,60 +1,32 @@
-import type { PageServerLoad, Actions } from "./$types";
-import { db } from "$lib/server/db/client";
-import { projet, userProjet } from "$lib/server/db/schema";
-import { eq } from "drizzle-orm";
-import { fail } from "@sveltejs/kit";
+import type { Actions, PageServerLoad } from "./$types";
+import { formDataForFailure } from "$lib/effect/schemas/forms";
+import { actionFailure, errorFailure, isBoundarySuccess } from "$lib/server/effect/sveltekit";
+import { runServerEffect } from "$lib/server/effect/runtime";
+import { requireAdmin } from "$lib/server/admin";
+import {
+  loadUserProjectAssignments,
+  setUserProjectAssignments,
+} from "$lib/server/workflows/administration";
 
-export const load: PageServerLoad = async () => {
-  // Charger tous les projets pour le dropdown
-  const projets = await db
-    .select({
-      id: projet.id,
-      libelle: projet.libelle,
-      reference: projet.reference,
-    })
-    .from(projet);
-
-  // Charger les associations utilisateur-projet
-  const usersWithProjets = await db
-    .select({
-      userId: userProjet.userId,
-      projetId: userProjet.projetId,
-    })
-    .from(userProjet);
-
-  return {
-    projets,
-    usersWithProjets,
-  };
+export const load: PageServerLoad = async ({ parent }) => {
+  await requireAdmin(parent);
+  const result = await runServerEffect(loadUserProjectAssignments());
+  if (!isBoundarySuccess(result)) return errorFailure(result);
+  return result.value;
 };
 
 export const actions: Actions = {
   setProjets: async ({ request }) => {
     const formData = await request.formData();
-    const userId = formData.get("userId") as string;
-    const projetIds = formData.getAll("projetIds") as string[];
-
-    if (!userId) {
-      return fail(400, { error: "userId requis" });
+    const result = await runServerEffect(setUserProjectAssignments(formData));
+    if (!isBoundarySuccess(result)) {
+      return actionFailure(
+        result,
+        "error",
+        "Erreur lors de la mise à jour",
+        formDataForFailure(formData),
+      );
     }
-
-    try {
-      // Supprimer toutes les associations existantes pour cet utilisateur
-      await db.delete(userProjet).where(eq(userProjet.userId, userId));
-
-      // Insérer les nouvelles associations
-      if (projetIds.length > 0) {
-        const newAssociations = projetIds.map((projetId) => ({
-          userId,
-          projetId,
-        }));
-        await db.insert(userProjet).values(newAssociations);
-      }
-
-      return { success: true };
-    } catch (e) {
-      console.error("Erreur mise à jour projets:", e);
-      return fail(500, { error: "Erreur lors de la mise à jour" });
-    }
+    return result.value;
   },
 };

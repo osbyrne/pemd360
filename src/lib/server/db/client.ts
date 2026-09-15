@@ -1,10 +1,17 @@
-import { drizzle } from "drizzle-orm/libsql";
-import { createClient } from "@libsql/client";
 import { env } from "$env/dynamic/private";
+import { createDatabase, type AppDatabase } from "./factory";
 
-const turso = createClient({
-  url: env.TURSO_CONNECTION_URL,
-  authToken: env.TURSO_AUTH_TOKEN,
-});
+export type { AppDatabase, DatabaseConfig } from "./factory";
+export { createDatabase } from "./factory";
 
-export const db = drizzle(turso);
+let cachedDatabase: AppDatabase | undefined;
+
+/** Lazily initialize the shared server database; request-specific data never lives here. */
+export function getDatabase(): AppDatabase {
+  cachedDatabase ??= createDatabase({
+    url: env.TURSO_CONNECTION_URL,
+    authToken: env.TURSO_AUTH_TOKEN,
+  });
+
+  return cachedDatabase;
+}
