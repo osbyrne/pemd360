@@ -15,7 +15,8 @@
     return new Date(ts).toISOString().split("T")[0];
   }
 
-  const storedDocuments: string[] = JSON.parse(data.diagnostic?.documentsConsultes || "[]");
+  const storedDocuments: string[] = (() =>
+    JSON.parse(data.diagnostic?.documentsConsultes || "[]"))();
 
   let desordres = $derived(!!data.diagnostic?.desordres);
   let precaution = $derived(!!data.diagnostic?.precaution);
