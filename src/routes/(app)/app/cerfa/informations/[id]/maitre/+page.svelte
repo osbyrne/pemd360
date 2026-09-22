@@ -10,7 +10,7 @@
 
   const id = $derived($page.params.id);
 
-  let typePersonne = $state(data.moa?.nomPerMorale ? "morale" : "physique");
+  let typePersonne = $derived(data.moa?.nomPerMorale ? "morale" : "physique");
 
   const styles = stylex.create({
     div: {
