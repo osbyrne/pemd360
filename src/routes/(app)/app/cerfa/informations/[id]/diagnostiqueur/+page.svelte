@@ -66,6 +66,15 @@
       lineHeight: "1.25rem",
       fontWeight: 500,
     },
+    fieldset: {
+      borderWidth: 0,
+      margin: 0,
+      minWidth: 0,
+      padding: 0,
+    },
+    legend: {
+      padding: 0,
+    },
     div7: {
       display: "grid",
       gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
@@ -327,15 +336,14 @@
               class={stylex.attrs(ui.input).class}
             />
           </div>
-          <div class={stylex.attrs(styles.stackSpacing1).class}>
-            <label for="dateDebutAssurance" class={stylex.attrs(styles.label).class}
-              >Date de validité</label
-            >
+          <fieldset class={stylex.attrs(styles.stackSpacing1, styles.fieldset).class}>
+            <legend class={stylex.attrs(styles.label, styles.legend).class}>Date de validité</legend>
             <div class={stylex.attrs(styles.div7).class}>
               <input
                 id="dateDebutAssurance"
                 name="dateDebutAssurance"
                 type="date"
+                aria-label="Début de validité"
                 value={toDateInput(data.diagnostiqueur?.dateDebutAssurance)}
                 class={stylex.attrs(ui.input).class}
               />
@@ -343,11 +351,12 @@
                 id="dateFinAssurance"
                 name="dateFinAssurance"
                 type="date"
+                aria-label="Fin de validité"
                 value={toDateInput(data.diagnostiqueur?.dateFinAssurance)}
                 class={stylex.attrs(ui.input).class}
               />
             </div>
-          </div>
+          </fieldset>
         </div>
 
         <div class={stylex.attrs(styles.stackSpacing15, styles.div11).class}>
