@@ -1,6 +1,7 @@
 <script lang="ts">
   import * as stylex from "@stylexjs/stylex";
   import { ui } from "$lib/styles/ui.stylex";
+  import { theme } from "../../../lib/styles/tokens.stylex";
   import { authClient } from "$lib/auth-client";
   import { goto } from "$app/navigation";
   import { onDestroy } from "svelte";
@@ -312,11 +313,25 @@
     },
     div6: {
       "--stack-gap": "0.25rem",
-      paddingTop: "0.25rem",
-      paddingBottom: "0.25rem",
+      marginLeft: "1.75rem",
+      paddingTop: "0.375rem",
+      paddingBottom: "0.375rem",
+      paddingLeft: "0.75rem",
+      borderLeftWidth: "2px",
+      borderLeftStyle: "solid",
+      borderLeftColor: `color-mix(in oklab, ${theme.baseContent} 18%, transparent)`,
     },
     a: {
       display: "flex",
+      width: "100%",
+      justifyContent: "flex-start",
+      textAlign: "left",
+      paddingInline: "0.75rem",
+      fontWeight: 500,
+    },
+    activeSubItem: {
+      backgroundColor: `color-mix(in oklab, ${theme.primary} 10%, transparent)`,
+      color: theme.primary,
     },
     div7: {
       flexShrink: 0,
@@ -482,7 +497,9 @@
                         ui.button,
                         ui.buttonGhost,
                         styles.a,
+                        isActive(subLink.href) && styles.activeSubItem,
                       ).class}
+                      aria-current={isActive(subLink.href) ? "page" : undefined}
                       onclick={() => {
                         if (window.innerWidth < 1024) sidebarOpen = false;
                       }}
