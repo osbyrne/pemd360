@@ -3,5 +3,5 @@ set -eu
 
 cd "$(git rev-parse --show-toplevel)"
 
-bun run lint
-bunx oxfmt --check package.json scripts src
+deno task lint
+deno task fmt:check package.json scripts src

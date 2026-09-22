@@ -4,6 +4,10 @@ This document is the resumable implementation ledger for `docs/EFFECT_MIGRATION_
 The plan is the user-provided specification; this file records implementation decisions and
 verification evidence.
 
+Current toolchain (2026-09-22): Deno installs dependencies and runs the repository tasks.
+The Bun commands below record the earlier Effect migration and are historical evidence.
+The Vercel adapter targets Node.js 24 for deployed functions.
+
 ## Toolchain and baseline
 
 - Assessment date: 2026-09-11.

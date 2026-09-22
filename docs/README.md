@@ -10,20 +10,19 @@ PEMD360 is a web application for building diagnostics and waste management (PEMD
 
 ## Tooling and Effect architecture
 
-- Bun is the canonical runtime for the executable `package.json` scripts and `bun.lock`.
-- Deno remains a supported installation/runtime context; use `deno install` and `deno task <script>` when working through Deno.
+- Deno installs dependencies from `package.json` and runs its scripts through `deno task`. Commit `deno.lock` for reproducible installs.
 - The application is pinned to the stable Effect 3 release `effect@3.22.2`; Effect 4 APIs are not used.
 - Server workflows under `src/lib/server/workflows` compose typed Effects through lazy services for the database, authorization, storage, email, and reports. SvelteKit route files only decode request data and map typed outcomes to the existing route contracts.
 - Browser workflows under `src/lib/client/workflows` use client-only adapters. Components retain markup, local state, DOM bindings, SvelteKit form enhancement, and navigation; the Matterport viewer has an owned connection and serialized tag reconciliation lifecycle.
 - `scripts/create-admin.ts` has its own CLI runtime and does not import SvelteKit `$env` modules. It keeps hidden password entry, explicit target confirmation, existing-account refusal, and transactional cleanup.
 
-Run the same checks with either runtime:
+Run the project checks with Deno:
 
 ```bash
-bun run check
-bun run test
-bun run lint
-bun run fmt:check
+deno task check
+deno task test
+deno task lint
+deno task fmt:check
 ```
 
 The migration ledger and its verification evidence are in `docs/EFFECT_MIGRATION_STATUS.md`.
@@ -43,9 +42,7 @@ Administrator bootstrap is intentionally available only as a local CLI command. 
 The command uses `TURSO_CONNECTION_URL`, `TURSO_AUTH_TOKEN`, `BETTER_AUTH_SECRET`, and optionally `BETTER_AUTH_URL` from `.env`. It displays the target database before making changes, asks for an explicit confirmation, and prompts for the password without displaying or storing it.
 
 ```bash
-bun run admin:create -- --email admin@example.com --name "Admin Name"
-# Or, through Deno's package-script task runner:
-deno task admin:create -- --email admin@example.com --name "Admin Name"
+deno task admin:create --email admin@example.com --name "Admin Name"
 ```
 
 Type `create admin` when prompted, then enter and confirm a password of at least eight characters. The user and credential account are created atomically with the `admin` role.
@@ -63,10 +60,10 @@ Security notes:
 
 ```bash
 # Generate migration
-dx drizzle-kit generate
+deno x drizzle-kit generate
 
 # Apply migration
-dx drizzle-kit migrate
+deno x drizzle-kit migrate
 ```
 
 # Matterport SDK Usage
@@ -91,8 +88,8 @@ dx drizzle-kit migrate
 
 1. Define schema in `src/lib/server/db/schema.ts`
 2. Add relations if needed
-3. Run `npx drizzle-kit generate` to create migration
-4. Run `npx drizzle-kit migrate` to apply
+3. Run `deno x drizzle-kit generate` to create migration
+4. Run `deno x drizzle-kit migrate` to apply
 
 ## Creating a New Protected Route
 
@@ -126,5 +123,4 @@ dx drizzle-kit migrate
 
 ## notes
 
-Run `deno task check` and fix issues before committing when using Deno.
-Also run `deno task fmt`.
+Run `deno task check` and `deno task fmt:check` before committing.

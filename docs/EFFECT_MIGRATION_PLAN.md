@@ -33,18 +33,18 @@ The README documents Deno, `package.json` includes Bun commands, and both lockfi
 
 Create these modules as their phases need them, rather than generating empty scaffolding:
 
-| Location | Responsibility |
-| --- | --- |
-| `src/lib/effect/errors.ts` | Shared tagged domain/integration errors; safe public messages |
-| `src/lib/effect/schemas/` | Input schemas grouped by domain, with explicit FormData decoding |
-| `src/lib/server/effect/runtime.ts` | Lazy server runtime and shared infrastructure layer composition |
-| `src/lib/server/effect/sveltekit.ts` | Run programs and map typed outcomes to existing route contracts |
-| `src/lib/server/services/` | Database, authorization, storage, email, and report adapters |
-| `src/lib/server/workflows/` | Project, PEMD, administration, CERFA, and synthesis use cases |
-| `src/lib/client/effect/runtime.ts` | Browser runtime factory; no server imports |
-| `src/lib/client/effect/operation.svelte.ts` | Component-owned operation lifecycle and Svelte state bridge |
-| `src/lib/client/services/` | Better Auth client and Matterport adapters |
-| `src/lib/client/workflows/` | Multi-step browser operations |
+| Location                                    | Responsibility                                                   |
+| ------------------------------------------- | ---------------------------------------------------------------- |
+| `src/lib/effect/errors.ts`                  | Shared tagged domain/integration errors; safe public messages    |
+| `src/lib/effect/schemas/`                   | Input schemas grouped by domain, with explicit FormData decoding |
+| `src/lib/server/effect/runtime.ts`          | Lazy server runtime and shared infrastructure layer composition  |
+| `src/lib/server/effect/sveltekit.ts`        | Run programs and map typed outcomes to existing route contracts  |
+| `src/lib/server/services/`                  | Database, authorization, storage, email, and report adapters     |
+| `src/lib/server/workflows/`                 | Project, PEMD, administration, CERFA, and synthesis use cases    |
+| `src/lib/client/effect/runtime.ts`          | Browser runtime factory; no server imports                       |
+| `src/lib/client/effect/operation.svelte.ts` | Component-owned operation lifecycle and Svelte state bridge      |
+| `src/lib/client/services/`                  | Better Auth client and Matterport adapters                       |
+| `src/lib/client/workflows/`                 | Multi-step browser operations                                    |
 
 Use Effect 3 `Context.Tag`, `Layer`, `ManagedRuntime`, and `Effect.gen` consistently. Choose the simplest concrete service interfaces that preserve Drizzle's inferred result types. Avoid a generic repository framework or one global union containing every possible application error.
 

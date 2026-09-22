@@ -52,7 +52,7 @@ function parseArguments(args: string[]): Arguments {
 
 function printUsage() {
   console.log(`Usage:
-  bun run admin:create -- --email admin@example.com --name "Admin Name"
+  deno task admin:create --email admin@example.com --name "Admin Name"
 
 Options:
   --email  Email address for the new administrator
