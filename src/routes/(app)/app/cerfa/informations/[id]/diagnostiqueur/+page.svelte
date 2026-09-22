@@ -10,7 +10,7 @@
 
   const id = $derived($page.params.id);
 
-  let typePersonne = $state(data.diagnostiqueur?.nomPerMorale ? "morale" : "physique");
+  let typePersonne = $derived(data.diagnostiqueur?.nomPerMorale ? "morale" : "physique");
 
   function toDateInput(ts: number | null | undefined): string {
     if (!ts) return "";
