@@ -15,11 +15,11 @@
     return new Date(ts).toISOString().split("T")[0];
   }
 
-  const storedTypologies: string[] = JSON.parse(data.operation?.typologieBat || "[]");
+  const storedTypologies = (): string[] => JSON.parse(data.operation?.typologieBat || "[]");
   const storedOperationsSoumis = (): string[] =>
     JSON.parse(data.operation?.operationSoumis || "[]");
 
-  let typologies = $state([...storedTypologies]);
+  let typologies = $state([...storedTypologies()]);
   let operationsSoumis = $state([...storedOperationsSoumis()]);
 
   const typologiesList = [
