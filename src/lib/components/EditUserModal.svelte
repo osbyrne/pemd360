@@ -112,9 +112,11 @@
 </script>
 
 <button
+  type="button"
   on:click={openModal}
-  class={stylex.attrs(ui.button, ui.buttonGhost).class}
+  class={stylex.attrs(ui.button, ui.buttonSmall, ui.buttonGhost).class}
   title="Modifier les informations"
+  aria-label="Modifier les informations de {user.name}"
 >
   <Pencil size={18} />
 </button>

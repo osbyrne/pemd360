@@ -96,9 +96,11 @@
 </script>
 
 <button
+  type="button"
   on:click={openModal}
-  class={stylex.attrs(ui.button, ui.buttonGhost, styles.button).class}
+  class={stylex.attrs(ui.button, ui.buttonSmall, ui.buttonGhost, styles.button).class}
   title="Supprimer"
+  aria-label="Supprimer {user.name}"
 >
   <X size={18} />
 </button>

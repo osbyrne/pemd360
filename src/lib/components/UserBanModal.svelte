@@ -110,9 +110,11 @@
 </script>
 
 <button
+  type="button"
   on:click={openModal}
   class={stylex.attrs(
     ui.button,
+    ui.buttonSmall,
     ui.buttonGhost,
     styles.button,
     user.banned
@@ -120,8 +122,11 @@
       : [ui.hoverBgAmber50, ui.hoverTextAmber600],
   ).class}
   title={user.banned ? "Reactiver le compte" : "Cloturer le compte"}
+  aria-label={user.banned
+    ? `Réactiver le compte de ${user.name}`
+    : `Clôturer le compte de ${user.name}`}
 >
-  <Ban />
+  <Ban size={18} />
 </button>
 
 <dialog bind:this={modal} class={stylex.attrs(ui.dialog).class}>

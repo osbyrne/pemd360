@@ -133,9 +133,11 @@
 </script>
 
 <button
+  type="button"
   on:click={openModal}
-  class={stylex.attrs(ui.button, ui.buttonGhost).class}
+  class={stylex.attrs(ui.button, ui.buttonSmall, ui.buttonGhost).class}
   title="Gérer les projets"
+  aria-label="Gérer les projets de {user.name}"
 >
   <Folder size={18} />
 </button>

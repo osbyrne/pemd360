@@ -47,7 +47,10 @@
 
   // Projets from server
   $: projets = (data.projets || []) as Projet[];
-  $: usersWithProjets = (data.usersWithProjets || []) as { userId: string; projetId: string }[];
+  $: usersWithProjets = (data.usersWithProjets || []) as {
+    userId: string;
+    projetId: string;
+  }[];
 
   // Pagination & Search
   let query = "";
@@ -136,7 +139,12 @@
   }
 
   function handleUserUpdated(
-    event: CustomEvent<{ userId: string; name: string; email: string; role: string }>,
+    event: CustomEvent<{
+      userId: string;
+      name: string;
+      email: string;
+      role: string;
+    }>,
   ) {
     const { userId, name, email, role } = event.detail;
     users = users.map((u) => (u.id === userId ? { ...u, name, email, role } : u));
@@ -159,266 +167,149 @@
       year: "numeric",
     });
   }
-  const pulse = stylex.keyframes({ "50%": { opacity: 0.5 } });
-
   const styles = stylex.create({
     main: {
-      marginInlineStart: "auto",
-      marginInlineEnd: "auto",
+      width: "100%",
       maxWidth: "80rem",
+      marginInline: "auto",
     },
-    div: {
-      marginBottom: "2rem",
-    },
-    div2: {
-      display: {
-        "@media (min-width: 640px)": "flex",
+    header: {
+      display: "flex",
+      flexDirection: {
+        default: "column",
+        "@media (min-width: 640px)": "row",
       },
       alignItems: {
+        default: "flex-start",
         "@media (min-width: 640px)": "center",
       },
-      justifyContent: {
-        "@media (min-width: 640px)": "space-between",
-      },
+      justifyContent: "space-between",
+      gap: "1rem",
+      marginBottom: "1.5rem",
     },
-    h1: {
-      fontSize: {
-        default: "1.5rem",
-        "@media (min-width: 640px)": "1.875rem",
-      },
-      lineHeight: {
-        default: "2rem",
-        "@media (min-width: 640px)": "2.25rem",
-      },
+    title: {
+      fontSize: "1.875rem",
+      lineHeight: "2.25rem",
       fontWeight: 700,
       letterSpacing: "-.025em",
     },
-    p: {
-      marginTop: "0.5rem",
+    description: {
+      marginTop: ".375rem",
       fontSize: ".875rem",
-      lineHeight: "1.25rem",
+      color: `color-mix(in oklab, ${theme.baseContent} 65%, transparent)`,
     },
-    div3: {
-      marginTop: {
-        default: "1rem",
-        "@media (min-width: 640px)": "0rem",
-      },
-      display: "flex",
-      flexWrap: "wrap",
-      gap: "0.75rem",
-    },
-    label: {
+    search: {
       position: "relative",
+      width: "100%",
+      maxWidth: "26rem",
       marginBottom: "1.5rem",
     },
-    div4: {
+    searchIcon: {
+      position: "absolute",
+      insetInlineStart: ".875rem",
+      top: "50%",
+      transform: "translateY(-50%)",
+      pointerEvents: "none",
+      color: `color-mix(in oklab, ${theme.baseContent} 55%, transparent)`,
+    },
+    searchInput: {
+      width: "100%",
+      paddingInlineStart: "2.75rem",
+    },
+    error: {
+      display: "flex",
+      alignItems: "flex-start",
+      gap: ".75rem",
       marginBottom: "1.5rem",
+      padding: "1rem",
+      borderRadius: ".75rem",
+      backgroundColor: theme.error,
+      color: theme.errorContent,
+    },
+    errorTitle: { fontWeight: 600 },
+    errorMessage: { marginTop: ".25rem", fontSize: ".875rem" },
+    tableCard: {
+      overflow: "hidden",
       borderRadius: ".75rem",
       borderWidth: "1px",
       borderStyle: "solid",
-      borderColor: "oklch(88.5% 0.062 18.334)",
-      backgroundColor: "oklch(97.1% 0.013 17.38)",
-      paddingTop: "1rem",
-      paddingRight: "1rem",
-      paddingBottom: "1rem",
-      paddingLeft: "1rem",
-    },
-    div5: {
-      display: "flex",
-      alignItems: "flex-start",
-      gap: "0.75rem",
-    },
-    h3: {
-      fontSize: ".875rem",
-      lineHeight: "1.25rem",
-      fontWeight: 600,
-      color: "oklch(44.4% 0.177 26.899)",
-    },
-    p2: {
-      marginTop: "0.25rem",
-      fontSize: ".875rem",
-      lineHeight: "1.25rem",
-      color: "oklch(50.5% 0.213 27.518)",
-    },
-    ul: {
-      borderRadius: ".5rem",
+      borderColor: `color-mix(in oklab, ${theme.baseContent} 12%, transparent)`,
       backgroundColor: theme.base100,
-      boxShadow: "0 4px 6px -1px #0000001a, 0 2px 4px -2px #0000001a",
+      boxShadow: "0 1px 3px #0000001a",
     },
-    div6: {
-      "--divider-width": "1px",
-      "--divider-color": "oklch(96.8% 0.007 247.896)",
-    },
-    div7: {
-      display: "flex",
-      alignItems: "center",
-      gap: "1rem",
-      paddingTop: "1rem",
-      paddingRight: "1rem",
-      paddingBottom: "1rem",
-      paddingLeft: "1rem",
-    },
-    div8: {
-      height: "3rem",
-      width: "3rem",
-      animationName: pulse,
-      animationDuration: "2s",
-      animationTimingFunction: "cubic-bezier(0.4, 0, 0.6, 1)",
-      animationIterationCount: "infinite",
-      "@media (prefers-reduced-motion: reduce)": {
-        animationName: "none",
-      },
-      borderRadius: "9999px",
-    },
-    div9: {
-      flex: "1 1 0%",
-      "--stack-gap": "0.5rem",
-    },
-    div10: {
-      height: "1rem",
-      width: "8rem",
-      animationName: pulse,
-      animationDuration: "2s",
-      animationTimingFunction: "cubic-bezier(0.4, 0, 0.6, 1)",
-      animationIterationCount: "infinite",
-      "@media (prefers-reduced-motion: reduce)": {
-        animationName: "none",
-      },
-      borderRadius: ".25rem",
-    },
-    div11: {
-      height: "0.75rem",
-      width: "12rem",
-      animationName: pulse,
-      animationDuration: "2s",
-      animationTimingFunction: "cubic-bezier(0.4, 0, 0.6, 1)",
-      animationIterationCount: "infinite",
-      "@media (prefers-reduced-motion: reduce)": {
-        animationName: "none",
-      },
-      borderRadius: ".25rem",
-    },
-    div12: {
-      height: "1.5rem",
-      width: "4rem",
-      animationName: pulse,
-      animationDuration: "2s",
-      animationTimingFunction: "cubic-bezier(0.4, 0, 0.6, 1)",
-      animationIterationCount: "infinite",
-      "@media (prefers-reduced-motion: reduce)": {
-        animationName: "none",
-      },
-      borderRadius: "9999px",
-    },
-    div13: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      paddingInlineStart: "1rem",
-      paddingInlineEnd: "1rem",
-      paddingTop: "4rem",
-      paddingBottom: "4rem",
-    },
-    p3: {
-      fontWeight: 500,
-    },
-    p4: {
-      marginTop: "0.25rem",
+    tableScroll: { overflowX: "auto" },
+    table: {
+      width: "100%",
+      minWidth: "58rem",
+      borderCollapse: "collapse",
+      tableLayout: "fixed",
+      textAlign: "left",
       fontSize: ".875rem",
-      lineHeight: "1.25rem",
     },
-    div14: {
-      minWidth: "0rem",
-      flex: "1 1 0%",
-    },
-    div15: {
-      display: "flex",
-      alignItems: "center",
-      gap: "0.5rem",
-    },
-    p5: {
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
+    heading: {
+      padding: ".875rem 1rem",
+      backgroundColor: theme.base200,
+      color: `color-mix(in oklab, ${theme.baseContent} 65%, transparent)`,
+      fontSize: ".75rem",
       fontWeight: 600,
+      letterSpacing: ".04em",
     },
-    span: {
+    userColumn: { width: "26%" },
+    roleColumn: { width: "15%" },
+    projectsColumn: { width: "15%" },
+    dateColumn: { width: "17%" },
+    actionsColumn: { width: "27%", textAlign: "right" },
+    row: {
+      backgroundColor: {
+        default: "transparent",
+        ":hover": theme.base200,
+      },
+    },
+    cell: {
+      padding: ".875rem 1rem",
+      borderTopWidth: "1px",
+      borderTopStyle: "solid",
+      borderTopColor: `color-mix(in oklab, ${theme.baseContent} 9%, transparent)`,
+      verticalAlign: "middle",
+    },
+    userName: { fontWeight: 600 },
+    userEmail: {
+      marginTop: ".25rem",
+      color: `color-mix(in oklab, ${theme.baseContent} 65%, transparent)`,
+      fontSize: ".8125rem",
+      overflowWrap: "anywhere",
+    },
+    roleBadge: {
+      display: "inline-flex",
+      maxWidth: "100%",
+      padding: ".25rem .625rem",
       borderRadius: "9999px",
-      paddingInlineStart: "0.5rem",
-      paddingInlineEnd: "0.5rem",
-      paddingTop: "0.125rem",
-      paddingBottom: "0.125rem",
+      backgroundColor: theme.base200,
       fontSize: ".75rem",
-      lineHeight: "1rem",
-    },
-    p6: {
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-      fontSize: ".875rem",
-      lineHeight: "1.25rem",
-    },
-    div16: {
-      display: {
-        default: "none",
-        "@media (min-width: 768px)": "flex",
-      },
-      flexDirection: {
-        "@media (min-width: 768px)": "column",
-      },
-      alignItems: {
-        "@media (min-width: 768px)": "flex-end",
-      },
-    },
-    p7: {
-      fontSize: ".75rem",
-      lineHeight: "1rem",
-    },
-    p8: {
-      fontSize: ".875rem",
-      lineHeight: "1.25rem",
-      fontWeight: 500,
+      fontWeight: 600,
       whiteSpace: "nowrap",
     },
-    div17: {
-      marginRight: "1rem",
-      display: {
-        default: "none",
-        "@media (min-width: 1024px)": "flex",
-      },
-      width: "8rem",
-      flexDirection: {
-        "@media (min-width: 1024px)": "column",
-      },
-      alignItems: {
-        "@media (min-width: 1024px)": "flex-end",
-      },
-    },
-    p9: {
-      maxWidth: "7.5rem",
-      overflow: "hidden",
-      textOverflow: "ellipsis",
-      whiteSpace: "nowrap",
-      fontSize: ".875rem",
-      lineHeight: "1.25rem",
-      fontWeight: 500,
-    },
-    div18: {
+    projectValue: { fontWeight: 500 },
+    dateValue: { whiteSpace: "nowrap" },
+    actions: {
       display: "flex",
       alignItems: "center",
-      gap: "0.25rem",
-      borderLeftWidth: "1px",
-      borderLeftStyle: "solid",
-      borderColor: "oklch(92.9% 0.013 255.508)",
-      paddingLeft: "0.5rem",
+      justifyContent: "flex-end",
+      gap: ".125rem",
     },
-    span2: {
-      fontSize: ".875rem",
-      lineHeight: "1.25rem",
-      fontWeight: 500,
+    statusCell: {
+      padding: "3rem 1rem",
+      textAlign: "center",
+      color: `color-mix(in oklab, ${theme.baseContent} 65%, transparent)`,
     },
-    stackSpacing05: { marginBlockEnd: { default: "0.5rem", ":last-child": 0 } },
+    statusIcon: { marginInline: "auto", marginBottom: ".75rem" },
+    statusTitle: { color: theme.baseContent, fontWeight: 600 },
+    statusDescription: { marginTop: ".25rem", fontSize: ".875rem" },
+    pagination: {
+      borderTopWidth: "1px",
+      borderTopStyle: "solid",
+      borderTopColor: `color-mix(in oklab, ${theme.baseContent} 9%, transparent)`,
+    },
   });
 </script>
 
@@ -427,157 +318,169 @@
 </svelte:head>
 
 <main class={stylex.attrs(styles.main).class}>
-  <!-- Header -->
-  <div class={stylex.attrs(styles.div).class}>
-    <div class={stylex.attrs(styles.div2).class}>
-      <div>
-        <h1 class={stylex.attrs(styles.h1).class}>Gestion des utilisateurs</h1>
-        <p class={stylex.attrs(styles.p).class}>
-          Gérez les utilisateurs, leurs rôles et leurs accès.
-        </p>
-      </div>
-      <div class={stylex.attrs(styles.div3).class}>
-        <CreateUserModal
-          {projets}
-          on:created={loadUsers}
-          on:toast={(e) => showToast(e.detail.message, e.detail.type)}
-        />
-      </div>
+  <header class={stylex.attrs(styles.header).class}>
+    <div>
+      <h1 class={stylex.attrs(styles.title).class}>Gestion des utilisateurs</h1>
+      <p class={stylex.attrs(styles.description).class}>
+        Gérez les utilisateurs, leurs rôles et leurs accès.
+      </p>
     </div>
+    <CreateUserModal
+      {projets}
+      on:created={loadUsers}
+      on:toast={(e) => showToast(e.detail.message, e.detail.type)}
+    />
+  </header>
+
+  <div class={stylex.attrs(styles.search).class}>
+    <Search size={18} class={stylex.attrs(styles.searchIcon).class} aria-hidden="true" />
+    <input
+      type="search"
+      bind:value={query}
+      on:input={() => (page = 1)}
+      aria-label="Rechercher par nom ou email"
+      placeholder="Rechercher par nom ou email..."
+      class={stylex.attrs(ui.input, styles.searchInput).class}
+    />
   </div>
 
-  <!-- Search Bar -->
-  <label class={stylex.attrs(ui.input, styles.label).class}>
-    <Search />
-    <input type="search" bind:value={query} placeholder="Rechercher par nom ou email..." />
-  </label>
-
-  <!-- Error State -->
   {#if error}
-    <div class={stylex.attrs(styles.div4).class}>
-      <div class={stylex.attrs(styles.div5).class}>
-        <Bug size={24} />
-        <div>
-          <h3 class={stylex.attrs(styles.h3).class}>Erreur de chargement</h3>
-          <p class={stylex.attrs(styles.p2).class}>{error}</p>
-        </div>
+    <div class={stylex.attrs(styles.error).class} role="alert">
+      <Bug size={24} />
+      <div>
+        <h2 class={stylex.attrs(styles.errorTitle).class}>Erreur de chargement</h2>
+        <p class={stylex.attrs(styles.errorMessage).class}>{error}</p>
       </div>
     </div>
   {/if}
 
-  <!-- Users Grid -->
-  <ul class={stylex.attrs(ui.list, styles.ul).class}>
-    {#if loading}
-      <div class={stylex.attrs(styles.div6).class}>
-        {#each [...Array(5).keys()] as i (i)}
-          <div class={stylex.attrs(ui.divideChild, styles.div7).class}>
-            <div class={stylex.attrs(styles.div8).class}></div>
-            <div class={stylex.attrs(styles.div9).class}>
-              <div class={stylex.attrs(styles.stackSpacing05, styles.div10).class}></div>
-              <div class={stylex.attrs(styles.stackSpacing05, styles.div11).class}></div>
-            </div>
-            <div class={stylex.attrs(styles.div12).class}></div>
-          </div>
-        {/each}
-      </div>
-    {:else if displayedUsers.length === 0}
-      <div class={stylex.attrs(styles.div13).class}>
-        <Users />
-        <p class={stylex.attrs(styles.p3).class}>Aucun utilisateur trouvé</p>
-        <p class={stylex.attrs(styles.p4).class}>Essayez de modifier vos critères de recherche</p>
-      </div>
-    {:else}
-      <div>
-        {#each displayedUsers as user (user.id)}
-          <li class={stylex.attrs(ui.listRow).class}>
-            <div class={stylex.attrs(styles.div14).class}>
-              <div class={stylex.attrs(styles.div15).class}>
-                <p class={stylex.attrs(styles.p5).class}>{user.name}</p>
-                {#if user.role === "admin"}
-                  <span class={stylex.attrs(styles.span).class}> Administrateur </span>
-                {:else if user.role === "collaborator"}
-                  <span class={stylex.attrs(styles.span).class}> Collaborateur </span>
-                {:else}
-                  <span class={stylex.attrs(styles.span).class}> Utilisateur </span>
-                {/if}
-              </div>
-              <p class={stylex.attrs(styles.p6).class}>{user.email}</p>
-            </div>
-
-            <!-- Date -->
-            <div class={stylex.attrs(styles.div16).class}>
-              <p class={stylex.attrs(styles.p7).class}>Inscrit le</p>
-              <p class={stylex.attrs(styles.p8).class}>
-                {formatDate(user.createdAt)}
-              </p>
-            </div>
-
-            <!-- Projets -->
-            <div class={stylex.attrs(styles.div17).class}>
-              <p class={stylex.attrs(styles.p7).class}>Projets</p>
-              {#if user.role === "admin"}
-                <p class={stylex.attrs(styles.p9).class}>tous</p>
-              {:else}
-                <p
-                  class={stylex.attrs(styles.p9).class}
-                  title={getProjetsNames(getUserProjets(user.id))}
-                >
-                  {getProjetsCount(user.id)} projet{getProjetsCount(user.id) > 1 ? "s" : ""}
+  <div class={stylex.attrs(styles.tableCard).class}>
+    <div class={stylex.attrs(styles.tableScroll).class}>
+      <table class={stylex.attrs(styles.table).class} aria-label="Utilisateurs" aria-busy={loading}>
+        <thead>
+          <tr>
+            <th scope="col" class={stylex.attrs(styles.heading, styles.userColumn).class}
+              >Utilisateur</th
+            >
+            <th scope="col" class={stylex.attrs(styles.heading, styles.roleColumn).class}>Rôle</th>
+            <th scope="col" class={stylex.attrs(styles.heading, styles.projectsColumn).class}
+              >Projets</th
+            >
+            <th scope="col" class={stylex.attrs(styles.heading, styles.dateColumn).class}
+              >Inscription</th
+            >
+            <th scope="col" class={stylex.attrs(styles.heading, styles.actionsColumn).class}
+              >Actions</th
+            >
+          </tr>
+        </thead>
+        <tbody>
+          {#if loading}
+            <tr>
+              <td colspan="5" class={stylex.attrs(styles.cell, styles.statusCell).class}>
+                Chargement des utilisateurs…
+              </td>
+            </tr>
+          {:else if displayedUsers.length === 0}
+            <tr>
+              <td colspan="5" class={stylex.attrs(styles.cell, styles.statusCell).class}>
+                <Users size={28} class={stylex.attrs(styles.statusIcon).class} aria-hidden="true" />
+                <p class={stylex.attrs(styles.statusTitle).class}>Aucun utilisateur trouvé</p>
+                <p class={stylex.attrs(styles.statusDescription).class}>
+                  Essayez de modifier vos critères de recherche
                 </p>
-              {/if}
-            </div>
-
-            <!-- Actions -->
-            <div class={stylex.attrs(styles.div18).class}>
-              <UserProjetsModal
-                {user}
-                {projets}
-                initialProjetIds={getUserProjets(user.id)}
-                on:saved={handleProjetsSaved}
-                on:toast={(e) => showToast(e.detail.message, e.detail.type)}
-              />
-              <EditUserModal
-                {user}
-                on:updated={handleUserUpdated}
-                on:toast={(e) => showToast(e.detail.message, e.detail.type)}
-              />
-              <UserPasswordModal
-                {user}
-                on:toast={(e) => showToast(e.detail.message, e.detail.type)}
-              />
-              <UserBanModal
-                {user}
-                on:statusChanged={handleUserStatusChanged}
-                on:toast={(e) => showToast(e.detail.message, e.detail.type)}
-              />
-              <DeleteUserModal
-                {user}
-                on:deleted={handleUserDeleted}
-                on:toast={(e) => showToast(e.detail.message, e.detail.type)}
-              />
-            </div>
-          </li>
-        {/each}
+              </td>
+            </tr>
+          {:else}
+            {#each displayedUsers as user (user.id)}
+              <tr class={stylex.attrs(styles.row).class}>
+                <th scope="row" class={stylex.attrs(styles.cell).class}>
+                  <div class={stylex.attrs(styles.userName).class}>
+                    {user.name}
+                  </div>
+                  <div class={stylex.attrs(styles.userEmail).class}>
+                    {user.email}
+                  </div>
+                </th>
+                <td class={stylex.attrs(styles.cell).class}>
+                  <span class={stylex.attrs(styles.roleBadge).class}>
+                    {#if user.role === "admin"}
+                      Administrateur
+                    {:else if user.role === "collaborator"}
+                      Collaborateur
+                    {:else}
+                      Utilisateur
+                    {/if}
+                  </span>
+                </td>
+                <td class={stylex.attrs(styles.cell).class}>
+                  {#if user.role === "admin"}
+                    <span class={stylex.attrs(styles.projectValue).class}>Tous</span>
+                  {:else}
+                    <span
+                      class={stylex.attrs(styles.projectValue).class}
+                      title={getProjetsNames(getUserProjets(user.id))}
+                    >
+                      {getProjetsCount(user.id)} projet{getProjetsCount(user.id) > 1 ? "s" : ""}
+                    </span>
+                  {/if}
+                </td>
+                <td class={stylex.attrs(styles.cell, styles.dateValue).class}>
+                  {formatDate(user.createdAt)}
+                </td>
+                <td class={stylex.attrs(styles.cell).class}>
+                  <div class={stylex.attrs(styles.actions).class}>
+                    <UserProjetsModal
+                      {user}
+                      {projets}
+                      initialProjetIds={getUserProjets(user.id)}
+                      on:saved={handleProjetsSaved}
+                      on:toast={(e) => showToast(e.detail.message, e.detail.type)}
+                    />
+                    <EditUserModal
+                      {user}
+                      on:updated={handleUserUpdated}
+                      on:toast={(e) => showToast(e.detail.message, e.detail.type)}
+                    />
+                    <UserPasswordModal
+                      {user}
+                      on:toast={(e) => showToast(e.detail.message, e.detail.type)}
+                    />
+                    <UserBanModal
+                      {user}
+                      on:statusChanged={handleUserStatusChanged}
+                      on:toast={(e) => showToast(e.detail.message, e.detail.type)}
+                    />
+                    <DeleteUserModal
+                      {user}
+                      on:deleted={handleUserDeleted}
+                      on:toast={(e) => showToast(e.detail.message, e.detail.type)}
+                    />
+                  </div>
+                </td>
+              </tr>
+            {/each}
+          {/if}
+        </tbody>
+      </table>
+    </div>
+    {#if !loading && totalPages > 1}
+      <div class={stylex.attrs(styles.pagination).class}>
+        <Pagination
+          {page}
+          {totalPages}
+          totalItems={filteredUsers.length}
+          {perPage}
+          onPageChange={(p) => (page = p)}
+        />
       </div>
     {/if}
-
-    <!-- Pagination -->
-    {#if !loading}
-      <Pagination
-        {page}
-        {totalPages}
-        totalItems={filteredUsers.length}
-        {perPage}
-        onPageChange={(p) => (page = p)}
-      />
-    {/if}
-  </ul>
+  </div>
 </main>
-
 {#if toast}
   <div class={stylex.attrs(ui.toast).class}>
     <div class={stylex.attrs(ui.alert, ui.alertInfo).class}>
-      <span class={stylex.attrs(styles.span2).class}>{toast.message}</span>
+      <span>{toast.message}</span>
     </div>
   </div>
 {/if}

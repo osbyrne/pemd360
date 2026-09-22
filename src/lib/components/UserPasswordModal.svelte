@@ -94,9 +94,11 @@
 </script>
 
 <button
+  type="button"
   on:click={openModal}
-  class={stylex.attrs(ui.button, ui.buttonGhost).class}
+  class={stylex.attrs(ui.button, ui.buttonSmall, ui.buttonGhost).class}
   title="Changer le mot de passe"
+  aria-label="Changer le mot de passe de {user.name}"
 >
   <KeyRound size={18} />
 </button>
