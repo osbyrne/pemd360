@@ -328,7 +328,9 @@
             />
           </div>
           <div class={stylex.attrs(styles.stackSpacing1).class}>
-            <label class={stylex.attrs(styles.label).class}>Date de validité</label>
+            <label for="dateDebutAssurance" class={stylex.attrs(styles.label).class}
+              >Date de validité</label
+            >
             <div class={stylex.attrs(styles.div7).class}>
               <input
                 id="dateDebutAssurance"
