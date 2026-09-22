@@ -17,7 +17,7 @@
 
   const storedDocuments: string[] = JSON.parse(data.diagnostic?.documentsConsultes || "[]");
 
-  let desordres = $state(!!data.diagnostic?.desordres);
+  let desordres = $derived(!!data.diagnostic?.desordres);
   let precaution = $state(!!data.diagnostic?.precaution);
   let documentsConsultes = $state([...storedDocuments]);
 
