@@ -8,6 +8,13 @@ PEMD360 is a web application for building diagnostics and waste management (PEMD
 
 - Deno
 
+## Reproducible Toolchain
+
+The Flox environment in `.flox/` pins the local runtimes and service CLIs used by this
+repository: Bun 1.4.2, Deno 2.9.7, Node.js 24.21.0, Turso CLI 1.0.33, and Wrangler 4.148.0
+(Cloudflare Workers). From the repository root, run `flox activate` to enter that environment.
+The JavaScript dependency graph remains pinned by `deno.lock`.
+
 ## Tooling and Effect architecture
 
 - Deno installs dependencies from `package.json` and runs its scripts through `deno task`. Commit `deno.lock` for reproducible installs.
