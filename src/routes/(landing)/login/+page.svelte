@@ -14,6 +14,7 @@
 
   let email = $state("");
   let password = $state("");
+  const hasCredentials = $derived(email.trim().length > 0 && password.length > 0);
   let error = $state("");
   const operation = createOperation<void, unknown>();
   const loading = $derived(operation.state.pending);
@@ -170,6 +171,16 @@
       alignItems: "center",
       paddingRight: "0.75rem",
     },
+    actions: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      flexWrap: "wrap",
+      gap: "0.75rem",
+    },
+    submit: {
+      marginInlineStart: "auto",
+    },
     Loader: {
       height: "1.25rem",
       width: "1.25rem",
@@ -250,24 +261,22 @@
           </div>
         </div>
 
-        <button
-          type="submit"
-          class={stylex.attrs(styles.stackSpacing15, ui.button).class}
-          disabled={loading}
-        >
-          {#if loading}
-            <Loader class={stylex.attrs(styles.Loader).class} />
-            <span>Connexion en cours...</span>
-          {:else}
-            <span>Se connecter</span>
-          {/if}
-        </button>
+        <div class={stylex.attrs(styles.actions).class}>
+          <a href="/" class={stylex.attrs(ui.button).class}>Retour à l'accueil</a>
+          <button
+            type="submit"
+            class={stylex.attrs(ui.button, styles.submit, hasCredentials && ui.buttonSuccess).class}
+            disabled={loading}
+          >
+            {#if loading}
+              <Loader class={stylex.attrs(styles.Loader).class} />
+              <span>Connexion en cours...</span>
+            {:else}
+              <span>Se connecter</span>
+            {/if}
+          </button>
+        </div>
       </form>
-    </div>
-
-    <!-- Footer -->
-    <div class={stylex.attrs(ui.button).class}>
-      <a href="/">Retour à l'accueil </a>
     </div>
   </div>
 </div>

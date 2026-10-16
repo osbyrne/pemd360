@@ -313,9 +313,15 @@
 </div>
 
 <!-- Search Bar -->
-<label class={stylex.attrs(ui.input, styles.label).class}>
-  <Search />
-  <input type="search" bind:value={query} placeholder="Rechercher par catégorie ou groupe..." />
+<label class={stylex.attrs(ui.input, ui.searchField, styles.label).class}>
+  <Search class={stylex.attrs(ui.searchIcon).class} aria-hidden="true" />
+  <input
+    class={stylex.attrs(ui.searchInput).class}
+    aria-label="Rechercher par catégorie ou groupe..."
+    type="search"
+    bind:value={query}
+    placeholder="Rechercher par catégorie ou groupe..."
+  />
 </label>
 <br />
 <br />

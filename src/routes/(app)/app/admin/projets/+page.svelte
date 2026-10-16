@@ -312,9 +312,11 @@
   </div>
 
   <!-- Search Bar -->
-  <label class={stylex.attrs(ui.input, styles.label).class}>
-    <Search />
+  <label class={stylex.attrs(ui.input, ui.searchField, styles.label).class}>
+    <Search class={stylex.attrs(ui.searchIcon).class} aria-hidden="true" />
     <input
+      class={stylex.attrs(ui.searchInput).class}
+      aria-label="Rechercher par ID Matterport, référence, libellé, ville, établissement..."
       type="search"
       bind:value={query}
       placeholder="Rechercher par ID Matterport, référence, libellé, ville, établissement..."
