@@ -172,9 +172,11 @@
       </div>
       <div>
         <div class={stylex.attrs(styles.div4).class}>Projets assignes</div>
-        <label class={stylex.attrs(ui.input).class}>
-          <Search />
+        <label class={stylex.attrs(ui.input, ui.searchField).class}>
+          <Search class={stylex.attrs(ui.searchIcon).class} aria-hidden="true" />
           <input
+            class={stylex.attrs(ui.searchInput).class}
+            aria-label="Rechercher un projet..."
             type="search"
             bind:value={modalProjectSearch}
             placeholder="Rechercher un projet..."

@@ -228,16 +228,16 @@
       <div class={stylex.attrs(styles.div3).class}>
         <div class={stylex.attrs(styles.div4).class}>
           <!-- Search -->
-          <label class={stylex.attrs(ui.input, styles.label).class}>
-            <Search />
+          <label class={stylex.attrs(ui.input, ui.searchField, styles.label).class}>
+            <Search class={stylex.attrs(ui.searchIcon).class} aria-hidden="true" />
             <input
+              class={stylex.attrs(ui.searchInput).class}
+              aria-label="Rechercher un projet par nom, référence ou ville..."
               type="search"
               bind:value={searchQuery}
               placeholder="Rechercher un projet par nom, référence ou ville..."
             />
           </label>
-          <br />
-
           <!-- View Toggle & Sort -->
           <div class={stylex.attrs(styles.div5).class}>
             <!-- Sort Buttons -->

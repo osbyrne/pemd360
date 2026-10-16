@@ -202,9 +202,11 @@
 <!-- Filters -->
 <div class={stylex.attrs(styles.div3).class}>
   <ProjectFilter projects={data.projects} selectedProjectId={data.selectedProjectId} />
-  <label class={stylex.attrs(ui.input, styles.label2).class}>
-    <Search />
+  <label class={stylex.attrs(ui.input, ui.searchField, styles.label2).class}>
+    <Search class={stylex.attrs(ui.searchIcon).class} aria-hidden="true" />
     <input
+      class={stylex.attrs(ui.searchInput).class}
+      aria-label="Rechercher par label, description ou projet..."
       type="search"
       bind:value={query}
       placeholder="Rechercher par label, description ou projet..."

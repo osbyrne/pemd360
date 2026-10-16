@@ -476,9 +476,16 @@
     </div>
 
     <!-- Search Bar -->
-    <label class={stylex.attrs(ui.input, styles.label).class}>
-      <Search />
-      <input type="search" value={query} oninput={handleSearchInput} placeholder="Rechercher..." />
+    <label class={stylex.attrs(ui.input, ui.searchField, styles.label).class}>
+      <Search class={stylex.attrs(ui.searchIcon).class} aria-hidden="true" />
+      <input
+        class={stylex.attrs(ui.searchInput).class}
+        aria-label="Rechercher..."
+        type="search"
+        value={query}
+        oninput={handleSearchInput}
+        placeholder="Rechercher..."
+      />
     </label>
   </div>
 

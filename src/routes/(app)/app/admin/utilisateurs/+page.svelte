@@ -204,18 +204,6 @@
       maxWidth: "26rem",
       marginBottom: "1.5rem",
     },
-    searchIcon: {
-      position: "absolute",
-      insetInlineStart: ".875rem",
-      top: "50%",
-      transform: "translateY(-50%)",
-      pointerEvents: "none",
-      color: `color-mix(in oklab, ${theme.baseContent} 55%, transparent)`,
-    },
-    searchInput: {
-      width: "100%",
-      paddingInlineStart: "2.75rem",
-    },
     error: {
       display: "flex",
       alignItems: "flex-start",
@@ -332,15 +320,15 @@
     />
   </header>
 
-  <div class={stylex.attrs(styles.search).class}>
-    <Search size={18} class={stylex.attrs(styles.searchIcon).class} aria-hidden="true" />
+  <div class={stylex.attrs(ui.input, ui.searchField, styles.search).class}>
+    <Search class={stylex.attrs(ui.searchIcon).class} aria-hidden="true" />
     <input
       type="search"
       bind:value={query}
       on:input={() => (page = 1)}
       aria-label="Rechercher par nom ou email"
       placeholder="Rechercher par nom ou email..."
-      class={stylex.attrs(ui.input, styles.searchInput).class}
+      class={stylex.attrs(ui.searchInput).class}
     />
   </div>
 

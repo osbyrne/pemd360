@@ -299,9 +299,11 @@
   <!-- Filters & Stats -->
   <div class={stylex.attrs(styles.div3).class}>
     <ProjectFilter projects={data.projects} selectedProjectId={data.selectedProjectId} />
-    <label class={stylex.attrs(ui.input, styles.label).class}>
-      <Search />
+    <label class={stylex.attrs(ui.input, ui.searchField, styles.label).class}>
+      <Search class={stylex.attrs(ui.searchIcon).class} aria-hidden="true" />
       <input
+        class={stylex.attrs(ui.searchInput).class}
+        aria-label="Rechercher par nature, code déchet, éco-organisme..."
         type="search"
         value={query}
         oninput={handleSearchInput}

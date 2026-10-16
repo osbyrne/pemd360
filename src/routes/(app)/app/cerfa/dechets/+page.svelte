@@ -429,9 +429,15 @@
   <!-- Filters Section -->
   <div class={stylex.attrs(styles.div5).class}>
     <!-- Search -->
-    <label class={stylex.attrs(ui.input, styles.label).class}>
-      <Search />
-      <input type="search" bind:value={searchTerm} placeholder="Rechercher..." />
+    <label class={stylex.attrs(ui.input, ui.searchField, styles.label).class}>
+      <Search class={stylex.attrs(ui.searchIcon).class} aria-hidden="true" />
+      <input
+        class={stylex.attrs(ui.searchInput).class}
+        aria-label="Rechercher..."
+        type="search"
+        bind:value={searchTerm}
+        placeholder="Rechercher..."
+      />
     </label>
 
     <!-- Filter by valorisation -->

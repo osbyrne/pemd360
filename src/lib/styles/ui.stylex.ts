@@ -100,6 +100,37 @@ export const ui = stylex.create({
       ":disabled": "not-allowed",
     },
   },
+  searchField: {
+    display: "flex",
+    alignItems: "center",
+    gap: ".5rem",
+    minWidth: 0,
+    minHeight: "2.5rem",
+    borderColor: {
+      ":focus-within": "#10b981",
+    },
+    outlineWidth: {
+      ":focus-within": "2px",
+    },
+  },
+  searchIcon: {
+    width: "1.125rem",
+    height: "1.125rem",
+    flexShrink: 0,
+    pointerEvents: "none",
+    color: `color-mix(in oklab, ${theme.baseContent} 55%, transparent)`,
+  },
+  searchInput: {
+    flex: "1 1 0%",
+    width: "100%",
+    minWidth: 0,
+    height: "100%",
+    padding: 0,
+    borderWidth: 0,
+    backgroundColor: "transparent",
+    outlineStyle: "none",
+    fontSize: "inherit",
+  },
   select: {
     appearance: "none",
     width: "20rem",

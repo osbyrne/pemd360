@@ -277,9 +277,15 @@
       </div>
       <div class={stylex.attrs(styles.stackSpacing1).class}>
         <label for="create-projets" class={stylex.attrs(styles.label).class}>Projets</label>
-        <label class={stylex.attrs(styles.label2).class}>
-          <Search />
-          <input type="search" bind:value={projectSearch} placeholder="Rechercher un projet..." />
+        <label class={stylex.attrs(ui.input, ui.searchField, styles.label2).class}>
+          <Search class={stylex.attrs(ui.searchIcon).class} aria-hidden="true" />
+          <input
+            class={stylex.attrs(ui.searchInput).class}
+            aria-label="Rechercher un projet..."
+            type="search"
+            bind:value={projectSearch}
+            placeholder="Rechercher un projet..."
+          />
         </label>
         <div class={stylex.attrs(styles.div4).class}>
           {#if projets.length === 0}
