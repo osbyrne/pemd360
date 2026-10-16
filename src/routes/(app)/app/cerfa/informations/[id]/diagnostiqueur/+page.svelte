@@ -337,7 +337,8 @@
             />
           </div>
           <fieldset class={stylex.attrs(styles.stackSpacing1, styles.fieldset).class}>
-            <legend class={stylex.attrs(styles.label, styles.legend).class}>Date de validité</legend>
+            <legend class={stylex.attrs(styles.label, styles.legend).class}>Date de validité</legend
+            >
             <div class={stylex.attrs(styles.div7).class}>
               <input
                 id="dateDebutAssurance"

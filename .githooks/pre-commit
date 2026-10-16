@@ -4,4 +4,5 @@ set -eu
 cd "$(git rev-parse --show-toplevel)"
 
 deno task lint
+deno run check
 deno task fmt:check package.json scripts src
