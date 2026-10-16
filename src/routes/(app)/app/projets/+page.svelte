@@ -14,6 +14,7 @@
   let searchQuery = $state("");
   let sortBy = $state<"date" | "name" | "ville">("date");
   let sortOrder = $state<"asc" | "desc">("desc");
+  let hasSelectedSort = $state(false);
 
   onMount(() => {
     mounted = true;
@@ -52,6 +53,7 @@
   );
 
   function toggleSort(field: "date" | "name" | "ville") {
+    hasSelectedSort = true;
     if (sortBy === field) {
       sortOrder = sortOrder === "asc" ? "desc" : "asc";
     } else {
@@ -243,19 +245,28 @@
             <!-- Sort Buttons -->
             <button
               onclick={() => toggleSort("date")}
-              class={stylex.attrs(ui.button, sortBy === "date" ? ui.textEmerald600 : false).class}
+              class={stylex.attrs(
+                ui.button,
+                hasSelectedSort && sortBy === "date" && ui.textEmerald600,
+              ).class}
             >
               Date
             </button>
             <button
               onclick={() => toggleSort("name")}
-              class={stylex.attrs(ui.button, sortBy === "name" ? ui.textEmerald600 : false).class}
+              class={stylex.attrs(
+                ui.button,
+                hasSelectedSort && sortBy === "name" && ui.textEmerald600,
+              ).class}
             >
               Nom
             </button>
             <button
               onclick={() => toggleSort("ville")}
-              class={stylex.attrs(ui.button, sortBy === "ville" ? ui.textEmerald600 : false).class}
+              class={stylex.attrs(
+                ui.button,
+                hasSelectedSort && sortBy === "ville" && ui.textEmerald600,
+              ).class}
             >
               Ville
             </button>

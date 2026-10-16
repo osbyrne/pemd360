@@ -107,9 +107,11 @@ export const ui = stylex.create({
     minWidth: 0,
     minHeight: "2.5rem",
     borderColor: {
+      default: `color-mix(in oklab, ${theme.baseContent} 20%, transparent)`,
       ":focus-within": "#10b981",
     },
     outlineWidth: {
+      default: 0,
       ":focus-within": "2px",
     },
   },
