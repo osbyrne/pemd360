@@ -36,10 +36,9 @@ export interface AuthorizationService {
   ) => Effect.Effect<PermissionResult, AuthenticationProviderError>;
 }
 
-export class Authorization extends Context.Tag("pemd360/Authorization")<
-  Authorization,
-  AuthorizationService
->() {}
+export class Authorization extends Context.Service<Authorization, AuthorizationService>()(
+  "pemd360/Authorization",
+) {}
 
 export function makeAuthorizationService(
   getAuthClient: () => Auth = getAuth,

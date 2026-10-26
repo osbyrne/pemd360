@@ -2,8 +2,25 @@
   import * as stylex from "@stylexjs/stylex";
   import { ui } from "$lib/styles/ui.stylex";
   import { page } from "$app/stores";
+  import { goto } from "$app/navigation";
   import { Info, Box, Trash2, Download } from "lucide-svelte";
   import Tabs from "./Tabs.svelte";
+
+  let {
+    projects,
+    projectId,
+  }: {
+    projects: readonly { id: string; libelle: string | null }[];
+    projectId: string | null;
+  } = $props();
+
+  function selectProject(event: Event) {
+    const id = (event.currentTarget as HTMLSelectElement).value;
+    if (!id) return;
+    const target = new URL($page.url);
+    target.searchParams.set("projetId", id);
+    void goto(target.pathname + target.search);
+  }
 
   const tabs = [
     {
@@ -21,8 +38,6 @@
     },
   ];
 
-  const projetId = $derived($page.url.searchParams.get("projetId"));
-
   const styles = stylex.create({
     Download: {
       height: "1rem",
@@ -33,9 +48,21 @@
 
 <Tabs {tabs} useTabColorWhenActive={true}>
   {#snippet actions()}
-    {#if projetId}
+    {#if projects.length > 0}
+      <select
+        aria-label="Projet"
+        value={projectId ?? ""}
+        onchange={selectProject}
+        class={stylex.attrs(ui.select).class}
+      >
+        {#each projects as project}
+          <option value={project.id}>{project.libelle || "Projet sans nom"}</option>
+        {/each}
+      </select>
+    {/if}
+    {#if projectId}
       <a
-        href="/api/projects/{projetId}/cerfa"
+        href="/api/projects/{projectId}/cerfa"
         target="_blank"
         class={stylex.attrs(ui.button).class}
       >

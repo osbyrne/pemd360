@@ -4,21 +4,50 @@ This document is the resumable implementation ledger for `docs/EFFECT_MIGRATION_
 The plan is the user-provided specification; this file records implementation decisions and
 verification evidence.
 
-Current toolchain (2026-09-22): Deno installs dependencies and runs the repository tasks.
-The Bun commands below record the earlier Effect migration and are historical evidence.
+Current toolchain (2026-10-26): Bun installs dependencies and runs the repository tasks.
+The earlier verification results below are historical evidence.
 The Vercel adapter targets Node.js 24 for deployed functions.
+
+## Current update: Effect v4 and CERFA repairs (2026-10-23)
+
+- Stable `effect@4.0.5` is pinned in the package manifest and `bun.lock`.
+- Server, browser, and CLI service keys use `Context.Service`. Workflows use
+  `Effect.result`; Schema decoding uses `Schema.decodeUnknownEffect` and maps
+  failures into the existing typed `ValidationError` boundary.
+- CERFA accepts and normalizes legacy operation labels, preserves custom list
+  entries, validates dates/numbers before transactional writes, and shows action
+  failures in the operation editor.
+- PDF output converts kilograms to tonnes, includes nature-based waste codes and
+  possible treatment routes, retains zero quantities and object units, and sizes
+  rows for multiline treatment choices.
+- A CERFA layout resolves and validates project selection for every tab. Missing
+  query parameters redirect to an accessible default; unknown/inaccessible projects
+  return 404. The project selector preserves the current tab.
+- `0005_cerfa_renovation_date.sql` adds a nullable month column. It was tested against
+  a local pre-change table, then applied to the configured Turso database on
+  2026-10-23 at the user's request. The existing Drizzle migration ledger was updated.
+  Post-commit verification confirmed all five existing CERFA operation records were
+  unchanged and the new column is nullable.
+- Transient database and session reads have bounded retries and timeouts. Database
+  mutations are never retried. Existing authorization contracts remain unchanged.
+
+Validation: 48 tests pass across 15 files; `bun run check` reports zero errors
+and warnings; lint passes with existing warnings; the full source format check,
+CLI type checking, and production build pass. Browser verification on an isolated
+SQLite database covered default selection, project switching, legacy form values,
+month persistence, visible validation errors, and the downloaded PDF. Rendered PDF
+pages were inspected for the month, units, waste code, and actual treatment option.
+
+The earlier implementation ledger below records the historical v3 migration.
 
 ## Toolchain and baseline
 
 - Assessment date: 2026-09-11.
 - Runtime decision: use Bun for the repository's executable `package.json` scripts and
-  `bun.lock`; keep Deno as the documented supported installation/runtime context. There is no
-  CI configuration or separate task runner in the repository. `deno task` discovers the same
-  package scripts.
-- Effect: exact stable v3 pin `effect@3.22.2`. Effect v4 is not used.
+  `bun.lock`. There is no CI configuration or separate task runner in the repository.
+- Historical baseline: exact stable v3 pin `effect@3.22.2` before the v4 update above.
 - Dependency installation: `bun add effect@3.22.2` completed successfully and updated
-  `package.json` and `bun.lock`. The existing `deno.lock` predates the current package manifest
-  and will be refreshed only as needed without unrelated dependency upgrades.
+  `package.json` and `bun.lock`.
 - Baseline `bun run check`: passed, 0 errors and 8 existing Svelte warnings.
 - Baseline `bun run test`: passed, 1 file / 12 tests.
 - Baseline `bun run lint`: passed with existing warnings, including warnings in vendored
@@ -328,6 +357,5 @@ resetUrl }` inputs.
   flows remain unrun because this environment has no configured live credentials/model and the
   build host uses an unsupported Node version. No production mutation, schema migration,
   deployment, or push was performed.
-- `deno.lock` now includes the exact `npm:effect@3.22.2` graph entries merged from an isolated
-  lock refresh. The pre-existing lock still reflects older package-manifest versions outside
-  this migration; a full Deno lock regeneration would introduce unrelated dependency churn.
+- `bun.lock` is the authoritative dependency lockfile; keep it aligned with `package.json`
+  without unrelated dependency upgrades.

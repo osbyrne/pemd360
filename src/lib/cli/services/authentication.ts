@@ -20,10 +20,10 @@ export interface AdminAuthenticationService {
   ) => Effect.Effect<{ readonly email: string }, AuthenticationProviderError>;
 }
 
-export class AdminAuthentication extends Context.Tag("pemd360/cli/AdminAuthentication")<
+export class AdminAuthentication extends Context.Service<
   AdminAuthentication,
   AdminAuthenticationService
->() {}
+>()("pemd360/cli/AdminAuthentication") {}
 
 export function makeAdminAuthenticationService(config: {
   readonly secret: string;

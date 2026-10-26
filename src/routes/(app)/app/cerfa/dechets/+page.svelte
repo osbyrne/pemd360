@@ -379,7 +379,7 @@
 </svelte:head>
 
 <div class={stylex.attrs(styles.div).class}>
-  <CerfaTabs />
+  <CerfaTabs projects={data.cerfaProjects} projectId={data.cerfaProject?.id ?? null} />
 
   <!-- Header Section -->
   <div class={stylex.attrs(styles.div2).class}>

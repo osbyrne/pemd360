@@ -24,10 +24,9 @@ export interface MatterportService {
   }) => Effect.Effect<MatterportConnection, MatterportError>;
 }
 
-export class Matterport extends Context.Tag("pemd360/Matterport")<
-  Matterport,
-  MatterportService
->() {}
+export class Matterport extends Context.Service<Matterport, MatterportService>()(
+  "pemd360/Matterport",
+) {}
 
 export type MatterportConnectors = {
   readonly npm?: (sdkKey: string, iframe: HTMLIFrameElement) => Promise<MpSdk>;

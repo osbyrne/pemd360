@@ -4,16 +4,11 @@
   import { ui } from "$lib/styles/ui.stylex";
   import CerfaTabs from "$lib/components/CerfaTabs.svelte";
   import { Building2, UserCircle, MapPin, CalendarDays, Edit2 } from "lucide-svelte";
-  import { page } from "$app/stores";
   import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();
 
-  const projetId = $derived($page.url.searchParams.get("projetId") || "");
-
-  const projectData = $derived(
-    data.list.find((item) => item.projetId === projetId) || data.list[0],
-  );
+  const projectData = $derived(data.list.find((item) => item.projetId === data.cerfaProject?.id));
 
   const styles = stylex.create({
     div: {
@@ -309,7 +304,7 @@
 </svelte:head>
 
 <div class={stylex.attrs(styles.div).class}>
-  <CerfaTabs />
+  <CerfaTabs projects={data.cerfaProjects} projectId={data.cerfaProject?.id ?? null} />
   <div class={stylex.attrs(styles.div2).class}>
     <div>
       <h1 class={stylex.attrs(styles.h1).class}>Partie Informations</h1>

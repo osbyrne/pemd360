@@ -27,7 +27,7 @@ Preserve routes, French messages, action names, form result shapes, redirects, p
 
 The official website advertised Effect 4 as a release candidate on the assessment date. Default to an exact stable Effect 3.x version for this plan; resolve the latest stable patch in that major at implementation time and record it. Do not install `effect@rc`, copy v4 service APIs, or upgrade majors during the migration. Add other Effect packages only if necessary and compatible with the pinned version. Existing Vitest is sufficient to begin.
 
-The README documents Deno, `package.json` includes Bun commands, and both lockfiles exist. Inspect CI/tooling and available runtimes first. Prefer the documented Deno workflow unless actual repository automation establishes another canonical workflow. Record the choice, use it consistently, and keep supported lockfiles consistent without unrelated dependency upgrades. Do not delete a lockfile just to simplify this migration.
+Use Bun to install dependencies and run the repository scripts. Commit `bun.lock` as the authoritative dependency lockfile and keep it consistent with `package.json` without unrelated dependency upgrades.
 
 ### Module layout
 
@@ -69,7 +69,7 @@ Services expose Effect values. Workflows compose them. Execute Effects only at f
 
 ## Phase 0 — Inventory and baseline
 
-1. Inspect `package.json`, `deno.json`, both lockfiles, `vite.config.ts`, `vitest.config.ts`, `svelte.config.js`, `src/app.d.ts`, `src/hooks.server.ts`, and `scripts/create-admin.ts`.
+1. Inspect `package.json`, `bun.lock`, `vite.config.ts`, `vitest.config.ts`, `svelte.config.js`, `src/app.d.ts`, `src/hooks.server.ts`, and `scripts/create-admin.ts`.
 2. Inventory all application-owned async/I/O calls using `rg`: `async`, `await`, `fetch`, `Promise`, timers, subscriptions, database/client imports, and lifecycle callbacks. Exclude generated files and vendored SDK internals. Initial assessment found 60 Svelte files, 46 server route files, and one test file under `src`.
 3. Create the status document with one entry per affected file/workflow, including public pages, layouts, playground, scripts, and export routes. Mark pure components and vendor/framework callbacks as explicit exclusions with reasons.
 4. Run existing check, test, lint, format-check, and build commands using the chosen runtime. Record existing failures separately, including missing environment-dependent build prerequisites. Do not expose `.env` values.

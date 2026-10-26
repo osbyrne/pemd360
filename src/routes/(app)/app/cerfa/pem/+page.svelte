@@ -3,8 +3,9 @@
   import { ui } from "$lib/styles/ui.stylex";
   import CerfaTabs from "$lib/components/CerfaTabs.svelte";
   import { Box } from "lucide-svelte";
+  import type { PageData } from "./$types";
 
-  let { data } = $props();
+  let { data }: { data: PageData } = $props();
 
   const styles = stylex.create({
     div: {
@@ -39,7 +40,6 @@
       fontSize: ".75rem",
       lineHeight: "1rem",
       fontWeight: 600,
-      textTransform: "uppercase",
     },
     th: {
       paddingInlineStart: "1.5rem",
@@ -107,13 +107,18 @@
 </svelte:head>
 
 <div class={stylex.attrs(styles.div).class}>
-  <CerfaTabs />
+  <CerfaTabs projects={data.cerfaProjects} projectId={data.cerfaProject?.id ?? null} />
 
   <div class={stylex.attrs(styles.div2).class}>
     <h1 class={stylex.attrs(styles.h1).class}>Caractérisation PEM</h1>
     <p class={stylex.attrs(styles.p).class}>
       Inventaire des Produits, Équipements et Matériaux (Réemploi/Réutilisation).
     </p>
+    {#if data.projetInfo}
+      <p class={stylex.attrs(styles.p).class}>
+        Projet : {data.projetInfo.libelle} (Réf. : {data.projetInfo.reference})
+      </p>
+    {/if}
   </div>
 
   <div class={stylex.attrs(styles.div3).class}>
@@ -152,19 +157,19 @@
                 {item.objet}
               </td>
               <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
-                {item.masseUnitaire || "?"}
+                {item.quantite?.toLocaleString("fr-FR", { maximumFractionDigits: 2 }) ?? "—"}
                 {item.unite || ""}
               </td>
               <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
-                <span class={stylex.attrs(styles.span).class}>
-                  {item.etat || "Réemploi"}
-                </span>
+                <span class={stylex.attrs(styles.span).class}>Réemploi</span>
               </td>
             </tr>
           {:else}
             <tr class={stylex.attrs(ui.divideChild).class}>
               <td colspan="5" class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td3).class}>
-                Aucun élément caractérisé PEM (Réemploi) trouvé.
+                {data.projetInfo
+                  ? "Aucun élément caractérisé PEM (réemploi) trouvé pour ce projet."
+                  : "Sélectionnez un projet pour consulter les PEM."}
               </td>
             </tr>
           {/each}

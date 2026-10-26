@@ -51,12 +51,12 @@ export function createUserWithAssignments(input: {
 
     const assignment = yield* input
       .assignProjects(created.userId, input.projectIds)
-      .pipe(Effect.either);
-    if (assignment._tag === "Left") {
+      .pipe(Effect.result);
+    if (assignment._tag === "Failure") {
       return {
         userId: created.userId,
         assignment: "partial",
-        assignmentError: assignment.left,
+        assignmentError: assignment.failure,
       };
     }
     return { userId: created.userId, assignment: "succeeded" };

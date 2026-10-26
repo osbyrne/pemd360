@@ -8,6 +8,13 @@
       "when": 1771180000000,
       "tag": "0000_schema_cleanup",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1792770688293,
+      "tag": "0005_cerfa_renovation_date",
+      "breakpoints": true
     }
   ]
 }

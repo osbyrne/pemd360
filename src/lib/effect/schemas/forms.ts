@@ -1,7 +1,7 @@
-import { Either, Effect, ParseResult, Schema } from "effect";
+import { Effect, Schema } from "effect";
 import { ValidationError } from "../errors";
 
-export type FormSchema<A, I = unknown> = Schema.Schema<A, I, never>;
+export type FormSchema<A, I = unknown> = Schema.Codec<A, I>;
 
 /** Preserve repeated form fields as arrays and reject File values through the schema. */
 export function formDataToRecord(formData: FormData): Record<string, unknown> {
@@ -48,27 +48,9 @@ export function decodeFormRecord<A, I>(
   schema: FormSchema<A, I>,
   input: unknown,
 ): Effect.Effect<A, ValidationError> {
-  return Effect.sync(() => Schema.decodeUnknownEither(schema)(input)).pipe(
-    Effect.flatMap((result) => {
-      if (Either.isRight(result)) {
-        return Effect.succeed(result.right);
-      }
-
-      return Effect.fail(
-        new ValidationError({
-          message: formatParseError(result.left),
-        }),
-      );
-    }),
+  return Schema.decodeUnknownEffect(schema)(input).pipe(
+    Effect.mapError((error) => new ValidationError({ message: error.message })),
   );
-}
-
-function formatParseError(error: ParseResult.ParseError): string {
-  try {
-    return ParseResult.TreeFormatter.formatErrorSync(error);
-  } catch {
-    return "Données invalides";
-  }
 }
 
 export function requiredString(

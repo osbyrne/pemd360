@@ -7,4 +7,4 @@ export const RecordIdForm = Schema.Struct({
   riskType: OptionalString,
 });
 
-export type RecordIdFormInput = Schema.Schema.Type<typeof RecordIdForm>;
+export type RecordIdFormInput = typeof RecordIdForm.Type;

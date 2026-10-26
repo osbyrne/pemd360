@@ -44,7 +44,11 @@ export async function runWithClientRuntime<A, E, R extends ClientServices>(
 function exitToClientResult<A, E>(exit: Exit.Exit<A, E>): ClientResult<A, E> {
   if (Exit.isSuccess(exit)) return { _tag: "success", value: exit.value };
 
-  const failure = Cause.failureOption(exit.cause);
+  if (Cause.hasDies(exit.cause) || Cause.hasInterrupts(exit.cause)) {
+    return { _tag: "defect", cause: Cause.squash(exit.cause) };
+  }
+
+  const failure = Cause.findErrorOption(exit.cause);
   if (Option.isSome(failure)) return { _tag: "failure", error: failure.value };
   return { _tag: "defect", cause: Cause.squash(exit.cause) };
 }

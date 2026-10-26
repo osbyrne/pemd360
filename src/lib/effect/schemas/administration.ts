@@ -50,6 +50,6 @@ export const UserProjectAssignmentForm = Schema.Struct({
   userId: OptionalString,
 });
 
-export type EstablishmentFormInput = Schema.Schema.Type<typeof EstablishmentForm>;
-export type ProjectFormInput = Schema.Schema.Type<typeof ProjectForm>;
-export type CompanyFormInput = Schema.Schema.Type<typeof CompanyForm>;
+export type EstablishmentFormInput = typeof EstablishmentForm.Type;
+export type ProjectFormInput = typeof ProjectForm.Type;
+export type CompanyFormInput = typeof CompanyForm.Type;

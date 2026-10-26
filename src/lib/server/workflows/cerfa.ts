@@ -1,6 +1,13 @@
-import { Effect } from "effect";
+import { Effect, Schema } from "effect";
+import { isCerfaReuseItem } from "$lib/cerfa/reuse";
+import {
+  normalizeOperationType,
+  normalizePreviousOperation,
+  OperationType,
+  RenovationMonth,
+} from "$lib/cerfa/operation";
 import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
-import { and, eq, inArray, isNotNull } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import {
   DatabaseError,
   ForbiddenError,
@@ -8,7 +15,7 @@ import {
   UnauthenticatedError,
   ValidationError,
 } from "$lib/effect/errors";
-import { decodeFormData, optionalNumber, requiredString } from "$lib/effect/schemas/forms";
+import { decodeFormData, decodeFormRecord, requiredString } from "$lib/effect/schemas/forms";
 import {
   DiagnosticForm,
   DiagnostiqueurForm,
@@ -39,6 +46,36 @@ type CerfaError =
   | NotFoundError
   | ValidationError;
 
+export function loadCerfaProjects(input: {
+  readonly projectId: string | null;
+  readonly user: WorkflowUser | null | undefined;
+}) {
+  return Effect.gen(function* () {
+    const user = yield* authenticatedUser(input.user);
+    const database = yield* Database;
+    const ids = yield* accessibleProjectIds(database, user);
+    const projects =
+      ids && ids.length === 0
+        ? []
+        : yield* database.read("cerfa.projects.list", (db) =>
+            db
+              .select({ id: projet.id, libelle: projet.libelle, reference: projet.reference })
+              .from(projet)
+              .where(ids ? inArray(projet.id, ids) : undefined)
+              .orderBy(projet.libelle, projet.id),
+          );
+    const project = input.projectId
+      ? projects.find((project) => project.id === input.projectId)
+      : projects[0];
+    if (input.projectId && !project) {
+      return yield* Effect.fail(
+        new NotFoundError({ message: "Projet introuvable ou inaccessible" }),
+      );
+    }
+    return { cerfaProjects: projects, cerfaProject: project ?? null };
+  });
+}
+
 export function loadCerfaInformationList(user: WorkflowUser | null | undefined) {
   return Effect.gen(function* () {
     const currentUser = yield* authenticatedUser(user);
@@ -46,7 +83,7 @@ export function loadCerfaInformationList(user: WorkflowUser | null | undefined) 
     const projectIds = yield* accessibleProjectIds(database, currentUser);
     if (projectIds && projectIds.length === 0) return { list: [] };
 
-    const list = yield* database.run("cerfa.information.list", (db) =>
+    const list = yield* database.read("cerfa.information.list", (db) =>
       db
         .select({
           projetId: projet.id,
@@ -106,7 +143,7 @@ export function loadCerfaWaste(input: {
     const projectId = yield* ensureProjectAccess(input.projectId, input.user);
     const database = yield* Database;
 
-    const projetInfo = yield* database.run("cerfa.waste.project", (db) =>
+    const projetInfo = yield* database.read("cerfa.waste.project", (db) =>
       db
         .select({ id: projet.id, libelle: projet.libelle, reference: projet.reference })
         .from(projet)
@@ -114,7 +151,7 @@ export function loadCerfaWaste(input: {
         .limit(1),
     );
     const project = projetInfo[0] ?? null;
-    const rows = yield* database.run("cerfa.waste.list", (db) =>
+    const rows = yield* database.read("cerfa.waste.list", (db) =>
       db
         .select({
           id: pemd.id,
@@ -148,26 +185,40 @@ export function loadCerfaWaste(input: {
   });
 }
 
-export function loadCerfaPem() {
+export function loadCerfaPem(input: {
+  readonly projectId: string | null;
+  readonly user: WorkflowUser | null | undefined;
+}) {
   return Effect.gen(function* () {
+    if (!input.projectId) return { items: [], projetInfo: null };
+    const projectId = yield* ensureProjectAccess(input.projectId, input.user);
     const database = yield* Database;
-    const items = yield* database.run("cerfa.pem.list", (db) =>
+    const projects = yield* database.read("cerfa.pem.project", (db) =>
+      db
+        .select({ id: projet.id, libelle: projet.libelle, reference: projet.reference })
+        .from(projet)
+        .where(eq(projet.id, projectId))
+        .limit(1),
+    );
+    const items = yield* database.read("cerfa.pem.list", (db) =>
       db
         .select({
-          id: objets.id,
+          id: pemd.id,
           objet: objets.objet,
           categorie: categorieV2.categoriev2,
           groupe: groupe.groupe,
           unite: objets.unite,
-          masseUnitaire: objets.masseUnitaire,
-          etat: objets.deposeReemlpoi,
+          quantite: pemd.quantite,
+          reemploi: pemd.reemploi,
+          potentielReemploi: pemd.potentielReemploi,
         })
-        .from(objets)
+        .from(pemd)
+        .leftJoin(objets, eq(pemd.objetId, objets.id))
         .leftJoin(categorieV2, eq(objets.categorieId, categorieV2.id))
         .leftJoin(groupe, eq(categorieV2.groupeId, groupe.id))
-        .where(isNotNull(objets.deposeReemlpoi)),
+        .where(eq(pemd.sidId, projectId)),
     );
-    return { items };
+    return { items: items.filter(isCerfaReuseItem), projetInfo: projects[0] ?? null };
   });
 }
 
@@ -225,7 +276,7 @@ function loadSection(
     const database = yield* Database;
     switch (kind) {
       case "diagnostiqueur": {
-        const rows = yield* database.run("cerfa.diagnostiqueur.load", (db) =>
+        const rows = yield* database.read("cerfa.diagnostiqueur.load", (db) =>
           db
             .select()
             .from(cerfaDiagnostiqueur)
@@ -235,19 +286,19 @@ function loadSection(
         return rows[0] ?? null;
       }
       case "moa": {
-        const rows = yield* database.run("cerfa.moa.load", (db) =>
+        const rows = yield* database.read("cerfa.moa.load", (db) =>
           db.select().from(cerfaMtrOuvrage).where(eq(cerfaMtrOuvrage.projetId, id)).limit(1),
         );
         return rows[0] ?? null;
       }
       case "diagnostic": {
-        const rows = yield* database.run("cerfa.diagnostic.load", (db) =>
+        const rows = yield* database.read("cerfa.diagnostic.load", (db) =>
           db.select().from(cerfaDiagnostic).where(eq(cerfaDiagnostic.projetId, id)).limit(1),
         );
         return rows[0] ?? null;
       }
       case "operation": {
-        const rows = yield* database.run("cerfa.operation.load", (db) =>
+        const rows = yield* database.read("cerfa.operation.load", (db) =>
           db.select().from(cerfaOperation).where(eq(cerfaOperation.projetId, id)).limit(1),
         );
         return rows[0] ?? null;
@@ -372,6 +423,20 @@ export function saveOperation(
   return Effect.gen(function* () {
     const id = yield* ensureProjectAccess(projectId, user);
     const form = yield* decodeFormData(OperationForm, formData);
+    const selection = yield* decodeFormRecord(Schema.Struct({ operation: OperationType }), {
+      operation: normalizeOperationType(form.operation),
+    });
+    const previousOperations = [
+      ...new Set(toStringArray(form.operationsSoumis).map(normalizePreviousOperation)),
+    ];
+    const dateRenovation = form.dateRenovation?.trim() || null;
+    if (dateRenovation) {
+      yield* Schema.decodeUnknownEffect(RenovationMonth)(dateRenovation).pipe(
+        Effect.mapError(
+          () => new ValidationError({ message: "Date de rénovation invalide (AAAA-MM)" }),
+        ),
+      );
+    }
     const values: InferInsertModel<typeof cerfaOperation> = {
       projetId: id,
       adresse: nullable(form.adresse),
@@ -379,21 +444,33 @@ export function saveOperation(
       commune: nullable(form.commune),
       dateDeDebut: yield* dateValue(form.dateDebut, "Date de début invalide"),
       dateDeFin: yield* dateValue(form.dateFin, "Date de fin invalide"),
-      operation: nullable(form.operation),
+      operation: nullable(selection.operation),
       nbBatDemolition: yield* numberValue(
         form.nbBatDemolition,
         "Nombre de bâtiments à démolir invalide",
+        true,
       ),
       surfaceADemolir: yield* numberValue(form.surfaceDemolir, "Surface à démolir invalide"),
       nbBatRenovation: yield* numberValue(
         form.nbBatRenovation,
         "Nombre de bâtiments à rénover invalide",
+        true,
       ),
       surfaceARenover: yield* numberValue(form.surfaceRenover, "Surface à rénover invalide"),
       typologieBat: JSON.stringify(toStringArray(form.typologies)),
       datePermisDeConstruire: yield* dateValue(form.datePermis, "Date du permis invalide"),
-      operationSoumis: JSON.stringify(toStringArray(form.operationsSoumis)),
+      operationSoumis: JSON.stringify(previousOperations),
+      dateRenovation: previousOperations.includes("renovation") ? dateRenovation : null,
     };
+    if (
+      typeof values.dateDeDebut === "number" &&
+      typeof values.dateDeFin === "number" &&
+      values.dateDeDebut > values.dateDeFin
+    ) {
+      return yield* Effect.fail(
+        new ValidationError({ message: "La date de fin doit suivre la date de début" }),
+      );
+    }
     yield* upsertRecord("cerfa.operation.save", {
       find: (db) =>
         db
@@ -413,7 +490,7 @@ function accessibleProjectIds(
   user: WorkflowUser,
 ): Effect.Effect<string[] | null, DatabaseError> {
   if (user.role === "admin") return Effect.succeed(null);
-  return database.run("cerfa.access.projects", (db) =>
+  return database.read("cerfa.access.projects", (db) =>
     db
       .select({ id: userProjet.projetId })
       .from(userProjet)
@@ -428,7 +505,7 @@ function ensureProjectAccess(projectId: string, user: WorkflowUser | null | unde
     const id = yield* requiredString(projectId, "Projet manquant");
     const database = yield* Database;
     if (currentUser.role !== "admin") {
-      const rows = yield* database.run("cerfa.access.project", (db) =>
+      const rows = yield* database.read("cerfa.access.project", (db) =>
         db
           .select({ id: userProjet.projetId })
           .from(userProjet)
@@ -439,6 +516,11 @@ function ensureProjectAccess(projectId: string, user: WorkflowUser | null | unde
           new ForbiddenError({ message: "Accès non autorisé à ce projet" }),
         );
     }
+    const projects = yield* database.read("cerfa.access.exists", (db) =>
+      db.select({ id: projet.id }).from(projet).where(eq(projet.id, id)).limit(1),
+    );
+    if (projects.length === 0)
+      return yield* Effect.fail(new NotFoundError({ message: "Projet non trouvé" }));
     return id;
   });
 }
@@ -446,21 +528,29 @@ function ensureProjectAccess(projectId: string, user: WorkflowUser | null | unde
 function upsertRecord(
   operation: string,
   input: {
-    readonly find: (database: AppDatabase) => PromiseLike<ReadonlyArray<{ readonly id: number }>>;
-    readonly update: (database: AppDatabase) => PromiseLike<unknown>;
-    readonly insert: (database: AppDatabase) => PromiseLike<unknown>;
+    readonly find: (
+      database: Pick<AppDatabase, "select" | "insert" | "update">,
+    ) => PromiseLike<ReadonlyArray<{ readonly id: number }>>;
+    readonly update: (
+      database: Pick<AppDatabase, "select" | "insert" | "update">,
+    ) => PromiseLike<unknown>;
+    readonly insert: (
+      database: Pick<AppDatabase, "select" | "insert" | "update">,
+    ) => PromiseLike<unknown>;
   },
 ) {
   return Effect.gen(function* () {
     const database = yield* Database;
-    yield* database.run(operation, async (db) => {
-      const existing = await input.find(db);
-      if (existing.length > 0) {
-        await input.update(db);
-      } else {
-        await input.insert(db);
-      }
-    });
+    yield* database.run(operation, (db) =>
+      db.transaction(async (tx) => {
+        const existing = await input.find(tx);
+        if (existing.length > 0) {
+          await input.update(tx);
+        } else {
+          await input.insert(tx);
+        }
+      }),
+    );
   });
 }
 
@@ -482,7 +572,9 @@ function dateValue(
 ): Effect.Effect<number | null, ValidationError> {
   if (!value) return Effect.succeed(null);
   const date = new Date(value).getTime();
-  return Number.isFinite(date)
+  return /^\d{4}-\d{2}-\d{2}$/.test(value) &&
+    Number.isFinite(date) &&
+    new Date(date).toISOString().slice(0, 10) === value
     ? Effect.succeed(date)
     : Effect.fail(new ValidationError({ message }));
 }
@@ -490,10 +582,17 @@ function dateValue(
 function numberValue(
   value: string | undefined,
   message: string,
+  integer = false,
 ): Effect.Effect<number, ValidationError> {
-  if (!value) return Effect.succeed(0);
-  return optionalNumber(value, message).pipe(
-    Effect.flatMap((number) => (number === null ? Effect.succeed(0) : Effect.succeed(number))),
+  if (!value?.trim()) return Effect.succeed(0);
+  const numberSchema = Schema.Number.check(Schema.isFinite(), Schema.isGreaterThanOrEqualTo(0));
+  return Schema.decodeUnknownEffect(numberSchema)(Number(value.trim().replace(",", "."))).pipe(
+    Effect.flatMap((number) =>
+      integer && !Number.isInteger(number)
+        ? Effect.fail(new ValidationError({ message }))
+        : Effect.succeed(number),
+    ),
+    Effect.mapError(() => new ValidationError({ message })),
   );
 }
 
@@ -513,12 +612,13 @@ function groupWasteRows<
     readonly masse: number | null;
     readonly volume: number | null;
     readonly reemploi: number | null;
+    readonly potentielReemploi: string | null;
   },
 >(rows: Row[]) {
   type Grouped = Row & { masse: number; volume: number; count: number };
   const groups = new Map<string, Grouped>();
   for (const item of rows) {
-    if (item.reemploi !== 0 && item.reemploi !== null) continue;
+    if (isCerfaReuseItem(item)) continue;
     const key = `${item.categorie || "Inconnu"}_${item.nature || "Inconnu"}_${item.codeDechet || "NC"}`;
     const existing = groups.get(key);
     if (existing) {

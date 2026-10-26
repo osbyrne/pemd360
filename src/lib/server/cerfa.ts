@@ -1,5 +1,6 @@
 import { PDFDocument, rgb, StandardFonts, type PDFPage, type PDFForm } from "pdf-lib";
 import type { InferSelectModel } from "drizzle-orm";
+import { isCerfaReuseItem } from "$lib/cerfa/reuse";
 import type {
   cerfaDiagnostic,
   cerfaDiagnostiqueur,
@@ -33,6 +34,14 @@ export type CerfaPdfPemdRow = Pick<
 > & {
   readonly categorie: string | null;
   readonly famille: string | null;
+  readonly unite?: string | null;
+  readonly codeDechet?: number | null;
+  readonly reutilisation?: number | null;
+  readonly recyclable?: number | null;
+  readonly valorisationMatiere?: number | null;
+  readonly valorisationEnergetique?: number | null;
+  readonly incinerationSansValo?: number | null;
+  readonly nonValorisation?: number | null;
 };
 
 /**
@@ -88,6 +97,29 @@ export async function renderCerfaPdf(
   const p2 = pages.length > 3 ? pages[2] : pages[1]; // Maître d'ouvrage & Diagnostiqueur (skip potential blank page)
   const p3 = pages.length > 3 ? pages[3] : pages[2]; // Diagnostic
 
+  const supportedCharacters = new Set(helveticaFont.getCharacterSet());
+  const arrowFallbacks = new Map([
+    ["→", "->"],
+    ["←", "<-"],
+    ["↔", "<->"],
+  ]);
+
+  // Standard Helvetica is WinAnsi, including French accents and punctuation.
+  // Normalize before measuring as well as drawing; unsupported characters remain
+  // identifiable through explicit Unicode markers instead of being discarded.
+  const normalizeText = (text: string, multiline = false): string =>
+    Array.from(text.normalize("NFC").replace(/\r\n?|[\u0085\u2028\u2029]/g, "\n"), (character) => {
+      if (character === "\n") return multiline ? "\n" : " ";
+      if (character === "\t") return "    ";
+      if (/[\s\u200B]/u.test(character)) return " ";
+      const codePoint = character.codePointAt(0)!;
+      if (supportedCharacters.has(codePoint)) return character;
+      return (
+        arrowFallbacks.get(character) ??
+        `[U+${codePoint.toString(16).toUpperCase().padStart(4, "0")}]`
+      );
+    }).join("");
+
   /**
    * Draw text at specific coordinates with proper styling
    */
@@ -102,9 +134,7 @@ export async function renderCerfaPdf(
     const size = options?.size ?? 9;
     const font = options?.bold ? helveticaBoldFont : helveticaFont;
 
-    let textStr = String(text)
-      .replace(/\t/g, "    ")
-      .replace(/[\u2000-\u200B\u202F\u205F\u3000]/g, " ");
+    let textStr = normalizeText(String(text));
 
     // Truncate if maxWidth is specified
     if (options?.maxWidth) {
@@ -156,31 +186,32 @@ export async function renderCerfaPdf(
     maxLines: number = 5,
   ) => {
     if (!text) return;
-    const words = text.split(" ");
     const lines: string[] = [];
-    let currentLine = "";
 
-    for (const word of words) {
-      const testLine = currentLine ? `${currentLine} ${word}` : word;
-      const width = helveticaFont.widthOfTextAtSize(testLine, 9);
+    for (const paragraph of normalizeText(text, true).split("\n")) {
+      let currentLine = "";
+      for (const word of paragraph.split(/ +/).filter(Boolean)) {
+        const testLine = currentLine ? `${currentLine} ${word}` : word;
+        const width = helveticaFont.widthOfTextAtSize(testLine, 9);
 
-      if (width > maxWidth && currentLine) {
-        lines.push(currentLine);
-        currentLine = word;
-      } else {
-        currentLine = testLine;
+        if (width > maxWidth && currentLine) {
+          lines.push(currentLine);
+          currentLine = word;
+        } else {
+          currentLine = testLine;
+        }
       }
+      lines.push(currentLine);
     }
-    if (currentLine) lines.push(currentLine);
 
     // Limit lines and add ellipsis if needed
     const limitedLines = lines.slice(0, maxLines);
     if (lines.length > maxLines) {
-      limitedLines[maxLines - 1] = limitedLines[maxLines - 1].slice(0, -3) + "...";
+      limitedLines[maxLines - 1] += "...";
     }
 
     limitedLines.forEach((line, i) => {
-      drawText(page, line, x, y - i * lineHeight);
+      drawText(page, line, x, y - i * lineHeight, { maxWidth });
     });
   };
 
@@ -305,6 +336,13 @@ export async function renderCerfaPdf(
           // Support both old format (full text) and new format (short keys)
           if (ops.includes("Rénovation importante") || ops.includes("renovation"))
             drawCheck(p2, X_check, 720);
+          if (
+            operation.dateRenovation &&
+            (ops.includes("Rénovation importante") || ops.includes("renovation"))
+          ) {
+            const [year, month] = operation.dateRenovation.split("-");
+            drawText(p2, `${month}/${year}`, 365, 720, { maxWidth: 100 });
+          }
           if (ops.includes("Opération de décontamination") || ops.includes("decontamination"))
             drawCheck(p2, X_check, 703);
           if (ops.includes("Autre intervention importante") || ops.includes("autre"))
@@ -547,25 +585,55 @@ export async function renderCerfaPdf(
       return y - rowHeight;
     };
 
+    const tableRowHeight = (data: string[]) =>
+      Math.max(...data.map((text) => text.split("\n").length)) * 11 + 4;
     const drawTableRow = (p: PDFPage, y: number, headers: { width: number }[], data: string[]) => {
       let currentX = 50;
-      const rowHeight = 15;
+      const rowHeight = tableRowHeight(data);
       data.forEach((text, i) => {
-        const w = headers[i].width;
-        // Draw cell text
-        drawText(p, text, currentX + 5, y, { size: 8, maxWidth: w - 10 });
-        currentX += w;
+        text.split("\n").forEach((line, index) => {
+          drawText(p, line, currentX + 5, y - index * 11, {
+            size: 8,
+            maxWidth: headers[i].width - 10,
+          });
+        });
+        currentX += headers[i].width;
       });
-
-      // Draw horizontal line below
       p.drawLine({
-        start: { x: 50, y: y - 5 },
-        end: { x: 550, y: y - 5 },
+        start: { x: 50, y: y - rowHeight + 10 },
+        end: { x: 550, y: y - rowHeight + 10 },
         thickness: 0.5,
         color: rgb(0.8, 0.8, 0.8),
       });
-
       return y - rowHeight;
+    };
+
+    const formatNumber = (value: number) =>
+      value.toLocaleString("fr-FR", { maximumFractionDigits: 6 });
+    const quantity = (item: CerfaPdfPemdRow, preferMass = false): string => {
+      if (preferMass && item.masse !== null) return `${formatNumber(item.masse / 1000)} t`;
+      if (item.quantite !== null)
+        return `${formatNumber(item.quantite)}${item.unite ? ` ${item.unite}` : ""}`;
+      if (item.masse !== null) return `${formatNumber(item.masse / 1000)} t`;
+      if (item.volume !== null) return `${formatNumber(item.volume)} m³`;
+      if (item.surface !== null) return `${formatNumber(item.surface)} m²`;
+      return "Non renseignée";
+    };
+    const wasteRoutes = (item: CerfaPdfPemdRow): string => {
+      const routes = [
+        [item.reutilisation, "Réutilisation"],
+        [item.recyclable, "Recyclage"],
+        [item.valorisationMatiere, "Valorisation matière"],
+        [item.valorisationEnergetique, "Valorisation énergétique"],
+        [item.incinerationSansValo, "Incinération sans valorisation"],
+        [item.nonValorisation, "Élimination sans valorisation"],
+      ] as const;
+      return (
+        routes
+          .filter(([enabled]) => enabled === 1)
+          .map(([, label]) => label)
+          .join("\n") || "Non renseignées"
+      );
     };
 
     const checkPageSpace = (
@@ -581,9 +649,7 @@ export async function renderCerfaPdf(
     };
 
     // --- Tableau 1: Réemploi ---
-    const reuseItems = pemdList.filter(
-      (i) => i.reemploi === 1 || (i.potentielReemploi && i.potentielReemploi !== "0"),
-    );
+    const reuseItems = pemdList.filter(isCerfaReuseItem);
 
     let currentPage = pdfDoc.addPage([595.28, 841.89]);
     let yPos = 800;
@@ -608,33 +674,25 @@ export async function renderCerfaPdf(
       yPos = drawTableHeader(currentPage, yPos, reuseHeaders);
 
       reuseItems.forEach((item) => {
-        const res = checkPageSpace(currentPage, yPos);
-        currentPage = res.page;
-        yPos = res.y;
-        if (yPos === 800) yPos = drawTableHeader(currentPage, yPos, reuseHeaders); // Redraw header on new page
-
-        let q = "";
-        if (item.quantite) q = String(item.quantite);
-        else if (item.masse) q = `${item.masse} t`;
-
-        drawTableRow(currentPage, yPos, reuseHeaders, [
+        const cells = [
           item.categorie || "",
           item.description || "",
-          q,
+          quantity(item),
           item.etat || "",
-          "Réemploi", // Destination
-        ]);
-
-        yPos -= 15;
+          "Réemploi",
+        ].map((text) => normalizeText(text));
+        const res = checkPageSpace(currentPage, yPos, tableRowHeight(cells) + 30);
+        currentPage = res.page;
+        yPos = res.y;
+        if (yPos === 800) yPos = drawTableHeader(currentPage, yPos, reuseHeaders);
+        yPos = drawTableRow(currentPage, yPos, reuseHeaders, cells);
       });
 
       yPos -= 30; // Spacing after table
     }
 
     // --- Tableau 2: Déchets ---
-    const wasteItems = pemdList.filter(
-      (i) => !i.reemploi && (!i.potentielReemploi || i.potentielReemploi === "0"),
-    );
+    const wasteItems = pemdList.filter((item) => !isCerfaReuseItem(item));
 
     if (wasteItems.length > 0) {
       const res = checkPageSpace(currentPage, yPos, 100); // Check enough space for title + header
@@ -653,31 +711,23 @@ export async function renderCerfaPdf(
         { text: "Catégorie", width: 150 },
         { text: "Codification", width: 100 },
         { text: "Quantité", width: 100 },
-        { text: "Filière", width: 150 },
+        { text: "Filières possibles", width: 150 },
       ];
 
       yPos = drawTableHeader(currentPage, yPos, wasteHeaders);
 
       wasteItems.forEach((item) => {
-        const res = checkPageSpace(currentPage, yPos);
+        const cells = [
+          normalizeText(item.categorie || ""),
+          item.codeDechet == null ? "Non renseignée" : String(item.codeDechet).padStart(6, "0"),
+          quantity(item, true),
+          wasteRoutes(item),
+        ];
+        const res = checkPageSpace(currentPage, yPos, tableRowHeight(cells) + 30);
         currentPage = res.page;
         yPos = res.y;
         if (yPos === 800) yPos = drawTableHeader(currentPage, yPos, wasteHeaders);
-
-        let q = item.masse ? `${item.masse} t` : item.quantite ? String(item.quantite) : "";
-
-        // Determine Filière based on type (simplistic)
-        let filiere = "Recyclage";
-        // Could infer from flags if available, default to 'Traitement' or 'Valorisation'
-
-        drawTableRow(currentPage, yPos, wasteHeaders, [
-          item.categorie || "",
-          "", // Codification often empty in DB
-          q,
-          filiere,
-        ]);
-
-        yPos -= 15;
+        yPos = drawTableRow(currentPage, yPos, wasteHeaders, cells);
       });
     }
   }

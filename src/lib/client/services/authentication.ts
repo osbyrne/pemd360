@@ -96,10 +96,10 @@ export interface ClientAuthenticationService {
   }) => Effect.Effect<void, AuthenticationProviderError>;
 }
 
-export class ClientAuthentication extends Context.Tag("pemd360/ClientAuthentication")<
+export class ClientAuthentication extends Context.Service<
   ClientAuthentication,
   ClientAuthenticationService
->() {}
+>()("pemd360/ClientAuthentication") {}
 
 export function makeClientAuthenticationService(
   client: ClientAuthenticationApi = authClient,

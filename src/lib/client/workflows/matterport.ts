@@ -35,18 +35,18 @@ export function reconcileTagSet(
     const errors: MatterportError[] = [];
     const failedRemovals: string[] = [];
     for (const id of currentIds) {
-      const result = yield* connection.removeTag(id).pipe(Effect.either);
-      if (result._tag === "Left") {
-        errors.push(result.left);
+      const result = yield* connection.removeTag(id).pipe(Effect.result);
+      if (result._tag === "Failure") {
+        errors.push(result.failure);
         failedRemovals.push(id);
       }
     }
     ids.push(...failedRemovals);
 
     for (const descriptor of desired) {
-      const result = yield* connection.addTag(descriptor).pipe(Effect.either);
-      if (result._tag === "Right") ids.push(result.right);
-      else errors.push(result.left);
+      const result = yield* connection.addTag(descriptor).pipe(Effect.result);
+      if (result._tag === "Success") ids.push(result.success);
+      else errors.push(result.failure);
     }
     return { ids, errors };
   });

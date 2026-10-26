@@ -3,7 +3,7 @@ import { Schema } from "effect";
 const OptionalString = Schema.optional(Schema.String);
 
 export const ProjectIdParam = Schema.Struct({
-  id: Schema.String.pipe(Schema.minLength(1)),
+  id: Schema.String.check(Schema.isMinLength(1)),
 });
 
 export const PemdTagForm = Schema.Struct({
@@ -25,4 +25,4 @@ export const DeletePemdTagForm = Schema.Struct({
   tagId: Schema.optional(Schema.String),
 });
 
-export type PemdTagFormInput = Schema.Schema.Type<typeof PemdTagForm>;
+export type PemdTagFormInput = typeof PemdTagForm.Type;

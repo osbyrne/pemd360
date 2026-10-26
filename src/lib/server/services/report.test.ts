@@ -50,13 +50,13 @@ describe("report and email adapters", () => {
           to: "user@example.com",
           resetUrl: "https://example.com/reset",
         })
-        .pipe(Effect.either),
+        .pipe(Effect.result),
     );
 
-    expect(result._tag).toBe("Left");
-    if (result._tag === "Left") {
-      expect(result.left).toBeInstanceOf(EmailError);
-      expect(result.left.operation).toBe("email.password-reset");
+    expect(result._tag).toBe("Failure");
+    if (result._tag === "Failure") {
+      expect(result.failure).toBeInstanceOf(EmailError);
+      expect(result.failure.operation).toBe("email.password-reset");
     }
   });
 
@@ -85,6 +85,7 @@ describe("report and email adapters", () => {
             typologieBat: null,
             datePermisDeConstruire: null,
             operationSoumis: null,
+            dateRenovation: null,
           },
           pemdList: [],
         },

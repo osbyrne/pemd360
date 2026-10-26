@@ -7,10 +7,6 @@
         "pkg-path": "bun",
         "version": "1.4.2"
       },
-      "deno": {
-        "pkg-path": "deno",
-        "version": "2.9.7"
-      },
       "nodejs_24": {
         "pkg-path": "nodejs_24",
         "version": "24.21.0"
@@ -112,99 +108,6 @@
       ],
       "outputs": {
         "out": "/nix/store/216mr46yy8xspaydgapjhf4a21y643ji-bun-1.4.2"
-      },
-      "system": "x86_64-linux",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "deno",
-      "broken": false,
-      "derivation": "/nix/store/dkwa70by66pv79248402mcndva3ykrw3-deno-2.9.7.drv",
-      "description": "Secure runtime for JavaScript and TypeScript",
-      "install_id": "deno",
-      "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=7fd4004d0511991fff3a0524856a9be09e28c5f0",
-      "name": "deno-2.9.7",
-      "pname": "deno",
-      "rev": "7fd4004d0511991fff3a0524856a9be09e28c5f0",
-      "rev_count": 1090327,
-      "rev_date": "2026-10-11T15:54:36Z",
-      "scrape_date": "2026-10-13T05:00:29.398869Z",
-      "stabilities": [
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.9.7",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "denort": "/nix/store/l377ncs4dsdmfr36yjkvxk4lqsk6hfqr-deno-2.9.7-denort",
-        "libdenort": "/nix/store/zzq283zwa8hs1i9xfshwviffmbzqizhi-deno-2.9.7-libdenort",
-        "out": "/nix/store/4jixsxbkgx6wv22kx7s4nnpp4fbmy65l-deno-2.9.7"
-      },
-      "system": "aarch64-darwin",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "deno",
-      "broken": false,
-      "derivation": "/nix/store/w5qjys9b39hbfilql3cx4jvnmanrxj8x-deno-2.9.7.drv",
-      "description": "Secure runtime for JavaScript and TypeScript",
-      "install_id": "deno",
-      "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=7fd4004d0511991fff3a0524856a9be09e28c5f0",
-      "name": "deno-2.9.7",
-      "pname": "deno",
-      "rev": "7fd4004d0511991fff3a0524856a9be09e28c5f0",
-      "rev_count": 1090327,
-      "rev_date": "2026-10-11T15:54:36Z",
-      "scrape_date": "2026-10-13T05:33:17.485766Z",
-      "stabilities": [
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.9.7",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "denort": "/nix/store/1v2vnwkksgxhsbwhn00rjsn2gbiq8l9v-deno-2.9.7-denort",
-        "libdenort": "/nix/store/sp1c5a36z1kfnszdkacyr873f8yw25qm-deno-2.9.7-libdenort",
-        "out": "/nix/store/q56058iwni5cb6m7rwy76dqdbnwfvbk9-deno-2.9.7"
-      },
-      "system": "aarch64-linux",
-      "group": "toplevel",
-      "priority": 5
-    },
-    {
-      "attr_path": "deno",
-      "broken": false,
-      "derivation": "/nix/store/vb81nwrqzxx5ihm93a0nbr7alb5g6321-deno-2.9.7.drv",
-      "description": "Secure runtime for JavaScript and TypeScript",
-      "install_id": "deno",
-      "license": "MIT",
-      "locked_url": "https://github.com/flox/nixpkgs?rev=7fd4004d0511991fff3a0524856a9be09e28c5f0",
-      "name": "deno-2.9.7",
-      "pname": "deno",
-      "rev": "7fd4004d0511991fff3a0524856a9be09e28c5f0",
-      "rev_count": 1090327,
-      "rev_date": "2026-10-11T15:54:36Z",
-      "scrape_date": "2026-10-13T06:09:55.880380Z",
-      "stabilities": [
-        "unstable"
-      ],
-      "unfree": false,
-      "version": "2.9.7",
-      "outputs_to_install": [
-        "out"
-      ],
-      "outputs": {
-        "denort": "/nix/store/m0c2qmm4dbkj812q22g0ic88a24lh4xj-deno-2.9.7-denort",
-        "libdenort": "/nix/store/k7y3nh2c3ym5hn53k3zgn8jbm29jr351-deno-2.9.7-libdenort",
-        "out": "/nix/store/q4f99ywwv55mlmqllaly912qi5jzf19g-deno-2.9.7"
       },
       "system": "x86_64-linux",
       "group": "toplevel",

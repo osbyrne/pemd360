@@ -29,9 +29,9 @@ describe("Effect server boundaries", () => {
     form.append("etage", "RDC");
     form.append("etage", "1");
 
-    const result = await Effect.runPromise(decodeFormData(PemdTagForm, form).pipe(Effect.either));
+    const result = await Effect.runPromise(decodeFormData(PemdTagForm, form).pipe(Effect.result));
 
-    expect(result._tag).toBe("Left");
+    expect(result._tag).toBe("Failure");
   });
 
   it("maps typed authorization failures to the existing action contract", () => {
@@ -49,6 +49,7 @@ describe("Effect server boundaries", () => {
   it("checks authorization before any protected PEMD write", async () => {
     let databaseCalls = 0;
     const database: DatabaseService = {
+      read: () => Effect.die("unexpected database read"),
       run: () => {
         databaseCalls += 1;
         return Effect.fail(

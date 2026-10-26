@@ -6,30 +6,30 @@ PEMD360 is a web application for building diagnostics and waste management (PEMD
 
 ## Pre-Requisite
 
-- Deno
+- Bun
 
 ## Reproducible Toolchain
 
 The Flox environment in `.flox/` pins the local runtimes and service CLIs used by this
-repository: Bun 1.4.2, Deno 2.9.7, Node.js 24.21.0, Turso CLI 1.0.33, and Wrangler 4.148.0
+repository: Bun 1.4.2, Node.js 24.21.0, Turso CLI 1.0.33, and Wrangler 4.148.0
 (Cloudflare Workers). From the repository root, run `flox activate` to enter that environment.
-The JavaScript dependency graph remains pinned by `deno.lock`.
+The JavaScript dependency graph remains pinned by `bun.lock`.
 
 ## Tooling and Effect architecture
 
-- Deno installs dependencies from `package.json` and runs its scripts through `deno task`. Commit `deno.lock` for reproducible installs.
-- The application is pinned to the stable Effect 3 release `effect@3.22.2`; Effect 4 APIs are not used.
+- Bun installs dependencies from `package.json` and runs its scripts through `bun run`. Commit `bun.lock` for reproducible installs.
+- The application is pinned to stable `effect@4.0.5`, using `Context.Service`, `Effect.result`, Effect-based Schema decoding, and managed runtimes. `bun.lock` pins this version.
 - Server workflows under `src/lib/server/workflows` compose typed Effects through lazy services for the database, authorization, storage, email, and reports. SvelteKit route files only decode request data and map typed outcomes to the existing route contracts.
 - Browser workflows under `src/lib/client/workflows` use client-only adapters. Components retain markup, local state, DOM bindings, SvelteKit form enhancement, and navigation; the Matterport viewer has an owned connection and serialized tag reconciliation lifecycle.
 - `scripts/create-admin.ts` has its own CLI runtime and does not import SvelteKit `$env` modules. It keeps hidden password entry, explicit target confirmation, existing-account refusal, and transactional cleanup.
 
-Run the project checks with Deno:
+Run the project checks with Bun:
 
 ```bash
-deno task check
-deno task test
-deno task lint
-deno task fmt:check
+bun run check
+bun run test
+bun run lint
+bun run fmt:check
 ```
 
 The migration ledger and its verification evidence are in `docs/EFFECT_MIGRATION_STATUS.md`.
@@ -37,10 +37,28 @@ The migration ledger and its verification evidence are in `docs/EFFECT_MIGRATION
 ## Installation
 
 ```bash
-deno install
+bun install
 ```
 
 Copy `.env.example` to `.env` and fill in the required values.
+
+## CERFA data migration
+
+Before running the updated CERFA operation forms against an existing database, apply
+`drizzle/0005_cerfa_renovation_date.sql` once. It adds the nullable `date_renovation`
+column to `cerfa_operation`; existing rows remain intact. The month is stored as
+`YYYY-MM`, shown in the editor, and printed as `MM/YYYY` in the PDF.
+
+For installations already tracked by Drizzle, use the normal migration runner. For
+an existing database maintained outside Drizzle, check `PRAGMA table_info(cerfa_operation)`
+and apply this one SQL file if `date_renovation` is absent; do not replay the old
+schema-cleanup migration against an already-upgraded database.
+
+CERFA reads retry recognized transient transport failures at most twice, with
+exponential delay and a 15-second limit. Writes are transactional and are never
+retried automatically. PDF waste masses convert kilograms to tonnes, waste codes
+come from the material nature, and possible treatment routes come from the configured
+flags. Missing route information is displayed explicitly.
 
 ## Creating an administrator
 
@@ -49,7 +67,7 @@ Administrator bootstrap is intentionally available only as a local CLI command. 
 The command uses `TURSO_CONNECTION_URL`, `TURSO_AUTH_TOKEN`, `BETTER_AUTH_SECRET`, and optionally `BETTER_AUTH_URL` from `.env`. It displays the target database before making changes, asks for an explicit confirmation, and prompts for the password without displaying or storing it.
 
 ```bash
-deno task admin:create --email admin@example.com --name "Admin Name"
+bun run admin:create --email admin@example.com --name "Admin Name"
 ```
 
 Type `create admin` when prompted, then enter and confirm a password of at least eight characters. The user and credential account are created atomically with the `admin` role.
@@ -67,10 +85,10 @@ Security notes:
 
 ```bash
 # Generate migration
-deno x drizzle-kit generate
+bunx drizzle-kit generate
 
 # Apply migration
-deno x drizzle-kit migrate
+bunx drizzle-kit migrate
 ```
 
 # Matterport SDK Usage
@@ -95,8 +113,8 @@ deno x drizzle-kit migrate
 
 1. Define schema in `src/lib/server/db/schema.ts`
 2. Add relations if needed
-3. Run `deno x drizzle-kit generate` to create migration
-4. Run `deno x drizzle-kit migrate` to apply
+3. Run `bunx drizzle-kit generate` to create migration
+4. Run `bunx drizzle-kit migrate` to apply
 
 ## Creating a New Protected Route
 
@@ -130,4 +148,4 @@ deno x drizzle-kit migrate
 
 ## notes
 
-Run `deno task check` and `deno task fmt:check` before committing.
+Run `bun run check` and `bun run fmt:check` before committing.

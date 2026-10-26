@@ -39,13 +39,13 @@ describe("client authentication workflows", () => {
       }),
     );
     const result = await Effect.runPromise(
-      service.setRole({ userId: "user-1", role: "user" }).pipe(Effect.either),
+      service.setRole({ userId: "user-1", role: "user" }).pipe(Effect.result),
     );
 
-    expect(result._tag).toBe("Left");
-    if (result._tag === "Left") {
-      expect(result.left).toBeInstanceOf(AuthenticationProviderError);
-      expect(result.left.message).toBe("Role refused");
+    expect(result._tag).toBe("Failure");
+    if (result._tag === "Failure") {
+      expect(result.failure).toBeInstanceOf(AuthenticationProviderError);
+      expect(result.failure.message).toBe("Role refused");
     }
   });
 

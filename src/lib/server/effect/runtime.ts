@@ -60,7 +60,11 @@ export async function runWithServerRuntime<A, E, R extends ServerServices>(
     return { _tag: "success", value: exit.value };
   }
 
-  const failure = Cause.failureOption(exit.cause);
+  if (Cause.hasDies(exit.cause) || Cause.hasInterrupts(exit.cause)) {
+    return { _tag: "defect", cause: Cause.squash(exit.cause) };
+  }
+
+  const failure = Cause.findErrorOption(exit.cause);
   if (Option.isSome(failure)) {
     return { _tag: "failure", error: failure.value };
   }

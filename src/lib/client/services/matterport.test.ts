@@ -29,10 +29,10 @@ describe("Matterport service adapter", () => {
     const iframe = {} as HTMLIFrameElement;
 
     const result = await Effect.runPromise(
-      service.connect({ mode: "NPM", sdkKey: "key", iframe, timeoutMs: 5 }).pipe(Effect.either),
+      service.connect({ mode: "NPM", sdkKey: "key", iframe, timeoutMs: 5 }).pipe(Effect.result),
     );
 
-    expect(result._tag).toBe("Left");
+    expect(result._tag).toBe("Failure");
     resolveConnection?.(sdk);
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(sdk.disconnect).toHaveBeenCalledTimes(1);

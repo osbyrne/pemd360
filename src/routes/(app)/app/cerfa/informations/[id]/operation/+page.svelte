@@ -4,9 +4,14 @@
   import { ui } from "$lib/styles/ui.stylex";
   import { page } from "$app/stores";
   import { enhance } from "$app/forms";
-  import type { PageData } from "./$types";
+  import {
+    normalizeOperationType,
+    normalizePreviousOperation,
+    storedStringList,
+  } from "$lib/cerfa/operation";
+  import type { ActionData, PageData } from "./$types";
 
-  let { data }: { data: PageData } = $props();
+  let { data, form }: { data: PageData; form: ActionData } = $props();
 
   const id = $derived($page.params.id);
 
@@ -15,12 +20,18 @@
     return new Date(ts).toISOString().split("T")[0];
   }
 
-  const storedTypologies = (): string[] => JSON.parse(data.operation?.typologieBat || "[]");
-  const storedOperationsSoumis = (): string[] =>
-    JSON.parse(data.operation?.operationSoumis || "[]");
-
-  let typologies = $state([...storedTypologies()]);
-  let operationsSoumis = $state([...storedOperationsSoumis()]);
+  let selectedOperation = $derived(normalizeOperationType(data.operation?.operation));
+  let typologies = $derived(storedStringList(data.operation?.typologieBat));
+  let operationsSoumis = $derived(
+    storedStringList(data.operation?.operationSoumis).map(normalizePreviousOperation),
+  );
+  const previousOperationValues = [
+    "renovation",
+    "decontamination",
+    "autre",
+    "aucune",
+    "ne_sait_pas",
+  ];
 
   const typologiesList = [
     "Maison individuelle",
@@ -146,11 +157,20 @@
   </div>
 
   <div class={stylex.attrs(ui.card, styles.div3).class}>
+    {#if form?.message}
+      <p role="alert">{form.message}</p>
+    {/if}
     <div class={stylex.attrs(styles.div4).class}>
       <h1 class={stylex.attrs(styles.h1).class}>L'opération</h1>
     </div>
     <div class={stylex.attrs(styles.div5).class}>
       <form method="POST" use:enhance class={stylex.attrs(styles.form).class}>
+        {#each typologies.filter((value) => !typologiesList.includes(value)) as value}
+          <input type="hidden" name="typologies" {value} />
+        {/each}
+        {#each operationsSoumis.filter((value) => !previousOperationValues.includes(value)) as value}
+          <input type="hidden" name="operationsSoumis" {value} />
+        {/each}
         <div class={stylex.attrs(styles.stackSpacing15, styles.div6).class}>
           <div>
             <label for="adresse" class={stylex.attrs(styles.label).class}>Adresse</label>
@@ -216,17 +236,19 @@
           <label for="operation" class={stylex.attrs(styles.label).class}
             >L'opération est-elle</label
           >
-          <select id="operation" name="operation" class={stylex.attrs(ui.select).class}>
+          <select
+            id="operation"
+            name="operation"
+            bind:value={selectedOperation}
+            class={stylex.attrs(ui.select).class}
+          >
             <option value="">Sélectionnez...</option>
-            <option value="demolition" selected={data.operation?.operation === "demolition"}
-              >Démolition</option
-            >
-            <option value="renovation" selected={data.operation?.operation === "renovation"}
-              >Rénovation</option
-            >
-            <option value="mixte" selected={data.operation?.operation === "mixte"}
-              >Mixte (Démolition + Rénovation)</option
-            >
+            {#if selectedOperation && !["demolition", "renovation", "mixte"].includes(selectedOperation)}
+              <option value={selectedOperation}>{selectedOperation}</option>
+            {/if}
+            <option value="demolition">Démolition</option>
+            <option value="renovation">Rénovation</option>
+            <option value="mixte">Mixte (Démolition + Rénovation)</option>
           </select>
         </div>
 
@@ -367,6 +389,7 @@
               <input
                 type="month"
                 name="dateRenovation"
+                value={data.operation?.dateRenovation ?? ""}
                 class={stylex.attrs(styles.stackSpacing05, ui.input).class}
               />
             {/if}

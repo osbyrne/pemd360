@@ -17,6 +17,8 @@ import {
   cerfaMtrOuvrage,
   cerfaOperation,
   groupe,
+  objets,
+  natureV2,
   pemd,
   projet,
   userProjet,
@@ -44,7 +46,7 @@ export function generateCerfaPdfReport(input: {
     if (!user) return yield* Effect.fail(new UnauthenticatedError({ message: "Non autorisé" }));
 
     const database = yield* Database;
-    const projectRows = yield* database.run("report.cerfa.project", (db) =>
+    const projectRows = yield* database.read("report.cerfa.project", (db) =>
       db.select({ id: projet.id }).from(projet).where(eq(projet.id, projectId)).limit(1),
     );
     if (projectRows.length === 0) {
@@ -52,7 +54,7 @@ export function generateCerfaPdfReport(input: {
     }
 
     if (user.role !== "admin") {
-      const accessRows = yield* database.run("report.cerfa.access", (db) =>
+      const accessRows = yield* database.read("report.cerfa.access", (db) =>
         db
           .select({ projetId: userProjet.projetId })
           .from(userProjet)
@@ -69,31 +71,31 @@ export function generateCerfaPdfReport(input: {
     const [diagnosticRows, diagnostiqueurRows, ouvrageRows, operationRows, pemdList] =
       yield* Effect.all(
         [
-          database.run("report.cerfa.diagnostic", (db) =>
+          database.read("report.cerfa.diagnostic", (db) =>
             db
               .select()
               .from(cerfaDiagnostic)
               .where(eq(cerfaDiagnostic.projetId, projectId))
               .limit(1),
           ),
-          database.run("report.cerfa.diagnostiqueur", (db) =>
+          database.read("report.cerfa.diagnostiqueur", (db) =>
             db
               .select()
               .from(cerfaDiagnostiqueur)
               .where(eq(cerfaDiagnostiqueur.projetId, projectId))
               .limit(1),
           ),
-          database.run("report.cerfa.ouvrage", (db) =>
+          database.read("report.cerfa.ouvrage", (db) =>
             db
               .select()
               .from(cerfaMtrOuvrage)
               .where(eq(cerfaMtrOuvrage.projetId, projectId))
               .limit(1),
           ),
-          database.run("report.cerfa.operation", (db) =>
+          database.read("report.cerfa.operation", (db) =>
             db.select().from(cerfaOperation).where(eq(cerfaOperation.projetId, projectId)).limit(1),
           ),
-          database.run("report.cerfa.pemd", (db) =>
+          database.read("report.cerfa.pemd", (db) =>
             db
               .select({
                 id: pemd.id,
@@ -110,9 +112,19 @@ export function generateCerfaPdfReport(input: {
                 potentielReemploi: pemd.potentielReemploi,
                 categorie: categorieV2.categoriev2,
                 famille: groupe.groupe,
+                unite: objets.unite,
+                codeDechet: natureV2.codeDechet,
+                reutilisation: natureV2.reutilisation,
+                recyclable: natureV2.recyclable,
+                valorisationMatiere: natureV2.valorisationMatiere,
+                valorisationEnergetique: natureV2.valorisationEnergetique,
+                incinerationSansValo: natureV2.incinerationSansValorisationEnergetique,
+                nonValorisation: natureV2.nonValorisation,
               })
               .from(pemd)
-              .leftJoin(categorieV2, eq(pemd.natureId, categorieV2.id))
+              .leftJoin(objets, eq(pemd.objetId, objets.id))
+              .leftJoin(natureV2, eq(pemd.natureId, natureV2.id))
+              .leftJoin(categorieV2, eq(objets.categorieId, categorieV2.id))
               .leftJoin(groupe, eq(categorieV2.groupeId, groupe.id))
               .where(eq(pemd.sidId, projectId)),
           ),

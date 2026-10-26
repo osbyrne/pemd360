@@ -17,7 +17,7 @@ export interface StorageService {
   readonly listObjects: (maxKeys: number) => Effect.Effect<readonly string[], StorageError>;
 }
 
-export class Storage extends Context.Tag("pemd360/Storage")<Storage, StorageService>() {}
+export class Storage extends Context.Service<Storage, StorageService>()("pemd360/Storage") {}
 
 export function makeStorageService(
   adapters: {

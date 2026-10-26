@@ -42,7 +42,7 @@ export interface ReportService {
   ) => Effect.Effect<Uint8Array, ReportGenerationError>;
 }
 
-export class Report extends Context.Tag("pemd360/Report")<Report, ReportService>() {}
+export class Report extends Context.Service<Report, ReportService>()("pemd360/Report") {}
 
 export function makeReportService(
   adapters: {

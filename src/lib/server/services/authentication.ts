@@ -1,4 +1,5 @@
 import { Context, Effect, Layer } from "effect";
+import { retryTransientRead } from "$lib/server/effect/transient-read";
 import { AuthenticationProviderError } from "$lib/effect/errors";
 import { getAuth, type Auth } from "$lib/auth";
 
@@ -11,25 +12,38 @@ export interface AuthenticationService {
   ) => Effect.Effect<SessionResult, AuthenticationProviderError>;
 }
 
-export class Authentication extends Context.Tag("pemd360/Authentication")<
-  Authentication,
-  AuthenticationService
->() {}
+export class Authentication extends Context.Service<Authentication, AuthenticationService>()(
+  "pemd360/Authentication",
+) {}
 
 export function makeAuthenticationService(
   getAuthClient: () => Auth = getAuth,
 ): AuthenticationService {
   return {
     getSession: (input) =>
-      Effect.tryPromise({
-        try: () => getAuthClient().api.getSession(input),
-        catch: (cause) =>
-          new AuthenticationProviderError({
-            message: "Le service d'authentification est indisponible",
-            operation: "getSession",
-            cause,
-          }),
-      }),
+      retryTransientRead(
+        Effect.tryPromise({
+          try: () => getAuthClient().api.getSession(input),
+          catch: (cause) =>
+            new AuthenticationProviderError({
+              message: "Le service d'authentification est indisponible",
+              operation: "getSession",
+              cause,
+            }),
+        }),
+      ).pipe(
+        Effect.timeoutOrElse({
+          duration: "15 seconds",
+          orElse: () =>
+            Effect.fail(
+              new AuthenticationProviderError({
+                message: "Le service d'authentification est indisponible",
+                operation: "getSession",
+                cause: new Error("Session lookup timed out"),
+              }),
+            ),
+        }),
+      ),
   };
 }
 

@@ -6,7 +6,7 @@ export interface EmailService {
   readonly sendPasswordResetEmail: (input: PasswordResetEmail) => Effect.Effect<void, EmailError>;
 }
 
-export class Email extends Context.Tag("pemd360/Email")<Email, EmailService>() {}
+export class Email extends Context.Service<Email, EmailService>()("pemd360/Email") {}
 
 export function makeEmailService(
   send: typeof sendPasswordResetEmailRequest = sendPasswordResetEmailRequest,

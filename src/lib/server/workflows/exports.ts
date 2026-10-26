@@ -1,4 +1,5 @@
 import { Effect } from "effect";
+import { isCerfaReuseItem } from "$lib/cerfa/reuse";
 import { eq, inArray } from "drizzle-orm";
 import {
   DatabaseError,
@@ -327,12 +328,13 @@ export function exportCerfaWaste(input: {
     const projectId = yield* requireExportProjectId(input.projectId);
     const access = yield* authorizeExport(input.user, projectId);
     const database = yield* Database;
-    const rows = yield* database.run("export.cerfa-waste.query", (db) =>
+    const rows = yield* database.read("export.cerfa-waste.query", (db) =>
       db
         .select({
           id: pemd.id,
           sidId: pemd.sidId,
           reemploi: pemd.reemploi,
+          potentielReemploi: pemd.potentielReemploi,
           categorie: categorieV2.categoriev2,
           objet: objets.objet,
           codeDechet: natureV2.codeDechet,
@@ -414,12 +416,13 @@ type WasteGroupRow = WasteExcelRow & {
   readonly id: string;
   readonly sidId: string;
   readonly reemploi: number | null;
+  readonly potentielReemploi: string | null;
 };
 
 function groupWasteRows(rows: readonly WasteGroupRow[]): WasteExcelRow[] {
   const grouped = new Map<string, WasteExcelRow>();
   for (const item of rows) {
-    if (item.reemploi !== 0 && item.reemploi !== null) continue;
+    if (isCerfaReuseItem(item)) continue;
     const key = `${item.categorie || "Inconnu"}_${item.nature || "Inconnu"}_${item.codeDechet || "NC"}`;
     const current = grouped.get(key);
     if (current) {

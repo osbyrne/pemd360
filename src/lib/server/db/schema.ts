@@ -328,6 +328,7 @@ export const cerfaOperation = sqliteTable(
     typologieBat: text("typologie_bat"),
     datePermisDeConstruire: integer("date_permis_de_construire"),
     operationSoumis: text("operation_soumis"),
+    dateRenovation: text("date_renovation", { length: 7 }),
   },
   (table) => [index("cerfa_operation_projet_id_idx").on(table.projetId)],
 );

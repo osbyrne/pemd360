@@ -22,10 +22,9 @@ export interface AdminDatabaseService {
   ) => Effect.Effect<A, E | DatabaseError>;
 }
 
-export class AdminDatabase extends Context.Tag("pemd360/cli/AdminDatabase")<
-  AdminDatabase,
-  AdminDatabaseService
->() {}
+export class AdminDatabase extends Context.Service<AdminDatabase, AdminDatabaseService>()(
+  "pemd360/cli/AdminDatabase",
+) {}
 
 export function makeAdminDatabaseService(database: AppDatabase): AdminDatabaseService {
   return {
@@ -73,7 +72,7 @@ function runTransaction<A, E>(
   database: AppDatabase,
   operation: (transaction: AdminTransaction) => Effect.Effect<A, E>,
 ): Effect.Effect<A, E | DatabaseError> {
-  return Effect.async<A, E | DatabaseError>((resume) => {
+  return Effect.callback<A, E | DatabaseError>((resume) => {
     void Promise.resolve()
       .then(() =>
         database.transaction(async (transaction) => {
