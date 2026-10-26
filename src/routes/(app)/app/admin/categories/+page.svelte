@@ -83,6 +83,12 @@
   }
 
   const styles = stylex.create({
+    tr: {
+      transitionProperty:
+        "color, background-color, border-color, text-decoration-color, fill, stroke",
+      transitionDuration: "150ms",
+      transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+    },
     div: {
       marginBottom: "2rem",
       display: "flex",
@@ -115,59 +121,17 @@
       position: "relative",
       marginBottom: "1.5rem",
     },
-    div2: {
-      overflow: "hidden",
-      borderRadius: ".75rem",
-      boxShadow: "0 1px 3px #0000001a, 0 1px 2px -1px #0000001a",
-    },
-    div3: {
-      overflowX: "auto",
-    },
-    thead: {
-      fontSize: ".75rem",
-      lineHeight: "1rem",
-      fontWeight: 600,
-      textTransform: "uppercase",
-    },
     th: {
       width: "5rem",
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
-    },
-    th2: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
     },
     th3: {
       width: "8rem",
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
       textAlign: "center",
     },
-    tr: {
-      transitionProperty:
-        "color, background-color, border-color, text-decoration-color, fill, stroke",
-      transitionDuration: "150ms",
-      transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-    },
     td: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
       fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
     },
     td2: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
       fontWeight: 500,
     },
     span: {
@@ -189,13 +153,6 @@
       alignItems: "center",
       justifyContent: "center",
       gap: "0.5rem",
-    },
-    td3: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "3rem",
-      paddingBottom: "3rem",
-      textAlign: "center",
     },
     div5: {
       position: "fixed",
@@ -327,34 +284,44 @@
 <br />
 
 <!-- Table -->
-<div class={stylex.attrs(styles.div2).class}>
-  <div class={stylex.attrs(styles.div3).class}>
+<div class={stylex.attrs(ui.tableFrame).class}>
+  <!-- svelte-ignore a11y_no_noninteractive_tabindex (Keyboard access to horizontal scrolling.) -->
+  <div
+    class={stylex.attrs(ui.tableScroll).class}
+    tabindex="0"
+    role="region"
+    aria-label="Tableau défilant"
+  >
     <table class={stylex.attrs(ui.table).class}>
-      <thead class={stylex.attrs(styles.thead).class}>
+      <thead>
         <tr>
-          <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+          <th
+            scope="col"
+            class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
             >ID</th
           >
-          <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th2).class}
+          <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
             >Catégorie</th
           >
-          <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th2).class}
+          <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
             >Groupe</th
           >
-          <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th3).class}
+          <th
+            scope="col"
+            class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th3).class}
             >Actions</th
           >
         </tr>
       </thead>
       <tbody>
         {#each displayedList as category}
-          <tr class={stylex.attrs(styles.tr).class}>
+          <tr class={stylex.attrs(ui.tableRow).class}>
             <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>#{category.id}</td
             >
             <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td2).class}
               >{category.categorie}</td
             >
-            <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th2).class}>
+            <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
               {#if category.groupeName}
                 <span class={stylex.attrs(styles.span).class}>
                   {category.groupeName}
@@ -363,7 +330,7 @@
                 <span>-</span>
               {/if}
             </td>
-            <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th2).class}>
+            <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
               <div class={stylex.attrs(styles.div4).class}>
                 <button
                   onclick={() => openEditModal(category)}
@@ -383,8 +350,8 @@
             </td>
           </tr>
         {:else}
-          <tr>
-            <td colspan="4" class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td3).class}>
+          <tr class={stylex.attrs(ui.tableRow).class}>
+            <td colspan="4" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableEmpty).class}>
               {#if query}
                 Aucun résultat pour "{query}".
               {:else}

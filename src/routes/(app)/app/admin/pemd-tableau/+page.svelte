@@ -116,54 +116,11 @@
       position: "relative",
       marginBottom: "1.5rem",
     },
-    div4: {
-      overflow: "hidden",
-    },
-    div5: {
-      overflowX: "auto",
-    },
-    thead: {
-      fontSize: ".75rem",
-      lineHeight: "1rem",
-      fontWeight: 600,
-      textTransform: "uppercase",
-    },
-    th: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
-    },
     th2: {
       width: "8rem",
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
       textAlign: "center",
-    },
-    tbody: {
-      "--divider-width": "1px",
-      "--divider-color": "oklch(96.7% 0.003 264.542)",
-    },
-    td: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "3rem",
-      paddingBottom: "3rem",
-      textAlign: "center",
-    },
-    tr: {
-      transitionProperty:
-        "color, background-color, border-color, text-decoration-color, fill, stroke",
-      transitionDuration: "150ms",
-      transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
     },
     td2: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
       fontWeight: 500,
     },
     img: {
@@ -243,68 +200,79 @@
     </label>
   </div>
 
-  <div class={stylex.attrs(styles.div4).class}>
-    <div class={stylex.attrs(styles.div5).class}>
+  <div class={stylex.attrs(ui.tableFrame).class}>
+    <!-- svelte-ignore a11y_no_noninteractive_tabindex (Keyboard access to horizontal scrolling.) -->
+    <div
+      class={stylex.attrs(ui.tableScroll).class}
+      tabindex="0"
+      role="region"
+      aria-label="Tableau défilant"
+    >
       <table class={stylex.attrs(ui.table).class}>
-        <thead class={stylex.attrs(styles.thead).class}>
+        <thead>
           <tr>
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Groupe</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Catégorie</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >PEMD</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Estimation d'âge</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Quantité</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Description</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >État</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Nature</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Surface (m²)</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Épaisseur (m)</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Densité</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Masse (kg)</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Constitution</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Miniature</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Étage</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Typologie</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th2).class}
+            <th
+              scope="col"
+              class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th2).class}
               >Actions</th
             >
           </tr>
         </thead>
-        <tbody class={stylex.attrs(styles.tbody).class}>
+        <tbody>
           {#if displayedList.length === 0}
-            <tr class={stylex.attrs(ui.divideChild).class}>
-              <td colspan="17" class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+            <tr class={stylex.attrs(ui.tableRow).class}>
+              <td
+                colspan="17"
+                class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableEmpty).class}
+              >
                 {#if query}
                   Aucun résultat pour "{query}".
                 {:else}
@@ -314,47 +282,37 @@
             </tr>
           {:else}
             {#each displayedList as item}
-              <tr class={stylex.attrs(ui.divideChild, styles.tr).class}>
+              <tr class={stylex.attrs(ui.tableRow).class}>
                 <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td2).class}
                   >{item.groupe || "-"}</td
                 >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}
                   >{item.categorie || "-"}</td
                 >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
-                  >{item.objet || "-"}</td
-                >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>{item.objet || "-"}</td>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}
                   >{item.estimationAge || "-"}</td
                 >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}
                   >{item.quantite || "-"}</td
                 >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}
                   >{item.description || "-"}</td
                 >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
-                  >{item.etat || "-"}</td
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>{item.etat || "-"}</td>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>{item.nature || "-"}</td>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>{item.surface || "-"}</td
                 >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
-                  >{item.nature || "-"}</td
-                >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
-                  >{item.surface || "-"}</td
-                >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}
                   >{item.epaisseur || "-"}</td
                 >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
-                  >{item.densite || "-"}</td
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>{item.densite || "-"}</td
                 >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
-                  >{item.masse || "-"}</td
-                >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>{item.masse || "-"}</td>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}
                   >{item.constitution || "-"}</td
                 >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   {#if item.imageHash}
                     <img
                       src={imageUrl(item.imageHash)}
@@ -366,13 +324,11 @@
                     <span class={stylex.attrs(styles.span).class}>N/A</span>
                   {/if}
                 </td>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
-                  >{item.etage || "-"}</td
-                >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>{item.etage || "-"}</td>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}
                   >{item.typologieAppart || "-"}</td
                 >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <div class={stylex.attrs(styles.div6).class}>
                     <button
                       onclick={() => openDeleteModal(item)}

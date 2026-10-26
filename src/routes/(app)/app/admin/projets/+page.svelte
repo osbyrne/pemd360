@@ -166,9 +166,6 @@
       position: "relative",
       marginBottom: "1.5rem",
     },
-    div4: {
-      overflow: "hidden",
-    },
     div5: {
       display: "flex",
       flexDirection: "column",
@@ -176,8 +173,8 @@
       justifyContent: "center",
       paddingInlineStart: "1rem",
       paddingInlineEnd: "1rem",
-      paddingTop: "4rem",
-      paddingBottom: "4rem",
+      paddingTop: "3rem",
+      paddingBottom: "3rem",
     },
     ChartNoAxesCombined: {
       marginBottom: "1rem",
@@ -189,25 +186,6 @@
       marginTop: "0.25rem",
       fontSize: ".875rem",
       lineHeight: "1.25rem",
-    },
-    div6: {
-      overflowX: "auto",
-    },
-    tbody: {
-      "--divider-width": "1px",
-      "--divider-color": "oklch(96.8% 0.007 247.896)",
-    },
-    tr: {
-      transitionProperty:
-        "color, background-color, border-color, text-decoration-color, fill, stroke",
-      transitionDuration: "150ms",
-      transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-    },
-    td: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
     },
     span: {
       borderRadius: ".25rem",
@@ -326,7 +304,7 @@
   <br />
 
   <!-- Table -->
-  <div class={stylex.attrs(styles.div4).class}>
+  <div class={stylex.attrs(ui.tableFrame).class}>
     {#if displayedProjets.length === 0}
       <div class={stylex.attrs(styles.div5).class}>
         <ChartNoAxesCombined
@@ -340,65 +318,85 @@
         </p>
       </div>
     {:else}
-      <div class={stylex.attrs(styles.div6).class}>
+      <!-- svelte-ignore a11y_no_noninteractive_tabindex (Keyboard access to horizontal scrolling.) -->
+      <div
+        class={stylex.attrs(ui.tableScroll).class}
+        tabindex="0"
+        role="region"
+        aria-label="Tableau défilant"
+      >
         <table class={stylex.attrs(ui.table).class}>
           <thead>
             <tr>
-              <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
+              <th
+                scope="col"
+                class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
                 >ID Matterport</th
               >
-              <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
+              <th
+                scope="col"
+                class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
                 >Référence</th
               >
-              <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
-                >Libellé</th
+              <th
+                scope="col"
+                class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}>Libellé</th
               >
-              <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}>Ville</th>
-              <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
+              <th
+                scope="col"
+                class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}>Ville</th
+              >
+              <th
+                scope="col"
+                class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
                 >Établissement</th
               >
-              <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
-                >Société</th
+              <th
+                scope="col"
+                class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}>Société</th
               >
-              <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
+              <th
+                scope="col"
+                class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
                 >Démarrage</th
               >
-              <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
-                >Actions</th
+              <th
+                scope="col"
+                class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}>Actions</th
               >
             </tr>
           </thead>
-          <tbody class={stylex.attrs(styles.tbody).class}>
+          <tbody>
             {#each displayedProjets as proj (proj.id)}
-              <tr class={stylex.attrs(ui.divideChild, styles.tr).class}>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+              <tr class={stylex.attrs(ui.tableRow).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <span class={stylex.attrs(styles.span).class}>{proj.id}</span>
                 </td>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <span class={stylex.attrs(styles.span2).class}>{proj.reference}</span>
                 </td>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <span class={stylex.attrs(styles.span3).class}>{proj.libelle}</span>
                 </td>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <span class={stylex.attrs(styles.span3).class}>{proj.ville}</span>
                 </td>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <span class={stylex.attrs(styles.span3).class}
                     >{proj.etablissementNom || "-"}</span
                   >
                 </td>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <span class={stylex.attrs(styles.span4).class}>
                     {proj.societeNom || "-"}
                   </span>
                 </td>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <span class={stylex.attrs(styles.span3).class}
                     >{formatDate(proj.dateDemarrage)}</span
                   >
                 </td>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <a
                     href="/app/admin/projets/{proj.id}"
                     class={stylex.attrs(ui.button, ui.buttonGhost).class}

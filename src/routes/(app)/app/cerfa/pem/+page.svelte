@@ -29,51 +29,15 @@
       fontSize: ".875rem",
       lineHeight: "1.25rem",
     },
-    div3: {
-      overflow: "hidden",
-    },
-    div4: {
-      overflowX: "auto",
-    },
-    thead: {
-      fontSize: ".75rem",
-      lineHeight: "1rem",
-      fontWeight: 600,
-      textTransform: "uppercase",
-    },
-    th: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
-    },
-    tbody: {
-      "--divider-width": "1px",
-      "--divider-color": "oklch(96.7% 0.003 264.542)",
-    },
-    tr: {
-      transitionProperty:
-        "color, background-color, border-color, text-decoration-color, fill, stroke",
-      transitionDuration: "150ms",
-      transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-    },
     td: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
       fontWeight: 500,
     },
     td2: {
-      display: "flex",
-      alignItems: "center",
-      gap: "0.5rem",
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
+      whiteSpace: "nowrap",
     },
     Box: {
+      display: "inline-block",
+      marginInlineEnd: ".5rem",
       height: "1rem",
       width: "1rem",
       color: "oklch(66.6% 0.179 58.318)",
@@ -92,13 +56,6 @@
       fontWeight: 500,
       color: "oklch(47.3% 0.137 46.201)",
     },
-    td3: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "3rem",
-      paddingBottom: "3rem",
-      textAlign: "center",
-    },
   });
 </script>
 
@@ -116,54 +73,58 @@
     </p>
   </div>
 
-  <div class={stylex.attrs(styles.div3).class}>
-    <div class={stylex.attrs(styles.div4).class}>
+  <div class={stylex.attrs(ui.tableFrame).class}>
+    <!-- svelte-ignore a11y_no_noninteractive_tabindex (Keyboard access to horizontal scrolling.) -->
+    <div
+      class={stylex.attrs(ui.tableScroll).class}
+      tabindex="0"
+      role="region"
+      aria-label="Tableau défilant"
+    >
       <table class={stylex.attrs(ui.table).class}>
-        <thead class={stylex.attrs(styles.thead).class}>
+        <thead>
           <tr>
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Famille (Macro)</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Matériau (Catégorie)</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Nature (Objet)</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Quantité / Unité</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Destination</th
             >
           </tr>
         </thead>
-        <tbody class={stylex.attrs(styles.tbody).class}>
+        <tbody>
           {#each data.items as item}
-            <tr class={stylex.attrs(ui.divideChild, styles.tr).class}>
+            <tr class={stylex.attrs(ui.tableRow).class}>
               <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}
                 >{item.groupe}</td
               >
-              <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
-                >{item.categorie}</td
-              >
+              <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>{item.categorie}</td>
               <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td2).class}>
                 <Box class={stylex.attrs(styles.Box).class} />
                 {item.objet}
               </td>
-              <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
+              <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                 {item.masseUnitaire || "?"}
                 {item.unite || ""}
               </td>
-              <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
+              <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                 <span class={stylex.attrs(styles.span).class}>
                   {item.etat || "Réemploi"}
                 </span>
               </td>
             </tr>
           {:else}
-            <tr class={stylex.attrs(ui.divideChild).class}>
-              <td colspan="5" class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td3).class}>
+            <tr class={stylex.attrs(ui.tableRow).class}>
+              <td colspan="5" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableEmpty).class}>
                 Aucun élément caractérisé PEM (Réemploi) trouvé.
               </td>
             </tr>

@@ -1,5 +1,5 @@
 import * as stylex from "@stylexjs/stylex";
-import { theme } from "./tokens.stylex";
+import { theme, tableTheme } from "./tokens.stylex";
 
 /** Shared controls and state variants. Page layouts live alongside their components. */
 export const ui = stylex.create({
@@ -270,29 +270,69 @@ export const ui = stylex.create({
     fontSize: "1.125rem",
     fontWeight: 600,
   },
+  tableFrame: {
+    minWidth: 0,
+    width: "100%",
+    overflow: "hidden",
+    borderRadius: tableTheme.radius,
+    borderWidth: "1px",
+    borderStyle: "solid",
+    borderColor: tableTheme.border,
+    backgroundColor: theme.base100,
+  },
+  tableScroll: {
+    maxWidth: "100%",
+    overflowX: "auto",
+    outlineColor: theme.primary,
+    outlineOffset: "-2px",
+  },
   table: {
     position: "relative",
     width: "100%",
     borderCollapse: "separate",
     borderSpacing: 0,
-    borderRadius: ".5rem",
     textAlign: "left",
     fontSize: ".875rem",
+    lineHeight: "1.5rem",
+    color: theme.baseContent,
+    backgroundColor: theme.base100,
+    fontVariantNumeric: "tabular-nums",
   },
   tableCell: {
     verticalAlign: "middle",
-    paddingBlock: ".75rem",
-    paddingInline: "1rem",
+    paddingBlock: tableTheme.cellBlock,
+    paddingInline: tableTheme.cellInline,
+    fontWeight: 400,
   },
   tableHeading: {
+    backgroundColor: theme.base200,
     whiteSpace: "nowrap",
+    fontSize: ".75rem",
+    lineHeight: "1.25rem",
     fontWeight: 600,
-    color: `color-mix(in oklab, ${theme.baseContent} 60%, transparent)`,
+    color: tableTheme.heading,
+  },
+  tableRow: {
+    backgroundColor: {
+      default: "transparent",
+      ":hover": tableTheme.hover,
+      ":focus-within": tableTheme.hover,
+    },
+  },
+  tableEmpty: {
+    paddingBlock: "3rem",
+    textAlign: "center",
+    color: tableTheme.heading,
   },
   tableRule: {
     borderBottomWidth: "1px",
     borderBottomStyle: "solid",
-    borderBottomColor: `color-mix(in oklab, ${theme.baseContent} 5%, transparent)`,
+    borderBottomColor: tableTheme.border,
+  },
+  tableGroupRule: {
+    borderInlineStartWidth: "1px",
+    borderInlineStartStyle: "solid",
+    borderInlineStartColor: tableTheme.border,
   },
   buttonGroup: {
     display: "inline-flex",

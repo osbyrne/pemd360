@@ -163,61 +163,14 @@
     label: {
       position: "relative",
     },
-    div5: {
-      overflow: "hidden",
-    },
-    div6: {
-      overflowX: "auto",
-    },
-    thead: {
-      fontSize: ".75rem",
-      lineHeight: "1rem",
-      fontWeight: 600,
-      textTransform: "uppercase",
-    },
-    th: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
-    },
     th2: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
       textAlign: "center",
     },
     th3: {
       width: "8rem",
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
       textAlign: "center",
-    },
-    tbody: {
-      "--divider-width": "1px",
-      "--divider-color": "oklch(96.7% 0.003 264.542)",
-    },
-    td: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "3rem",
-      paddingBottom: "3rem",
-      textAlign: "center",
-    },
-    tr: {
-      transitionProperty:
-        "color, background-color, border-color, text-decoration-color, fill, stroke",
-      transitionDuration: "150ms",
-      transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
     },
     td2: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
       fontWeight: 500,
     },
     span: {
@@ -489,44 +442,54 @@
     </label>
   </div>
 
-  <div class={stylex.attrs(styles.div5).class}>
-    <div class={stylex.attrs(styles.div6).class}>
+  <div class={stylex.attrs(ui.tableFrame).class}>
+    <!-- svelte-ignore a11y_no_noninteractive_tabindex (Keyboard access to horizontal scrolling.) -->
+    <div
+      class={stylex.attrs(ui.tableScroll).class}
+      tabindex="0"
+      role="region"
+      aria-label="Tableau défilant"
+    >
       <table class={stylex.attrs(ui.table).class}>
-        <thead class={stylex.attrs(styles.thead).class}>
+        <thead>
           <tr>
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >PEMD</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Description</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >État</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Étage</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Potentiel réemploi</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Coefficient réemploi</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Miniature</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th2).class}
+            <th
+              scope="col"
+              class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th2).class}
               >QR code</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th3).class}
+            <th
+              scope="col"
+              class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th3).class}
               >Actions</th
             >
           </tr>
         </thead>
-        <tbody class={stylex.attrs(styles.tbody).class}>
+        <tbody>
           {#if displayedList.length === 0}
-            <tr class={stylex.attrs(ui.divideChild).class}>
-              <td colspan="9" class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+            <tr class={stylex.attrs(ui.tableRow).class}>
+              <td colspan="9" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableEmpty).class}>
                 {#if query}
                   Aucun résultat pour "{query}".
                 {:else}
@@ -536,14 +499,14 @@
             </tr>
           {:else}
             {#each displayedList as item}
-              <tr class={stylex.attrs(ui.divideChild, styles.tr).class}>
+              <tr class={stylex.attrs(ui.tableRow).class}>
                 <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td2).class}
                   >{item.objet || "-"}</td
                 >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}
                   >{item.description || "-"}</td
                 >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   {#if item.etat}
                     <span class={stylex.attrs(styles.span).class}>
                       {item.etat}
@@ -552,10 +515,8 @@
                     <span>-</span>
                   {/if}
                 </td>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
-                  >{item.etage || "-"}</td
-                >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>{item.etage || "-"}</td>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   {#if item.potentielReemploi}
                     <span class={stylex.attrs(styles.span2).class}>
                       {item.potentielReemploi}
@@ -564,7 +525,7 @@
                     <span>-</span>
                   {/if}
                 </td>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <span
                     class={stylex.attrs(styles.span3, item.reemploi ? ui.textGreen600 : false)
                       .class}
@@ -572,7 +533,7 @@
                     {getCoefficientReemploi(item)}
                   </span>
                 </td>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   {#if item.imageHash}
                     <img
                       src={imageUrl(item.imageHash)}
@@ -594,7 +555,7 @@
                     <span class={stylex.attrs(styles.span5).class}>Voir</span>
                   </button>
                 </td>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <div class={stylex.attrs(styles.div7).class}>
                     <button
                       onclick={() => openDeleteModal(item)}
