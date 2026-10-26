@@ -101,48 +101,11 @@
       position: "relative",
       marginBottom: "1.5rem",
     },
-    thead: {
-      fontSize: ".75rem",
-      lineHeight: "1rem",
-      fontWeight: 600,
-      textTransform: "uppercase",
-    },
-    th: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
-    },
     th2: {
       width: "8rem",
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
       textAlign: "center",
-    },
-    tbody: {
-      "--divider-width": "1px",
-      "--divider-color": "oklch(96.7% 0.003 264.542)",
-    },
-    td: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "3rem",
-      paddingBottom: "3rem",
-      textAlign: "center",
-    },
-    tr: {
-      transitionProperty:
-        "color, background-color, border-color, text-decoration-color, fill, stroke",
-      transitionDuration: "150ms",
-      transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
     },
     td2: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
       fontWeight: 500,
     },
     img: {
@@ -213,80 +176,94 @@
   <br />
 </div>
 
-<table class={stylex.attrs(ui.table).class}>
-  <thead class={stylex.attrs(styles.thead).class}>
-    <tr>
-      <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
-        >Nom du prélèvement</th
-      >
-      <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
-        >Description</th
-      >
-      <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
-        >Localisation</th
-      >
-      <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
-        >Type</th
-      >
-      <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
-        >Miniature</th
-      >
-      <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th2).class}
-        >Actions</th
-      >
-    </tr>
-  </thead>
-  <tbody class={stylex.attrs(styles.tbody).class}>
-    {#if displayedList.length === 0}
-      <tr class={stylex.attrs(ui.divideChild).class}>
-        <td colspan="6" class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
-          {#if query}
-            Aucun résultat pour "{query}".
-          {:else}
-            Aucun tag risque enregistré.
-          {/if}
-        </td>
-      </tr>
-    {:else}
-      {#each displayedList as item (item.uid)}
-        <tr class={stylex.attrs(ui.divideChild, styles.tr).class}>
-          <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td2).class}> {item.label} </td>
-          <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
-            {item.description || "-"}
-          </td>
-          <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
-            {item.etage || "-"}
-          </td>
-          <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
-            {item.riskLabel || item.type || "-"}
-          </td>
-          <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
-            {#if item.thumbnailUrl}
-              <img
-                src={item.thumbnailUrl}
-                alt={item.label}
-                class={stylex.attrs(styles.img).class}
-              />
-            {:else}
-              <span class={stylex.attrs(styles.span).class}>N/A</span>
-            {/if}
-          </td>
-          <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
-            <div class={stylex.attrs(styles.div4).class}>
-              <button
-                onclick={() => openDeleteModal(item)}
-                class={stylex.attrs(ui.button, ui.buttonGhost, ui.buttonWarning).class}
-                title="Supprimer"
-              >
-                <Trash2 class={stylex.attrs(styles.Trash2).class} />
-              </button>
-            </div>
-          </td>
+<div class={stylex.attrs(ui.tableFrame).class}>
+  <!-- svelte-ignore a11y_no_noninteractive_tabindex (Keyboard access to horizontal scrolling.) -->
+  <div
+    class={stylex.attrs(ui.tableScroll).class}
+    tabindex="0"
+    role="region"
+    aria-label="Tableau défilant"
+  >
+    <table class={stylex.attrs(ui.table).class}>
+      <thead>
+        <tr>
+          <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
+            >Nom du prélèvement</th
+          >
+          <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
+            >Description</th
+          >
+          <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
+            >Localisation</th
+          >
+          <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
+            >Type</th
+          >
+          <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
+            >Miniature</th
+          >
+          <th
+            scope="col"
+            class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th2).class}
+            >Actions</th
+          >
         </tr>
-      {/each}
-    {/if}
-  </tbody>
-</table>
+      </thead>
+      <tbody>
+        {#if displayedList.length === 0}
+          <tr class={stylex.attrs(ui.tableRow).class}>
+            <td colspan="6" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableEmpty).class}>
+              {#if query}
+                Aucun résultat pour "{query}".
+              {:else}
+                Aucun tag risque enregistré.
+              {/if}
+            </td>
+          </tr>
+        {:else}
+          {#each displayedList as item (item.uid)}
+            <tr class={stylex.attrs(ui.tableRow).class}>
+              <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td2).class}>
+                {item.label}
+              </td>
+              <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
+                {item.description || "-"}
+              </td>
+              <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
+                {item.etage || "-"}
+              </td>
+              <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
+                {item.riskLabel || item.type || "-"}
+              </td>
+              <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
+                {#if item.thumbnailUrl}
+                  <img
+                    src={item.thumbnailUrl}
+                    alt={item.label}
+                    class={stylex.attrs(styles.img).class}
+                  />
+                {:else}
+                  <span class={stylex.attrs(styles.span).class}>N/A</span>
+                {/if}
+              </td>
+              <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
+                <div class={stylex.attrs(styles.div4).class}>
+                  <button
+                    onclick={() => openDeleteModal(item)}
+                    class={stylex.attrs(ui.button, ui.buttonGhost, ui.buttonWarning).class}
+                    title="Supprimer"
+                  >
+                    <Trash2 class={stylex.attrs(styles.Trash2).class} />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          {/each}
+        {/if}
+      </tbody>
+    </table>
+  </div>
+</div>
 
 <Pagination
   {page}

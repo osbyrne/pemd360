@@ -228,50 +228,16 @@
     },
     errorTitle: { fontWeight: 600 },
     errorMessage: { marginTop: ".25rem", fontSize: ".875rem" },
-    tableCard: {
-      overflow: "hidden",
-      borderRadius: ".75rem",
-      borderWidth: "1px",
-      borderStyle: "solid",
-      borderColor: `color-mix(in oklab, ${theme.baseContent} 12%, transparent)`,
-      backgroundColor: theme.base100,
-      boxShadow: "0 1px 3px #0000001a",
-    },
-    tableScroll: { overflowX: "auto" },
     table: {
       width: "100%",
       minWidth: "58rem",
-      borderCollapse: "collapse",
       tableLayout: "fixed",
-      textAlign: "left",
-      fontSize: ".875rem",
-    },
-    heading: {
-      padding: ".875rem 1rem",
-      backgroundColor: theme.base200,
-      color: `color-mix(in oklab, ${theme.baseContent} 65%, transparent)`,
-      fontSize: ".75rem",
-      fontWeight: 600,
-      letterSpacing: ".04em",
     },
     userColumn: { width: "26%" },
     roleColumn: { width: "15%" },
     projectsColumn: { width: "15%" },
     dateColumn: { width: "17%" },
     actionsColumn: { width: "27%", textAlign: "right" },
-    row: {
-      backgroundColor: {
-        default: "transparent",
-        ":hover": theme.base200,
-      },
-    },
-    cell: {
-      padding: ".875rem 1rem",
-      borderTopWidth: "1px",
-      borderTopStyle: "solid",
-      borderTopColor: `color-mix(in oklab, ${theme.baseContent} 9%, transparent)`,
-      verticalAlign: "middle",
-    },
     userName: { fontWeight: 600 },
     userEmail: {
       marginTop: ".25rem",
@@ -296,11 +262,6 @@
       alignItems: "center",
       justifyContent: "flex-end",
       gap: ".125rem",
-    },
-    statusCell: {
-      padding: "3rem 1rem",
-      textAlign: "center",
-      color: `color-mix(in oklab, ${theme.baseContent} 65%, transparent)`,
     },
     statusIcon: { marginInline: "auto", marginBottom: ".75rem" },
     statusTitle: { color: theme.baseContent, fontWeight: 600 },
@@ -354,36 +315,62 @@
     </div>
   {/if}
 
-  <div class={stylex.attrs(styles.tableCard).class}>
-    <div class={stylex.attrs(styles.tableScroll).class}>
-      <table class={stylex.attrs(styles.table).class} aria-label="Utilisateurs" aria-busy={loading}>
+  <div class={stylex.attrs(ui.tableFrame).class}>
+    <!-- svelte-ignore a11y_no_noninteractive_tabindex (Keyboard access to horizontal scrolling.) -->
+    <div
+      class={stylex.attrs(ui.tableScroll).class}
+      tabindex="0"
+      role="region"
+      aria-label="Utilisateurs : tableau défilant"
+    >
+      <table
+        class={stylex.attrs(ui.table, styles.table).class}
+        aria-label="Utilisateurs"
+        aria-busy={loading}
+      >
         <thead>
           <tr>
-            <th scope="col" class={stylex.attrs(styles.heading, styles.userColumn).class}
-              >Utilisateur</th
+            <th
+              scope="col"
+              class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.userColumn)
+                .class}>Utilisateur</th
             >
-            <th scope="col" class={stylex.attrs(styles.heading, styles.roleColumn).class}>Rôle</th>
-            <th scope="col" class={stylex.attrs(styles.heading, styles.projectsColumn).class}
-              >Projets</th
+            <th
+              scope="col"
+              class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.roleColumn)
+                .class}>Rôle</th
             >
-            <th scope="col" class={stylex.attrs(styles.heading, styles.dateColumn).class}
-              >Inscription</th
+            <th
+              scope="col"
+              class={stylex.attrs(
+                ui.tableCell,
+                ui.tableRule,
+                ui.tableHeading,
+                styles.projectsColumn,
+              ).class}>Projets</th
             >
-            <th scope="col" class={stylex.attrs(styles.heading, styles.actionsColumn).class}
-              >Actions</th
+            <th
+              scope="col"
+              class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.dateColumn)
+                .class}>Inscription</th
+            >
+            <th
+              scope="col"
+              class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.actionsColumn)
+                .class}>Actions</th
             >
           </tr>
         </thead>
         <tbody>
           {#if loading}
             <tr>
-              <td colspan="5" class={stylex.attrs(styles.cell, styles.statusCell).class}>
+              <td colspan="5" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableEmpty).class}>
                 Chargement des utilisateurs…
               </td>
             </tr>
           {:else if displayedUsers.length === 0}
             <tr>
-              <td colspan="5" class={stylex.attrs(styles.cell, styles.statusCell).class}>
+              <td colspan="5" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableEmpty).class}>
                 <Users size={28} class={stylex.attrs(styles.statusIcon).class} aria-hidden="true" />
                 <p class={stylex.attrs(styles.statusTitle).class}>Aucun utilisateur trouvé</p>
                 <p class={stylex.attrs(styles.statusDescription).class}>
@@ -393,8 +380,8 @@
             </tr>
           {:else}
             {#each displayedUsers as user (user.id)}
-              <tr class={stylex.attrs(styles.row).class}>
-                <th scope="row" class={stylex.attrs(styles.cell).class}>
+              <tr class={stylex.attrs(ui.tableRow).class}>
+                <th scope="row" class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <div class={stylex.attrs(styles.userName).class}>
                     {user.name}
                   </div>
@@ -402,7 +389,7 @@
                     {user.email}
                   </div>
                 </th>
-                <td class={stylex.attrs(styles.cell).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <span class={stylex.attrs(styles.roleBadge).class}>
                     {#if user.role === "admin"}
                       Administrateur
@@ -413,7 +400,7 @@
                     {/if}
                   </span>
                 </td>
-                <td class={stylex.attrs(styles.cell).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   {#if user.role === "admin"}
                     <span class={stylex.attrs(styles.projectValue).class}>Tous</span>
                   {:else}
@@ -425,10 +412,10 @@
                     </span>
                   {/if}
                 </td>
-                <td class={stylex.attrs(styles.cell, styles.dateValue).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.dateValue).class}>
                   {formatDate(user.createdAt)}
                 </td>
-                <td class={stylex.attrs(styles.cell).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <div class={stylex.attrs(styles.actions).class}>
                     <UserProjetsModal
                       {user}

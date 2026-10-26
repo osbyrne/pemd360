@@ -194,93 +194,28 @@
       height: "1rem",
       width: "1rem",
     },
-    div7: {
-      display: "flex",
-      flexDirection: "column",
-      overflow: "hidden",
-    },
-    div8: {
-      overflowX: "auto",
-    },
     th: {
       minWidth: "18.75rem",
-      paddingInlineStart: "1rem",
-      paddingInlineEnd: "1rem",
-      paddingTop: "0.75rem",
-      paddingBottom: "0.75rem",
       fontWeight: 600,
-      whiteSpace: "nowrap",
     },
     th2: {
-      paddingInlineStart: "1rem",
-      paddingInlineEnd: "1rem",
-      paddingTop: "0.75rem",
-      paddingBottom: "0.75rem",
       fontWeight: 600,
-      whiteSpace: "nowrap",
     },
     th3: {
-      paddingInlineStart: "1rem",
-      paddingInlineEnd: "1rem",
-      paddingTop: "0.75rem",
-      paddingBottom: "0.75rem",
       textAlign: "right",
       fontWeight: 600,
-      whiteSpace: "nowrap",
     },
     th4: {
-      borderLeftWidth: "1px",
-      borderLeftStyle: "solid",
-      borderColor: "oklch(92.8% 0.006 264.531)",
-      paddingInlineStart: "0.5rem",
-      paddingInlineEnd: "0.5rem",
-      paddingTop: "0.75rem",
-      paddingBottom: "0.75rem",
       textAlign: "center",
-      fontSize: ".75rem",
-      lineHeight: "1rem",
       fontWeight: 600,
-      whiteSpace: "nowrap",
     },
     th5: {
-      paddingInlineStart: "0.5rem",
-      paddingInlineEnd: "0.5rem",
-      paddingTop: "0.75rem",
-      paddingBottom: "0.75rem",
       textAlign: "center",
-      fontSize: ".75rem",
-      lineHeight: "1rem",
       fontWeight: 600,
-      whiteSpace: "nowrap",
     },
     th6: {
-      borderLeftWidth: "1px",
-      borderLeftStyle: "solid",
-      borderColor: "oklch(92.8% 0.006 264.531)",
-      paddingInlineStart: "1rem",
-      paddingInlineEnd: "1rem",
-      paddingTop: "0.75rem",
-      paddingBottom: "0.75rem",
       textAlign: "left",
       fontWeight: 600,
-      whiteSpace: "nowrap",
-    },
-    tbody: {
-      "--divider-width": "1px",
-      "--divider-color": "oklch(96.7% 0.003 264.542)",
-    },
-    tr: {
-      transitionProperty:
-        "color, background-color, border-color, text-decoration-color, fill, stroke",
-      transitionDuration: "150ms",
-      transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
-    },
-    td: {
-      paddingInlineStart: "1rem",
-      paddingInlineEnd: "1rem",
-      paddingTop: "0.75rem",
-      paddingBottom: "0.75rem",
-      verticalAlign: "top",
     },
     div9: {
       marginTop: "0.125rem",
@@ -294,75 +229,26 @@
       fontStyle: "italic",
     },
     td2: {
-      paddingInlineStart: "1rem",
-      paddingInlineEnd: "1rem",
-      paddingTop: "0.75rem",
-      paddingBottom: "0.75rem",
-      verticalAlign: "top",
       fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
-      fontSize: ".75rem",
-      lineHeight: "1rem",
     },
     td3: {
-      paddingInlineStart: "1rem",
-      paddingInlineEnd: "1rem",
-      paddingTop: "0.75rem",
-      paddingBottom: "0.75rem",
       textAlign: "right",
-      verticalAlign: "top",
       fontWeight: 500,
     },
     td4: {
-      paddingInlineStart: "1rem",
-      paddingInlineEnd: "1rem",
-      paddingTop: "0.75rem",
-      paddingBottom: "0.75rem",
       textAlign: "right",
-      verticalAlign: "top",
     },
     td5: {
-      borderLeftWidth: "1px",
-      borderLeftStyle: "solid",
-      borderColor: "oklch(96.7% 0.003 264.542)",
-      paddingInlineStart: "0.5rem",
-      paddingInlineEnd: "0.5rem",
-      paddingTop: "0.75rem",
-      paddingBottom: "0.75rem",
       textAlign: "center",
-      verticalAlign: "top",
     },
     td6: {
-      paddingInlineStart: "0.5rem",
-      paddingInlineEnd: "0.5rem",
-      paddingTop: "0.75rem",
-      paddingBottom: "0.75rem",
       textAlign: "center",
-      verticalAlign: "top",
-    },
-    td7: {
-      borderLeftWidth: "1px",
-      borderLeftStyle: "solid",
-      borderColor: "oklch(96.7% 0.003 264.542)",
-      paddingInlineStart: "1rem",
-      paddingInlineEnd: "1rem",
-      paddingTop: "0.75rem",
-      paddingBottom: "0.75rem",
-      verticalAlign: "top",
-      fontSize: ".75rem",
-      lineHeight: "1rem",
     },
     div11: {
       maxWidth: "9.375rem",
       overflow: "hidden",
       textOverflow: "ellipsis",
       whiteSpace: "nowrap",
-    },
-    td8: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "3rem",
-      paddingBottom: "3rem",
-      textAlign: "center",
     },
     div12: {
       marginTop: "1rem",
@@ -458,53 +344,101 @@
   </div>
 
   <!-- Tableau des déchets (Simple & Clean) -->
-  <div class={stylex.attrs(styles.div7).class}>
-    <div class={stylex.attrs(styles.div8).class}>
+  <div class={stylex.attrs(ui.tableFrame).class}>
+    <!-- svelte-ignore a11y_no_noninteractive_tabindex (Keyboard access to horizontal scrolling.) -->
+    <div
+      class={stylex.attrs(ui.tableScroll).class}
+      tabindex="0"
+      role="region"
+      aria-label="Tableau défilant"
+    >
       <table class={stylex.attrs(ui.table).class}>
         <thead>
           <tr>
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th
+              scope="col"
+              class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
               >Catégorie / Nature</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th2).class}
+            <th
+              scope="col"
+              class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th2).class}
               >Code</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th3).class}
+            <th
+              scope="col"
+              class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th3).class}
               >Masse (Kg)</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th3).class}
+            <th
+              scope="col"
+              class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th3).class}
               >Vol (m³)</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th4).class}>
+            <th
+              scope="col"
+              class={stylex.attrs(
+                ui.tableCell,
+                ui.tableRule,
+                ui.tableHeading,
+                ui.tableGroupRule,
+                styles.th4,
+              ).class}
+            >
               Diag.<br />filières?
             </th>
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th5).class}>
+            <th
+              scope="col"
+              class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th5).class}
+            >
               Réutili-<br />sation
             </th>
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th5).class}>
+            <th
+              scope="col"
+              class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th5).class}
+            >
               Recy-<br />clable
             </th>
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th5).class}>
+            <th
+              scope="col"
+              class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th5).class}
+            >
               Remblay-<br />age
             </th>
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th5).class}>
+            <th
+              scope="col"
+              class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th5).class}
+            >
               Incin.<br />avec valo.
             </th>
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th5).class}>
+            <th
+              scope="col"
+              class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th5).class}
+            >
               Incin.<br />sans valo.
             </th>
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th5).class}>
+            <th
+              scope="col"
+              class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th5).class}
+            >
               Enfouiss-<br />ment
             </th>
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th6).class}
-              >Conditions / Notes</th
+            <th
+              scope="col"
+              class={stylex.attrs(
+                ui.tableCell,
+                ui.tableRule,
+                ui.tableHeading,
+                ui.tableGroupRule,
+                styles.th6,
+              ).class}>Conditions / Notes</th
             >
           </tr>
         </thead>
-        <tbody class={stylex.attrs(styles.tbody).class}>
+        <tbody>
           {#each paginatedDechets as dechet, i (i)}
-            <tr class={stylex.attrs(ui.divideChild, styles.tr).class}>
-              <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+            <tr class={stylex.attrs(ui.tableRow).class}>
+              <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                 <div class={stylex.attrs(styles.span).class}>{dechet.categorie || "-"}</div>
                 {#if dechet.objet && dechet.objet !== dechet.categorie}
                   <div class={stylex.attrs(styles.div9).class}>{dechet.objet}</div>
@@ -524,7 +458,10 @@
               </td>
 
               <!-- Checklist columns -->
-              <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td5).class}>
+              <td
+                class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableGroupRule, styles.td5)
+                  .class}
+              >
                 {dechet.ecoOrganisme ? "☑" : "☐"}
               </td>
               <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td6).class}>
@@ -547,7 +484,7 @@
               </td>
               <!-- End checklist columns -->
 
-              <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td7).class}>
+              <td class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableGroupRule).class}>
                 <div
                   class={stylex.attrs(styles.div11).class}
                   title={dechet.stockage || dechet.description || ""}
@@ -557,8 +494,11 @@
               </td>
             </tr>
           {:else}
-            <tr class={stylex.attrs(ui.divideChild).class}>
-              <td colspan="12" class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td8).class}>
+            <tr class={stylex.attrs(ui.tableRow).class}>
+              <td
+                colspan="12"
+                class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableEmpty).class}
+              >
                 Aucun résultat.
               </td>
             </tr>

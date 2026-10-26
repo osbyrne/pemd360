@@ -184,54 +184,11 @@
       lineHeight: "1.75rem",
       fontWeight: 700,
     },
-    div7: {
-      overflow: "hidden",
-    },
-    div8: {
-      overflowX: "auto",
-    },
-    thead: {
-      fontSize: ".75rem",
-      lineHeight: "1rem",
-      fontWeight: 600,
-      textTransform: "uppercase",
-    },
-    th: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
-    },
     th2: {
       width: "8rem",
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
       textAlign: "center",
-    },
-    tbody: {
-      "--divider-width": "1px",
-      "--divider-color": "oklch(96.7% 0.003 264.542)",
-    },
-    td: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "3rem",
-      paddingBottom: "3rem",
-      textAlign: "center",
-    },
-    tr: {
-      transitionProperty:
-        "color, background-color, border-color, text-decoration-color, fill, stroke",
-      transitionDuration: "150ms",
-      transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
     },
     td2: {
-      paddingInlineStart: "1.5rem",
-      paddingInlineEnd: "1.5rem",
-      paddingTop: "1rem",
-      paddingBottom: "1rem",
       fontWeight: 500,
     },
     span3: {
@@ -326,53 +283,64 @@
     </div>
   </div>
 
-  <div class={stylex.attrs(styles.div7).class}>
-    <div class={stylex.attrs(styles.div8).class}>
+  <div class={stylex.attrs(ui.tableFrame).class}>
+    <!-- svelte-ignore a11y_no_noninteractive_tabindex (Keyboard access to horizontal scrolling.) -->
+    <div
+      class={stylex.attrs(ui.tableScroll).class}
+      tabindex="0"
+      role="region"
+      aria-label="Tableau défilant"
+    >
       <table class={stylex.attrs(ui.table).class}>
-        <thead class={stylex.attrs(styles.thead).class}>
+        <thead>
           <tr>
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Nature</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Code déchet</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Masse</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Réutilisation sur site</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Recyclable</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Remblayage</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Incinération valorisation énergétique</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Non valorisation à enfouir</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Incinération sans valorisation énergétique</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Eco-organisme REP</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th).class}
+            <th scope="col" class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading).class}
               >Stockage</th
             >
-            <th class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th2).class}
+            <th
+              scope="col"
+              class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableHeading, styles.th2).class}
               >Actions</th
             >
           </tr>
         </thead>
-        <tbody class={stylex.attrs(styles.tbody).class}>
+        <tbody>
           {#if displayedList.length === 0}
-            <tr class={stylex.attrs(ui.divideChild).class}>
-              <td colspan="12" class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td).class}>
+            <tr class={stylex.attrs(ui.tableRow).class}>
+              <td
+                colspan="12"
+                class={stylex.attrs(ui.tableCell, ui.tableRule, ui.tableEmpty).class}
+              >
                 {#if query}
                   Aucun résultat pour "{query}".
                 {:else}
@@ -382,17 +350,15 @@
             </tr>
           {:else}
             {#each displayedList as item}
-              <tr class={stylex.attrs(ui.divideChild, styles.tr).class}>
+              <tr class={stylex.attrs(ui.tableRow).class}>
                 <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.td2).class}
                   >{item.nature || "-"}</td
                 >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}
                   >{item.codeDechet || "-"}</td
                 >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
-                  >{item.masse || "-"}</td
-                >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>{item.masse || "-"}</td>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <span
                     class={stylex.attrs(
                       styles.span3,
@@ -402,7 +368,7 @@
                     {item.reutilisation ? "Oui" : "Non"}
                   </span>
                 </td>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <span
                     class={stylex.attrs(
                       styles.span3,
@@ -412,7 +378,7 @@
                     {item.recyclable ? "Oui" : "Non"}
                   </span>
                 </td>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <span
                     class={stylex.attrs(
                       styles.span3,
@@ -422,7 +388,7 @@
                     {item.valorisationMatiere ? "Oui" : "Non"}
                   </span>
                 </td>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <span
                     class={stylex.attrs(
                       styles.span3,
@@ -432,7 +398,7 @@
                     {item.valorisationEnergetique ? "Oui" : "Non"}
                   </span>
                 </td>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <span
                     class={stylex.attrs(
                       styles.span3,
@@ -442,7 +408,7 @@
                     {item.nonValorisation ? "Oui" : "Non"}
                   </span>
                 </td>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <span
                     class={stylex.attrs(
                       styles.span3,
@@ -454,13 +420,13 @@
                     {item.incinerationSansValorisationEnergetique ? "Oui" : "Non"}
                   </span>
                 </td>
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}
                   >{item.ecoOrganismeRep || "-"}</td
                 >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}
                   >{item.stockage || "-"}</td
                 >
-                <td class={stylex.attrs(ui.tableCell, ui.tableRule, styles.th).class}>
+                <td class={stylex.attrs(ui.tableCell, ui.tableRule).class}>
                   <div class={stylex.attrs(styles.div9).class}>
                     <button
                       onclick={() => openDeleteModal(item)}

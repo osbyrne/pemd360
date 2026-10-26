@@ -83,3 +83,13 @@ export const theme = stylex.defineVars({
     "@media (prefers-color-scheme: dark)": "oklch(27% 0.105 12.094)",
   },
 });
+
+/** One density and surface palette for every data table. */
+export const tableTheme = stylex.defineVars({
+  border: `color-mix(in oklab, ${theme.baseContent} 12%, ${theme.base100})`,
+  heading: `color-mix(in oklab, ${theme.baseContent} 70%, ${theme.base100})`,
+  hover: `color-mix(in oklab, ${theme.baseContent} 4%, ${theme.base100})`,
+  cellBlock: ".875rem",
+  cellInline: "1rem",
+  radius: ".5rem",
+});
